@@ -11,10 +11,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -100,7 +100,7 @@ fun TimerScreen(
                                         color = colorScheme.onPrimaryContainer
                                     ),
                                     textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.width(200.dp)
                                 )
 
                             TimerMode.SHORT_BREAK -> Text(
@@ -112,7 +112,7 @@ fun TimerScreen(
                                     color = colorScheme.onTertiaryContainer
                                 ),
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.width(200.dp)
                             )
 
                             TimerMode.LONG_BREAK -> Text(
@@ -124,7 +124,7 @@ fun TimerScreen(
                                     color = colorScheme.onTertiaryContainer
                                 ),
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.width(200.dp)
                             )
                         }
                     }
@@ -152,7 +152,6 @@ fun TimerScreen(
                         strokeWidth = 16.dp,
                         gapSize = 16.dp
                     )
-//                    Box {
                     Text(
                         text = uiState.timeStr,
                         style = TextStyle(
@@ -161,10 +160,9 @@ fun TimerScreen(
                             fontSize = 76.sp,
                             letterSpacing = (-2).sp
                         ),
+                        textAlign = TextAlign.Center,
                         maxLines = 1
-//                            autoSize = TextAutoSize.StepBased(stepSize = 24.sp)
                     )
-//                    }
                 }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -237,7 +235,7 @@ fun TimerScreen(
 @Composable
 fun TimerScreenPreview() {
     val uiState = UiState(
-        timeStr = "08:34", nextTimeStr = "5:00"
+        timeStr = "03:34", nextTimeStr = "5:00", timerMode = TimerMode.SHORT_BREAK
     )
     TimerScreen(uiState, { 0.3f }, {}, {})
 }

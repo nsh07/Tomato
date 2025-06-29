@@ -12,36 +12,36 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 class UiViewModel : ViewModel() {
-    val focusTime = 10
-    val shortBreakTime = 5
-    val longBreakTime = 20
+    val focusTime = 10000
+    val shortBreakTime = 5000
+    val longBreakTime = 20000
 
     private val _uiState = MutableStateFlow(
         UiState(
             totalTime = focusTime,
-            remainingTime = focusTime,
-            timeStr = secondsToStr(focusTime),
-            nextTimeStr = secondsToStr(shortBreakTime)
+            timeStr = millisecondsToStr(focusTime),
+            nextTimeStr = millisecondsToStr(shortBreakTime)
         )
     )
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
     var timerJob: Job? = null
 
-    var time = focusTime
+    private val _time = MutableStateFlow(focusTime)
+    val time: StateFlow<Int> = _time.asStateFlow()
+
     var cycles = 0
 
     fun resetTimer() {
-        time = focusTime
+        _time.update {  focusTime }
         cycles = 0
 
         _uiState.update { currentState ->
             currentState.copy(
                 timerMode = TimerMode.FOCUS,
-                timeStr = secondsToStr(time),
-                totalTime = time,
-                remainingTime = time,
+                timeStr = millisecondsToStr(time.value),
+                totalTime = time.value,
                 nextTimerMode = TimerMode.SHORT_BREAK,
-                nextTimeStr = secondsToStr(shortBreakTime)
+                nextTimeStr = millisecondsToStr(shortBreakTime)
             )
         }
     }
@@ -57,58 +57,55 @@ class UiViewModel : ViewModel() {
             timerJob = viewModelScope.launch {
                 while (true) {
                     if (!uiState.value.timerRunning) break
-                    time--
+                    _time.update { it - 10 }
 
-                    if (time < 0) {
+                    if (time.value < 0) {
                         cycles++
 
                         if (cycles % 2 == 0) {
-                            time = focusTime
+                            _time.update {  focusTime }
                             _uiState.update { currentState ->
                                 currentState.copy(
                                     timerMode = TimerMode.FOCUS,
-                                    timeStr = secondsToStr(time),
-                                    totalTime = time,
-                                    remainingTime = time,
+                                    timeStr = millisecondsToStr(time.value),
+                                    totalTime = time.value,
                                     nextTimerMode = if (cycles % 6 == 0) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                                    nextTimeStr = if (cycles % 6 == 0) secondsToStr(longBreakTime) else secondsToStr(
+                                    nextTimeStr = if (cycles % 6 == 0) millisecondsToStr(longBreakTime) else millisecondsToStr(
                                         shortBreakTime
                                     )
                                 )
                             }
                         } else {
                             val long = cycles % 7 == 0
-                            time = if (long) longBreakTime else shortBreakTime
+                            _time.update {  if (long) longBreakTime else shortBreakTime }
 
                             _uiState.update { currentState ->
                                 currentState.copy(
                                     timerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                                    timeStr = secondsToStr(time),
-                                    totalTime = time,
-                                    remainingTime = time,
+                                    timeStr = millisecondsToStr(time.value),
+                                    totalTime = time.value,
                                     nextTimerMode = TimerMode.FOCUS,
-                                    nextTimeStr = secondsToStr(focusTime)
+                                    nextTimeStr = millisecondsToStr(focusTime)
                                 )
                             }
                         }
                     } else {
                         _uiState.update { currentState ->
                             currentState.copy(
-                                timeStr = secondsToStr(time),
-                                remainingTime = time
+                                timeStr = millisecondsToStr(time.value)
                             )
                         }
                     }
 
-                    delay(1000)
+                    delay(10)
                 }
             }
         }
     }
 
-    private fun secondsToStr(t: Int): String {
-        val min = t / 60
-        val sec = t % 60
+    private fun millisecondsToStr(t: Int): String {
+        val min = (t / 1000) / 60
+        val sec = (t / 1000) % 60
         return String.format(locale = Locale.getDefault(), "%02d:%02d", min, sec)
     }
 }

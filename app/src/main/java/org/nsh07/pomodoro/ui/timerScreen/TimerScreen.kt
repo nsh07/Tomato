@@ -49,6 +49,7 @@ import org.nsh07.pomodoro.ui.viewModel.UiState
 @Composable
 fun TimerScreen(
     uiState: UiState,
+    progress: () -> Float,
     resetTimer: () -> Unit,
     toggleTimer: () -> Unit,
     modifier: Modifier = Modifier
@@ -144,7 +145,7 @@ fun TimerScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(
-                        progress = { (uiState.totalTime.toFloat() - uiState.remainingTime) / uiState.totalTime },
+                        progress =  progress,
                         modifier = Modifier.size(350.dp),
                         color = color,
                         trackColor = colorContainer,
@@ -238,5 +239,5 @@ fun TimerScreenPreview() {
     val uiState = UiState(
         timeStr = "08:34", nextTimeStr = "5:00"
     )
-    TimerScreen(uiState, {}, {})
+    TimerScreen(uiState, { 0.3f }, {}, {})
 }

@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,12 +32,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.ui.theme.OpenRundeFontFamily.openRundeClock
+import org.nsh07.pomodoro.ui.theme.AppFonts.interDisplayBlack
+import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppScreen(modifier: Modifier = Modifier) {
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        "Focus",
+                        style = TextStyle(
+                            fontFamily = interDisplayBlack,
+                            fontSize = 32.sp,
+                            lineHeight = 32.sp,
+                            color = colorScheme.onPrimaryContainer
+                        )
+                    )
+                },
+                subtitle = {},
+                titleHorizontalAlignment = Alignment.CenterHorizontally
+            )
+        },
         modifier = modifier.fillMaxSize()
     ) { insets ->
         Column(

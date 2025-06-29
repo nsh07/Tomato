@@ -19,8 +19,11 @@ val Typography = Typography(
     )
 )
 
-object OpenRundeFontFamily {
+object AppFonts {
     val openRundeClock = FontFamily(
         Font(R.font.open_runde_bold_clock_only, FontWeight.Bold)
+    )
+    val interDisplayBlack = FontFamily(
+        Font(R.font.inter_display_black, FontWeight.Black)
     )
 }

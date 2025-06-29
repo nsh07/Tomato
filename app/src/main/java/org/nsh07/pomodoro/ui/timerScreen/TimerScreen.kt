@@ -1,12 +1,17 @@
 package org.nsh07.pomodoro.ui.timerScreen
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,6 +53,7 @@ fun TimerScreen(
     toggleTimer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val motionScheme = motionScheme
     val color by animateColorAsState(
         if (uiState.timerMode == TimerMode.FOCUS) colorScheme.primary
         else colorScheme.tertiary,
@@ -62,29 +69,64 @@ fun TimerScreen(
         else colorScheme.tertiaryContainer,
         animationSpec = motionScheme.slowEffectsSpec()
     )
-    val onColorContainer by animateColorAsState(
-        if (uiState.timerMode == TimerMode.FOCUS) colorScheme.onPrimaryContainer
-        else colorScheme.onTertiaryContainer,
-        animationSpec = motionScheme.slowEffectsSpec()
-    )
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        when (uiState.timerMode) {
-                            TimerMode.FOCUS -> "Focus"
-                            TimerMode.SHORT_BREAK -> "Short Break"
-                            TimerMode.LONG_BREAK -> "Long Break"
-                        },
-                        style = TextStyle(
-                            fontFamily = interDisplayBlack,
-                            fontSize = 32.sp,
-                            lineHeight = 32.sp,
-                            color = onColorContainer
-                        )
-                    )
+                    AnimatedContent(
+                        uiState.timerMode,
+                        transitionSpec = {
+                            slideInVertically(
+                                animationSpec = motionScheme.slowSpatialSpec(),
+                                initialOffsetY = { (-it * 1.25).toInt() }
+                            ).togetherWith(
+                                slideOutVertically(
+                                    animationSpec = motionScheme.slowSpatialSpec(),
+                                    targetOffsetY = { (it * 1.25).toInt() }
+                                )
+                            )
+                        }
+                    ) {
+                        when (it) {
+                            TimerMode.FOCUS ->
+                                Text(
+                                    "Focus",
+                                    style = TextStyle(
+                                        fontFamily = interDisplayBlack,
+                                        fontSize = 32.sp,
+                                        lineHeight = 32.sp,
+                                        color = colorScheme.onPrimaryContainer
+                                    ),
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+
+                            TimerMode.SHORT_BREAK -> Text(
+                                "Short Break",
+                                style = TextStyle(
+                                    fontFamily = interDisplayBlack,
+                                    fontSize = 32.sp,
+                                    lineHeight = 32.sp,
+                                    color = colorScheme.onTertiaryContainer
+                                ),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+
+                            TimerMode.LONG_BREAK -> Text(
+                                "Long Break",
+                                style = TextStyle(
+                                    fontFamily = interDisplayBlack,
+                                    fontSize = 32.sp,
+                                    lineHeight = 32.sp,
+                                    color = colorScheme.onTertiaryContainer
+                                ),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
                 },
                 subtitle = {},
                 titleHorizontalAlignment = Alignment.CenterHorizontally

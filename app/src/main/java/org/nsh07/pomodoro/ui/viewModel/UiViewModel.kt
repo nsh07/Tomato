@@ -57,10 +57,10 @@ class UiViewModel : ViewModel() {
             timerJob = viewModelScope.launch {
                 while (true) {
                     if (!uiState.value.timerRunning) break
-                    time--;
+                    time--
 
                     if (time < 0) {
-                        cycles++;
+                        cycles++
 
                         if (cycles % 2 == 0) {
                             time = focusTime

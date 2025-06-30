@@ -29,9 +29,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -55,6 +58,8 @@ fun TimerScreen(
     modifier: Modifier = Modifier
 ) {
     val motionScheme = motionScheme
+    val haptic = LocalHapticFeedback.current
+
     val color by animateColorAsState(
         if (uiState.timerMode == TimerMode.FOCUS) colorScheme.primary
         else colorScheme.tertiary,
@@ -70,6 +75,10 @@ fun TimerScreen(
         else colorScheme.tertiaryContainer,
         animationSpec = motionScheme.slowEffectsSpec()
     )
+
+    LaunchedEffect(uiState.timerMode) {
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
 
     Scaffold(
         topBar = {

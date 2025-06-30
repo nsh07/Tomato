@@ -10,11 +10,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Locale
+import kotlin.math.ceil
 
 class UiViewModel : ViewModel() {
-    val focusTime = 10000
-    val shortBreakTime = 5000
-    val longBreakTime = 20000
+    val focusTime = 25 * 60 * 1000
+    val shortBreakTime = 5 * 60 * 1000
+    val longBreakTime = 15 * 60 * 1000
 
     private val _uiState = MutableStateFlow(
         UiState(
@@ -57,7 +58,7 @@ class UiViewModel : ViewModel() {
             timerJob = viewModelScope.launch {
                 while (true) {
                     if (!uiState.value.timerRunning) break
-                    _time.update { it - 10 }
+                    _time.update { it - 100 }
 
                     if (time.value < 0) {
                         cycles++
@@ -97,15 +98,15 @@ class UiViewModel : ViewModel() {
                         }
                     }
 
-                    delay(10)
+                    delay(100)
                 }
             }
         }
     }
 
     private fun millisecondsToStr(t: Int): String {
-        val min = (t / 1000) / 60
-        val sec = (t / 1000) % 60
+        val min = (ceil(t / 1000.0).toInt() / 60)
+        val sec = (ceil(t / 1000.0).toInt() % 60)
         return String.format(locale = Locale.getDefault(), "%02d:%02d", min, sec)
     }
 }

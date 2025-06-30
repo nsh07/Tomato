@@ -1,5 +1,6 @@
 package org.nsh07.pomodoro.ui.viewModel
 
+import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
@@ -30,11 +31,17 @@ class UiViewModel : ViewModel() {
     private val _time = MutableStateFlow(focusTime)
     val time: StateFlow<Int> = _time.asStateFlow()
 
-    var cycles = 0
+    private var cycles = 0
+    private var startTime = 0L
+    private var pauseTime = 0L
+    private var pauseDuration = 0L
 
     fun resetTimer() {
-        _time.update {  focusTime }
+        _time.update { focusTime }
         cycles = 0
+        startTime = 0L
+        pauseTime = 0L
+        pauseDuration = 0L
 
         _uiState.update { currentState ->
             currentState.copy(
@@ -53,32 +60,51 @@ class UiViewModel : ViewModel() {
                 currentState.copy(timerRunning = false)
             }
             timerJob?.cancel()
+            pauseTime = SystemClock.elapsedRealtime()
         } else {
             _uiState.update { it.copy(timerRunning = true) }
+            if (pauseTime != 0L) pauseDuration += SystemClock.elapsedRealtime() - pauseTime
+
             timerJob = viewModelScope.launch {
                 while (true) {
                     if (!uiState.value.timerRunning) break
-                    _time.update { it - 100 }
+                    if (startTime == 0L) startTime = SystemClock.elapsedRealtime()
+
+                    _time.update {
+                        when (uiState.value.timerMode) {
+                            TimerMode.FOCUS ->
+                                focusTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
+                            TimerMode.SHORT_BREAK ->
+                                shortBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
+                            TimerMode.LONG_BREAK ->
+                                longBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
+                        }
+                    }
 
                     if (time.value < 0) {
+                        startTime = 0L
+                        pauseTime = 0L
+                        pauseDuration = 0L
                         cycles++
 
                         if (cycles % 2 == 0) {
-                            _time.update {  focusTime }
+                            _time.update { focusTime }
                             _uiState.update { currentState ->
                                 currentState.copy(
                                     timerMode = TimerMode.FOCUS,
                                     timeStr = millisecondsToStr(time.value),
                                     totalTime = time.value,
                                     nextTimerMode = if (cycles % 6 == 0) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                                    nextTimeStr = if (cycles % 6 == 0) millisecondsToStr(longBreakTime) else millisecondsToStr(
+                                    nextTimeStr = if (cycles % 6 == 0) millisecondsToStr(
+                                        longBreakTime
+                                    ) else millisecondsToStr(
                                         shortBreakTime
                                     )
                                 )
                             }
                         } else {
                             val long = cycles % 7 == 0
-                            _time.update {  if (long) longBreakTime else shortBreakTime }
+                            _time.update { if (long) longBreakTime else shortBreakTime }
 
                             _uiState.update { currentState ->
                                 currentState.copy(

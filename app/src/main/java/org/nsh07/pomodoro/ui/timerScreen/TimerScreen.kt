@@ -52,8 +52,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.ui.theme.AppFonts.interDisplayBlack
 import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
+import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTitle
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.viewModel.UiState
@@ -114,7 +114,7 @@ fun TimerScreen(
                                 Text(
                                     "Tomato",
                                     style = TextStyle(
-                                        fontFamily = interDisplayBlack,
+                                        fontFamily = robotoFlexTitle,
                                         fontSize = 32.sp,
                                         lineHeight = 32.sp,
                                         color = colorScheme.onErrorContainer
@@ -127,7 +127,7 @@ fun TimerScreen(
                                 Text(
                                     "Focus",
                                     style = TextStyle(
-                                        fontFamily = interDisplayBlack,
+                                        fontFamily = robotoFlexTitle,
                                         fontSize = 32.sp,
                                         lineHeight = 32.sp,
                                         color = colorScheme.onPrimaryContainer
@@ -139,7 +139,7 @@ fun TimerScreen(
                             TimerMode.SHORT_BREAK -> Text(
                                 "Short Break",
                                 style = TextStyle(
-                                    fontFamily = interDisplayBlack,
+                                    fontFamily = robotoFlexTitle,
                                     fontSize = 32.sp,
                                     lineHeight = 32.sp,
                                     color = colorScheme.onTertiaryContainer
@@ -151,7 +151,7 @@ fun TimerScreen(
                             TimerMode.LONG_BREAK -> Text(
                                 "Long Break",
                                 style = TextStyle(
-                                    fontFamily = interDisplayBlack,
+                                    fontFamily = robotoFlexTitle,
                                     fontSize = 32.sp,
                                     lineHeight = 32.sp,
                                     color = colorScheme.onTertiaryContainer

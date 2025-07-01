@@ -76,7 +76,7 @@ class UiViewModel : ViewModel() {
                                 focusTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
                             TimerMode.SHORT_BREAK ->
                                 shortBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
-                            TimerMode.LONG_BREAK ->
+                            else ->
                                 longBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
                         }
                     }

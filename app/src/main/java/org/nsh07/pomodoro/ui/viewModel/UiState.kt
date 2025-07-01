@@ -10,5 +10,5 @@ data class UiState(
 )
 
 enum class TimerMode {
-    FOCUS, SHORT_BREAK, LONG_BREAK
+    FOCUS, SHORT_BREAK, LONG_BREAK, BRAND
 }

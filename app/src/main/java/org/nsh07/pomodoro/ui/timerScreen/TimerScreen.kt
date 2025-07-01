@@ -62,6 +62,7 @@ import org.nsh07.pomodoro.ui.viewModel.UiState
 @Composable
 fun TimerScreen(
     uiState: UiState,
+    showBrandTitle: Boolean,
     progress: () -> Float,
     resetTimer: () -> Unit,
     toggleTimer: () -> Unit,
@@ -95,7 +96,7 @@ fun TimerScreen(
             TopAppBar(
                 title = {
                     AnimatedContent(
-                        uiState.timerMode,
+                        if (!showBrandTitle) uiState.timerMode else TimerMode.BRAND,
                         transitionSpec = {
                             slideInVertically(
                                 animationSpec = motionScheme.slowSpatialSpec(),
@@ -109,6 +110,19 @@ fun TimerScreen(
                         }
                     ) {
                         when (it) {
+                            TimerMode.BRAND ->
+                                Text(
+                                    "Tomato",
+                                    style = TextStyle(
+                                        fontFamily = interDisplayBlack,
+                                        fontSize = 32.sp,
+                                        lineHeight = 32.sp,
+                                        color = colorScheme.onErrorContainer
+                                    ),
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.width(200.dp)
+                                )
+
                             TimerMode.FOCUS ->
                                 Text(
                                     "Focus",
@@ -289,7 +303,7 @@ fun TimerScreen(
                     when (uiState.nextTimerMode) {
                         TimerMode.FOCUS -> "Focus"
                         TimerMode.SHORT_BREAK -> "Short Break"
-                        TimerMode.LONG_BREAK -> "Long Break"
+                        else -> "Long Break"
                     },
                     style = typography.titleMediumEmphasized
                 )
@@ -309,6 +323,6 @@ fun TimerScreenPreview() {
         timeStr = "03:34", nextTimeStr = "5:00", timerMode = TimerMode.SHORT_BREAK
     )
     TomatoTheme {
-        TimerScreen(uiState, { 0.3f }, {}, {})
+        TimerScreen(uiState, false,{ 0.3f }, {}, {})
     }
 }

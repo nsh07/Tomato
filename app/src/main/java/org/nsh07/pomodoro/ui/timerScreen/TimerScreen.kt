@@ -10,12 +10,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconToggleButton
@@ -33,7 +37,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -153,20 +160,50 @@ fun TimerScreen(
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(
-                        progress =  progress,
-                        modifier = Modifier.size(350.dp),
-                        color = color,
-                        trackColor = colorContainer,
-                        strokeWidth = 16.dp,
-                        gapSize = 16.dp
-                    )
+                    if (uiState.timerMode == TimerMode.FOCUS) {
+                        CircularProgressIndicator(
+                            progress = progress,
+                            modifier = Modifier
+                                .widthIn(max = 350.dp)
+                                .fillMaxWidth(0.9f)
+                                .aspectRatio(1f),
+                            color = color,
+                            trackColor = colorContainer,
+                            strokeWidth = 16.dp,
+                            gapSize = 16.dp
+                        )
+                    } else {
+                        CircularWavyProgressIndicator(
+                            progress = progress,
+                            modifier = Modifier
+                                .widthIn(max = 350.dp)
+                                .fillMaxWidth(0.9f)
+                                .aspectRatio(1f),
+                            color = color,
+                            trackColor = colorContainer,
+                            stroke = Stroke(
+                                width = with(LocalDensity.current) {
+                                        16.dp.toPx()
+                                    },
+                                cap = StrokeCap.Round,
+                            ),
+                            trackStroke = Stroke(
+                                width = with(LocalDensity.current) {
+                                    16.dp.toPx()
+                                },
+                                cap = StrokeCap.Round,
+                            ),
+                            wavelength = 60.dp,
+//                            strokeWidth = 16.dp,
+                            gapSize = 16.dp
+                        )
+                    }
                     Text(
                         text = uiState.timeStr,
                         style = TextStyle(
                             fontFamily = openRundeClock,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 76.sp,
+                            fontSize = 72.sp,
                             letterSpacing = (-2).sp
                         ),
                         textAlign = TextAlign.Center,

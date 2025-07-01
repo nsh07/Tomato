@@ -5,10 +5,10 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +36,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
@@ -183,8 +185,8 @@ fun TimerScreen(
                             trackColor = colorContainer,
                             stroke = Stroke(
                                 width = with(LocalDensity.current) {
-                                        16.dp.toPx()
-                                    },
+                                    16.dp.toPx()
+                                },
                                 cap = StrokeCap.Round,
                             ),
                             trackStroke = Stroke(
@@ -210,43 +212,62 @@ fun TimerScreen(
                         maxLines = 1
                     )
                 }
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                val interactionSources = remember { List(2) { MutableInteractionSource() } }
+                ButtonGroup(
+                    overflowIndicator = {},
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    FilledTonalIconButton(
-                        onClick = resetTimer,
-                        colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = colorContainer),
-                        shapes = IconButtonDefaults.shapes(),
-                        modifier = Modifier.size(96.dp)
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.restart_large),
-                            contentDescription = "Restart"
-                        )
-                    }
-                    FilledIconToggleButton(
-                        onCheckedChange = { toggleTimer() },
-                        checked = uiState.timerRunning,
-                        colors = IconButtonDefaults.filledIconToggleButtonColors(
-                            checkedContainerColor = color,
-                            checkedContentColor = onColor
-                        ),
-                        shapes = IconButtonDefaults.toggleableShapes(),
-                        modifier = Modifier.size(width = 128.dp, height = 96.dp)
-                    ) {
-                        if (uiState.timerRunning) {
-                            Icon(
-                                painterResource(R.drawable.pause_large),
-                                contentDescription = "Pause"
-                            )
-                        } else {
-                            Icon(
-                                painterResource(R.drawable.play_large),
-                                contentDescription = "Play"
-                            )
-                        }
-                    }
+                    customItem(
+                        {
+                            FilledTonalIconButton(
+                                onClick = resetTimer,
+                                colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                    containerColor = colorContainer
+                                ),
+                                shapes = IconButtonDefaults.shapes(),
+                                interactionSource = interactionSources[0],
+                                modifier = Modifier
+                                    .size(96.dp)
+                                    .animateWidth(interactionSources[0])
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.restart_large),
+                                    contentDescription = "Restart"
+                                )
+                            }
+                        },
+                        {}
+                    )
+                    customItem(
+                        {
+                            FilledIconToggleButton(
+                                onCheckedChange = { toggleTimer() },
+                                checked = uiState.timerRunning,
+                                colors = IconButtonDefaults.filledIconToggleButtonColors(
+                                    checkedContainerColor = color,
+                                    checkedContentColor = onColor
+                                ),
+                                shapes = IconButtonDefaults.toggleableShapes(),
+                                interactionSource = interactionSources[1],
+                                modifier = Modifier
+                                    .size(width = 128.dp, height = 96.dp)
+                                    .animateWidth(interactionSources[1])
+                            ) {
+                                if (uiState.timerRunning) {
+                                    Icon(
+                                        painterResource(R.drawable.pause_large),
+                                        contentDescription = "Pause"
+                                    )
+                                } else {
+                                    Icon(
+                                        painterResource(R.drawable.play_large),
+                                        contentDescription = "Play"
+                                    )
+                                }
+                            }
+                        },
+                        {}
+                    )
                 }
             }
 
@@ -277,7 +298,11 @@ fun TimerScreen(
     }
 }
 
-@Preview(showSystemUi = true)
+@Preview(
+    widthDp = 384,
+    heightDp = 832,
+    showSystemUi = true
+)
 @Composable
 fun TimerScreenPreview() {
     val uiState = UiState(

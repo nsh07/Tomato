@@ -120,7 +120,7 @@ fun TimerScreen(
                                         color = colorScheme.onErrorContainer
                                     ),
                                     textAlign = TextAlign.Center,
-                                    modifier = Modifier.width(200.dp)
+                                    modifier = Modifier.width(210.dp)
                                 )
 
                             TimerMode.FOCUS ->
@@ -133,7 +133,7 @@ fun TimerScreen(
                                         color = colorScheme.onPrimaryContainer
                                     ),
                                     textAlign = TextAlign.Center,
-                                    modifier = Modifier.width(200.dp)
+                                    modifier = Modifier.width(210.dp)
                                 )
 
                             TimerMode.SHORT_BREAK -> Text(
@@ -145,7 +145,7 @@ fun TimerScreen(
                                     color = colorScheme.onTertiaryContainer
                                 ),
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.width(200.dp)
+                                modifier = Modifier.width(210.dp)
                             )
 
                             TimerMode.LONG_BREAK -> Text(
@@ -157,7 +157,7 @@ fun TimerScreen(
                                     color = colorScheme.onTertiaryContainer
                                 ),
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.width(200.dp)
+                                modifier = Modifier.width(210.dp)
                             )
                         }
                     }

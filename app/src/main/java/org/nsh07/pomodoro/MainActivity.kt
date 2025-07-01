@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import org.nsh07.pomodoro.ui.AppScreen
-import org.nsh07.pomodoro.ui.theme.PomodoroTheme
+import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.viewModel.UiViewModel
 
 class MainActivity : ComponentActivity() {
@@ -16,7 +16,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            PomodoroTheme {
+            TomatoTheme {
                 AppScreen(viewModel)
             }
         }

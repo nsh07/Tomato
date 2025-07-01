@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.sp
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.interDisplayBlack
 import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
+import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.viewModel.UiState
 
@@ -196,7 +197,6 @@ fun TimerScreen(
                                 cap = StrokeCap.Round,
                             ),
                             wavelength = 60.dp,
-//                            strokeWidth = 16.dp,
                             gapSize = 16.dp
                         )
                     }
@@ -308,5 +308,7 @@ fun TimerScreenPreview() {
     val uiState = UiState(
         timeStr = "03:34", nextTimeStr = "5:00", timerMode = TimerMode.SHORT_BREAK
     )
-    TimerScreen(uiState, { 0.3f }, {}, {})
+    TomatoTheme {
+        TimerScreen(uiState, { 0.3f }, {}, {})
+    }
 }

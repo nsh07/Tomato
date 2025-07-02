@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconToggleButton
@@ -48,6 +49,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -228,30 +230,29 @@ fun TimerScreen(
                 }
                 val interactionSources = remember { List(2) { MutableInteractionSource() } }
                 ButtonGroup(
-                    overflowIndicator = {},
+                    overflowIndicator = { state ->
+                        FilledTonalIconButton(
+                            onClick = {
+                                if (state.isExpanded) {
+                                    state.dismiss()
+                                } else {
+                                    state.show()
+                                }
+                            },
+                            colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                containerColor = colorContainer
+                            ),
+                            shapes = IconButtonDefaults.shapes(),
+                            modifier = Modifier.size(64.dp, 96.dp)
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.more_vert_large),
+                                contentDescription = "More"
+                            )
+                        }
+                    },
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    customItem(
-                        {
-                            FilledTonalIconButton(
-                                onClick = resetTimer,
-                                colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                    containerColor = colorContainer
-                                ),
-                                shapes = IconButtonDefaults.shapes(),
-                                interactionSource = interactionSources[0],
-                                modifier = Modifier
-                                    .size(96.dp)
-                                    .animateWidth(interactionSources[0])
-                            ) {
-                                Icon(
-                                    painterResource(R.drawable.restart_large),
-                                    contentDescription = "Restart"
-                                )
-                            }
-                        },
-                        {}
-                    )
                     customItem(
                         {
                             FilledIconToggleButton(
@@ -270,17 +271,76 @@ fun TimerScreen(
                                 if (uiState.timerRunning) {
                                     Icon(
                                         painterResource(R.drawable.pause_large),
-                                        contentDescription = "Pause"
+                                        contentDescription = "Pause",
+                                        modifier = Modifier.size(32.dp)
                                     )
                                 } else {
                                     Icon(
                                         painterResource(R.drawable.play_large),
-                                        contentDescription = "Play"
+                                        contentDescription = "Play",
+                                        modifier = Modifier.size(32.dp)
                                     )
                                 }
                             }
                         },
-                        {}
+                        { state ->
+                            DropdownMenuItem(
+                                leadingIcon = {
+                                    if (uiState.timerRunning) {
+                                        Icon(
+                                            painterResource(R.drawable.pause),
+                                            contentDescription = "Pause"
+                                        )
+                                    } else {
+                                        Icon(
+                                            painterResource(R.drawable.play),
+                                            contentDescription = "Play"
+                                        )
+                                    }
+                                },
+                                text = { Text(if (uiState.timerRunning) "Pause" else "Play") },
+                                onClick = {
+                                    toggleTimer()
+                                    state.dismiss()
+                                }
+                            )
+                        }
+                    )
+                    customItem(
+                        {
+                            FilledTonalIconButton(
+                                onClick = resetTimer,
+                                colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                    containerColor = colorContainer
+                                ),
+                                shapes = IconButtonDefaults.shapes(),
+                                interactionSource = interactionSources[0],
+                                modifier = Modifier
+                                    .size(96.dp)
+                                    .animateWidth(interactionSources[0])
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.restart_large),
+                                    contentDescription = "Restart",
+                                    modifier = Modifier.size(32.dp)
+                                )
+                            }
+                        },
+                        { state ->
+                            DropdownMenuItem(
+                                leadingIcon = {
+                                    Icon(
+                                        painterResource(R.drawable.restart),
+                                        "Restart"
+                                    )
+                                },
+                                text = { Text("Restart") },
+                                onClick = {
+                                    resetTimer()
+                                    state.dismiss()
+                                }
+                            )
+                        }
                     )
                 }
             }
@@ -313,16 +373,16 @@ fun TimerScreen(
 }
 
 @Preview(
-    widthDp = 384,
-    heightDp = 832,
-    showSystemUi = true
+    showSystemUi = true,
+    device = Devices.PIXEL_9_PRO,
+//    widthDp = 200
 )
 @Composable
 fun TimerScreenPreview() {
     val uiState = UiState(
-        timeStr = "03:34", nextTimeStr = "5:00", timerMode = TimerMode.SHORT_BREAK
+        timeStr = "03:34", nextTimeStr = "5:00", timerMode = TimerMode.FOCUS, timerRunning = true
     )
     TomatoTheme {
-        TimerScreen(uiState, false,{ 0.3f }, {}, {})
+        TimerScreen(uiState, false, { 0.3f }, {}, {})
     }
 }

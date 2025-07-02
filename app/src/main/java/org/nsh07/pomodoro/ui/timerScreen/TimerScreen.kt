@@ -67,6 +67,7 @@ fun TimerScreen(
     showBrandTitle: Boolean,
     progress: () -> Float,
     resetTimer: () -> Unit,
+    skipTimer: () -> Unit,
     toggleTimer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -228,7 +229,7 @@ fun TimerScreen(
                         maxLines = 1
                     )
                 }
-                val interactionSources = remember { List(2) { MutableInteractionSource() } }
+                val interactionSources = remember { List(3) { MutableInteractionSource() } }
                 ButtonGroup(
                     overflowIndicator = { state ->
                         FilledTonalIconButton(
@@ -243,11 +244,13 @@ fun TimerScreen(
                                 containerColor = colorContainer
                             ),
                             shapes = IconButtonDefaults.shapes(),
-                            modifier = Modifier.size(64.dp, 96.dp)
+                            modifier = Modifier
+                                .size(64.dp, 96.dp)
                         ) {
                             Icon(
                                 painterResource(R.drawable.more_vert_large),
-                                contentDescription = "More"
+                                contentDescription = "More",
+                                modifier = Modifier.size(32.dp)
                             )
                         }
                     },
@@ -263,10 +266,10 @@ fun TimerScreen(
                                     checkedContentColor = onColor
                                 ),
                                 shapes = IconButtonDefaults.toggleableShapes(),
-                                interactionSource = interactionSources[1],
+                                interactionSource = interactionSources[0],
                                 modifier = Modifier
                                     .size(width = 128.dp, height = 96.dp)
-                                    .animateWidth(interactionSources[1])
+                                    .animateWidth(interactionSources[0])
                             ) {
                                 if (uiState.timerRunning) {
                                     Icon(
@@ -306,6 +309,7 @@ fun TimerScreen(
                             )
                         }
                     )
+
                     customItem(
                         {
                             FilledTonalIconButton(
@@ -314,10 +318,10 @@ fun TimerScreen(
                                     containerColor = colorContainer
                                 ),
                                 shapes = IconButtonDefaults.shapes(),
-                                interactionSource = interactionSources[0],
+                                interactionSource = interactionSources[1],
                                 modifier = Modifier
                                     .size(96.dp)
-                                    .animateWidth(interactionSources[0])
+                                    .animateWidth(interactionSources[1])
                             ) {
                                 Icon(
                                     painterResource(R.drawable.restart_large),
@@ -337,6 +341,43 @@ fun TimerScreen(
                                 text = { Text("Restart") },
                                 onClick = {
                                     resetTimer()
+                                    state.dismiss()
+                                }
+                            )
+                        }
+                    )
+
+                    customItem(
+                        {
+                            FilledTonalIconButton(
+                                onClick = skipTimer,
+                                colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                    containerColor = colorContainer
+                                ),
+                                shapes = IconButtonDefaults.shapes(),
+                                interactionSource = interactionSources[2],
+                                modifier = Modifier
+                                    .size(64.dp, 96.dp)
+                                    .animateWidth(interactionSources[2])
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.skip_next_large),
+                                    contentDescription = "Skip to next",
+                                    modifier = Modifier.size(32.dp)
+                                )
+                            }
+                        },
+                        { state ->
+                            DropdownMenuItem(
+                                leadingIcon = {
+                                    Icon(
+                                        painterResource(R.drawable.skip_next),
+                                        "Skip to next"
+                                    )
+                                },
+                                text = { Text("Skip to next") },
+                                onClick = {
+                                    skipTimer()
                                     state.dismiss()
                                 }
                             )
@@ -374,8 +415,7 @@ fun TimerScreen(
 
 @Preview(
     showSystemUi = true,
-    device = Devices.PIXEL_9_PRO,
-//    widthDp = 200
+    device = Devices.PIXEL_9_PRO
 )
 @Composable
 fun TimerScreenPreview() {
@@ -383,6 +423,6 @@ fun TimerScreenPreview() {
         timeStr = "03:34", nextTimeStr = "5:00", timerMode = TimerMode.FOCUS, timerRunning = true
     )
     TomatoTheme {
-        TimerScreen(uiState, false, { 0.3f }, {}, {})
+        TimerScreen(uiState, false, { 0.3f }, {}, {}, {})
     }
 }

@@ -54,6 +54,43 @@ class UiViewModel : ViewModel() {
         }
     }
 
+    fun skipTimer() {
+        startTime = 0L
+        pauseTime = 0L
+        pauseDuration = 0L
+        cycles = (cycles + 1) % 8
+
+        if (cycles % 2 == 0) {
+            _time.update { focusTime }
+            _uiState.update { currentState ->
+                currentState.copy(
+                    timerMode = TimerMode.FOCUS,
+                    timeStr = millisecondsToStr(time.value),
+                    totalTime = time.value,
+                    nextTimerMode = if (cycles == 6) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
+                    nextTimeStr = if (cycles == 6) millisecondsToStr(
+                        longBreakTime
+                    ) else millisecondsToStr(
+                        shortBreakTime
+                    )
+                )
+            }
+        } else {
+            val long = cycles == 7
+            _time.update { if (long) longBreakTime else shortBreakTime }
+
+            _uiState.update { currentState ->
+                currentState.copy(
+                    timerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
+                    timeStr = millisecondsToStr(time.value),
+                    totalTime = time.value,
+                    nextTimerMode = TimerMode.FOCUS,
+                    nextTimeStr = millisecondsToStr(focusTime)
+                )
+            }
+        }
+    }
+
     fun toggleTimer() {
         if (uiState.value.timerRunning) {
             _uiState.update { currentState ->
@@ -85,7 +122,7 @@ class UiViewModel : ViewModel() {
                         startTime = 0L
                         pauseTime = 0L
                         pauseDuration = 0L
-                        cycles++
+                        cycles = (cycles + 1) % 8
 
                         if (cycles % 2 == 0) {
                             _time.update { focusTime }
@@ -94,8 +131,8 @@ class UiViewModel : ViewModel() {
                                     timerMode = TimerMode.FOCUS,
                                     timeStr = millisecondsToStr(time.value),
                                     totalTime = time.value,
-                                    nextTimerMode = if (cycles % 6 == 0) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                                    nextTimeStr = if (cycles % 6 == 0) millisecondsToStr(
+                                    nextTimerMode = if (cycles == 6) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
+                                    nextTimeStr = if (cycles == 6) millisecondsToStr(
                                         longBreakTime
                                     ) else millisecondsToStr(
                                         shortBreakTime
@@ -103,7 +140,7 @@ class UiViewModel : ViewModel() {
                                 )
                             }
                         } else {
-                            val long = cycles % 7 == 0
+                            val long = cycles == 7
                             _time.update { if (long) longBreakTime else shortBreakTime }
 
                             _uiState.update { currentState ->

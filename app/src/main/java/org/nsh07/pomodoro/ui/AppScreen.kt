@@ -41,6 +41,7 @@ fun AppScreen(
         showBrandTitle = showBrandTitle,
         progress = { progress },
         resetTimer = viewModel::resetTimer,
+        skipTimer = viewModel::skipTimer,
         toggleTimer = viewModel::toggleTimer,
         modifier = modifier
     )

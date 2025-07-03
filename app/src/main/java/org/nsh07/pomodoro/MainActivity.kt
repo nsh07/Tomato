@@ -29,6 +29,12 @@ class MainActivity : ComponentActivity() {
                 "Timer"
             ),
             NavItem(
+                Screen.Stats,
+                R.drawable.monitoring,
+                R.drawable.monitoring_filled,
+                "Stats"
+            ),
+            NavItem(
                 Screen.Settings,
                 R.drawable.settings,
                 R.drawable.settings_filled,

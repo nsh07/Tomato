@@ -31,6 +31,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.nsh07.pomodoro.MainActivity.Companion.screens
+import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreen
+import org.nsh07.pomodoro.ui.statsScreen.StatsScreen
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
 import org.nsh07.pomodoro.ui.viewModel.UiViewModel
 
@@ -64,7 +66,7 @@ fun AppScreen(
                     val selected = backStack.last() == it.route
                     ShortNavigationBarItem(
                         selected = selected,
-                        onClick = if (it.route != Screen.Timer) {
+                        onClick = if (it.route != Screen.Timer) { // Ensure the backstack does not accumulate screens
                             {
                                 if (backStack.size < 2) backStack.add(it.route)
                                 else backStack[1] = it.route
@@ -105,11 +107,11 @@ fun AppScreen(
                 }
 
                 entry<Screen.Settings> {
-                    Text("Settings")
+                    SettingsScreen()
                 }
 
                 entry<Screen.Stats> {
-                    Text("Stats")
+                    StatsScreen()
                 }
             }
         )

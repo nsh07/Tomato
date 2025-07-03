@@ -31,7 +31,6 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -94,89 +93,84 @@ fun TimerScreen(
         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    AnimatedContent(
-                        if (!showBrandTitle) uiState.timerMode else TimerMode.BRAND,
-                        transitionSpec = {
-                            slideInVertically(
+    Column(modifier = modifier) {
+        TopAppBar(
+            title = {
+                AnimatedContent(
+                    if (!showBrandTitle) uiState.timerMode else TimerMode.BRAND,
+                    transitionSpec = {
+                        slideInVertically(
+                            animationSpec = motionScheme.slowSpatialSpec(),
+                            initialOffsetY = { (-it * 1.25).toInt() }
+                        ).togetherWith(
+                            slideOutVertically(
                                 animationSpec = motionScheme.slowSpatialSpec(),
-                                initialOffsetY = { (-it * 1.25).toInt() }
-                            ).togetherWith(
-                                slideOutVertically(
-                                    animationSpec = motionScheme.slowSpatialSpec(),
-                                    targetOffsetY = { (it * 1.25).toInt() }
-                                )
+                                targetOffsetY = { (it * 1.25).toInt() }
                             )
-                        }
-                    ) {
-                        when (it) {
-                            TimerMode.BRAND ->
-                                Text(
-                                    "Tomato",
-                                    style = TextStyle(
-                                        fontFamily = robotoFlexTitle,
-                                        fontSize = 32.sp,
-                                        lineHeight = 32.sp,
-                                        color = colorScheme.onErrorContainer
-                                    ),
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.width(210.dp)
-                                )
-
-                            TimerMode.FOCUS ->
-                                Text(
-                                    "Focus",
-                                    style = TextStyle(
-                                        fontFamily = robotoFlexTitle,
-                                        fontSize = 32.sp,
-                                        lineHeight = 32.sp,
-                                        color = colorScheme.onPrimaryContainer
-                                    ),
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.width(210.dp)
-                                )
-
-                            TimerMode.SHORT_BREAK -> Text(
-                                "Short Break",
-                                style = TextStyle(
-                                    fontFamily = robotoFlexTitle,
-                                    fontSize = 32.sp,
-                                    lineHeight = 32.sp,
-                                    color = colorScheme.onTertiaryContainer
-                                ),
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.width(210.dp)
-                            )
-
-                            TimerMode.LONG_BREAK -> Text(
-                                "Long Break",
-                                style = TextStyle(
-                                    fontFamily = robotoFlexTitle,
-                                    fontSize = 32.sp,
-                                    lineHeight = 32.sp,
-                                    color = colorScheme.onTertiaryContainer
-                                ),
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.width(210.dp)
-                            )
-                        }
+                        )
                     }
-                },
-                subtitle = {},
-                titleHorizontalAlignment = Alignment.CenterHorizontally
-            )
-        },
-        modifier = modifier.fillMaxSize()
-    ) { insets ->
+                ) {
+                    when (it) {
+                        TimerMode.BRAND ->
+                            Text(
+                                "Tomato",
+                                style = TextStyle(
+                                    fontFamily = robotoFlexTitle,
+                                    fontSize = 32.sp,
+                                    lineHeight = 32.sp,
+                                    color = colorScheme.onErrorContainer
+                                ),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.width(210.dp)
+                            )
+
+                        TimerMode.FOCUS ->
+                            Text(
+                                "Focus",
+                                style = TextStyle(
+                                    fontFamily = robotoFlexTitle,
+                                    fontSize = 32.sp,
+                                    lineHeight = 32.sp,
+                                    color = colorScheme.onPrimaryContainer
+                                ),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.width(210.dp)
+                            )
+
+                        TimerMode.SHORT_BREAK -> Text(
+                            "Short Break",
+                            style = TextStyle(
+                                fontFamily = robotoFlexTitle,
+                                fontSize = 32.sp,
+                                lineHeight = 32.sp,
+                                color = colorScheme.onTertiaryContainer
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.width(210.dp)
+                        )
+
+                        TimerMode.LONG_BREAK -> Text(
+                            "Long Break",
+                            style = TextStyle(
+                                fontFamily = robotoFlexTitle,
+                                fontSize = 32.sp,
+                                lineHeight = 32.sp,
+                                color = colorScheme.onTertiaryContainer
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.width(210.dp)
+                        )
+                    }
+                }
+            },
+            subtitle = {},
+            titleHorizontalAlignment = Alignment.CenterHorizontally
+        )
+
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(insets)
+            modifier = Modifier.fillMaxSize()
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(contentAlignment = Alignment.Center) {
@@ -423,6 +417,13 @@ fun TimerScreenPreview() {
         timeStr = "03:34", nextTimeStr = "5:00", timerMode = TimerMode.FOCUS, timerRunning = true
     )
     TomatoTheme {
-        TimerScreen(uiState, false, { 0.3f }, {}, {}, {})
+        TimerScreen(
+            uiState,
+            false,
+            { 0.3f },
+            {},
+            {},
+            {}
+        )
     }
 }

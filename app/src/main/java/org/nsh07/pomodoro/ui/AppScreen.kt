@@ -40,7 +40,7 @@ import org.nsh07.pomodoro.ui.viewModel.UiViewModel
 @Composable
 fun AppScreen(
     modifier: Modifier = Modifier,
-    viewModel: UiViewModel = viewModel()
+    viewModel: UiViewModel = viewModel(factory = UiViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val remainingTime by viewModel.time.collectAsStateWithLifecycle()

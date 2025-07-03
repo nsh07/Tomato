@@ -2,7 +2,11 @@ package org.nsh07.pomodoro.ui.viewModel
 
 import android.os.SystemClock
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,10 +14,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.nsh07.pomodoro.TomatoApplication
+import org.nsh07.pomodoro.data.AppPreferenceRepository
 import java.util.Locale
 import kotlin.math.ceil
 
-class UiViewModel : ViewModel() {
+class UiViewModel(
+    private val preferenceRepository: AppPreferenceRepository
+) : ViewModel() {
     val focusTime = 25 * 60 * 1000
     val shortBreakTime = 5 * 60 * 1000
     val longBreakTime = 15 * 60 * 1000
@@ -153,6 +161,8 @@ class UiViewModel : ViewModel() {
                                 )
                             }
                         }
+
+                        toggleTimer()
                     } else {
                         _uiState.update { currentState ->
                             currentState.copy(
@@ -171,5 +181,15 @@ class UiViewModel : ViewModel() {
         val min = (ceil(t / 1000.0).toInt() / 60)
         val sec = (ceil(t / 1000.0).toInt() % 60)
         return String.format(locale = Locale.getDefault(), "%02d:%02d", min, sec)
+    }
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as TomatoApplication)
+                val appPreferenceRepository = application.container.appPreferencesRepository
+                UiViewModel(preferenceRepository = appPreferenceRepository)
+            }
+        }
     }
 }

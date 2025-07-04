@@ -12,10 +12,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.motionScheme
+import androidx.compose.material3.NavigationItemIconPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ShortNavigationBar
 import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,6 +36,7 @@ import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import androidx.window.core.layout.WindowSizeClass
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -58,6 +61,7 @@ fun AppScreen(
     val layoutDirection = LocalLayoutDirection.current
     val haptic = LocalHapticFeedback.current
     val motionScheme = motionScheme
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
@@ -93,6 +97,12 @@ fun AppScreen(
                                 else Icon(painterResource(it.unselectedIcon), null)
                             }
                         },
+                        iconPosition =
+                            if (windowSizeClass.isWidthAtLeastBreakpoint(
+                                    WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
+                                )
+                            ) NavigationItemIconPosition.Start
+                            else NavigationItemIconPosition.Top,
                         label = { Text(it.label) }
                     )
                 }

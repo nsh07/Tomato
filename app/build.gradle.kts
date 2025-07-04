@@ -40,6 +40,9 @@ android {
             jvmTarget.set(JvmTarget.JVM_17) // Use the enum for target JVM version
         }
     }
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
     buildFeatures {
         compose = true
     }

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,9 +23,13 @@ import kotlin.math.ceil
 class UiViewModel(
     private val preferenceRepository: AppPreferenceRepository
 ) : ViewModel() {
-    val focusTime = 25 * 60 * 1000
-    val shortBreakTime = 5 * 60 * 1000
-    val longBreakTime = 15 * 60 * 1000
+    var focusTime = 25 * 60 * 1000
+    var shortBreakTime = 5 * 60 * 1000
+    var longBreakTime = 15 * 60 * 1000
+
+    init {
+        updateTimerConstants()
+    }
 
     private val _uiState = MutableStateFlow(
         UiState(
@@ -119,8 +124,10 @@ class UiViewModel(
                         when (uiState.value.timerMode) {
                             TimerMode.FOCUS ->
                                 focusTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
+
                             TimerMode.SHORT_BREAK ->
                                 shortBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
+
                             else ->
                                 longBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
                         }
@@ -174,6 +181,19 @@ class UiViewModel(
                     delay(100)
                 }
             }
+        }
+    }
+
+    fun updateTimerConstants() {
+        viewModelScope.launch(Dispatchers.IO) {
+            focusTime = preferenceRepository.getIntPreference("focus_time")
+                ?: preferenceRepository.saveIntPreference("focus_time", focusTime)
+            shortBreakTime = preferenceRepository.getIntPreference("short_break_time")
+                ?: preferenceRepository.saveIntPreference("short_break_time", shortBreakTime)
+            longBreakTime = preferenceRepository.getIntPreference("long_break_time")
+                ?: preferenceRepository.saveIntPreference("long_break_time", longBreakTime)
+
+            resetTimer()
         }
     }
 

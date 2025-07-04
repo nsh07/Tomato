@@ -2,13 +2,12 @@ package org.nsh07.pomodoro.data
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 interface PreferencesRepository {
-    suspend fun saveIntPreference(key: String, value: Int)
+    suspend fun saveIntPreference(key: String, value: Int): Int
 
-    fun getIntPreference(key: String): Flow<Int?>
+    suspend fun getIntPreference(key: String): Int?
 
     suspend fun resetSettings()
 }
@@ -16,14 +15,16 @@ interface PreferencesRepository {
 class AppPreferenceRepository(
     private val preferenceDao: PreferenceDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-): PreferencesRepository {
-    override suspend fun saveIntPreference(key: String, value: Int) =
+) : PreferencesRepository {
+    override suspend fun saveIntPreference(key: String, value: Int): Int =
         withContext(ioDispatcher) {
             preferenceDao.insertIntPreference(IntPreference(key, value))
+            value
         }
 
-    override fun getIntPreference(key: String): Flow<Int?> =
+    override suspend fun getIntPreference(key: String): Int? = withContext(ioDispatcher) {
         preferenceDao.getIntPreference(key)
+    }
 
     override suspend fun resetSettings() = withContext(ioDispatcher) {
         preferenceDao.resetIntPreferences()

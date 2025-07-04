@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PreferenceDao {
@@ -15,5 +14,5 @@ interface PreferenceDao {
     suspend fun resetIntPreferences()
 
     @Query("SELECT value FROM int_preference WHERE `key` = :key")
-    fun getIntPreference(key: String): Flow<Int?>
+    suspend fun getIntPreference(key: String): Int?
 }

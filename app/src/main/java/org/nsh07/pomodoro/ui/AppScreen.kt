@@ -95,7 +95,7 @@ fun AppScreen(
                         uiState = uiState,
                         showBrandTitle = showBrandTitle,
                         progress = { progress },
-                        resetTimer = viewModel::resetTimer,
+                        resetTimer = viewModel::updateTimerConstants,
                         skipTimer = viewModel::skipTimer,
                         toggleTimer = viewModel::toggleTimer,
                         modifier = modifier.padding(

@@ -1,5 +1,6 @@
 package org.nsh07.pomodoro.ui.settingsScreen
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -15,22 +16,27 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,9 +52,23 @@ fun SettingsScreen(
     focusTime: Int,
     shortBreakTime: Int,
     longBreakTime: Int,
+    updateFocusTime: (Int) -> Unit,
+    updateShortBreakTime: (Int) -> Unit,
+    updateLongBreakTime: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+    val focusTimeInputFieldState = rememberTextFieldState(
+        (focusTime / 60000).toString().padStart(2, '0')
+    )
+    val shortBreakTimeInputFieldState = rememberTextFieldState(
+        (shortBreakTime / 60000).toString().padStart(2, '0')
+    )
+    val longBreakTimeInputFieldState = rememberTextFieldState(
+        (longBreakTime / 60000).toString().padStart(2, '0')
+    )
+
     Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
         TopAppBar(
             title = {
@@ -92,7 +112,14 @@ fun SettingsScreen(
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
-                                .clip(
+                                .size(112.dp, 100.dp)
+                                .background(
+                                    animateColorAsState(
+                                        if (focusTimeInputFieldState.text.isNotEmpty())
+                                            colorScheme.surfaceContainer
+                                        else colorScheme.errorContainer,
+                                        motionScheme.defaultEffectsSpec()
+                                    ).value,
                                     RoundedCornerShape(
                                         topStart = 16.dp,
                                         bottomStart = 16.dp,
@@ -100,20 +127,21 @@ fun SettingsScreen(
                                         bottomEnd = 4.dp
                                     )
                                 )
-                                .size(112.dp, 100.dp)
-                                .background(colorScheme.surfaceContainer)
                         ) {
-                            Text(
-                                text = remember(focusTime) { (focusTime / 60000).toString() },
-                                style = TextStyle(
+                            BasicTextField(
+                                state = focusTimeInputFieldState,
+                                lineLimits = TextFieldLineLimits.SingleLine,
+                                inputTransformation = MinutesInputTransformation,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                                textStyle = TextStyle(
                                     fontFamily = openRundeClock,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 57.sp,
-                                    letterSpacing = (-2).sp
+                                    letterSpacing = (-2).sp,
+                                    color = colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center
                                 ),
-                                textAlign = TextAlign.Center,
-                                maxLines = 1,
-                                color = colorScheme.onSurfaceVariant
+                                cursorBrush = SolidColor(colorScheme.onSurface)
                             )
                         }
                         Text(
@@ -128,23 +156,31 @@ fun SettingsScreen(
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
-                                .clip(RoundedCornerShape(4.dp))
                                 .size(112.dp, 100.dp)
-                                .background(colorScheme.surfaceContainer)
+                                .background(
+                                    animateColorAsState(
+                                        if (shortBreakTimeInputFieldState.text.isNotEmpty())
+                                            colorScheme.surfaceContainer
+                                        else colorScheme.errorContainer,
+                                        motionScheme.defaultEffectsSpec()
+                                    ).value,
+                                    RoundedCornerShape(4.dp)
+                                )
                         ) {
-                            Text(
-                                text = remember(shortBreakTime) {
-                                    (shortBreakTime / 60000).toString().padStart(2, '0')
-                                },
-                                style = TextStyle(
+                            BasicTextField(
+                                state = shortBreakTimeInputFieldState,
+                                lineLimits = TextFieldLineLimits.SingleLine,
+                                inputTransformation = MinutesInputTransformation,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                                textStyle = TextStyle(
                                     fontFamily = openRundeClock,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 57.sp,
-                                    letterSpacing = (-2).sp
+                                    letterSpacing = (-2).sp,
+                                    color = colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center
                                 ),
-                                textAlign = TextAlign.Center,
-                                maxLines = 1,
-                                color = colorScheme.onSurfaceVariant
+                                cursorBrush = SolidColor(colorScheme.onSurface)
                             )
                         }
                         Text(
@@ -159,30 +195,36 @@ fun SettingsScreen(
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
-                                .clip(
-                                    RoundedCornerShape(
+                                .size(112.dp, 100.dp)
+                                .background(
+                                    animateColorAsState(
+                                        if (longBreakTimeInputFieldState.text.isNotEmpty())
+                                            colorScheme.surfaceContainer
+                                        else colorScheme.errorContainer,
+                                        motionScheme.defaultEffectsSpec()
+                                    ).value,
+                                     RoundedCornerShape(
                                         topStart = 4.dp,
                                         bottomStart = 4.dp,
                                         topEnd = 16.dp,
                                         bottomEnd = 16.dp
                                     )
                                 )
-                                .size(112.dp, 100.dp)
-                                .background(colorScheme.surfaceContainer)
                         ) {
-                            Text(
-                                text = remember(shortBreakTime) {
-                                    (longBreakTime / 60000).toString().padStart(2, '0')
-                                },
-                                style = TextStyle(
+                            BasicTextField(
+                                state = longBreakTimeInputFieldState,
+                                lineLimits = TextFieldLineLimits.SingleLine,
+                                inputTransformation = MinutesInputTransformation,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                                textStyle = TextStyle(
                                     fontFamily = openRundeClock,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 57.sp,
-                                    letterSpacing = (-2).sp
+                                    letterSpacing = (-2).sp,
+                                    color = colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center
                                 ),
-                                textAlign = TextAlign.Center,
-                                maxLines = 1,
-                                color = colorScheme.onSurfaceVariant
+                                cursorBrush = SolidColor(colorScheme.onSurface)
                             )
                         }
                         Text(
@@ -206,9 +248,12 @@ fun SettingsScreen(
 fun SettingsScreenPreview() {
     TomatoTheme {
         SettingsScreen(
-            focusTime = 88 * 60 * 1000,
-            shortBreakTime = 88 * 60 * 1000,
-            longBreakTime = 88 * 60 * 1000,
+            focusTime = 25 * 60 * 1000,
+            shortBreakTime = 5 * 60 * 1000,
+            longBreakTime = 15 * 60 * 1000,
+            updateFocusTime = {},
+            updateShortBreakTime = {},
+            updateLongBreakTime = {},
             modifier = Modifier.fillMaxSize()
         )
     }

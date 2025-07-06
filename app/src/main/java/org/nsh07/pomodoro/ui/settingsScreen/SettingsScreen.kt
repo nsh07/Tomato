@@ -72,18 +72,18 @@ fun SettingsScreen(
         )
 
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
             item {
                 Text(
-                    "Durations",
+                    "Timer",
                     style = typography.titleSmall,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
+                        .padding(horizontal = 8.dp, vertical = 14.dp)
                 )
             }
             item {
@@ -93,7 +93,10 @@ fun SettingsScreen(
                         .fillMaxWidth()
                         .horizontalScroll(rememberScrollState())
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
                         MinuteInputField(
                             state = focusTimeInputFieldState,
                             shape = RoundedCornerShape(
@@ -112,7 +115,10 @@ fun SettingsScreen(
                         )
                     }
                     Spacer(Modifier.width(2.dp))
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
                         MinuteInputField(
                             state = shortBreakTimeInputFieldState,
                             shape = RoundedCornerShape(4.dp),
@@ -126,7 +132,10 @@ fun SettingsScreen(
                         )
                     }
                     Spacer(Modifier.width(2.dp))
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
                         MinuteInputField(
                             state = longBreakTimeInputFieldState,
                             shape = RoundedCornerShape(

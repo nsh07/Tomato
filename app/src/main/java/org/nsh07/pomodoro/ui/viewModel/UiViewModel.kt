@@ -231,11 +231,10 @@ class UiViewModel(
                 .debounce(500)
                 .collect {
                     if (it.isNotEmpty()) {
-                        preferenceRepository.saveIntPreference(
+                        focusTime = preferenceRepository.saveIntPreference(
                             "focus_time",
                             it.toString().toInt() * 60 * 1000
                         )
-                        updateTimerConstants(restart = false)
                     }
                 }
         }
@@ -244,11 +243,10 @@ class UiViewModel(
                 .debounce(500)
                 .collect {
                     if (it.isNotEmpty()) {
-                        preferenceRepository.saveIntPreference(
+                        focusTime = preferenceRepository.saveIntPreference(
                             "short_break_time",
                             it.toString().toInt() * 60 * 1000
                         )
-                        updateTimerConstants(restart = false)
                     }
                 }
         }
@@ -257,11 +255,10 @@ class UiViewModel(
                 .debounce(500)
                 .collect {
                     if (it.isNotEmpty()) {
-                        preferenceRepository.saveIntPreference(
+                        focusTime = preferenceRepository.saveIntPreference(
                             "long_break_time",
                             it.toString().toInt() * 60 * 1000
                         )
-                        updateTimerConstants(restart = false)
                     }
                 }
         }

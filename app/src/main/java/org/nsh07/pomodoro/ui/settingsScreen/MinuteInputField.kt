@@ -37,6 +37,7 @@ fun MinuteInputField(
         state = state,
         lineLimits = TextFieldLineLimits.SingleLine,
         inputTransformation = MinutesInputTransformation,
+        outputTransformation = MinutesOutputTransformation,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.NumberPassword,
             imeAction = imeAction

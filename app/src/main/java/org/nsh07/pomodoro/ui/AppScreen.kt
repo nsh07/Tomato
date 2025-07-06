@@ -55,6 +55,10 @@ fun AppScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val remainingTime by viewModel.time.collectAsStateWithLifecycle()
 
+    val focusTimeInputFieldState = viewModel.focusTimeTextFieldState
+    val shortBreakTimeInputFieldState = viewModel.shortBreakTimeTextFieldState
+    val longBreakTimeInputFieldState = viewModel.longBreakTimeTextFieldState
+
     val progress by rememberUpdatedState((uiState.totalTime.toFloat() - remainingTime) / uiState.totalTime)
     var showBrandTitle by remember { mutableStateOf(true) }
 
@@ -150,12 +154,11 @@ fun AppScreen(
 
                 entry<Screen.Settings> {
                     SettingsScreen(
-                        25 * 60 * 1000,
-                        5 * 60 * 1000,
-                        15 * 60 * 1000,
-                        {},
-                        {},
-                        {},
+                        focusTimeInputFieldState,
+                        shortBreakTimeInputFieldState,
+                        longBreakTimeInputFieldState,
+                        viewModel::startTimeFieldsCollection,
+                        viewModel::stopTimeFieldsCollection,
                         modifier = modifier.padding(
                             start = contentPadding.calculateStartPadding(layoutDirection),
                             end = contentPadding.calculateEndPadding(layoutDirection),

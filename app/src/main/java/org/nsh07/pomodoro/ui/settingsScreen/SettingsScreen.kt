@@ -1,5 +1,6 @@
 package org.nsh07.pomodoro.ui.settingsScreen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,22 +18,30 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTitle
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 
@@ -53,6 +63,7 @@ fun SettingsScreen(
     }
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val sessionsSliderState = rememberSliderState(value = 3f, steps = 3, valueRange = 1f..5f)
 
     Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
         TopAppBar(
@@ -67,6 +78,7 @@ fun SettingsScreen(
                 )
             },
             subtitle = {},
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = colorScheme.surfaceContainer),
             titleHorizontalAlignment = Alignment.CenterHorizontally,
             scrollBehavior = scrollBehavior
         )
@@ -74,17 +86,12 @@ fun SettingsScreen(
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier
+                .background(colorScheme.surfaceContainer)
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
             item {
-                Text(
-                    "Timer",
-                    style = typography.titleSmall,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 14.dp)
-                )
+                Spacer(Modifier.height(12.dp))
             }
             item {
                 Row(
@@ -97,6 +104,10 @@ fun SettingsScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
+                        Text(
+                            "Focus",
+                            style = typography.titleSmallEmphasized
+                        )
                         MinuteInputField(
                             state = focusTimeInputFieldState,
                             shape = RoundedCornerShape(
@@ -107,35 +118,31 @@ fun SettingsScreen(
                             ),
                             imeAction = ImeAction.Next
                         )
-                        Text(
-                            "Focus",
-                            style = typography.titleSmallEmphasized,
-                            color = colorScheme.onPrimaryContainer,
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        )
                     }
                     Spacer(Modifier.width(2.dp))
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
+                        Text(
+                            "Short break",
+                            style = typography.titleSmallEmphasized
+                        )
                         MinuteInputField(
                             state = shortBreakTimeInputFieldState,
                             shape = RoundedCornerShape(4.dp),
                             imeAction = ImeAction.Next
                         )
-                        Text(
-                            "Short break",
-                            style = typography.titleSmallEmphasized,
-                            color = colorScheme.onTertiaryContainer,
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        )
                     }
                     Spacer(Modifier.width(2.dp))
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
+                        Text(
+                            "Long break",
+                            style = typography.titleSmallEmphasized
+                        )
                         MinuteInputField(
                             state = longBreakTimeInputFieldState,
                             shape = RoundedCornerShape(
@@ -146,14 +153,34 @@ fun SettingsScreen(
                             ),
                             imeAction = ImeAction.Done
                         )
-                        Text(
-                            "Long break",
-                            style = typography.titleSmallEmphasized,
-                            color = colorScheme.onTertiaryContainer,
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        )
                     }
                 }
+            }
+            item {
+                Spacer(Modifier.height(12.dp))
+            }
+            item {
+                ListItem(
+                    leadingContent = {
+                        Icon(
+                            painterResource(R.drawable.clocks),
+                            null
+                        )
+                    },
+                    headlineContent = {
+                        Text("Sessions")
+                    },
+                    supportingContent = {
+                        Column {
+                            Text("${sessionsSliderState.value.toInt()} sessions before a long break")
+                            Slider(
+                                state = sessionsSliderState,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                        }
+                    },
+                    modifier = Modifier.clip(shapes.large)
+                )
             }
         }
     }

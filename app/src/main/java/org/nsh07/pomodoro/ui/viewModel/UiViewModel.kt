@@ -213,7 +213,7 @@ class UiViewModel(
                 .debounce(500)
                 .collect {
                     if (it.isNotEmpty()) {
-                        focusTime = preferenceRepository.saveIntPreference(
+                        shortBreakTime = preferenceRepository.saveIntPreference(
                             "short_break_time",
                             it.toString().toInt() * 60 * 1000
                         )
@@ -225,7 +225,7 @@ class UiViewModel(
                 .debounce(500)
                 .collect {
                     if (it.isNotEmpty()) {
-                        focusTime = preferenceRepository.saveIntPreference(
+                        longBreakTime = preferenceRepository.saveIntPreference(
                             "long_break_time",
                             it.toString().toInt() * 60 * 1000
                         )

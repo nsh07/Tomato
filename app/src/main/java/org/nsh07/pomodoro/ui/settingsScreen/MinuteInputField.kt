@@ -59,7 +59,7 @@ fun MinuteInputField(
                     .background(
                         animateColorAsState(
                             if (state.text.isNotEmpty())
-                                colorScheme.surfaceContainer
+                                colorScheme.surface
                             else colorScheme.errorContainer,
                             motionScheme.defaultEffectsSpec()
                         ).value,

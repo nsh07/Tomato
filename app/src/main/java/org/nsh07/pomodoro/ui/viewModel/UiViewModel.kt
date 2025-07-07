@@ -147,42 +147,12 @@ class UiViewModel(
                     }
 
                     if (time.value < 0) {
-                        startTime = 0L
-                        pauseTime = 0L
-                        pauseDuration = 0L
-                        cycles = (cycles + 1) % 8
+                        skipTimer()
 
-                        if (cycles % 2 == 0) {
-                            _time.update { focusTime }
-                            _uiState.update { currentState ->
-                                currentState.copy(
-                                    timerMode = TimerMode.FOCUS,
-                                    timeStr = millisecondsToStr(time.value),
-                                    totalTime = time.value,
-                                    nextTimerMode = if (cycles == 6) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                                    nextTimeStr = if (cycles == 6) millisecondsToStr(
-                                        longBreakTime
-                                    ) else millisecondsToStr(
-                                        shortBreakTime
-                                    )
-                                )
-                            }
-                        } else {
-                            val long = cycles == 7
-                            _time.update { if (long) longBreakTime else shortBreakTime }
-
-                            _uiState.update { currentState ->
-                                currentState.copy(
-                                    timerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                                    timeStr = millisecondsToStr(time.value),
-                                    totalTime = time.value,
-                                    nextTimerMode = TimerMode.FOCUS,
-                                    nextTimeStr = millisecondsToStr(focusTime)
-                                )
-                            }
+                        _uiState.update { currentState ->
+                            currentState.copy(timerRunning = false)
                         }
-
-                        toggleTimer()
+                        timerJob?.cancel()
                     } else {
                         _uiState.update { currentState ->
                             currentState.copy(
@@ -197,7 +167,7 @@ class UiViewModel(
         }
     }
 
-    fun updateTimerConstants(updateTextFields: Boolean = false, restart: Boolean = true) {
+    fun updateTimerConstants(updateTextFields: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             focusTime = preferenceRepository.getIntPreference("focus_time")
                 ?: preferenceRepository.saveIntPreference("focus_time", focusTime)
@@ -208,12 +178,12 @@ class UiViewModel(
 
             if (updateTextFields) {
                 focusTimeTextFieldState.edit {
-                    delete(0,length)
+                    delete(0, length)
                     append((focusTime / 60000).toString())
                 }
                 shortBreakTimeTextFieldState.edit {
                     delete(0, length)
-                    append((shortBreakTime/ 60000).toString())
+                    append((shortBreakTime / 60000).toString())
                 }
                 longBreakTimeTextFieldState.edit {
                     delete(0, length)
@@ -221,7 +191,7 @@ class UiViewModel(
                 }
             }
 
-            if (restart) resetTimer()
+            resetTimer()
         }
     }
 

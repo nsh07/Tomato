@@ -9,11 +9,11 @@ import org.nsh07.pomodoro.ui.AppScreen
 import org.nsh07.pomodoro.ui.NavItem
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
-import org.nsh07.pomodoro.ui.viewModel.UiViewModel
+import org.nsh07.pomodoro.ui.viewModel.TimerViewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: UiViewModel by viewModels(factoryProducer = { UiViewModel.Factory })
+    private val viewModel: TimerViewModel by viewModels(factoryProducer = { TimerViewModel.Factory })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

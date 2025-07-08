@@ -30,7 +30,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,27 +41,43 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTitle
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import org.nsh07.pomodoro.ui.viewModel.SettingsViewModel
+
+@Composable
+fun SettingsScreenRoot(
+    modifier: Modifier = Modifier,
+    viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
+) {
+    val focusTimeInputFieldState = rememberSaveable(saver = TextFieldState.Saver) {
+        viewModel.focusTimeTextFieldState
+    }
+    val shortBreakTimeInputFieldState = rememberSaveable(saver = TextFieldState.Saver) {
+        viewModel.shortBreakTimeTextFieldState
+    }
+    val longBreakTimeInputFieldState = rememberSaveable(saver = TextFieldState.Saver) {
+        viewModel.longBreakTimeTextFieldState
+    }
+
+    SettingsScreen(
+        focusTimeInputFieldState = focusTimeInputFieldState,
+        shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
+        longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+        modifier = modifier
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun SettingsScreen(
+private fun SettingsScreen(
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
-    startCollectingTimeFields: () -> Unit,
-    stopCollectingTimeFields: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    DisposableEffect(Unit) {
-        startCollectingTimeFields()
-        onDispose {
-            stopCollectingTimeFields()
-        }
-    }
-
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val sessionsSliderState = rememberSliderState(value = 3f, steps = 3, valueRange = 1f..5f)
 
@@ -197,8 +213,6 @@ fun SettingsScreenPreview() {
             focusTimeInputFieldState = rememberTextFieldState((25 * 60 * 1000).toString()),
             shortBreakTimeInputFieldState = rememberTextFieldState((5 * 60 * 1000).toString()),
             longBreakTimeInputFieldState = rememberTextFieldState((15 * 60 * 1000).toString()),
-            startCollectingTimeFields = {},
-            stopCollectingTimeFields = {},
             modifier = Modifier.fillMaxSize()
         )
     }

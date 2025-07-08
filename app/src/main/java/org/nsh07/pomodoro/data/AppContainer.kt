@@ -4,6 +4,7 @@ import android.content.Context
 
 interface AppContainer {
     val appPreferencesRepository: AppPreferenceRepository
+    val appTimerRepository: AppTimerRepository
 }
 
 class DefaultAppContainer(context: Context) : AppContainer {
@@ -12,6 +13,10 @@ class DefaultAppContainer(context: Context) : AppContainer {
         AppPreferenceRepository(
             AppDatabase.getDatabase(context).preferenceDao()
         )
+    }
+
+    override val appTimerRepository: AppTimerRepository by lazy {
+        AppTimerRepository()
     }
 
 }

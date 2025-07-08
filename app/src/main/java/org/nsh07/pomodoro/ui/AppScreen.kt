@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.NavigationItemIconPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ShortNavigationBar
+import androidx.compose.material3.ShortNavigationBarArrangement
 import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -44,7 +45,7 @@ import org.nsh07.pomodoro.MainActivity.Companion.screens
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreen
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
-import org.nsh07.pomodoro.ui.viewModel.TimerViewModel
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -52,7 +53,7 @@ fun AppScreen(
     modifier: Modifier = Modifier,
     viewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory)
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.timerState.collectAsStateWithLifecycle()
     val remainingTime by viewModel.time.collectAsStateWithLifecycle()
 
     val progress by rememberUpdatedState((uiState.totalTime.toFloat() - remainingTime) / uiState.totalTime)
@@ -78,7 +79,16 @@ fun AppScreen(
 
     Scaffold(
         bottomBar = {
-            ShortNavigationBar {
+            val wide = remember {
+                windowSizeClass.isWidthAtLeastBreakpoint(
+                    WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
+                )
+            }
+            ShortNavigationBar(
+                arrangement =
+                    if (wide) ShortNavigationBarArrangement.Centered
+                    else ShortNavigationBarArrangement.EqualWeight
+            ) {
                 screens.forEach {
                     val selected = backStack.last() == it.route
                     ShortNavigationBarItem(
@@ -98,10 +108,7 @@ fun AppScreen(
                             }
                         },
                         iconPosition =
-                            if (windowSizeClass.isWidthAtLeastBreakpoint(
-                                    WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
-                                )
-                            ) NavigationItemIconPosition.Start
+                            if (wide) NavigationItemIconPosition.Start
                             else NavigationItemIconPosition.Top,
                         label = { Text(it.label) }
                     )
@@ -134,7 +141,7 @@ fun AppScreen(
             entryProvider = entryProvider {
                 entry<Screen.Timer> {
                     TimerScreen(
-                        uiState = uiState,
+                        timerState = uiState,
                         showBrandTitle = showBrandTitle,
                         progress = { progress },
                         resetTimer = viewModel::resetTimer,

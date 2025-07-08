@@ -53,13 +53,13 @@ import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTitle
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
-import org.nsh07.pomodoro.ui.viewModel.TimerMode
-import org.nsh07.pomodoro.ui.viewModel.UiState
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TimerScreen(
-    uiState: UiState,
+    timerState: TimerState,
     showBrandTitle: Boolean,
     progress: () -> Float,
     resetTimer: () -> Unit,
@@ -70,17 +70,17 @@ fun TimerScreen(
     val motionScheme = motionScheme
 
     val color by animateColorAsState(
-        if (uiState.timerMode == TimerMode.FOCUS) colorScheme.primary
+        if (timerState.timerMode == TimerMode.FOCUS) colorScheme.primary
         else colorScheme.tertiary,
         animationSpec = motionScheme.slowEffectsSpec()
     )
     val onColor by animateColorAsState(
-        if (uiState.timerMode == TimerMode.FOCUS) colorScheme.onPrimary
+        if (timerState.timerMode == TimerMode.FOCUS) colorScheme.onPrimary
         else colorScheme.onTertiary,
         animationSpec = motionScheme.slowEffectsSpec()
     )
     val colorContainer by animateColorAsState(
-        if (uiState.timerMode == TimerMode.FOCUS) colorScheme.secondaryContainer
+        if (timerState.timerMode == TimerMode.FOCUS) colorScheme.secondaryContainer
         else colorScheme.tertiaryContainer,
         animationSpec = motionScheme.slowEffectsSpec()
     )
@@ -89,7 +89,7 @@ fun TimerScreen(
         TopAppBar(
             title = {
                 AnimatedContent(
-                    if (!showBrandTitle) uiState.timerMode else TimerMode.BRAND,
+                    if (!showBrandTitle) timerState.timerMode else TimerMode.BRAND,
                     transitionSpec = {
                         slideInVertically(
                             animationSpec = motionScheme.slowSpatialSpec(),
@@ -166,7 +166,7 @@ fun TimerScreen(
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(contentAlignment = Alignment.Center) {
-                    if (uiState.timerMode == TimerMode.FOCUS) {
+                    if (timerState.timerMode == TimerMode.FOCUS) {
                         CircularProgressIndicator(
                             progress = progress,
                             modifier = Modifier
@@ -204,7 +204,7 @@ fun TimerScreen(
                         )
                     }
                     Text(
-                        text = uiState.timeStr,
+                        text = timerState.timeStr,
                         style = TextStyle(
                             fontFamily = openRundeClock,
                             fontWeight = FontWeight.Bold,
@@ -246,7 +246,7 @@ fun TimerScreen(
                         {
                             FilledIconToggleButton(
                                 onCheckedChange = { toggleTimer() },
-                                checked = uiState.timerRunning,
+                                checked = timerState.timerRunning,
                                 colors = IconButtonDefaults.filledIconToggleButtonColors(
                                     checkedContainerColor = color,
                                     checkedContentColor = onColor
@@ -257,7 +257,7 @@ fun TimerScreen(
                                     .size(width = 128.dp, height = 96.dp)
                                     .animateWidth(interactionSources[0])
                             ) {
-                                if (uiState.timerRunning) {
+                                if (timerState.timerRunning) {
                                     Icon(
                                         painterResource(R.drawable.pause_large),
                                         contentDescription = "Pause",
@@ -275,7 +275,7 @@ fun TimerScreen(
                         { state ->
                             DropdownMenuItem(
                                 leadingIcon = {
-                                    if (uiState.timerRunning) {
+                                    if (timerState.timerRunning) {
                                         Icon(
                                             painterResource(R.drawable.pause),
                                             contentDescription = "Pause"
@@ -287,7 +287,7 @@ fun TimerScreen(
                                         )
                                     }
                                 },
-                                text = { Text(if (uiState.timerRunning) "Pause" else "Play") },
+                                text = { Text(if (timerState.timerRunning) "Pause" else "Play") },
                                 onClick = {
                                     toggleTimer()
                                     state.dismiss()
@@ -377,17 +377,17 @@ fun TimerScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("Up next", style = typography.titleSmall)
                 Text(
-                    uiState.nextTimeStr,
+                    timerState.nextTimeStr,
                     style = TextStyle(
                         fontFamily = openRundeClock,
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp,
                         lineHeight = 28.sp,
-                        color = if (uiState.nextTimerMode == TimerMode.FOCUS) colorScheme.primary else colorScheme.tertiary
+                        color = if (timerState.nextTimerMode == TimerMode.FOCUS) colorScheme.primary else colorScheme.tertiary
                     )
                 )
                 Text(
-                    when (uiState.nextTimerMode) {
+                    when (timerState.nextTimerMode) {
                         TimerMode.FOCUS -> "Focus"
                         TimerMode.SHORT_BREAK -> "Short Break"
                         else -> "Long Break"
@@ -405,12 +405,12 @@ fun TimerScreen(
 )
 @Composable
 fun TimerScreenPreview() {
-    val uiState = UiState(
+    val timerState = TimerState(
         timeStr = "03:34", nextTimeStr = "5:00", timerMode = TimerMode.FOCUS, timerRunning = true
     )
     TomatoTheme {
         TimerScreen(
-            uiState,
+            timerState,
             false,
             { 0.3f },
             {},

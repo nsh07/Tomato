@@ -9,7 +9,7 @@ import org.nsh07.pomodoro.ui.AppScreen
 import org.nsh07.pomodoro.ui.NavItem
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
-import org.nsh07.pomodoro.ui.viewModel.TimerViewModel
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 
 class MainActivity : ComponentActivity() {
 

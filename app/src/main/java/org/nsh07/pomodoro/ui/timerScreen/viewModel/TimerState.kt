@@ -1,6 +1,6 @@
-package org.nsh07.pomodoro.ui.viewModel
+package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
-data class UiState(
+data class TimerState(
     val timerMode: TimerMode = TimerMode.FOCUS,
     val timeStr: String = "25:00",
     val totalTime: Int = 25 * 60,

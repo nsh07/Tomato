@@ -1,6 +1,8 @@
-package org.nsh07.pomodoro.ui.viewModel
+package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SliderState
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -8,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
@@ -15,7 +18,7 @@ import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.AppPreferenceRepository
 import org.nsh07.pomodoro.data.TimerRepository
 
-@OptIn(FlowPreview::class)
+@OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
 class SettingsViewModel(
     private val preferenceRepository: AppPreferenceRepository,
     private val timerRepository: TimerRepository
@@ -27,8 +30,15 @@ class SettingsViewModel(
     val longBreakTimeTextFieldState =
         TextFieldState((timerRepository.longBreakTime / 60000).toString())
 
+    val sessionsSliderState = SliderState(
+        value = timerRepository.sessionLength.toFloat(),
+        steps = 4,
+        valueRange = 1f..6f,
+        onValueChangeFinished = ::updateSessionLength
+    )
+
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             snapshotFlow { focusTimeTextFieldState.text }
                 .debounce(500)
                 .collect {
@@ -39,6 +49,8 @@ class SettingsViewModel(
                         )
                     }
                 }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
             snapshotFlow { shortBreakTimeTextFieldState.text }
                 .debounce(500)
                 .collect {
@@ -49,6 +61,8 @@ class SettingsViewModel(
                         )
                     }
                 }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
             snapshotFlow { longBreakTimeTextFieldState.text }
                 .debounce(500)
                 .collect {
@@ -59,6 +73,15 @@ class SettingsViewModel(
                         )
                     }
                 }
+        }
+    }
+
+    private fun updateSessionLength() {
+        viewModelScope.launch {
+            timerRepository.sessionLength = preferenceRepository.saveIntPreference(
+                "session_length",
+                sessionsSliderState.value.toInt()
+            )
         }
     }
 

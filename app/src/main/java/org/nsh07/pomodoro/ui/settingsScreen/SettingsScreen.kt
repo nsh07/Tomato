@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -43,10 +44,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTitle
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
-import org.nsh07.pomodoro.ui.viewModel.SettingsViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreenRoot(
     modifier: Modifier = Modifier,
@@ -62,10 +64,20 @@ fun SettingsScreenRoot(
         viewModel.longBreakTimeTextFieldState
     }
 
+    val sessionsSliderState = rememberSaveable(
+        saver = SliderState.Saver(
+            viewModel.sessionsSliderState.onValueChangeFinished,
+            viewModel.sessionsSliderState.valueRange
+        )
+    ) {
+        viewModel.sessionsSliderState
+    }
+
     SettingsScreen(
         focusTimeInputFieldState = focusTimeInputFieldState,
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+        sessionsSliderState = sessionsSliderState,
         modifier = modifier
     )
 }
@@ -76,10 +88,10 @@ private fun SettingsScreen(
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
+    sessionsSliderState: SliderState,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val sessionsSliderState = rememberSliderState(value = 3f, steps = 3, valueRange = 1f..5f)
 
     Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
         TopAppBar(
@@ -184,11 +196,11 @@ private fun SettingsScreen(
                         )
                     },
                     headlineContent = {
-                        Text("Sessions")
+                        Text("Session length")
                     },
                     supportingContent = {
                         Column {
-                            Text("${sessionsSliderState.value.toInt()} sessions before a long break")
+                            Text("Focus intervals in one session: ${sessionsSliderState.value.toInt()}")
                             Slider(
                                 state = sessionsSliderState,
                                 modifier = Modifier.padding(vertical = 4.dp)
@@ -202,6 +214,7 @@ private fun SettingsScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(
     showSystemUi = true,
     device = Devices.PIXEL_9_PRO
@@ -213,6 +226,7 @@ fun SettingsScreenPreview() {
             focusTimeInputFieldState = rememberTextFieldState((25 * 60 * 1000).toString()),
             shortBreakTimeInputFieldState = rememberTextFieldState((5 * 60 * 1000).toString()),
             longBreakTimeInputFieldState = rememberTextFieldState((15 * 60 * 1000).toString()),
+            sessionsSliderState = rememberSliderState(value = 3f, steps = 3, valueRange = 1f..5f),
             modifier = Modifier.fillMaxSize()
         )
     }

@@ -1,4 +1,4 @@
-package org.nsh07.pomodoro.ui.viewModel
+package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
 import android.os.SystemClock
 import androidx.lifecycle.ViewModel
@@ -34,19 +34,21 @@ class TimerViewModel(
                 ?: preferenceRepository.saveIntPreference("short_break_time", timerRepository.shortBreakTime)
             timerRepository.longBreakTime = preferenceRepository.getIntPreference("long_break_time")
                 ?: preferenceRepository.saveIntPreference("long_break_time", timerRepository.longBreakTime)
+            timerRepository.sessionLength = preferenceRepository.getIntPreference("session_length")
+                ?: preferenceRepository.saveIntPreference("session_length", timerRepository.sessionLength)
 
             resetTimer()
         }
     }
 
-    private val _uiState = MutableStateFlow(
-        UiState(
+    private val _timerState = MutableStateFlow(
+        TimerState(
             totalTime = timerRepository.focusTime,
             timeStr = millisecondsToStr(timerRepository.focusTime),
             nextTimeStr = millisecondsToStr(timerRepository.shortBreakTime)
         )
     )
-    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+    val timerState: StateFlow<TimerState> = _timerState.asStateFlow()
     var timerJob: Job? = null
 
     private val _time = MutableStateFlow(timerRepository.focusTime)
@@ -64,7 +66,7 @@ class TimerViewModel(
         pauseTime = 0L
         pauseDuration = 0L
 
-        _uiState.update { currentState ->
+        _timerState.update { currentState ->
             currentState.copy(
                 timerMode = TimerMode.FOCUS,
                 timeStr = millisecondsToStr(time.value),
@@ -79,11 +81,11 @@ class TimerViewModel(
         startTime = 0L
         pauseTime = 0L
         pauseDuration = 0L
-        cycles = (cycles + 1) % 8
+        cycles = (cycles + 1) % (timerRepository.sessionLength * 2)
 
         if (cycles % 2 == 0) {
             _time.update { timerRepository.focusTime }
-            _uiState.update { currentState ->
+            _timerState.update { currentState ->
                 currentState.copy(
                     timerMode = TimerMode.FOCUS,
                     timeStr = millisecondsToStr(time.value),
@@ -97,10 +99,10 @@ class TimerViewModel(
                 )
             }
         } else {
-            val long = cycles == 7
+            val long = cycles == (timerRepository.sessionLength * 2) - 1
             _time.update { if (long) timerRepository.longBreakTime else timerRepository.shortBreakTime }
 
-            _uiState.update { currentState ->
+            _timerState.update { currentState ->
                 currentState.copy(
                     timerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
                     timeStr = millisecondsToStr(time.value),
@@ -113,23 +115,23 @@ class TimerViewModel(
     }
 
     fun toggleTimer() {
-        if (uiState.value.timerRunning) {
-            _uiState.update { currentState ->
+        if (timerState.value.timerRunning) {
+            _timerState.update { currentState ->
                 currentState.copy(timerRunning = false)
             }
             timerJob?.cancel()
             pauseTime = SystemClock.elapsedRealtime()
         } else {
-            _uiState.update { it.copy(timerRunning = true) }
+            _timerState.update { it.copy(timerRunning = true) }
             if (pauseTime != 0L) pauseDuration += SystemClock.elapsedRealtime() - pauseTime
 
             timerJob = viewModelScope.launch {
                 while (true) {
-                    if (!uiState.value.timerRunning) break
+                    if (!timerState.value.timerRunning) break
                     if (startTime == 0L) startTime = SystemClock.elapsedRealtime()
 
                     _time.update {
-                        when (uiState.value.timerMode) {
+                        when (timerState.value.timerMode) {
                             TimerMode.FOCUS ->
                                 timerRepository.focusTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
 
@@ -144,12 +146,12 @@ class TimerViewModel(
                     if (time.value < 0) {
                         skipTimer()
 
-                        _uiState.update { currentState ->
+                        _timerState.update { currentState ->
                             currentState.copy(timerRunning = false)
                         }
                         timerJob?.cancel()
                     } else {
-                        _uiState.update { currentState ->
+                        _timerState.update { currentState ->
                             currentState.copy(
                                 timeStr = millisecondsToStr(time.value)
                             )

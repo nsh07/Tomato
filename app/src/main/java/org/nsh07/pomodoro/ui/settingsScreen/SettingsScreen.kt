@@ -1,5 +1,6 @@
 package org.nsh07.pomodoro.ui.settingsScreen
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +19,9 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -31,7 +34,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -209,6 +216,37 @@ private fun SettingsScreen(
                     },
                     modifier = Modifier.clip(shapes.large)
                 )
+            }
+            item {
+                var expanded by remember { mutableStateOf(false) }
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    modifier = Modifier
+                        .padding(vertical = 6.dp)
+                        .fillMaxWidth()
+                ) {
+                    FilledTonalIconToggleButton(
+                        checked = expanded,
+                        onCheckedChange = { expanded = it },
+                        shapes = IconButtonDefaults.toggleableShapes(),
+                        modifier = Modifier.width(52.dp)
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.info),
+                            null
+                        )
+                    }
+                    AnimatedVisibility(expanded) {
+                        Text(
+                            "A \"session\" is a sequence of pomodoro intervals that contain focus" +
+                                    " intervals, short break intervals, and a long break interval. The " +
+                                    "last break of a session is always a long break.",
+                            style = typography.bodyMedium,
+                            color = colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
             }
         }
     }

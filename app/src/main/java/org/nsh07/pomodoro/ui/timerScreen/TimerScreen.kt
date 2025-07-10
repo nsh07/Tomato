@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2025 Nishant Mishra
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package org.nsh07.pomodoro.ui.timerScreen
 
 import androidx.compose.animation.AnimatedContent
@@ -53,6 +60,7 @@ import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTitle
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 
@@ -60,11 +68,8 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 @Composable
 fun TimerScreen(
     timerState: TimerState,
-    showBrandTitle: Boolean,
     progress: () -> Float,
-    resetTimer: () -> Unit,
-    skipTimer: () -> Unit,
-    toggleTimer: () -> Unit,
+    onAction: (TimerAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val motionScheme = motionScheme
@@ -89,7 +94,7 @@ fun TimerScreen(
         TopAppBar(
             title = {
                 AnimatedContent(
-                    if (!showBrandTitle) timerState.timerMode else TimerMode.BRAND,
+                    if (!timerState.showBrandTitle) timerState.timerMode else TimerMode.BRAND,
                     transitionSpec = {
                         slideInVertically(
                             animationSpec = motionScheme.slowSpatialSpec(),
@@ -245,7 +250,7 @@ fun TimerScreen(
                     customItem(
                         {
                             FilledIconToggleButton(
-                                onCheckedChange = { toggleTimer() },
+                                onCheckedChange = { onAction(TimerAction.ToggleTimer) },
                                 checked = timerState.timerRunning,
                                 colors = IconButtonDefaults.filledIconToggleButtonColors(
                                     checkedContainerColor = color,
@@ -289,7 +294,7 @@ fun TimerScreen(
                                 },
                                 text = { Text(if (timerState.timerRunning) "Pause" else "Play") },
                                 onClick = {
-                                    toggleTimer()
+                                    onAction(TimerAction.ToggleTimer)
                                     state.dismiss()
                                 }
                             )
@@ -299,7 +304,7 @@ fun TimerScreen(
                     customItem(
                         {
                             FilledTonalIconButton(
-                                onClick = resetTimer,
+                                onClick = { onAction(TimerAction.ResetTimer) },
                                 colors = IconButtonDefaults.filledTonalIconButtonColors(
                                     containerColor = colorContainer
                                 ),
@@ -326,7 +331,7 @@ fun TimerScreen(
                                 },
                                 text = { Text("Restart") },
                                 onClick = {
-                                    resetTimer()
+                                    onAction(TimerAction.ResetTimer)
                                     state.dismiss()
                                 }
                             )
@@ -336,7 +341,7 @@ fun TimerScreen(
                     customItem(
                         {
                             FilledTonalIconButton(
-                                onClick = skipTimer,
+                                onClick = { onAction(TimerAction.SkipTimer) },
                                 colors = IconButtonDefaults.filledTonalIconButtonColors(
                                     containerColor = colorContainer
                                 ),
@@ -363,7 +368,7 @@ fun TimerScreen(
                                 },
                                 text = { Text("Skip to next") },
                                 onClick = {
-                                    skipTimer()
+                                    onAction(TimerAction.SkipTimer)
                                     state.dismiss()
                                 }
                             )
@@ -411,10 +416,7 @@ fun TimerScreenPreview() {
     TomatoTheme {
         TimerScreen(
             timerState,
-            false,
             { 0.3f },
-            {},
-            {},
             {}
         )
     }

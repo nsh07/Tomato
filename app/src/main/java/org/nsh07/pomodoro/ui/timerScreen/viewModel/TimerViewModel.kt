@@ -82,10 +82,24 @@ class TimerViewModel(
                 )
 
             resetTimer()
+
+            delay(1500)
+
+            _timerState.update { currentState ->
+                currentState.copy(showBrandTitle = false)
+            }
         }
     }
 
-    fun resetTimer() {
+    fun onAction(action: TimerAction) {
+        when (action) {
+            TimerAction.ResetTimer -> resetTimer()
+            TimerAction.SkipTimer -> skipTimer()
+            TimerAction.ToggleTimer -> toggleTimer()
+        }
+    }
+
+    private fun resetTimer() {
         viewModelScope.launch {
             saveTimeToDb()
             _time.update { timerRepository.focusTime }
@@ -106,7 +120,7 @@ class TimerViewModel(
         }
     }
 
-    fun skipTimer() {
+    private fun skipTimer() {
         viewModelScope.launch {
             saveTimeToDb()
             startTime = 0L
@@ -147,7 +161,7 @@ class TimerViewModel(
         }
     }
 
-    fun toggleTimer() {
+    private fun toggleTimer() {
         if (timerState.value.timerRunning) {
             _timerState.update { currentState ->
                 currentState.copy(timerRunning = false)

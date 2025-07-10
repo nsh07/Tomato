@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2025 Nishant Mishra
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package org.nsh07.pomodoro.ui
 
 import androidx.compose.animation.ContentTransform
@@ -22,10 +29,8 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -38,9 +43,6 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import org.nsh07.pomodoro.MainActivity.Companion.screens
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreen
@@ -57,19 +59,11 @@ fun AppScreen(
     val remainingTime by viewModel.time.collectAsStateWithLifecycle()
 
     val progress by rememberUpdatedState((uiState.totalTime.toFloat() - remainingTime) / uiState.totalTime)
-    var showBrandTitle by remember { mutableStateOf(true) }
 
     val layoutDirection = LocalLayoutDirection.current
     val haptic = LocalHapticFeedback.current
     val motionScheme = motionScheme
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.IO) {
-            delay(1500)
-            showBrandTitle = false
-        }
-    }
 
     LaunchedEffect(uiState.timerMode) {
         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -142,11 +136,8 @@ fun AppScreen(
                 entry<Screen.Timer> {
                     TimerScreen(
                         timerState = uiState,
-                        showBrandTitle = showBrandTitle,
                         progress = { progress },
-                        resetTimer = viewModel::resetTimer,
-                        skipTimer = viewModel::skipTimer,
-                        toggleTimer = viewModel::toggleTimer,
+                        onAction = viewModel::onAction,
                         modifier = modifier.padding(
                             start = contentPadding.calculateStartPadding(layoutDirection),
                             end = contentPadding.calculateEndPadding(layoutDirection),

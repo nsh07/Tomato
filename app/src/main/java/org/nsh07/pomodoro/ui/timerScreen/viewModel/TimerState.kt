@@ -13,7 +13,8 @@ data class TimerState(
     val totalTime: Long = 25 * 60,
     val timerRunning: Boolean = false,
     val nextTimerMode: TimerMode = TimerMode.SHORT_BREAK,
-    val nextTimeStr: String = "5:00"
+    val nextTimeStr: String = "5:00",
+    val showBrandTitle: Boolean = true
 )
 
 enum class TimerMode {

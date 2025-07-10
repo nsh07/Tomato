@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-interface PreferencesRepository {
+interface PreferenceRepository {
     suspend fun saveIntPreference(key: String, value: Int): Int
 
     suspend fun getIntPreference(key: String): Int?
@@ -15,7 +15,7 @@ interface PreferencesRepository {
 class AppPreferenceRepository(
     private val preferenceDao: PreferenceDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : PreferencesRepository {
+) : PreferenceRepository {
     override suspend fun saveIntPreference(key: String, value: Int): Int =
         withContext(ioDispatcher) {
             preferenceDao.insertIntPreference(IntPreference(key, value))

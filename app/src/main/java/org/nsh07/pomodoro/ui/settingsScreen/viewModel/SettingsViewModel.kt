@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2025 Nishant Mishra
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
 import androidx.compose.foundation.text.input.TextFieldState
@@ -46,7 +53,7 @@ class SettingsViewModel(
                         timerRepository.focusTime = preferenceRepository.saveIntPreference(
                             "focus_time",
                             it.toString().toInt() * 60 * 1000
-                        )
+                        ).toLong()
                     }
                 }
         }
@@ -58,7 +65,7 @@ class SettingsViewModel(
                         timerRepository.shortBreakTime = preferenceRepository.saveIntPreference(
                             "short_break_time",
                             it.toString().toInt() * 60 * 1000
-                        )
+                        ).toLong()
                     }
                 }
         }
@@ -70,7 +77,7 @@ class SettingsViewModel(
                         timerRepository.longBreakTime = preferenceRepository.saveIntPreference(
                             "long_break_time",
                             it.toString().toInt() * 60 * 1000
-                        )
+                        ).toLong()
                     }
                 }
         }
@@ -89,7 +96,7 @@ class SettingsViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as TomatoApplication)
-                val appPreferenceRepository = application.container.appPreferencesRepository
+                val appPreferenceRepository = application.container.appPreferenceRepository
                 val appTimerRepository = application.container.appTimerRepository
 
                 SettingsViewModel(

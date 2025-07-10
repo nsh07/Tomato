@@ -12,11 +12,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+import java.time.LocalTime
 
 interface StatRepository {
-    suspend fun addFocusTime(focusTime: Int)
+    suspend fun addFocusTime(focusTime: Long)
 
-    suspend fun addBreakTime(breakTime: Int)
+    suspend fun addBreakTime(breakTime: Long)
 
     fun getTodayStat(): Flow<Stat?>
 
@@ -27,21 +28,55 @@ class AppStatRepository(
     private val statDao: StatDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : StatRepository {
-    override suspend fun addFocusTime(focusTime: Int) = withContext(ioDispatcher) {
+    override suspend fun addFocusTime(focusTime: Long) = withContext(ioDispatcher) {
         val currentDate = LocalDate.now().toString()
+        val currentTime = LocalTime.now().toSecondOfDay()
+        val secondsInDay = 24 * 60 * 60
+
         if (statDao.statExists(currentDate)) {
-            statDao.addFocusTime(currentDate, focusTime)
+            when (currentTime) {
+                in 0..(secondsInDay / 4) ->
+                    statDao.addFocusTimeQ1(currentDate, focusTime)
+
+                in (secondsInDay / 4)..(secondsInDay / 2) ->
+                    statDao.addFocusTimeQ2(currentDate, focusTime)
+
+                in (secondsInDay / 2)..(3 * secondsInDay / 4) ->
+                    statDao.addFocusTimeQ3(currentDate, focusTime)
+
+                else -> statDao.addFocusTimeQ4(currentDate, focusTime)
+            }
         } else {
-            statDao.insertStat(Stat(currentDate, focusTime, 0))
+            when (currentTime) {
+                in 0..(secondsInDay / 4) ->
+                    statDao.insertStat(
+                        Stat(currentDate, focusTime, 0, 0, 0, 0)
+                    )
+
+                in (secondsInDay / 4)..(secondsInDay / 2) ->
+                    statDao.insertStat(
+                        Stat(currentDate, 0, focusTime, 0, 0, 0)
+                    )
+
+                in (secondsInDay / 2)..(3 * secondsInDay / 4) ->
+                    statDao.insertStat(
+                        Stat(currentDate, 0, 0, focusTime, 0, 0)
+                    )
+
+                else ->
+                    statDao.insertStat(
+                        Stat(currentDate, 0, 0, 0, focusTime, 0)
+                    )
+            }
         }
     }
 
-    override suspend fun addBreakTime(breakTime: Int) = withContext(ioDispatcher) {
+    override suspend fun addBreakTime(breakTime: Long) = withContext(ioDispatcher) {
         val currentDate = LocalDate.now().toString()
         if (statDao.statExists(currentDate)) {
             statDao.addBreakTime(currentDate, breakTime)
         } else {
-            statDao.insertStat(Stat(currentDate, 0, breakTime))
+            statDao.insertStat(Stat(currentDate, 0, 0, 0, 0, breakTime))
         }
     }
 

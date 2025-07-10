@@ -1,8 +1,8 @@
 /*
- *     Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025 Nishant Mishra
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.nsh07.pomodoro.data
@@ -14,6 +14,9 @@ import androidx.room.PrimaryKey
 data class Stat(
     @PrimaryKey
     val date: String,
-    val focusTime: Int,
-    val breakTime: Int
+    val focusTimeQ1: Long,
+    val focusTimeQ2: Long,
+    val focusTimeQ3: Long,
+    val focusTimeQ4: Long,
+    val breakTime: Long
 )

@@ -18,11 +18,20 @@ interface StatDao {
     @Insert(onConflict = REPLACE)
     suspend fun insertStat(stat: Stat)
 
-    @Query("UPDATE stat SET focusTime = focusTime + :focusTime WHERE date = :date")
-    suspend fun addFocusTime(date: String, focusTime: Int)
+    @Query("UPDATE stat SET focusTimeQ1 = focusTimeQ1 + :focusTime WHERE date = :date")
+    suspend fun addFocusTimeQ1(date: String, focusTime: Long)
+
+    @Query("UPDATE stat SET focusTimeQ2 = focusTimeQ2 + :focusTime WHERE date = :date")
+    suspend fun addFocusTimeQ2(date: String, focusTime: Long)
+
+    @Query("UPDATE stat SET focusTimeQ3 = focusTimeQ3 + :focusTime WHERE date = :date")
+    suspend fun addFocusTimeQ3(date: String, focusTime: Long)
+
+    @Query("UPDATE stat SET focusTimeQ4 = focusTimeQ4 + :focusTime WHERE date = :date")
+    suspend fun addFocusTimeQ4(date: String, focusTime: Long)
 
     @Query("UPDATE stat SET breakTime = breakTime + :breakTime WHERE date = :date")
-    suspend fun addBreakTime(date: String, breakTime: Int)
+    suspend fun addBreakTime(date: String, breakTime: Long)
 
     @Query("SELECT * FROM stat WHERE date = :date")
     fun getStat(date: String): Flow<Stat?>

@@ -10,14 +10,14 @@ package org.nsh07.pomodoro.data
 import android.content.Context
 
 interface AppContainer {
-    val appPreferencesRepository: AppPreferenceRepository
+    val appPreferenceRepository: AppPreferenceRepository
     val appStatRepository: AppStatRepository
     val appTimerRepository: AppTimerRepository
 }
 
 class DefaultAppContainer(context: Context) : AppContainer {
 
-    override val appPreferencesRepository: AppPreferenceRepository by lazy {
+    override val appPreferenceRepository: AppPreferenceRepository by lazy {
         AppPreferenceRepository(AppDatabase.getDatabase(context).preferenceDao())
     }
 

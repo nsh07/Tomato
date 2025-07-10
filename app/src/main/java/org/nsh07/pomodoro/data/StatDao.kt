@@ -36,8 +36,11 @@ interface StatDao {
     @Query("SELECT * FROM stat WHERE date = :date")
     fun getStat(date: String): Flow<Stat?>
 
-    @Query("SELECT * FROM stat")
-    fun getStats(): Flow<List<Stat>>
+    @Query("SELECT date, focusTimeQ1 + focusTimeQ2 + focusTimeQ3 + focusTimeQ4 as focusTime, breakTime FROM stat")
+    fun getAllStatsSummary(): Flow<List<StatSummary>>
+
+    @Query("SELECT AVG(focusTimeQ1), AVG(focusTimeQ2), AVG(focusTimeQ3), AVG(focusTimeQ4) FROM stat")
+    fun getAvgFocusTimes(): Flow<StatFocusTime?>
 
     @Query("SELECT EXISTS (SELECT * FROM stat WHERE date = :date)")
     suspend fun statExists(date: String): Boolean

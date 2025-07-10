@@ -14,6 +14,11 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.LocalTime
 
+/**
+ * Interface for reading/writing statistics to the app's database. Ideally, writing should be done
+ * through the timer screen's ViewModel and reading should be done through the stats screen's
+ * ViewModel
+ */
 interface StatRepository {
     suspend fun addFocusTime(focusTime: Long)
 
@@ -21,9 +26,14 @@ interface StatRepository {
 
     fun getTodayStat(): Flow<Stat?>
 
-    fun getAllStats(): Flow<List<Stat>>
+    fun getAllStatsSummary(): Flow<List<StatSummary>>
+
+    fun getAverageFocusTimes(): Flow<StatFocusTime?>
 }
 
+/**
+ * See [StatRepository] for more details
+ */
 class AppStatRepository(
     private val statDao: StatDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -85,5 +95,7 @@ class AppStatRepository(
         return statDao.getStat(currentDate)
     }
 
-    override fun getAllStats(): Flow<List<Stat>> = statDao.getStats()
+    override fun getAllStatsSummary(): Flow<List<StatSummary>> = statDao.getAllStatsSummary()
+
+    override fun getAverageFocusTimes(): Flow<StatFocusTime?> = statDao.getAvgFocusTimes()
 }

@@ -9,6 +9,7 @@ package org.nsh07.pomodoro.ui.statsScreen
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -69,7 +70,6 @@ fun StatsScreenRoot(
     StatsScreen(
         lastWeekSummaryChartData = viewModel.lastWeekSummaryChartData,
         lastWeekSummaryAnalysisModelProducer = viewModel.lastWeekSummaryAnalysisModelProducer,
-        todayStatAnalysisModelProducer = viewModel.todayStatAnalysisModelProducer,
         todayStat = todayStat,
         modifier = modifier
     )
@@ -80,13 +80,11 @@ fun StatsScreenRoot(
 fun StatsScreen(
     lastWeekSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     lastWeekSummaryAnalysisModelProducer: CartesianChartModelProducer,
-    todayStatAnalysisModelProducer: CartesianChartModelProducer,
     todayStat: Stat?,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    var todayStatExpanded by rememberSaveable { mutableStateOf(false) }
     var lastWeekStatExpanded by rememberSaveable { mutableStateOf(false) }
 
     Column(
@@ -109,14 +107,18 @@ fun StatsScreen(
             scrollBehavior = scrollBehavior
         )
 
-        LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item { Spacer(Modifier) }
             item {
                 Text(
                     "Today",
                     style = typography.headlineSmall,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(horizontal = 16.dp)
                 )
             }
             item {
@@ -176,39 +178,6 @@ fun StatsScreen(
                         }
                     }
                 }
-            }
-            item {
-                val iconRotation by animateFloatAsState(
-                    if (todayStatExpanded) 180f else 0f,
-                    animationSpec = motionScheme.defaultSpatialSpec()
-                )
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Spacer(Modifier.height(2.dp))
-                    FilledTonalIconToggleButton(
-                        checked = todayStatExpanded,
-                        onCheckedChange = { todayStatExpanded = it },
-                        shapes = IconButtonDefaults.toggleableShapes(),
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .width(52.dp)
-                            .align(Alignment.End)
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.arrow_down),
-                            "More info",
-                            modifier = Modifier.rotate(iconRotation)
-                        )
-                    }
-                    ProductivityGraph(
-                        todayStatExpanded,
-                        todayStatAnalysisModelProducer,
-                        Modifier.padding(horizontal = 32.dp)
-                    )
-                }
-                Spacer(Modifier.height(16.dp))
             }
             item {
                 Text(
@@ -284,7 +253,6 @@ fun StatsScreenPreview() {
 
     StatsScreen(
         Pair(modelProducer, ExtraStore.Key()),
-        modelProducer,
         modelProducer,
         null
     )

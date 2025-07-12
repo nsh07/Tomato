@@ -35,7 +35,6 @@ class StatsViewModel(
     val lastWeekSummaryChartData =
         Pair(CartesianChartModelProducer(), ExtraStore.Key<List<String>>())
     val lastWeekSummaryAnalysisModelProducer = CartesianChartModelProducer()
-    val todayStatAnalysisModelProducer = CartesianChartModelProducer()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -48,21 +47,6 @@ class StatsViewModel(
                     lastWeekSummaryChartData.first.runTransaction {
                         columnSeries { series(values) }
                         extras { it[lastWeekSummaryChartData.second] = keys }
-                    }
-                }
-        }
-        viewModelScope.launch(Dispatchers.IO) {
-            todayStat
-                .collect {
-                    todayStatAnalysisModelProducer.runTransaction {
-                        columnSeries {
-                            series(
-                                it?.focusTimeQ1 ?: 0,
-                                it?.focusTimeQ2 ?: 0,
-                                it?.focusTimeQ3 ?: 0,
-                                it?.focusTimeQ4 ?: 0
-                            )
-                        }
                     }
                 }
         }

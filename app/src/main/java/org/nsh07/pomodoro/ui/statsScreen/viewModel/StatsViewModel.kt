@@ -29,12 +29,18 @@ class StatsViewModel(
     private val dayFormatter = DateTimeFormatter.ofPattern("E")
 
     val todayStat = statRepository.getTodayStat().distinctUntilChanged()
-    private val lastWeekStatsSummary = statRepository.getLastWeekStatsSummary()
-    private val lastWeekAverageFocusTimes = statRepository.getLastWeekAverageFocusTimes()
+    private val lastWeekStatsSummary = statRepository.getLastNDaysStatsSummary(7)
+    private val lastWeekAverageFocusTimes = statRepository.getLastNDaysAverageFocusTimes(7)
+    private val lastMonthStatsSummary = statRepository.getLastNDaysStatsSummary(30)
+    private val lastMonthAverageFocusTimes = statRepository.getLastNDaysAverageFocusTimes(30)
 
     val lastWeekSummaryChartData =
         Pair(CartesianChartModelProducer(), ExtraStore.Key<List<String>>())
     val lastWeekSummaryAnalysisModelProducer = CartesianChartModelProducer()
+
+    val lastMonthSummaryChartData =
+        Pair(CartesianChartModelProducer(), ExtraStore.Key<List<String>>())
+    val lastMonthSummaryAnalysisModelProducer = CartesianChartModelProducer()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -54,6 +60,33 @@ class StatsViewModel(
             lastWeekAverageFocusTimes
                 .collect {
                     lastWeekSummaryAnalysisModelProducer.runTransaction {
+                        columnSeries {
+                            series(
+                                it?.focusTimeQ1 ?: 0,
+                                it?.focusTimeQ2 ?: 0,
+                                it?.focusTimeQ3 ?: 0,
+                                it?.focusTimeQ4 ?: 0
+                            )
+                        }
+                    }
+                }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            lastMonthStatsSummary
+                .collect { list ->
+                    val reversed = list.reversed()
+                    val keys = reversed.map { it.date.dayOfMonth.toString() }
+                    val values = reversed.map { it.focusTime }
+                    lastMonthSummaryChartData.first.runTransaction {
+                        columnSeries { series(values) }
+                        extras { it[lastMonthSummaryChartData.second] = keys }
+                    }
+                }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            lastMonthAverageFocusTimes
+                .collect {
+                    lastMonthSummaryAnalysisModelProducer.runTransaction {
                         columnSeries {
                             series(
                                 it?.focusTimeQ1 ?: 0,

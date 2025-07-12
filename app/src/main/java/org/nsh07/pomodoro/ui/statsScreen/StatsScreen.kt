@@ -70,6 +70,8 @@ fun StatsScreenRoot(
     StatsScreen(
         lastWeekSummaryChartData = viewModel.lastWeekSummaryChartData,
         lastWeekSummaryAnalysisModelProducer = viewModel.lastWeekSummaryAnalysisModelProducer,
+        lastMonthSummaryChartData = viewModel.lastMonthSummaryChartData,
+        lastMonthSummaryAnalysisModelProducer = viewModel.lastMonthSummaryAnalysisModelProducer,
         todayStat = todayStat,
         modifier = modifier
     )
@@ -80,12 +82,15 @@ fun StatsScreenRoot(
 fun StatsScreen(
     lastWeekSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     lastWeekSummaryAnalysisModelProducer: CartesianChartModelProducer,
+    lastMonthSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
+    lastMonthSummaryAnalysisModelProducer: CartesianChartModelProducer,
     todayStat: Stat?,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     var lastWeekStatExpanded by rememberSaveable { mutableStateOf(false) }
+    var lastMonthStatExpanded by rememberSaveable { mutableStateOf(false) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -179,13 +184,14 @@ fun StatsScreen(
                     }
                 }
             }
+            item { Spacer(Modifier) }
             item {
                 Text(
-                    "This week",
+                    "Last week",
                     style = typography.headlineSmall,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(horizontal = 16.dp)
                 )
             }
             item {
@@ -229,6 +235,59 @@ fun StatsScreen(
                         modifier = Modifier.padding(horizontal = 32.dp)
                     )
                 }
+            }
+            item { Spacer(Modifier) }
+            item {
+                Text(
+                    "Last month",
+                    style = typography.headlineSmall,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                )
+            }
+            item {
+                TimeColumnChart(
+                    lastMonthSummaryChartData.first,
+                    modifier = Modifier.padding(start = 16.dp),
+                    thickness = 8.dp,
+                    xValueFormatter = CartesianValueFormatter { context, x, _ ->
+                        context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
+                    }
+                )
+            }
+            item {
+                val iconRotation by animateFloatAsState(
+                    if (lastMonthStatExpanded) 180f else 0f,
+                    animationSpec = motionScheme.defaultSpatialSpec()
+                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Spacer(Modifier.height(2.dp))
+                    FilledTonalIconToggleButton(
+                        checked = lastMonthStatExpanded,
+                        onCheckedChange = { lastMonthStatExpanded = it },
+                        shapes = IconButtonDefaults.toggleableShapes(),
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .width(52.dp)
+                            .align(Alignment.End)
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.arrow_down),
+                            "More info",
+                            modifier = Modifier.rotate(iconRotation)
+                        )
+                    }
+                    ProductivityGraph(
+                        lastMonthStatExpanded,
+                        lastMonthSummaryAnalysisModelProducer,
+                        label = "Monthly productivity analysis",
+                        modifier = Modifier.padding(horizontal = 32.dp)
+                    )
+                }
                 Spacer(Modifier.height(16.dp))
             }
         }
@@ -252,6 +311,8 @@ fun StatsScreenPreview() {
     }
 
     StatsScreen(
+        Pair(modelProducer, ExtraStore.Key()),
+        modelProducer,
         Pair(modelProducer, ExtraStore.Key()),
         modelProducer,
         null

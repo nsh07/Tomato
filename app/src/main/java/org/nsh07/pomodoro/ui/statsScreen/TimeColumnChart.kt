@@ -10,8 +10,8 @@ package org.nsh07.pomodoro.ui.statsScreen
 import android.graphics.Path
 import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.tween
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -48,7 +48,7 @@ internal fun TimeColumnChart(
     yValueFormatter: CartesianValueFormatter = CartesianValueFormatter { measuringContext, value, _ ->
         millisecondsToHours(value.toLong())
     },
-    animationSpec: AnimationSpec<Float>? = tween(500)
+    animationSpec: AnimationSpec<Float>? = motionScheme.slowEffectsSpec()
 ) {
     val radius = with(LocalDensity.current) {
         (thickness / 2).toPx()
@@ -111,6 +111,7 @@ internal fun TimeColumnChart(
                 minZoom = Zoom.min(Zoom.Content, Zoom.fixed())
             ),
             animationSpec = animationSpec,
+            animateIn = false,
             modifier = modifier,
         )
     }

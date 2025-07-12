@@ -37,8 +37,8 @@ interface StatDao {
     @Query("SELECT * FROM stat WHERE date = :date")
     fun getStat(date: LocalDate): Flow<Stat?>
 
-    @Query("SELECT date, focusTimeQ1 + focusTimeQ2 + focusTimeQ3 + focusTimeQ4 as focusTime, breakTime FROM stat ORDER BY date DESC LIMIT 7")
-    fun getLastWeekStatsSummary(): Flow<List<StatSummary>>
+    @Query("SELECT date, focusTimeQ1 + focusTimeQ2 + focusTimeQ3 + focusTimeQ4 as focusTime, breakTime FROM stat ORDER BY date DESC LIMIT :n")
+    fun getLastNDaysStatsSummary(n: Int): Flow<List<StatSummary>>
 
     @Query(
         "SELECT " +
@@ -46,11 +46,9 @@ interface StatDao {
                 "AVG(focusTimeQ2) AS focusTimeQ2, " +
                 "AVG(focusTimeQ3) AS focusTimeQ3, " +
                 "AVG(focusTimeQ4) AS focusTimeQ4 " +
-                "FROM (" +
-                "SELECT focusTimeQ1, focusTimeQ2, focusTimeQ3, focusTimeQ4 FROM stat ORDER BY date DESC LIMIT 7" +
-                ")"
+                "FROM (SELECT focusTimeQ1, focusTimeQ2, focusTimeQ3, focusTimeQ4 FROM stat ORDER BY date DESC LIMIT :n)"
     )
-    fun getLastWeekAvgFocusTimes(): Flow<StatFocusTime?>
+    fun getLastNDaysAvgFocusTimes(n: Int): Flow<StatFocusTime?>
 
     @Query("SELECT EXISTS (SELECT * FROM stat WHERE date = :date)")
     suspend fun statExists(date: LocalDate): Boolean

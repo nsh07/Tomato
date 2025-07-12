@@ -31,7 +31,7 @@ fun ColumnScope.ProductivityGraph(
     AnimatedVisibility(expanded) {
         Column(modifier = modifier) {
             Text(label, style = typography.titleMedium)
-            Text("Time of day versus focus hours", style = typography.bodySmall)
+            Text("Time of day versus focus duration", style = typography.bodySmall)
             Spacer(Modifier.height(8.dp))
             TimeColumnChart(
                 modelProducer,
@@ -46,8 +46,7 @@ fun ColumnScope.ProductivityGraph(
                 },
                 yValueFormatter = CartesianValueFormatter { _, value, _ ->
                     millisecondsToHoursMinutes(value.toLong())
-                },
-                animationSpec = null
+                }
             )
         }
     }

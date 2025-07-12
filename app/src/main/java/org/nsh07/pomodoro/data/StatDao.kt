@@ -36,8 +36,8 @@ interface StatDao {
     @Query("SELECT * FROM stat WHERE date = :date")
     fun getStat(date: String): Flow<Stat?>
 
-    @Query("SELECT date, focusTimeQ1 + focusTimeQ2 + focusTimeQ3 + focusTimeQ4 as focusTime, breakTime FROM stat")
-    fun getAllStatsSummary(): Flow<List<StatSummary>>
+    @Query("SELECT date, focusTimeQ1 + focusTimeQ2 + focusTimeQ3 + focusTimeQ4 as focusTime, breakTime FROM stat ORDER BY date DESC LIMIT 7")
+    fun getLastWeekStatsSummary(): Flow<List<StatSummary>>
 
     @Query("SELECT AVG(focusTimeQ1) AS focusTimeQ1, AVG(focusTimeQ2) AS focusTimeQ2, AVG(focusTimeQ3) AS focusTimeQ3, AVG(focusTimeQ4) AS focusTimeQ4 FROM stat")
     fun getAvgFocusTimes(): Flow<StatFocusTime?>

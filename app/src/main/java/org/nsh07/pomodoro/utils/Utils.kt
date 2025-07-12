@@ -8,10 +8,19 @@
 package org.nsh07.pomodoro.utils
 
 import java.util.Locale
-import kotlin.math.ceil
+import java.util.concurrent.TimeUnit
 
-fun millisecondsToStr(t: Long): String {
-    val min = (ceil(t / 1000.0).toInt() / 60)
-    val sec = (ceil(t / 1000.0).toInt() % 60)
-    return String.format(locale = Locale.getDefault(), "%02d:%02d", min, sec)
-}
+fun millisecondsToStr(t: Long): String =
+    String.format(
+        Locale.getDefault(),
+        "%02d:%02d",
+        TimeUnit.MILLISECONDS.toMinutes(t),
+        TimeUnit.MILLISECONDS.toSeconds(t) % TimeUnit.MINUTES.toSeconds(1)
+    )
+
+fun millisecondsToHours(t: Long): String =
+    String.format(
+        Locale.getDefault(),
+        "%dh",
+        TimeUnit.MILLISECONDS.toHours(t)
+    )

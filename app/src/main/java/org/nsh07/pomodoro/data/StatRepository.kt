@@ -26,7 +26,7 @@ interface StatRepository {
 
     fun getTodayStat(): Flow<Stat?>
 
-    fun getAllStatsSummary(): Flow<List<StatSummary>>
+    fun getLastWeekStatsSummary(): Flow<List<StatSummary>>
 
     fun getAverageFocusTimes(): Flow<StatFocusTime?>
 }
@@ -95,7 +95,8 @@ class AppStatRepository(
         return statDao.getStat(currentDate)
     }
 
-    override fun getAllStatsSummary(): Flow<List<StatSummary>> = statDao.getAllStatsSummary()
+    override fun getLastWeekStatsSummary(): Flow<List<StatSummary>> =
+        statDao.getLastWeekStatsSummary()
 
     override fun getAverageFocusTimes(): Flow<StatFocusTime?> = statDao.getAvgFocusTimes()
 }

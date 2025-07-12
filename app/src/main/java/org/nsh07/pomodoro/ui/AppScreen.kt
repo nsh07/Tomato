@@ -45,7 +45,7 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass
 import org.nsh07.pomodoro.MainActivity.Companion.screens
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
-import org.nsh07.pomodoro.ui.statsScreen.StatsScreen
+import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 
@@ -157,7 +157,7 @@ fun AppScreen(
                 }
 
                 entry<Screen.Stats> {
-                    StatsScreen()
+                    StatsScreenRoot()
                 }
             }
         )

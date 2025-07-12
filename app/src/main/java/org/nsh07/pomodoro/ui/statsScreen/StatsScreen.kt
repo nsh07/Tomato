@@ -68,10 +68,10 @@ fun StatsScreenRoot(
 ) {
     val todayStat by viewModel.todayStat.collectAsState(null)
     StatsScreen(
-        lastWeekSummaryChartData = viewModel.lastWeekSummaryChartData,
-        lastWeekSummaryAnalysisModelProducer = viewModel.lastWeekSummaryAnalysisModelProducer,
-        lastMonthSummaryChartData = viewModel.lastMonthSummaryChartData,
-        lastMonthSummaryAnalysisModelProducer = viewModel.lastMonthSummaryAnalysisModelProducer,
+        lastWeekSummaryChartData = remember { viewModel.lastWeekSummaryChartData },
+        lastWeekSummaryAnalysisModelProducer = remember { viewModel.lastWeekSummaryAnalysisModelProducer },
+        lastMonthSummaryChartData = remember { viewModel.lastMonthSummaryChartData },
+        lastMonthSummaryAnalysisModelProducer = remember { viewModel.lastMonthSummaryAnalysisModelProducer },
         todayStat = todayStat,
         modifier = modifier
     )

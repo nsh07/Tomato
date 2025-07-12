@@ -46,6 +46,7 @@ import androidx.window.core.layout.WindowSizeClass
 import org.nsh07.pomodoro.MainActivity.Companion.screens
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
+import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 
@@ -53,10 +54,11 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 @Composable
 fun AppScreen(
     modifier: Modifier = Modifier,
-    viewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory)
+    timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory),
+    statsViewModel: StatsViewModel = viewModel(factory = StatsViewModel.Factory)
 ) {
-    val uiState by viewModel.timerState.collectAsStateWithLifecycle()
-    val remainingTime by viewModel.time.collectAsStateWithLifecycle()
+    val uiState by timerViewModel.timerState.collectAsStateWithLifecycle()
+    val remainingTime by timerViewModel.time.collectAsStateWithLifecycle()
 
     val progress by rememberUpdatedState((uiState.totalTime.toFloat() - remainingTime) / uiState.totalTime)
 
@@ -137,7 +139,7 @@ fun AppScreen(
                     TimerScreen(
                         timerState = uiState,
                         progress = { progress },
-                        onAction = viewModel::onAction,
+                        onAction = timerViewModel::onAction,
                         modifier = modifier.padding(
                             start = contentPadding.calculateStartPadding(layoutDirection),
                             end = contentPadding.calculateEndPadding(layoutDirection),
@@ -158,6 +160,7 @@ fun AppScreen(
 
                 entry<Screen.Stats> {
                     StatsScreenRoot(
+                        viewModel = statsViewModel,
                         modifier = modifier.padding(
                             start = contentPadding.calculateStartPadding(layoutDirection),
                             end = contentPadding.calculateEndPadding(layoutDirection),

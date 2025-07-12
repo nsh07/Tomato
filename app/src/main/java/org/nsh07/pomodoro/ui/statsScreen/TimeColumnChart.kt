@@ -111,7 +111,6 @@ internal fun TimeColumnChart(
                 minZoom = Zoom.min(Zoom.Content, Zoom.fixed())
             ),
             animationSpec = animationSpec,
-            animateIn = false,
             modifier = modifier,
         )
     }

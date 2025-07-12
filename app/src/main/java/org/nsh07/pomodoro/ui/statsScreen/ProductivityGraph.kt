@@ -25,18 +25,16 @@ import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 fun ColumnScope.ProductivityGraph(
     expanded: Boolean,
     modelProducer: CartesianChartModelProducer,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    label: String = "Productivity analysis"
 ) {
     AnimatedVisibility(expanded) {
         Column(modifier = modifier) {
-            Text("Productivity analysis", style = typography.titleMedium)
+            Text(label, style = typography.titleMedium)
             Text("Time of day versus focus hours", style = typography.bodySmall)
             Spacer(Modifier.height(8.dp))
             TimeColumnChart(
                 modelProducer,
-                yValueFormatter = CartesianValueFormatter { _, value, _ ->
-                    millisecondsToHoursMinutes(value.toLong())
-                },
                 xValueFormatter = CartesianValueFormatter { _, value, _ ->
                     when (value) {
                         0.0 -> "0 - 6"
@@ -45,7 +43,11 @@ fun ColumnScope.ProductivityGraph(
                         3.0 -> "18 - 24"
                         else -> ""
                     }
-                }
+                },
+                yValueFormatter = CartesianValueFormatter { _, value, _ ->
+                    millisecondsToHoursMinutes(value.toLong())
+                },
+                animationSpec = null
             )
         }
     }

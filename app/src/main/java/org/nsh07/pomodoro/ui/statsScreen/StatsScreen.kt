@@ -49,7 +49,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import kotlinx.coroutines.runBlocking
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
@@ -65,8 +67,9 @@ fun StatsScreenRoot(
 ) {
     val todayStat by viewModel.todayStat.collectAsState(null)
     StatsScreen(
-        lastWeekSummaryModelProducer = viewModel.lastWeekSummaryChartModelProducer,
-        todayStatModelProducer = viewModel.todayStatModelProducer,
+        lastWeekSummaryChartData = viewModel.lastWeekSummaryChartData,
+        lastWeekSummaryAnalysisModelProducer = viewModel.lastWeekSummaryAnalysisModelProducer,
+        todayStatAnalysisModelProducer = viewModel.todayStatAnalysisModelProducer,
         todayStat = todayStat,
         modifier = modifier
     )
@@ -75,14 +78,16 @@ fun StatsScreenRoot(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun StatsScreen(
-    lastWeekSummaryModelProducer: CartesianChartModelProducer,
-    todayStatModelProducer: CartesianChartModelProducer,
+    lastWeekSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
+    lastWeekSummaryAnalysisModelProducer: CartesianChartModelProducer,
+    todayStatAnalysisModelProducer: CartesianChartModelProducer,
     todayStat: Stat?,
     modifier: Modifier = Modifier
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     var todayStatExpanded by rememberSaveable { mutableStateOf(false) }
+    var lastWeekStatExpanded by rememberSaveable { mutableStateOf(false) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -181,6 +186,7 @@ fun StatsScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
                 ) {
+                    Spacer(Modifier.height(2.dp))
                     FilledTonalIconToggleButton(
                         checked = todayStatExpanded,
                         onCheckedChange = { todayStatExpanded = it },
@@ -198,7 +204,7 @@ fun StatsScreen(
                     }
                     ProductivityGraph(
                         todayStatExpanded,
-                        todayStatModelProducer,
+                        todayStatAnalysisModelProducer,
                         Modifier.padding(horizontal = 32.dp)
                     )
                 }
@@ -215,9 +221,46 @@ fun StatsScreen(
             }
             item {
                 TimeColumnChart(
-                    lastWeekSummaryModelProducer,
-                    modifier = Modifier.padding(start = 16.dp)
+                    lastWeekSummaryChartData.first,
+                    modifier = Modifier.padding(start = 16.dp),
+                    xValueFormatter = CartesianValueFormatter { context, x, _ ->
+                        context.model.extraStore[lastWeekSummaryChartData.second][x.toInt()]
+                    }
                 )
+            }
+            item {
+                val iconRotation by animateFloatAsState(
+                    if (lastWeekStatExpanded) 180f else 0f,
+                    animationSpec = motionScheme.defaultSpatialSpec()
+                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Spacer(Modifier.height(2.dp))
+                    FilledTonalIconToggleButton(
+                        checked = lastWeekStatExpanded,
+                        onCheckedChange = { lastWeekStatExpanded = it },
+                        shapes = IconButtonDefaults.toggleableShapes(),
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .width(52.dp)
+                            .align(Alignment.End)
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.arrow_down),
+                            "More info",
+                            modifier = Modifier.rotate(iconRotation)
+                        )
+                    }
+                    ProductivityGraph(
+                        lastWeekStatExpanded,
+                        lastWeekSummaryAnalysisModelProducer,
+                        label = "Weekly productivity analysis",
+                        modifier = Modifier.padding(horizontal = 32.dp)
+                    )
+                }
+                Spacer(Modifier.height(16.dp))
             }
         }
     }
@@ -240,6 +283,7 @@ fun StatsScreenPreview() {
     }
 
     StatsScreen(
+        Pair(modelProducer, ExtraStore.Key()),
         modelProducer,
         modelProducer,
         null

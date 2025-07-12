@@ -15,38 +15,61 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.StatRepository
+import java.time.format.DateTimeFormatter
 
 class StatsViewModel(
     statRepository: StatRepository
 ) : ViewModel() {
-    val todayStat = statRepository.getTodayStat().distinctUntilChanged()
-    private val allStatsSummary = statRepository.getLastWeekStatsSummary()
-    private val averageFocusTimes = statRepository.getAverageFocusTimes()
+    private val dayFormatter = DateTimeFormatter.ofPattern("E")
 
-    val lastWeekSummaryChartModelProducer = CartesianChartModelProducer()
-    val todayStatModelProducer = CartesianChartModelProducer()
+    val todayStat = statRepository.getTodayStat().distinctUntilChanged()
+    private val lastWeekStatsSummary = statRepository.getLastWeekStatsSummary()
+    private val lastWeekAverageFocusTimes = statRepository.getLastWeekAverageFocusTimes()
+
+    val lastWeekSummaryChartData =
+        Pair(CartesianChartModelProducer(), ExtraStore.Key<List<String>>())
+    val lastWeekSummaryAnalysisModelProducer = CartesianChartModelProducer()
+    val todayStatAnalysisModelProducer = CartesianChartModelProducer()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            allStatsSummary
+            lastWeekStatsSummary
                 .collect { list ->
-                    lastWeekSummaryChartModelProducer.runTransaction {
-                        columnSeries {
-                            // reversing is required because we need ascending order while the DB returns descending order
-                            series(list.reversed().map { it.focusTime })
-                        }
+                    // reversing is required because we need ascending order while the DB returns descending order
+                    val reversed = list.reversed()
+                    val keys = reversed.map { it.date.format(dayFormatter) }
+                    val values = reversed.map { it.focusTime }
+                    lastWeekSummaryChartData.first.runTransaction {
+                        columnSeries { series(values) }
+                        extras { it[lastWeekSummaryChartData.second] = keys }
                     }
                 }
         }
         viewModelScope.launch(Dispatchers.IO) {
             todayStat
                 .collect {
-                    todayStatModelProducer.runTransaction {
+                    todayStatAnalysisModelProducer.runTransaction {
+                        columnSeries {
+                            series(
+                                it?.focusTimeQ1 ?: 0,
+                                it?.focusTimeQ2 ?: 0,
+                                it?.focusTimeQ3 ?: 0,
+                                it?.focusTimeQ4 ?: 0
+                            )
+                        }
+                    }
+                }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            lastWeekAverageFocusTimes
+                .collect {
+                    lastWeekSummaryAnalysisModelProducer.runTransaction {
                         columnSeries {
                             series(
                                 it?.focusTimeQ1 ?: 0,

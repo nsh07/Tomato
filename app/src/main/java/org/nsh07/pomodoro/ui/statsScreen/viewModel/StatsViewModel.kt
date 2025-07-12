@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.StatRepository
@@ -23,11 +24,12 @@ import org.nsh07.pomodoro.data.StatRepository
 class StatsViewModel(
     statRepository: StatRepository
 ) : ViewModel() {
-    private val todayStat = statRepository.getTodayStat()
+    val todayStat = statRepository.getTodayStat().distinctUntilChanged()
     private val allStatsSummary = statRepository.getLastWeekStatsSummary()
     private val averageFocusTimes = statRepository.getAverageFocusTimes()
 
     val allStatsSummaryModelProducer = CartesianChartModelProducer()
+    val todayStatModelProducer = CartesianChartModelProducer()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -35,6 +37,21 @@ class StatsViewModel(
                 .collect { list ->
                     allStatsSummaryModelProducer.runTransaction {
                         columnSeries { series(list.reversed().map { it.focusTime }) }
+                    }
+                }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            todayStat
+                .collect {
+                    todayStatModelProducer.runTransaction {
+                        columnSeries {
+                            series(
+                                it?.focusTimeQ1 ?: 0,
+                                it?.focusTimeQ2 ?: 0,
+                                it?.focusTimeQ3 ?: 0,
+                                it?.focusTimeQ4 ?: 0
+                            )
+                        }
                     }
                 }
         }

@@ -10,10 +10,10 @@ package org.nsh07.pomodoro.ui.statsScreen
 import android.graphics.Path
 import android.graphics.RectF
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
@@ -40,9 +40,11 @@ import org.nsh07.pomodoro.utils.millisecondsToHours
 internal fun TimeColumnChart(
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier = Modifier,
+    thickness: Dp = 40.dp,
+    timeConverter: (Long) -> String = ::millisecondsToHours
 ) {
     val radius = with(LocalDensity.current) {
-        (48.dp / 2).toPx()
+        (thickness / 2).toPx()
     }
     ProvideVicoTheme(rememberM3VicoTheme()) {
         CartesianChartHost(
@@ -53,7 +55,7 @@ internal fun TimeColumnChart(
                             vicoTheme.columnCartesianLayerColors.map { color ->
                                 rememberLineComponent(
                                     fill = fill(color),
-                                    thickness = 48.dp,
+                                    thickness = thickness,
                                     shape = { _, path, left, top, right, bottom ->
                                         if (top + radius <= bottom - radius) {
                                             path.arcTo(
@@ -87,21 +89,21 @@ internal fun TimeColumnChart(
                         tick = rememberLineComponent(Fill.Transparent),
                         guideline = rememberLineComponent(Fill.Transparent),
                         valueFormatter = CartesianValueFormatter { measuringContext, value, _ ->
-                            millisecondsToHours(value.toLong())
+                            timeConverter(value.toLong())
                         }
                     ),
                     bottomAxis = HorizontalAxis.rememberBottom(
                         rememberLineComponent(Fill.Transparent),
                         tick = rememberLineComponent(Fill.Transparent),
                         guideline = rememberLineComponent(Fill.Transparent)
-                    ),
+                    )
                 ),
             modelProducer = modelProducer,
             zoomState = rememberVicoZoomState(
+                zoomEnabled = false,
                 initialZoom = Zoom.fixed(),
-                minZoom = Zoom.min(Zoom.fixed(), Zoom.Content)
+                minZoom = Zoom.min(Zoom.Content, Zoom.fixed())
             ),
-            animationSpec = motionScheme.defaultSpatialSpec(),
             modifier = modifier,
         )
     }

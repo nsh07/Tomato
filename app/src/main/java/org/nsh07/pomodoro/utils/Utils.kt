@@ -24,3 +24,10 @@ fun millisecondsToHours(t: Long): String =
         "%dh",
         TimeUnit.MILLISECONDS.toHours(t)
     )
+
+fun millisecondsToHoursMinutes(t: Long): String =
+    String.format(
+        Locale.getDefault(),
+        "%dh %dm", TimeUnit.MILLISECONDS.toHours(t),
+        TimeUnit.MILLISECONDS.toMinutes(t) % TimeUnit.HOURS.toMinutes(1)
+    )

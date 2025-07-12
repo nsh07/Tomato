@@ -58,7 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
-import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTitle
+import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -112,7 +112,7 @@ fun TimerScreen(
                             Text(
                                 "Tomato",
                                 style = TextStyle(
-                                    fontFamily = robotoFlexTitle,
+                                    fontFamily = robotoFlexTopBar,
                                     fontSize = 32.sp,
                                     lineHeight = 32.sp,
                                     color = colorScheme.onErrorContainer
@@ -125,7 +125,7 @@ fun TimerScreen(
                             Text(
                                 "Focus",
                                 style = TextStyle(
-                                    fontFamily = robotoFlexTitle,
+                                    fontFamily = robotoFlexTopBar,
                                     fontSize = 32.sp,
                                     lineHeight = 32.sp,
                                     color = colorScheme.onPrimaryContainer
@@ -137,7 +137,7 @@ fun TimerScreen(
                         TimerMode.SHORT_BREAK -> Text(
                             "Short Break",
                             style = TextStyle(
-                                fontFamily = robotoFlexTitle,
+                                fontFamily = robotoFlexTopBar,
                                 fontSize = 32.sp,
                                 lineHeight = 32.sp,
                                 color = colorScheme.onTertiaryContainer
@@ -149,7 +149,7 @@ fun TimerScreen(
                         TimerMode.LONG_BREAK -> Text(
                             "Long Break",
                             style = TextStyle(
-                                fontFamily = robotoFlexTitle,
+                                fontFamily = robotoFlexTopBar,
                                 fontSize = 32.sp,
                                 lineHeight = 32.sp,
                                 color = colorScheme.onTertiaryContainer

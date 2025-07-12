@@ -41,7 +41,11 @@ internal fun TimeColumnChart(
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier = Modifier,
     thickness: Dp = 40.dp,
-    timeConverter: (Long) -> String = ::millisecondsToHours
+    columnCollectionSpacing: Dp = 4.dp,
+    xValueFormatter: CartesianValueFormatter = CartesianValueFormatter.Default,
+    yValueFormatter: CartesianValueFormatter = CartesianValueFormatter { measuringContext, value, _ ->
+        millisecondsToHours(value.toLong())
+    }
 ) {
     val radius = with(LocalDensity.current) {
         (thickness / 2).toPx()
@@ -82,20 +86,19 @@ internal fun TimeColumnChart(
                                 )
                             }
                         ),
-                        columnCollectionSpacing = 4.dp
+                        columnCollectionSpacing = columnCollectionSpacing
                     ),
                     startAxis = VerticalAxis.rememberStart(
                         line = rememberLineComponent(Fill.Transparent),
                         tick = rememberLineComponent(Fill.Transparent),
                         guideline = rememberLineComponent(Fill.Transparent),
-                        valueFormatter = CartesianValueFormatter { measuringContext, value, _ ->
-                            timeConverter(value.toLong())
-                        }
+                        valueFormatter = yValueFormatter
                     ),
                     bottomAxis = HorizontalAxis.rememberBottom(
                         rememberLineComponent(Fill.Transparent),
                         tick = rememberLineComponent(Fill.Transparent),
-                        guideline = rememberLineComponent(Fill.Transparent)
+                        guideline = rememberLineComponent(Fill.Transparent),
+                        valueFormatter = xValueFormatter
                     )
                 ),
             modelProducer = modelProducer,

@@ -85,13 +85,15 @@ class TimerViewModel(
 
             resetTimer()
 
-            var lastDate = LocalDate.parse(statRepository.getLastDate())
+            var lastDate = statRepository.getLastDate()
             val today = LocalDate.now()
 
             // Fills dates between today and lastDate with 0s to ensure continuous history
-            while (lastDate.until(today).days > 0) {
-                lastDate = lastDate.plusDays(1)
-                statRepository.insertStat(Stat(lastDate.toString(), 0, 0, 0, 0, 0))
+            lastDate?.until(today)?.days?.let {
+                while (it > 0) {
+                    lastDate = lastDate?.plusDays(1)
+                    statRepository.insertStat(Stat(lastDate!!, 0, 0, 0, 0, 0))
+                }
             }
 
             delay(1500)

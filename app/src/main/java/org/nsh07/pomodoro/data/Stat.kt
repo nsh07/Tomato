@@ -9,6 +9,7 @@ package org.nsh07.pomodoro.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.time.LocalDate
 
 /**
  * Data class for storing the user's statistics in the app's database. This class stores the focus
@@ -18,7 +19,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "stat")
 data class Stat(
     @PrimaryKey
-    val date: String,
+    val date: LocalDate,
     val focusTimeQ1: Long,
     val focusTimeQ2: Long,
     val focusTimeQ3: Long,
@@ -27,7 +28,7 @@ data class Stat(
 )
 
 data class StatSummary(
-    val date: String,
+    val date: LocalDate,
     val focusTime: Long,
     val breakTime: Long
 )

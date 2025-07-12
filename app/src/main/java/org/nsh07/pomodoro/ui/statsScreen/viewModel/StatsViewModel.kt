@@ -28,15 +28,18 @@ class StatsViewModel(
     private val allStatsSummary = statRepository.getLastWeekStatsSummary()
     private val averageFocusTimes = statRepository.getAverageFocusTimes()
 
-    val allStatsSummaryModelProducer = CartesianChartModelProducer()
+    val lastWeekSummaryChartModelProducer = CartesianChartModelProducer()
     val todayStatModelProducer = CartesianChartModelProducer()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             allStatsSummary
                 .collect { list ->
-                    allStatsSummaryModelProducer.runTransaction {
-                        columnSeries { series(list.reversed().map { it.focusTime }) }
+                    lastWeekSummaryChartModelProducer.runTransaction {
+                        columnSeries {
+                            // reversing is required because we need ascending order while the DB returns descending order
+                            series(list.reversed().map { it.focusTime })
+                        }
                     }
                 }
         }

@@ -12,6 +12,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 @Dao
 interface StatDao {
@@ -19,22 +20,22 @@ interface StatDao {
     suspend fun insertStat(stat: Stat)
 
     @Query("UPDATE stat SET focusTimeQ1 = focusTimeQ1 + :focusTime WHERE date = :date")
-    suspend fun addFocusTimeQ1(date: String, focusTime: Long)
+    suspend fun addFocusTimeQ1(date: LocalDate, focusTime: Long)
 
     @Query("UPDATE stat SET focusTimeQ2 = focusTimeQ2 + :focusTime WHERE date = :date")
-    suspend fun addFocusTimeQ2(date: String, focusTime: Long)
+    suspend fun addFocusTimeQ2(date: LocalDate, focusTime: Long)
 
     @Query("UPDATE stat SET focusTimeQ3 = focusTimeQ3 + :focusTime WHERE date = :date")
-    suspend fun addFocusTimeQ3(date: String, focusTime: Long)
+    suspend fun addFocusTimeQ3(date: LocalDate, focusTime: Long)
 
     @Query("UPDATE stat SET focusTimeQ4 = focusTimeQ4 + :focusTime WHERE date = :date")
-    suspend fun addFocusTimeQ4(date: String, focusTime: Long)
+    suspend fun addFocusTimeQ4(date: LocalDate, focusTime: Long)
 
     @Query("UPDATE stat SET breakTime = breakTime + :breakTime WHERE date = :date")
-    suspend fun addBreakTime(date: String, breakTime: Long)
+    suspend fun addBreakTime(date: LocalDate, breakTime: Long)
 
     @Query("SELECT * FROM stat WHERE date = :date")
-    fun getStat(date: String): Flow<Stat?>
+    fun getStat(date: LocalDate): Flow<Stat?>
 
     @Query("SELECT date, focusTimeQ1 + focusTimeQ2 + focusTimeQ3 + focusTimeQ4 as focusTime, breakTime FROM stat ORDER BY date DESC LIMIT 7")
     fun getLastWeekStatsSummary(): Flow<List<StatSummary>>
@@ -43,8 +44,8 @@ interface StatDao {
     fun getAvgFocusTimes(): Flow<StatFocusTime?>
 
     @Query("SELECT EXISTS (SELECT * FROM stat WHERE date = :date)")
-    suspend fun statExists(date: String): Boolean
+    suspend fun statExists(date: LocalDate): Boolean
 
     @Query("SELECT date FROM stat ORDER BY date DESC LIMIT 1")
-    suspend fun getLastDate(): String?
+    suspend fun getLastDate(): LocalDate?
 }

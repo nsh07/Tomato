@@ -157,7 +157,13 @@ fun AppScreen(
                 }
 
                 entry<Screen.Stats> {
-                    StatsScreenRoot()
+                    StatsScreenRoot(
+                        modifier = modifier.padding(
+                            start = contentPadding.calculateStartPadding(layoutDirection),
+                            end = contentPadding.calculateEndPadding(layoutDirection),
+                            bottom = contentPadding.calculateBottomPadding()
+                        )
+                    )
                 }
             }
         )

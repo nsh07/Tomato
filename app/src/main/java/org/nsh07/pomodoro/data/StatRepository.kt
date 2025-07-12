@@ -32,7 +32,7 @@ interface StatRepository {
 
     fun getAverageFocusTimes(): Flow<StatFocusTime?>
 
-    suspend fun getLastDate(): String?
+    suspend fun getLastDate(): LocalDate?
 }
 
 /**
@@ -45,7 +45,7 @@ class AppStatRepository(
     override suspend fun insertStat(stat: Stat) = statDao.insertStat(stat)
 
     override suspend fun addFocusTime(focusTime: Long) = withContext(ioDispatcher) {
-        val currentDate = LocalDate.now().toString()
+        val currentDate = LocalDate.now()
         val currentTime = LocalTime.now().toSecondOfDay()
         val secondsInDay = 24 * 60 * 60
 
@@ -88,7 +88,7 @@ class AppStatRepository(
     }
 
     override suspend fun addBreakTime(breakTime: Long) = withContext(ioDispatcher) {
-        val currentDate = LocalDate.now().toString()
+        val currentDate = LocalDate.now()
         if (statDao.statExists(currentDate)) {
             statDao.addBreakTime(currentDate, breakTime)
         } else {
@@ -97,7 +97,7 @@ class AppStatRepository(
     }
 
     override fun getTodayStat(): Flow<Stat?> {
-        val currentDate = LocalDate.now().toString()
+        val currentDate = LocalDate.now()
         return statDao.getStat(currentDate)
     }
 
@@ -106,5 +106,5 @@ class AppStatRepository(
 
     override fun getAverageFocusTimes(): Flow<StatFocusTime?> = statDao.getAvgFocusTimes()
 
-    override suspend fun getLastDate(): String? = statDao.getLastDate()
+    override suspend fun getLastDate(): LocalDate? = statDao.getLastDate()
 }

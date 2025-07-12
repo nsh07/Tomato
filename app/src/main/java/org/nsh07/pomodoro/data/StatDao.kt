@@ -44,4 +44,7 @@ interface StatDao {
 
     @Query("SELECT EXISTS (SELECT * FROM stat WHERE date = :date)")
     suspend fun statExists(date: String): Boolean
+
+    @Query("SELECT date FROM stat ORDER BY date DESC LIMIT 1")
+    suspend fun getLastDate(): String?
 }

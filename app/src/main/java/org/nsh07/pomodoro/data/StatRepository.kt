@@ -20,6 +20,8 @@ import java.time.LocalTime
  * ViewModel
  */
 interface StatRepository {
+    suspend fun insertStat(stat: Stat)
+
     suspend fun addFocusTime(focusTime: Long)
 
     suspend fun addBreakTime(breakTime: Long)
@@ -29,6 +31,8 @@ interface StatRepository {
     fun getLastWeekStatsSummary(): Flow<List<StatSummary>>
 
     fun getAverageFocusTimes(): Flow<StatFocusTime?>
+
+    suspend fun getLastDate(): String?
 }
 
 /**
@@ -38,6 +42,8 @@ class AppStatRepository(
     private val statDao: StatDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : StatRepository {
+    override suspend fun insertStat(stat: Stat) = statDao.insertStat(stat)
+
     override suspend fun addFocusTime(focusTime: Long) = withContext(ioDispatcher) {
         val currentDate = LocalDate.now().toString()
         val currentTime = LocalTime.now().toSecondOfDay()
@@ -99,4 +105,6 @@ class AppStatRepository(
         statDao.getLastWeekStatsSummary()
 
     override fun getAverageFocusTimes(): Flow<StatFocusTime?> = statDao.getAvgFocusTimes()
+
+    override suspend fun getLastDate(): String? = statDao.getLastDate()
 }

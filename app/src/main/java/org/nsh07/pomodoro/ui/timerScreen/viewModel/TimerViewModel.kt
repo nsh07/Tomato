@@ -25,9 +25,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.PreferenceRepository
+import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.TimerRepository
 import org.nsh07.pomodoro.utils.millisecondsToStr
+import java.time.LocalDate
 
 @OptIn(FlowPreview::class)
 class TimerViewModel(
@@ -82,6 +84,15 @@ class TimerViewModel(
                 )
 
             resetTimer()
+
+            var lastDate = LocalDate.parse(statRepository.getLastDate())
+            val today = LocalDate.now()
+
+            // Fills dates between today and lastDate with 0s to ensure continuous history
+            while (lastDate.until(today).days > 0) {
+                lastDate = lastDate.plusDays(1)
+                statRepository.insertStat(Stat(lastDate.toString(), 0, 0, 0, 0, 0))
+            }
 
             delay(1500)
 

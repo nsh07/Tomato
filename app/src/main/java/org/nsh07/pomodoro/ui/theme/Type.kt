@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2025 Nishant Mishra
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package org.nsh07.pomodoro.ui.theme
 
 import androidx.compose.material3.Typography
@@ -9,6 +16,8 @@ import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexHeadline
+import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTitle
 
 // Set of Material typography styles to start with
 val Typography = Typography(
@@ -18,6 +27,24 @@ val Typography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = robotoFlexHeadline,
+        fontSize = 24.sp,
+        lineHeight = 32.sp,
+        letterSpacing = 0.sp,
+    ),
+    titleMedium = TextStyle(
+        fontFamily = robotoFlexTitle,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.15.sp,
+    ),
+    titleSmall = TextStyle(
+        fontFamily = robotoFlexTitle,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 0.1.sp
     )
 )
 
@@ -27,7 +54,7 @@ object AppFonts {
     )
 
     @OptIn(ExperimentalTextApi::class)
-    val robotoFlexTitle = FontFamily(
+    val robotoFlexTopBar = FontFamily(
         Font(
             R.font.roboto_flex_variable,
             variationSettings = FontVariation.Settings(
@@ -42,6 +69,30 @@ object AppFonts {
                 FontVariation.Setting("YTFI", 738F),
                 FontVariation.Setting("YTLC", 514F),
                 FontVariation.Setting("YTUC", 712F)
+            )
+        )
+    )
+
+    @OptIn(ExperimentalTextApi::class)
+    val robotoFlexHeadline = FontFamily(
+        Font(
+            R.font.roboto_flex_variable,
+            variationSettings = FontVariation.Settings(
+                FontVariation.width(130f),
+                FontVariation.weight(600),
+                FontVariation.grade(0)
+            )
+        )
+    )
+
+    @OptIn(ExperimentalTextApi::class)
+    val robotoFlexTitle = FontFamily(
+        Font(
+            R.font.roboto_flex_variable,
+            variationSettings = FontVariation.Settings(
+                FontVariation.width(130f),
+                FontVariation.weight(700),
+                FontVariation.grade(0)
             )
         )
     )

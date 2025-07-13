@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2025 Nishant Mishra
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package org.nsh07.pomodoro.ui.settingsScreen
 
 import androidx.compose.animation.AnimatedVisibility
@@ -52,7 +59,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
-import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTitle
+import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -106,7 +113,7 @@ private fun SettingsScreen(
                 Text(
                     "Settings",
                     style = LocalTextStyle.current.copy(
-                        fontFamily = robotoFlexTitle,
+                        fontFamily = robotoFlexTopBar,
                         fontSize = 32.sp,
                         lineHeight = 32.sp
                     )

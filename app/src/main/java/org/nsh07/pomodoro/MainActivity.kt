@@ -8,19 +8,21 @@ import androidx.activity.viewModels
 import org.nsh07.pomodoro.ui.AppScreen
 import org.nsh07.pomodoro.ui.NavItem
 import org.nsh07.pomodoro.ui.Screen
+import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: TimerViewModel by viewModels(factoryProducer = { TimerViewModel.Factory })
+    private val timerViewModel: TimerViewModel by viewModels(factoryProducer = { TimerViewModel.Factory })
+    private val statsViewModel: StatsViewModel by viewModels(factoryProducer = { StatsViewModel.Factory })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             TomatoTheme {
-                AppScreen(viewModel = viewModel)
+                AppScreen(timerViewModel = timerViewModel, statsViewModel = statsViewModel)
             }
         }
     }

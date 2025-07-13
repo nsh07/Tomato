@@ -31,7 +31,7 @@ fun ColumnScope.ProductivityGraph(
     AnimatedVisibility(expanded) {
         Column(modifier = modifier) {
             Text(label, style = typography.titleMedium)
-            Text("Time of day versus focus duration", style = typography.bodySmall)
+            Text("Focus durations at different times of the day", style = typography.bodySmall)
             Spacer(Modifier.height(8.dp))
             TimeColumnChart(
                 modelProducer,

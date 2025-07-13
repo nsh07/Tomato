@@ -25,7 +25,9 @@ data class Stat(
     val focusTimeQ3: Long,
     val focusTimeQ4: Long,
     val breakTime: Long
-)
+) {
+    fun totalFocusTime() = focusTimeQ1 + focusTimeQ2 + focusTimeQ3 + focusTimeQ4
+}
 
 data class StatSummary(
     val date: LocalDate,
@@ -38,4 +40,6 @@ data class StatFocusTime(
     val focusTimeQ2: Long,
     val focusTimeQ3: Long,
     val focusTimeQ4: Long
-)
+) {
+    fun total() = focusTimeQ1 + focusTimeQ2 + focusTimeQ3 + focusTimeQ4
+}

@@ -33,7 +33,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
@@ -56,6 +56,7 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import kotlinx.coroutines.runBlocking
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
+import org.nsh07.pomodoro.data.StatFocusTime
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
@@ -66,13 +67,20 @@ fun StatsScreenRoot(
     modifier: Modifier = Modifier,
     viewModel: StatsViewModel = viewModel(factory = StatsViewModel.Factory)
 ) {
-    val todayStat by viewModel.todayStat.collectAsState(null)
+    val todayStat by viewModel.todayStat.collectAsStateWithLifecycle(null)
+    val lastWeekAverageFocusTimes by viewModel
+        .lastWeekAverageFocusTimes.collectAsStateWithLifecycle(null)
+    val lastMonthAverageFocusTimes by viewModel
+        .lastMonthAverageFocusTimes.collectAsStateWithLifecycle(null)
+
     StatsScreen(
         lastWeekSummaryChartData = remember { viewModel.lastWeekSummaryChartData },
         lastWeekSummaryAnalysisModelProducer = remember { viewModel.lastWeekSummaryAnalysisModelProducer },
         lastMonthSummaryChartData = remember { viewModel.lastMonthSummaryChartData },
         lastMonthSummaryAnalysisModelProducer = remember { viewModel.lastMonthSummaryAnalysisModelProducer },
         todayStat = todayStat,
+        lastWeekAverageFocusTimes = lastWeekAverageFocusTimes,
+        lastMonthAverageFocusTimes = lastMonthAverageFocusTimes,
         modifier = modifier
     )
 }
@@ -85,6 +93,8 @@ fun StatsScreen(
     lastMonthSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     lastMonthSummaryAnalysisModelProducer: CartesianChartModelProducer,
     todayStat: Stat?,
+    lastWeekAverageFocusTimes: StatFocusTime?,
+    lastMonthAverageFocusTimes: StatFocusTime?,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -143,14 +153,9 @@ fun StatsScreen(
                                 color = colorScheme.onPrimaryContainer
                             )
                             Text(
-                                if (todayStat != null) remember(todayStat) {
-                                    millisecondsToHoursMinutes(
-                                        todayStat.focusTimeQ1 +
-                                                todayStat.focusTimeQ2 +
-                                                todayStat.focusTimeQ3 +
-                                                todayStat.focusTimeQ4
-                                    )
-                                } else "0h 0m",
+                                remember(todayStat) {
+                                    millisecondsToHoursMinutes(todayStat?.totalFocusTime() ?: 0)
+                                },
                                 style = typography.displaySmall,
                                 fontFamily = openRundeClock,
                                 color = colorScheme.onPrimaryContainer
@@ -173,9 +178,9 @@ fun StatsScreen(
                                 color = colorScheme.onTertiaryContainer
                             )
                             Text(
-                                if (todayStat != null) remember(todayStat) {
-                                    millisecondsToHoursMinutes(todayStat.breakTime)
-                                } else "0h 0m",
+                                remember(todayStat) {
+                                    millisecondsToHoursMinutes(todayStat?.breakTime ?: 0)
+                                },
                                 style = typography.displaySmall,
                                 fontFamily = openRundeClock,
                                 color = colorScheme.onTertiaryContainer
@@ -193,6 +198,26 @@ fun StatsScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 )
+            }
+            item {
+                Row(
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text(
+                        millisecondsToHoursMinutes(lastWeekAverageFocusTimes?.total() ?: 0),
+                        style = typography.displaySmall,
+                        fontFamily = openRundeClock
+                    )
+                    Text(
+                        "focus per day (avg)",
+                        style = typography.titleSmall,
+                        modifier = Modifier.padding(bottom = 6.3.dp)
+                    )
+                }
             }
             item {
                 TimeColumnChart(
@@ -245,6 +270,26 @@ fun StatsScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 )
+            }
+            item {
+                Row(
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text(
+                        millisecondsToHoursMinutes(lastMonthAverageFocusTimes?.total() ?: 0),
+                        style = typography.displaySmall,
+                        fontFamily = openRundeClock
+                    )
+                    Text(
+                        "focus per day (avg)",
+                        style = typography.titleSmall,
+                        modifier = Modifier.padding(bottom = 6.3.dp)
+                    )
+                }
             }
             item {
                 TimeColumnChart(
@@ -315,6 +360,8 @@ fun StatsScreenPreview() {
         modelProducer,
         Pair(modelProducer, ExtraStore.Key()),
         modelProducer,
+        null,
+        null,
         null
     )
 }

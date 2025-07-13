@@ -21,18 +21,20 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.StatRepository
-import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
+import java.util.Locale
 
 class StatsViewModel(
     statRepository: StatRepository
 ) : ViewModel() {
-    private val dayFormatter = DateTimeFormatter.ofPattern("E")
 
     val todayStat = statRepository.getTodayStat().distinctUntilChanged()
     private val lastWeekStatsSummary = statRepository.getLastNDaysStatsSummary(7)
-    private val lastWeekAverageFocusTimes = statRepository.getLastNDaysAverageFocusTimes(7)
+    val lastWeekAverageFocusTimes =
+        statRepository.getLastNDaysAverageFocusTimes(7).distinctUntilChanged()
     private val lastMonthStatsSummary = statRepository.getLastNDaysStatsSummary(30)
-    private val lastMonthAverageFocusTimes = statRepository.getLastNDaysAverageFocusTimes(30)
+    val lastMonthAverageFocusTimes =
+        statRepository.getLastNDaysAverageFocusTimes(30).distinctUntilChanged()
 
     val lastWeekSummaryChartData =
         Pair(CartesianChartModelProducer(), ExtraStore.Key<List<String>>())
@@ -48,7 +50,12 @@ class StatsViewModel(
                 .collect { list ->
                     // reversing is required because we need ascending order while the DB returns descending order
                     val reversed = list.reversed()
-                    val keys = reversed.map { it.date.format(dayFormatter) }
+                    val keys = reversed.map {
+                        it.date.dayOfWeek.getDisplayName(
+                            TextStyle.NARROW,
+                            Locale.getDefault()
+                        )
+                    }
                     val values = reversed.map { it.focusTime }
                     lastWeekSummaryChartData.first.runTransaction {
                         columnSeries { series(values) }

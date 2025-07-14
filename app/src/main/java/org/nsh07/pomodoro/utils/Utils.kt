@@ -10,24 +10,30 @@ package org.nsh07.pomodoro.utils
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
-fun millisecondsToStr(t: Long): String =
-    String.format(
+fun millisecondsToStr(t: Long): String {
+    require(t >= 0L)
+    return String.format(
         Locale.getDefault(),
         "%02d:%02d",
         TimeUnit.MILLISECONDS.toMinutes(t),
         TimeUnit.MILLISECONDS.toSeconds(t) % TimeUnit.MINUTES.toSeconds(1)
     )
+}
 
-fun millisecondsToHours(t: Long): String =
-    String.format(
+fun millisecondsToHours(t: Long): String {
+    require(t >= 0L)
+    return String.format(
         Locale.getDefault(),
         "%dh",
         TimeUnit.MILLISECONDS.toHours(t)
     )
+}
 
-fun millisecondsToHoursMinutes(t: Long): String =
-    String.format(
+fun millisecondsToHoursMinutes(t: Long): String {
+    require(t >= 0L)
+    return String.format(
         Locale.getDefault(),
         "%dh %dm", TimeUnit.MILLISECONDS.toHours(t),
         TimeUnit.MILLISECONDS.toMinutes(t) % TimeUnit.HOURS.toMinutes(1)
     )
+}

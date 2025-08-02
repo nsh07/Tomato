@@ -1,10 +1,7 @@
-![Feature graphic](.github/repo_photos/banner.png)
-
-## About 🍅
-
----
-
 <div align="center">
+  <img src=".github/repo_photos/banner.png">
+
+## About
 
 Tomato is a minimalist Pomodoro timer for Android based on Material 3 Expressive.
 
@@ -14,9 +11,21 @@ Tomato is a minimalist Pomodoro timer for Android based on Material 3 Expressive
   </a>
 </p>
 
-</div>
+<br/>
 
----
+> *"It just might be the best looking timer app that I've ever seen"*
+
+\- [*HowToMen* on YouTube](https://www.youtube.com/watch?v=iwvHk4SUrMQ&t=280s)
+
+<br/>
+
+> *"It's probably the most minimal yet thoughtfully designed timer application I've used in a while"*
+
+\- [*Enoch Boateng* on YouTube](https://youtu.be/T1hOiBwyddo)
+
+<br/>
+
+</div>
 
 ## Screenshots
 

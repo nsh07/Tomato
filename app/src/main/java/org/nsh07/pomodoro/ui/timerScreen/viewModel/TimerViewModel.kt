@@ -225,10 +225,10 @@ class TimerViewModel(
     suspend fun saveTimeToDb() {
         when (timerState.value.timerMode) {
             TimerMode.FOCUS -> statRepository
-                .addFocusTime((timerState.value.totalTime - time.value).coerceAtLeast(0))
+                .addFocusTime((timerState.value.totalTime - time.value).coerceAtLeast(0L))
 
             else -> statRepository
-                .addBreakTime((timerState.value.totalTime - time.value).coerceAtLeast(0))
+                .addBreakTime((timerState.value.totalTime - time.value).coerceAtLeast(0L))
         }
     }
 

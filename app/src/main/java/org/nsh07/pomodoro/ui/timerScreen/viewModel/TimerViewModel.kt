@@ -7,7 +7,15 @@
 
 package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.os.SystemClock
+import androidx.annotation.RequiresPermission
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -23,6 +31,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.Stat
@@ -30,12 +39,16 @@ import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.TimerRepository
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import java.time.LocalDate
+import kotlin.math.ceil
+import kotlin.text.Typography.middleDot
 
 @OptIn(FlowPreview::class)
 class TimerViewModel(
     private val preferenceRepository: PreferenceRepository,
     private val statRepository: StatRepository,
-    private val timerRepository: TimerRepository
+    private val timerRepository: TimerRepository,
+    private val notificationBuilder: NotificationCompat.Builder,
+    private val notificationManager: NotificationManagerCompat
 ) : ViewModel() {
     // TODO: Document code
     private val _timerState = MutableStateFlow(
@@ -134,6 +147,7 @@ class TimerViewModel(
     private fun skipTimer() {
         viewModelScope.launch {
             saveTimeToDb()
+            showTimerNotification(0, paused = true, complete = true)
             startTime = 0L
             pauseTime = 0L
             pauseDuration = 0L
@@ -174,6 +188,7 @@ class TimerViewModel(
 
     private fun toggleTimer() {
         if (timerState.value.timerRunning) {
+            showTimerNotification(time.value.toInt(), paused = true)
             _timerState.update { currentState ->
                 currentState.copy(timerRunning = false)
             }
@@ -182,6 +197,8 @@ class TimerViewModel(
         } else {
             _timerState.update { it.copy(timerRunning = true) }
             if (pauseTime != 0L) pauseDuration += SystemClock.elapsedRealtime() - pauseTime
+
+            var iterations = -1
 
             timerJob = viewModelScope.launch {
                 while (true) {
@@ -200,6 +217,10 @@ class TimerViewModel(
                                 timerRepository.longBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
                         }
                     }
+
+                    iterations = (iterations + 1) % 50
+
+                    if (iterations == 0) showTimerNotification(time.value.toInt())
 
                     if (time.value < 0) {
                         skipTimer()
@@ -232,6 +253,67 @@ class TimerViewModel(
         }
     }
 
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+    fun showTimerNotification(
+        remainingTime: Int,
+        paused: Boolean = false,
+        complete: Boolean = false
+    ) {
+        val totalTime = when (timerState.value.timerMode) {
+            TimerMode.FOCUS -> timerRepository.focusTime.toInt()
+            TimerMode.SHORT_BREAK -> timerRepository.shortBreakTime.toInt()
+            else -> timerRepository.longBreakTime.toInt()
+        }
+
+        val currentTimer = when (timerState.value.timerMode) {
+            TimerMode.FOCUS -> "Focus"
+            TimerMode.SHORT_BREAK -> "Short break"
+            else -> "Long break"
+        }
+
+        val nextTimer = when (timerState.value.nextTimerMode) {
+            TimerMode.FOCUS -> "Focus"
+            TimerMode.SHORT_BREAK -> "Short break"
+            else -> "Long break"
+        }
+
+        notificationManager.notify(
+            1,
+            notificationBuilder
+                .setContentTitle("$currentTimer $middleDot  ${ceil(remainingTime.toFloat() / 60000f).toInt()} min remaining")
+                .setContentText("Up next: $nextTimer (${timerState.value.nextTimeStr})")
+                .setStyle(
+                    NotificationCompat.ProgressStyle()
+                        .also {
+                            for (i in 0..<timerRepository.sessionLength * 2) {
+                                if (i % 2 == 0) it.addProgressSegment(
+                                    NotificationCompat.ProgressStyle.Segment(
+                                        timerRepository.focusTime.toInt()
+                                    )
+                                )
+                                else if (i != (timerRepository.sessionLength * 2 - 1)) it.addProgressSegment(
+                                    NotificationCompat.ProgressStyle.Segment(timerRepository.shortBreakTime.toInt())
+                                )
+                                else it.addProgressSegment(
+                                    NotificationCompat.ProgressStyle.Segment(
+                                        timerRepository.longBreakTime.toInt()
+                                    )
+                                )
+                            }
+                        }
+                        .setProgress(
+                            (totalTime - remainingTime) +
+                                    ((cycles + 1) / 2) * timerRepository.focusTime.toInt() +
+                                    (cycles / 2) * timerRepository.shortBreakTime.toInt()
+                        )
+                )
+                .setShowWhen(true)
+                .setShortCriticalText("${remainingTime / 60000} min")
+                .setSilent(true)
+                .build()
+        )
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -240,10 +322,27 @@ class TimerViewModel(
                 val appStatRepository = application.container.appStatRepository
                 val appTimerRepository = application.container.appTimerRepository
 
+                val notificationManager = NotificationManagerCompat.from(application)
+
+                val notificationChannel = NotificationChannel(
+                    "timer",
+                    "Timer progress",
+                    NotificationManager.IMPORTANCE_DEFAULT
+                )
+
+                notificationManager.createNotificationChannel(notificationChannel)
+
+                val notificationBuilder = NotificationCompat.Builder(application, "timer")
+                    .setSmallIcon(R.drawable.hourglass_filled)
+                    .setOngoing(true)
+                    .setColor(Color.Red.toArgb())
+
                 TimerViewModel(
                     preferenceRepository = appPreferenceRepository,
                     statRepository = appStatRepository,
-                    timerRepository = appTimerRepository
+                    timerRepository = appTimerRepository,
+                    notificationBuilder = notificationBuilder,
+                    notificationManager = notificationManager
                 )
             }
         }

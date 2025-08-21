@@ -354,7 +354,7 @@ class TimerViewModel(
                 )
 
                 val notificationBuilder = NotificationCompat.Builder(application, "timer")
-                    .setSmallIcon(R.drawable.hourglass_filled)
+                    .setSmallIcon(R.drawable.tomato_logo_notification)
                     .setOngoing(true)
                     .setColor(Color.Red.toArgb())
                     .setContentIntent(contentIntent)

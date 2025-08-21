@@ -14,6 +14,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.os.SystemClock
 import androidx.annotation.RequiresPermission
+import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
@@ -72,6 +73,8 @@ class TimerViewModel(
     private var pauseTime = 0L
     private var pauseDuration = 0L
 
+    private lateinit var cs: ColorScheme
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             timerRepository.focusTime =
@@ -115,6 +118,10 @@ class TimerViewModel(
                 currentState.copy(showBrandTitle = false)
             }
         }
+    }
+
+    fun setCompositionLocals(colorScheme: ColorScheme) {
+        cs = colorScheme
     }
 
     fun onAction(action: TimerAction) {
@@ -299,15 +306,17 @@ class TimerViewModel(
                                 if (i % 2 == 0) it.addProgressSegment(
                                     NotificationCompat.ProgressStyle.Segment(
                                         timerRepository.focusTime.toInt()
-                                    )
+                                    ).setColor(cs.primary.toArgb())
                                 )
                                 else if (i != (timerRepository.sessionLength * 2 - 1)) it.addProgressSegment(
-                                    NotificationCompat.ProgressStyle.Segment(timerRepository.shortBreakTime.toInt())
+                                    NotificationCompat.ProgressStyle.Segment(
+                                        timerRepository.shortBreakTime.toInt()
+                                    ).setColor(cs.tertiary.toArgb())
                                 )
                                 else it.addProgressSegment(
                                     NotificationCompat.ProgressStyle.Segment(
                                         timerRepository.longBreakTime.toInt()
-                                    )
+                                    ).setColor(cs.tertiary.toArgb())
                                 )
                             }
                         }

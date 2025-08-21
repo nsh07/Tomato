@@ -42,7 +42,6 @@ import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.TimerRepository
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import java.time.LocalDate
-import kotlin.math.ceil
 import kotlin.text.Typography.middleDot
 
 @OptIn(FlowPreview::class)
@@ -282,7 +281,7 @@ class TimerViewModel(
 
         val remainingTimeString =
             if ((remainingTime.toFloat() / 60000f) < 1.0f) "< 1"
-            else ceil(remainingTime.toFloat() / 60000f).toInt()
+            else (remainingTime.toFloat() / 60000f).toInt()
 
         notificationManager.notify(
             1,
@@ -319,7 +318,7 @@ class TimerViewModel(
                         )
                 )
                 .setShowWhen(true)
-                .setShortCriticalText("${remainingTime / 60000} min")
+                .setWhen(System.currentTimeMillis() + remainingTime)
                 .setSilent(true)
                 .build()
         )
@@ -359,6 +358,8 @@ class TimerViewModel(
                     .setOngoing(true)
                     .setColor(Color.Red.toArgb())
                     .setContentIntent(contentIntent)
+                    .setRequestPromotedOngoing(true)
+                    .setOngoing(true)
 
                 TimerViewModel(
                     preferenceRepository = appPreferenceRepository,

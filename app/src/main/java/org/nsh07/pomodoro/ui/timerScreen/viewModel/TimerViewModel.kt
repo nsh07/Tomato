@@ -10,6 +10,8 @@ package org.nsh07.pomodoro.ui.timerScreen.viewModel
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Intent
 import android.os.SystemClock
 import androidx.annotation.RequiresPermission
 import androidx.compose.ui.graphics.Color
@@ -31,6 +33,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.nsh07.pomodoro.MainActivity
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.PreferenceRepository
@@ -277,10 +280,18 @@ class TimerViewModel(
             else -> "Long break"
         }
 
+        val remainingTimeString =
+            if ((remainingTime.toFloat() / 60000f) < 1.0f) "< 1"
+            else ceil(remainingTime.toFloat() / 60000f).toInt()
+
         notificationManager.notify(
             1,
             notificationBuilder
-                .setContentTitle("$currentTimer $middleDot  ${ceil(remainingTime.toFloat() / 60000f).toInt()} min remaining")
+                .setContentTitle(
+                    if (!complete) {
+                        "$currentTimer $middleDot  $remainingTimeString min remaining" + if (paused) "  $middleDot  Paused" else ""
+                    } else "$currentTimer $middleDot Completed"
+                )
                 .setContentText("Up next: $nextTimer (${timerState.value.nextTimeStr})")
                 .setStyle(
                     NotificationCompat.ProgressStyle()
@@ -327,15 +338,27 @@ class TimerViewModel(
                 val notificationChannel = NotificationChannel(
                     "timer",
                     "Timer progress",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_HIGH
                 )
 
                 notificationManager.createNotificationChannel(notificationChannel)
+
+                val openAppIntent = Intent(application, MainActivity::class.java)
+                openAppIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                openAppIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+
+                val contentIntent = PendingIntent.getActivity(
+                    application,
+                    System.currentTimeMillis().toInt(),
+                    openAppIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
 
                 val notificationBuilder = NotificationCompat.Builder(application, "timer")
                     .setSmallIcon(R.drawable.hourglass_filled)
                     .setOngoing(true)
                     .setColor(Color.Red.toArgb())
+                    .setContentIntent(contentIntent)
 
                 TimerViewModel(
                     preferenceRepository = appPreferenceRepository,

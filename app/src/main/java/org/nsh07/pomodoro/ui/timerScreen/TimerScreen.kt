@@ -7,6 +7,10 @@
 
 package org.nsh07.pomodoro.ui.timerScreen
 
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.slideInVertically
@@ -88,6 +92,11 @@ fun TimerScreen(
         if (timerState.timerMode == TimerMode.FOCUS) colorScheme.secondaryContainer
         else colorScheme.tertiaryContainer,
         animationSpec = motionScheme.slowEffectsSpec()
+    )
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = {}
     )
 
     Column(modifier = modifier) {
@@ -250,7 +259,12 @@ fun TimerScreen(
                     customItem(
                         {
                             FilledIconToggleButton(
-                                onCheckedChange = { onAction(TimerAction.ToggleTimer) },
+                                onCheckedChange = { checked ->
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checked) {
+                                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                    }
+                                    onAction(TimerAction.ToggleTimer)
+                                },
                                 checked = timerState.timerRunning,
                                 colors = IconButtonDefaults.filledIconToggleButtonColors(
                                     checkedContainerColor = color,

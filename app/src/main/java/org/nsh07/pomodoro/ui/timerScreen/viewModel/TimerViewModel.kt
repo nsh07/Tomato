@@ -7,13 +7,12 @@
 
 package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.SystemClock
-import androidx.annotation.RequiresPermission
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -53,7 +52,6 @@ class TimerViewModel(
     private val notificationBuilder: NotificationCompat.Builder,
     private val notificationManager: NotificationManagerCompat
 ) : ViewModel() {
-    // TODO: Document code
     private val _timerState = MutableStateFlow(
         TimerState(
             totalTime = timerRepository.focusTime,
@@ -262,7 +260,7 @@ class TimerViewModel(
         }
     }
 
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+    @SuppressLint("MissingPermission") // We check for the permission when pressing the Play button in the UI
     fun showTimerNotification(
         remainingTime: Int,
         paused: Boolean = false,
@@ -302,6 +300,7 @@ class TimerViewModel(
                 .setStyle(
                     NotificationCompat.ProgressStyle()
                         .also {
+                            // Add all the Focus, Short break and long break intervals in order
                             for (i in 0..<timerRepository.sessionLength * 2) {
                                 if (i % 2 == 0) it.addProgressSegment(
                                     NotificationCompat.ProgressStyle.Segment(
@@ -320,14 +319,14 @@ class TimerViewModel(
                                 )
                             }
                         }
-                        .setProgress(
+                        .setProgress( // Set the current progress by filling the previous intervals and part of the current interval
                             (totalTime - remainingTime) +
                                     ((cycles + 1) / 2) * timerRepository.focusTime.toInt() +
                                     (cycles / 2) * timerRepository.shortBreakTime.toInt()
                         )
                 )
                 .setShowWhen(true)
-                .setWhen(System.currentTimeMillis() + remainingTime)
+                .setWhen(System.currentTimeMillis() + remainingTime) // Sets the Live Activity/Now Bar chip time
                 .setSilent(true)
                 .build()
         )

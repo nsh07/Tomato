@@ -327,7 +327,7 @@ class TimerViewModel(
                 )
                 .setShowWhen(true)
                 .setWhen(System.currentTimeMillis() + remainingTime) // Sets the Live Activity/Now Bar chip time
-                .setSilent(true)
+                .setSilent(!complete)
                 .build()
         )
     }

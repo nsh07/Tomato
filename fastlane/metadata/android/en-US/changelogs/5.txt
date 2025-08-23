@@ -1,0 +1,3 @@
+New features:
+- New timer notification that supports Now Bar on Samsung devices and Live Updates on other devices running on Android 16 or later
+- Notification sound now plays whenever a timer interval is complete

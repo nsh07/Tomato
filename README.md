@@ -50,8 +50,8 @@ Tomato is a minimalist Pomodoro timer for Android based on Material 3 Expressive
 
 ## Download
 
-- **F-Droid** (recommended): Tomato is not yet available on the official F-Droid repository.
-  Instead, you can currently install it through
+- **F-Droid** (recommended): Tomato is available on the official F-Droid repository. Simply open your preferred F-Droid app and search for Tomato.
+  Updates on F-Droid are generally a week late. To get faster updates, you can install it through
   the [IzzyOnDroid repository](https://apt.izzysoft.de/fdroid/).
 - **Obtainium** (recommended): You can add this GitHub repository
   on [Obtainium](https://obtainium.imranr.dev/) to get updates directly from GitHub releases. This

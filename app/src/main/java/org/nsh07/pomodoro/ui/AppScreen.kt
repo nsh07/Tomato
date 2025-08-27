@@ -160,6 +160,7 @@ fun AppScreen(
 
                 entry<Screen.Stats> {
                     StatsScreenRoot(
+                        contentPadding = contentPadding,
                         viewModel = statsViewModel,
                         modifier = modifier.padding(
                             start = contentPadding.calculateStartPadding(layoutDirection),

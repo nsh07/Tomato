@@ -10,5 +10,6 @@ package org.nsh07.pomodoro.ui.timerScreen.viewModel
 sealed interface TimerAction {
     data object ResetTimer : TimerAction
     data object SkipTimer : TimerAction
+    data object StopAlarm : TimerAction
     data object ToggleTimer : TimerAction
 }

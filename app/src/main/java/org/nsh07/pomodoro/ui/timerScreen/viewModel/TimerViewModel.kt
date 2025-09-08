@@ -8,19 +8,23 @@
 package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.SystemClock
+import android.provider.Settings
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -46,12 +50,13 @@ import kotlin.text.Typography.middleDot
 
 @OptIn(FlowPreview::class)
 class TimerViewModel(
+    application: Application,
     private val preferenceRepository: PreferenceRepository,
     private val statRepository: StatRepository,
     private val timerRepository: TimerRepository,
     private val notificationBuilder: NotificationCompat.Builder,
     private val notificationManager: NotificationManagerCompat
-) : ViewModel() {
+) : AndroidViewModel(application) {
     private val _timerState = MutableStateFlow(
         TimerState(
             totalTime = timerRepository.focusTime,
@@ -72,6 +77,11 @@ class TimerViewModel(
     private var pauseDuration = 0L
 
     private lateinit var cs: ColorScheme
+
+    private val alarm = MediaPlayer.create(
+        this.application,
+        Settings.System.DEFAULT_ALARM_ALERT_URI ?: Settings.System.DEFAULT_RINGTONE_URI
+    )
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -126,6 +136,7 @@ class TimerViewModel(
         when (action) {
             TimerAction.ResetTimer -> resetTimer()
             TimerAction.SkipTimer -> skipTimer()
+            TimerAction.StopAlarm -> stopAlarm()
             TimerAction.ToggleTimer -> toggleTimer()
         }
     }
@@ -331,9 +342,24 @@ class TimerViewModel(
                 )
                 .setShowWhen(true)
                 .setWhen(System.currentTimeMillis() + remainingTime) // Sets the Live Activity/Now Bar chip time
-                .setSilent(!complete)
+                .setSilent(true)
                 .build()
         )
+
+        if (complete) {
+            alarm.start()
+            _timerState.update { currentState ->
+                currentState.copy(alarmRinging = true)
+            }
+        }
+    }
+
+    fun stopAlarm() {
+        alarm.pause()
+        alarm.seekTo(0)
+        _timerState.update { currentState ->
+            currentState.copy(alarmRinging = false)
+        }
     }
 
     companion object {
@@ -374,6 +400,7 @@ class TimerViewModel(
                     .setOngoing(true)
 
                 TimerViewModel(
+                    application = application,
                     preferenceRepository = appPreferenceRepository,
                     statRepository = appStatRepository,
                     timerRepository = appTimerRepository,

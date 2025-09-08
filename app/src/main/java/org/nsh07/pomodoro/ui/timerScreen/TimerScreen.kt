@@ -395,7 +395,7 @@ fun TimerScreen(
                     customItem(
                         {
                             FilledTonalIconButton(
-                                onClick = { onAction(TimerAction.SkipTimer) },
+                                onClick = { onAction(TimerAction.SkipTimer(fromButton = true)) },
                                 colors = IconButtonDefaults.filledTonalIconButtonColors(
                                     containerColor = colorContainer
                                 ),
@@ -422,7 +422,7 @@ fun TimerScreen(
                                 },
                                 text = { Text("Skip to next") },
                                 onClick = {
-                                    onAction(TimerAction.SkipTimer)
+                                    onAction(TimerAction.SkipTimer(fromButton = true))
                                     state.dismiss()
                                 }
                             )

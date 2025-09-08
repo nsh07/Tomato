@@ -134,8 +134,9 @@ class TimerViewModel(
 
     fun onAction(action: TimerAction) {
         when (action) {
+            is TimerAction.SkipTimer -> skipTimer(action.fromButton)
+
             TimerAction.ResetTimer -> resetTimer()
-            TimerAction.SkipTimer -> skipTimer()
             TimerAction.StopAlarm -> stopAlarm()
             TimerAction.ToggleTimer -> toggleTimer()
         }
@@ -164,10 +165,10 @@ class TimerViewModel(
         }
     }
 
-    private fun skipTimer() {
+    private fun skipTimer(fromButton: Boolean = false) {
         viewModelScope.launch {
             saveTimeToDb()
-            showTimerNotification(0, paused = true, complete = true)
+            showTimerNotification(0, paused = true, complete = !fromButton)
             startTime = 0L
             pauseTime = 0L
             pauseDuration = 0L

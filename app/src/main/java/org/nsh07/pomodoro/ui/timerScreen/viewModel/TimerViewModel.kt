@@ -145,7 +145,9 @@ class TimerViewModel(
                     timeStr = millisecondsToStr(time.value),
                     totalTime = time.value,
                     nextTimerMode = if (timerRepository.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
-                    nextTimeStr = millisecondsToStr(if (timerRepository.sessionLength > 1) timerRepository.shortBreakTime else timerRepository.longBreakTime)
+                    nextTimeStr = millisecondsToStr(if (timerRepository.sessionLength > 1) timerRepository.shortBreakTime else timerRepository.longBreakTime),
+                    currentFocusCount = 1,
+                    totalFocusCount = timerRepository.sessionLength
                 )
             }
         }
@@ -173,7 +175,9 @@ class TimerViewModel(
                             timerRepository.longBreakTime
                         ) else millisecondsToStr(
                             timerRepository.shortBreakTime
-                        )
+                        ),
+                        currentFocusCount = cycles / 2 + 1,
+                        totalFocusCount = timerRepository.sessionLength
                     )
                 }
             } else {

@@ -14,7 +14,9 @@ data class TimerState(
     val timerRunning: Boolean = false,
     val nextTimerMode: TimerMode = TimerMode.SHORT_BREAK,
     val nextTimeStr: String = "5:00",
-    val showBrandTitle: Boolean = true
+    val showBrandTitle: Boolean = true,
+    val currentFocusCount: Int = 1,
+    val totalFocusCount: Int = 4
 )
 
 enum class TimerMode {

@@ -258,9 +258,10 @@ fun TimerScreen(
                                     shrinkVertically(motionScheme.defaultSpatialSpec())
                         ) {
                             Text(
-                                "1 of 4",
+                                "${timerState.currentFocusCount} of ${timerState.totalFocusCount}",
                                 fontFamily = openRundeClock,
-                                style = typography.titleLarge
+                                style = typography.titleLarge,
+                                color = colorScheme.outline
                             )
                         }
                     }

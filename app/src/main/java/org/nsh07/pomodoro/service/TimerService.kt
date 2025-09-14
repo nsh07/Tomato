@@ -139,7 +139,7 @@ class TimerService : Service() {
                         else -> timerRepository.longBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
                     }
 
-                    iterations = (iterations + 1) % 50
+                    iterations = (iterations + 1) % 10
 
                     if (iterations == 0) showTimerNotification(time.toInt())
 
@@ -224,6 +224,7 @@ class TimerService : Service() {
                         )
                 )
                 .setWhen(System.currentTimeMillis() + remainingTime) // Sets the Live Activity/Now Bar chip time
+                .setShortCriticalText(millisecondsToStr(time))
                 .build()
         )
 

@@ -60,6 +60,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
+import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -120,7 +122,7 @@ private fun SettingsScreen(
                 )
             },
             subtitle = {},
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = colorScheme.surfaceContainer),
+            colors = topBarColors,
             titleHorizontalAlignment = Alignment.CenterHorizontally,
             scrollBehavior = scrollBehavior
         )
@@ -128,7 +130,7 @@ private fun SettingsScreen(
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier
-                .background(colorScheme.surfaceContainer)
+                .background(topBarColors.containerColor)
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
@@ -221,6 +223,7 @@ private fun SettingsScreen(
                             )
                         }
                     },
+                    colors = listItemColors,
                     modifier = Modifier.clip(shapes.large)
                 )
             }

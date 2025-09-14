@@ -12,8 +12,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -64,6 +66,7 @@ import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 
 @Composable
 fun StatsScreenRoot(
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     viewModel: StatsViewModel = viewModel(factory = StatsViewModel.Factory)
 ) {
@@ -74,6 +77,7 @@ fun StatsScreenRoot(
         .lastMonthAverageFocusTimes.collectAsStateWithLifecycle(null)
 
     StatsScreen(
+        contentPadding = contentPadding,
         lastWeekSummaryChartData = remember { viewModel.lastWeekSummaryChartData },
         lastWeekSummaryAnalysisModelProducer = remember { viewModel.lastWeekSummaryAnalysisModelProducer },
         lastMonthSummaryChartData = remember { viewModel.lastMonthSummaryChartData },
@@ -88,6 +92,7 @@ fun StatsScreenRoot(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun StatsScreen(
+    contentPadding: PaddingValues,
     lastWeekSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     lastWeekSummaryAnalysisModelProducer: CartesianChartModelProducer,
     lastMonthSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
@@ -114,12 +119,16 @@ fun StatsScreen(
                         fontFamily = robotoFlexTopBar,
                         fontSize = 32.sp,
                         lineHeight = 32.sp
-                    )
+                    ),
+                    modifier = Modifier
+                        .padding(top = contentPadding.calculateTopPadding())
+                        .padding(vertical = 14.dp)
                 )
             },
             subtitle = {},
             titleHorizontalAlignment = Alignment.CenterHorizontally,
-            scrollBehavior = scrollBehavior
+            scrollBehavior = scrollBehavior,
+            windowInsets = WindowInsets()
         )
 
         LazyColumn(
@@ -356,6 +365,7 @@ fun StatsScreenPreview() {
     }
 
     StatsScreen(
+        PaddingValues(),
         Pair(modelProducer, ExtraStore.Key()),
         modelProducer,
         Pair(modelProducer, ExtraStore.Key()),

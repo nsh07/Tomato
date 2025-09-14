@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
+import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -59,7 +60,7 @@ fun MinuteInputField(
                     .background(
                         animateColorAsState(
                             if (state.text.isNotEmpty())
-                                colorScheme.surface
+                                listItemColors.containerColor
                             else colorScheme.errorContainer,
                             motionScheme.defaultEffectsSpec()
                         ).value,

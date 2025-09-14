@@ -1,0 +1,16 @@
+<!--
+  ~ Copyright (c) 2025 Nishant Mishra
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+    <path
+        android:fillColor="#e3e3e3"
+        android:pathData="M520,504v-144q0,-17 -11.5,-28.5T480,320q-17,0 -28.5,11.5T440,360v159q0,8 3,15.5t9,13.5l112,112q11,11 28,11t28,-11q11,-11 11,-28t-11,-28L520,504ZM480,880q-75,0 -140.5,-28.5t-114,-77q-48.5,-48.5 -77,-114T120,520q0,-75 28.5,-140.5t77,-114q48.5,-48.5 114,-77T480,160q75,0 140.5,28.5t114,77q48.5,48.5 77,114T840,520q0,75 -28.5,140.5t-77,114q-48.5,48.5 -114,77T480,880ZM82,292q-11,-11 -11,-28t11,-28l114,-114q11,-11 28,-11t28,11q11,11 11,28t-11,28L138,292q-11,11 -28,11t-28,-11ZM878,292q-11,11 -28,11t-28,-11L708,178q-11,-11 -11,-28t11,-28q11,-11 28,-11t28,11l114,114q11,11 11,28t-11,28Z" />
+</vector>

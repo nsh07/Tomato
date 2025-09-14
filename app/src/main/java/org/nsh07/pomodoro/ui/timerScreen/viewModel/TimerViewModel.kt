@@ -7,38 +7,22 @@
 
 package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Intent
-import android.media.MediaPlayer
-import android.os.SystemClock
-import android.provider.Settings
 import androidx.compose.material3.ColorScheme
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.nsh07.pomodoro.MainActivity
-import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.Stat
@@ -46,7 +30,6 @@ import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.TimerRepository
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import java.time.LocalDate
-import kotlin.text.Typography.middleDot
 
 @OptIn(FlowPreview::class)
 class TimerViewModel(
@@ -54,20 +37,10 @@ class TimerViewModel(
     private val preferenceRepository: PreferenceRepository,
     private val statRepository: StatRepository,
     private val timerRepository: TimerRepository,
-    private val notificationBuilder: NotificationCompat.Builder,
-    private val notificationManager: NotificationManagerCompat
+    private val _timerState: MutableStateFlow<TimerState>,
+    private val _time: MutableStateFlow<Long>
 ) : AndroidViewModel(application) {
-    private val _timerState = MutableStateFlow(
-        TimerState(
-            totalTime = timerRepository.focusTime,
-            timeStr = millisecondsToStr(timerRepository.focusTime),
-            nextTimeStr = millisecondsToStr(timerRepository.shortBreakTime)
-        )
-    )
-
     val timerState: StateFlow<TimerState> = _timerState.asStateFlow()
-    var timerJob: Job? = null
-    private val _time = MutableStateFlow(timerRepository.focusTime)
 
     val time: StateFlow<Long> = _time.asStateFlow()
     private var cycles = 0
@@ -77,11 +50,6 @@ class TimerViewModel(
     private var pauseDuration = 0L
 
     private lateinit var cs: ColorScheme
-
-    private val alarm = MediaPlayer.create(
-        this.application,
-        Settings.System.DEFAULT_ALARM_ALERT_URI ?: Settings.System.DEFAULT_RINGTONE_URI
-    )
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -132,16 +100,6 @@ class TimerViewModel(
         cs = colorScheme
     }
 
-    fun onAction(action: TimerAction) {
-        when (action) {
-            is TimerAction.SkipTimer -> skipTimer(action.fromButton)
-
-            TimerAction.ResetTimer -> resetTimer()
-            TimerAction.StopAlarm -> stopAlarm()
-            TimerAction.ToggleTimer -> toggleTimer()
-        }
-    }
-
     private fun resetTimer() {
         viewModelScope.launch {
             saveTimeToDb()
@@ -165,107 +123,6 @@ class TimerViewModel(
         }
     }
 
-    private fun skipTimer(fromButton: Boolean = false) {
-        viewModelScope.launch {
-            saveTimeToDb()
-            showTimerNotification(0, paused = true, complete = !fromButton)
-            startTime = 0L
-            pauseTime = 0L
-            pauseDuration = 0L
-
-            cycles = (cycles + 1) % (timerRepository.sessionLength * 2)
-
-            if (cycles % 2 == 0) {
-                _time.update { timerRepository.focusTime }
-                _timerState.update { currentState ->
-                    currentState.copy(
-                        timerMode = TimerMode.FOCUS,
-                        timeStr = millisecondsToStr(time.value),
-                        totalTime = time.value,
-                        nextTimerMode = if (cycles == (timerRepository.sessionLength - 1) * 2) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                        nextTimeStr = if (cycles == (timerRepository.sessionLength - 1) * 2) millisecondsToStr(
-                            timerRepository.longBreakTime
-                        ) else millisecondsToStr(
-                            timerRepository.shortBreakTime
-                        ),
-                        currentFocusCount = cycles / 2 + 1,
-                        totalFocusCount = timerRepository.sessionLength
-                    )
-                }
-            } else {
-                val long = cycles == (timerRepository.sessionLength * 2) - 1
-                _time.update { if (long) timerRepository.longBreakTime else timerRepository.shortBreakTime }
-
-                _timerState.update { currentState ->
-                    currentState.copy(
-                        timerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                        timeStr = millisecondsToStr(time.value),
-                        totalTime = time.value,
-                        nextTimerMode = TimerMode.FOCUS,
-                        nextTimeStr = millisecondsToStr(timerRepository.focusTime)
-                    )
-                }
-            }
-        }
-    }
-
-    private fun toggleTimer() {
-        if (timerState.value.timerRunning) {
-            showTimerNotification(time.value.toInt(), paused = true)
-            _timerState.update { currentState ->
-                currentState.copy(timerRunning = false)
-            }
-            timerJob?.cancel()
-            pauseTime = SystemClock.elapsedRealtime()
-        } else {
-            _timerState.update { it.copy(timerRunning = true) }
-            if (pauseTime != 0L) pauseDuration += SystemClock.elapsedRealtime() - pauseTime
-
-            var iterations = -1
-
-            timerJob = viewModelScope.launch {
-                while (true) {
-                    if (!timerState.value.timerRunning) break
-                    if (startTime == 0L) startTime = SystemClock.elapsedRealtime()
-
-                    _time.update {
-                        when (timerState.value.timerMode) {
-                            TimerMode.FOCUS ->
-                                timerRepository.focusTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
-
-                            TimerMode.SHORT_BREAK ->
-                                timerRepository.shortBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
-
-                            else ->
-                                timerRepository.longBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
-                        }
-                    }
-
-                    iterations = (iterations + 1) % 50
-
-                    if (iterations == 0) showTimerNotification(time.value.toInt())
-
-                    if (time.value < 0) {
-                        skipTimer()
-
-                        _timerState.update { currentState ->
-                            currentState.copy(timerRunning = false)
-                        }
-                        timerJob?.cancel()
-                    } else {
-                        _timerState.update { currentState ->
-                            currentState.copy(
-                                timeStr = millisecondsToStr(time.value)
-                            )
-                        }
-                    }
-
-                    delay(100)
-                }
-            }
-        }
-    }
-
     suspend fun saveTimeToDb() {
         when (timerState.value.timerMode) {
             TimerMode.FOCUS -> statRepository
@@ -276,93 +133,6 @@ class TimerViewModel(
         }
     }
 
-    @SuppressLint("MissingPermission") // We check for the permission when pressing the Play button in the UI
-    fun showTimerNotification(
-        remainingTime: Int,
-        paused: Boolean = false,
-        complete: Boolean = false
-    ) {
-        val totalTime = when (timerState.value.timerMode) {
-            TimerMode.FOCUS -> timerRepository.focusTime.toInt()
-            TimerMode.SHORT_BREAK -> timerRepository.shortBreakTime.toInt()
-            else -> timerRepository.longBreakTime.toInt()
-        }
-
-        val currentTimer = when (timerState.value.timerMode) {
-            TimerMode.FOCUS -> "Focus"
-            TimerMode.SHORT_BREAK -> "Short break"
-            else -> "Long break"
-        }
-
-        val nextTimer = when (timerState.value.nextTimerMode) {
-            TimerMode.FOCUS -> "Focus"
-            TimerMode.SHORT_BREAK -> "Short break"
-            else -> "Long break"
-        }
-
-        val remainingTimeString =
-            if ((remainingTime.toFloat() / 60000f) < 1.0f) "< 1"
-            else (remainingTime.toFloat() / 60000f).toInt()
-
-        notificationManager.notify(
-            1,
-            notificationBuilder
-                .setContentTitle(
-                    if (!complete) {
-                        "$currentTimer $middleDot  $remainingTimeString min remaining" + if (paused) "  $middleDot  Paused" else ""
-                    } else "$currentTimer $middleDot Completed"
-                )
-                .setContentText("Up next: $nextTimer (${timerState.value.nextTimeStr})")
-                .setStyle(
-                    NotificationCompat.ProgressStyle()
-                        .also {
-                            // Add all the Focus, Short break and long break intervals in order
-                            for (i in 0..<timerRepository.sessionLength * 2) {
-                                if (i % 2 == 0) it.addProgressSegment(
-                                    NotificationCompat.ProgressStyle.Segment(
-                                        timerRepository.focusTime.toInt()
-                                    ).setColor(cs.primary.toArgb())
-                                )
-                                else if (i != (timerRepository.sessionLength * 2 - 1)) it.addProgressSegment(
-                                    NotificationCompat.ProgressStyle.Segment(
-                                        timerRepository.shortBreakTime.toInt()
-                                    ).setColor(cs.tertiary.toArgb())
-                                )
-                                else it.addProgressSegment(
-                                    NotificationCompat.ProgressStyle.Segment(
-                                        timerRepository.longBreakTime.toInt()
-                                    ).setColor(cs.tertiary.toArgb())
-                                )
-                            }
-                        }
-                        .setProgress( // Set the current progress by filling the previous intervals and part of the current interval
-                            (totalTime - remainingTime) +
-                                    ((cycles + 1) / 2) * timerRepository.focusTime.toInt() +
-                                    (cycles / 2) * timerRepository.shortBreakTime.toInt()
-                        )
-                )
-                .setShowWhen(true)
-                .setWhen(System.currentTimeMillis() + remainingTime) // Sets the Live Activity/Now Bar chip time
-                .setSilent(true)
-                .build()
-        )
-
-        if (complete) {
-            alarm.start()
-            _timerState.update { currentState ->
-                currentState.copy(alarmRinging = true)
-            }
-        }
-    }
-
-    fun stopAlarm() {
-        alarm.pause()
-        alarm.seekTo(0)
-        _timerState.update { currentState ->
-            currentState.copy(alarmRinging = false)
-        }
-    }
-
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -370,43 +140,16 @@ class TimerViewModel(
                 val appPreferenceRepository = application.container.appPreferenceRepository
                 val appStatRepository = application.container.appStatRepository
                 val appTimerRepository = application.container.appTimerRepository
-
-                val notificationManager = NotificationManagerCompat.from(application)
-
-                val notificationChannel = NotificationChannel(
-                    "timer",
-                    "Timer progress",
-                    NotificationManager.IMPORTANCE_HIGH
-                )
-
-                notificationManager.createNotificationChannel(notificationChannel)
-
-                val openAppIntent = Intent(application, MainActivity::class.java)
-                openAppIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                openAppIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-
-                val contentIntent = PendingIntent.getActivity(
-                    application,
-                    System.currentTimeMillis().toInt(),
-                    openAppIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
-
-                val notificationBuilder = NotificationCompat.Builder(application, "timer")
-                    .setSmallIcon(R.drawable.tomato_logo_notification)
-                    .setOngoing(true)
-                    .setColor(Color.Red.toArgb())
-                    .setContentIntent(contentIntent)
-                    .setRequestPromotedOngoing(true)
-                    .setOngoing(true)
+                val timerState = application.container.timerState
+                val time = application.container.time
 
                 TimerViewModel(
                     application = application,
                     preferenceRepository = appPreferenceRepository,
                     statRepository = appStatRepository,
                     timerRepository = appTimerRepository,
-                    notificationBuilder = notificationBuilder,
-                    notificationManager = notificationManager
+                    _timerState = timerState,
+                    _time = time
                 )
             }
         }

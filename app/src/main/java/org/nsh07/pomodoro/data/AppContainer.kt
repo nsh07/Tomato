@@ -15,6 +15,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.service.addTimerActions
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import org.nsh07.pomodoro.utils.millisecondsToStr
 
@@ -56,6 +57,7 @@ class DefaultAppContainer(context: Context) : AppContainer {
                     PendingIntent.FLAG_IMMUTABLE
                 )
             )
+            .addTimerActions(context, R.drawable.play, "Start")
             .setShowWhen(true)
             .setSilent(true)
             .setOngoing(true)

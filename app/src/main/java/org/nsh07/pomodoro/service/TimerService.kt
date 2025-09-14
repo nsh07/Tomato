@@ -7,7 +7,6 @@ import android.media.MediaPlayer
 import android.os.IBinder
 import android.os.SystemClock
 import android.provider.Settings
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.toArgb
@@ -23,6 +22,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.AppContainer
 import org.nsh07.pomodoro.data.StatRepository
@@ -32,7 +32,6 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import kotlin.text.Typography.middleDot
 
-@ExperimentalAnimationApi
 class TimerService : Service() {
     private lateinit var appContainer: AppContainer
 
@@ -108,6 +107,13 @@ class TimerService : Service() {
     }
 
     private fun toggleTimer() {
+        notificationBuilder
+            .clearActions()
+            .addTimerActions(
+                this,
+                if (timerState.value.timerRunning) R.drawable.pause else R.drawable.play,
+                if (timerState.value.timerRunning) "Stop" else "Start"
+            )
         if (timerState.value.timerRunning) {
             showTimerNotification(time.toInt(), paused = true)
             _timerState.update { currentState ->
@@ -324,14 +330,6 @@ class TimerService : Service() {
         notificationManager.cancel(1)
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
-    }
-
-    private fun setStopButton() {
-        // TODO
-    }
-
-    private fun setResumeButton() {
-        // TODO
     }
 
     override fun onDestroy() {

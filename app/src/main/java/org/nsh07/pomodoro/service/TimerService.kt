@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.AppContainer
 import org.nsh07.pomodoro.data.StatRepository
@@ -216,9 +217,7 @@ class TimerService : Service() {
                             (totalTime - remainingTime) + ((cycles + 1) / 2) * timerRepository.focusTime.toInt() + (cycles / 2) * timerRepository.shortBreakTime.toInt()
                         )
                 )
-                .setShowWhen(true)
                 .setWhen(System.currentTimeMillis() + remainingTime) // Sets the Live Activity/Now Bar chip time
-                .setSilent(true)
                 .build()
         )
 
@@ -337,7 +336,11 @@ class TimerService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        timerJob.cancel()
+        runBlocking {
+            timerJob.cancel()
+            saveTimeToDb()
+            notificationManager.cancel(1)
+        }
     }
 
     enum class Actions {

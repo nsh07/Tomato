@@ -46,10 +46,11 @@ class DefaultAppContainer(context: Context) : AppContainer {
     override val notificationBuilder: NotificationCompat.Builder by lazy {
         NotificationCompat.Builder(context, "timer")
             .setSmallIcon(R.drawable.tomato_logo_notification)
-            .setOngoing(true)
             .setColor(Color.Red.toArgb())
-            .setRequestPromotedOngoing(true)
+            .setShowWhen(true)
+            .setSilent(true)
             .setOngoing(true)
+            .setRequestPromotedOngoing(true)
     }
 
     override val timerState: MutableStateFlow<TimerState> by lazy {

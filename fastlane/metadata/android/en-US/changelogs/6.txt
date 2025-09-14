@@ -1,0 +1,9 @@
+New features:
+- The app now rings the system alarm sound when a timer completes
+- Clicking the timer clock now shows the current session count
+- The app can now stay in the background and the timer keeps running even when the app is closed
+- New notification buttons to control the timer without opening the app
+
+Fixes:
+- Current elapsed time is now saved in the stats when the app is closed while a timer is running
+- Live Updates/Now Bar now shows precisely how much time is remaining (in seconds)

@@ -205,7 +205,7 @@ fun TimerScreen(
                             color = color,
                             trackColor = colorContainer,
                             strokeWidth = 16.dp,
-                            gapSize = 16.dp
+                            gapSize = 8.dp
                         )
                     } else {
                         CircularWavyProgressIndicator(
@@ -229,7 +229,7 @@ fun TimerScreen(
                                 cap = StrokeCap.Round,
                             ),
                             wavelength = 60.dp,
-                            gapSize = 16.dp
+                            gapSize = 8.dp
                         )
                     }
                     var expanded by remember { mutableStateOf(timerState.showBrandTitle) }
@@ -300,10 +300,10 @@ fun TimerScreen(
                         {
                             FilledIconToggleButton(
                                 onCheckedChange = { checked ->
+                                    onAction(TimerAction.ToggleTimer)
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checked) {
                                         permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                                     }
-                                    onAction(TimerAction.ToggleTimer)
                                 },
                                 checked = timerState.timerRunning,
                                 colors = IconButtonDefaults.filledIconToggleButtonColors(

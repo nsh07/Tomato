@@ -19,44 +19,56 @@ fun NotificationCompat.Builder.addTimerActions(
     context: Context,
     @DrawableRes playPauseIcon: Int,
     playPauseText: String
-): NotificationCompat.Builder {
-    this
-        .addAction(
-            playPauseIcon,
-            playPauseText,
-            PendingIntent.getService(
-                context,
-                0,
-                Intent(context, TimerService::class.java).also {
-                    it.action = TimerService.Actions.TOGGLE.toString()
-                },
-                FLAG_IMMUTABLE
-            )
+): NotificationCompat.Builder = this
+    .addAction(
+        playPauseIcon,
+        playPauseText,
+        PendingIntent.getService(
+            context,
+            0,
+            Intent(context, TimerService::class.java).also {
+                it.action = TimerService.Actions.TOGGLE.toString()
+            },
+            FLAG_IMMUTABLE
         )
-        .addAction(
-            R.drawable.restart,
-            "Reset",
-            PendingIntent.getService(
-                context,
-                0,
-                Intent(context, TimerService::class.java).also {
-                    it.action = TimerService.Actions.RESET.toString()
-                },
-                FLAG_IMMUTABLE
-            )
+    )
+    .addAction(
+        R.drawable.restart,
+        "Reset",
+        PendingIntent.getService(
+            context,
+            0,
+            Intent(context, TimerService::class.java).also {
+                it.action = TimerService.Actions.RESET.toString()
+            },
+            FLAG_IMMUTABLE
         )
-        .addAction(
-            R.drawable.skip_next,
-            "Skip",
-            PendingIntent.getService(
-                context,
-                0,
-                Intent(context, TimerService::class.java).also {
-                    it.action = TimerService.Actions.SKIP.toString()
-                },
-                FLAG_IMMUTABLE
-            )
+    )
+    .addAction(
+        R.drawable.skip_next,
+        "Skip",
+        PendingIntent.getService(
+            context,
+            0,
+            Intent(context, TimerService::class.java).also {
+                it.action = TimerService.Actions.SKIP.toString()
+            },
+            FLAG_IMMUTABLE
         )
+    )
 
-    return this
-}
+fun NotificationCompat.Builder.addStopAlarmAction(
+    context: Context
+): NotificationCompat.Builder = this
+    .addAction(
+        R.drawable.alarm,
+        "Stop alarm",
+        PendingIntent.getService(
+            context,
+            0,
+            Intent(context, TimerService::class.java).also {
+                it.action = TimerService.Actions.STOP_ALARM.toString()
+            },
+            FLAG_IMMUTABLE
+        )
+    )

@@ -57,9 +57,9 @@ class TimerService : Service() {
     private var pauseTime = 0L
     private var pauseDuration = 0L
 
-    private val timerJob = SupervisorJob()
-    private val scope = CoroutineScope(Dispatchers.IO + timerJob)
-    private val skipScope = CoroutineScope(Dispatchers.IO)
+    private var job = SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.IO + job)
+    private val skipScope = CoroutineScope(Dispatchers.IO + job)
 
     private lateinit var alarm: MediaPlayer
 
@@ -145,11 +145,10 @@ class TimerService : Service() {
 
                     if (time < 0) {
                         skipTimer()
-
                         _timerState.update { currentState ->
                             currentState.copy(timerRunning = false)
                         }
-                        timerJob.cancel()
+                        break
                     } else {
                         _timerState.update { currentState ->
                             currentState.copy(
@@ -168,6 +167,8 @@ class TimerService : Service() {
     fun showTimerNotification(
         remainingTime: Int, paused: Boolean = false, complete: Boolean = false
     ) {
+        if (complete) notificationBuilder.clearActions().addStopAlarmAction(this)
+
         val totalTime = when (timerState.value.timerMode) {
             TimerMode.FOCUS -> timerRepository.focusTime.toInt()
             TimerMode.SHORT_BREAK -> timerRepository.shortBreakTime.toInt()
@@ -224,7 +225,7 @@ class TimerService : Service() {
                         )
                 )
                 .setWhen(System.currentTimeMillis() + remainingTime) // Sets the Live Activity/Now Bar chip time
-                .setShortCriticalText(millisecondsToStr(time))
+                .setShortCriticalText(millisecondsToStr(time.coerceAtLeast(0)))
                 .build()
         )
 
@@ -309,6 +310,16 @@ class TimerService : Service() {
         _timerState.update { currentState ->
             currentState.copy(alarmRinging = false)
         }
+        notificationBuilder.clearActions().addTimerActions(this, R.drawable.play, "Start")
+        showTimerNotification(
+            when (timerState.value.timerMode) {
+                TimerMode.FOCUS -> timerRepository.focusTime.toInt()
+                TimerMode.SHORT_BREAK -> timerRepository.shortBreakTime.toInt()
+                else -> timerRepository.longBreakTime.toInt()
+            },
+            paused = true,
+            complete = false
+        )
     }
 
     suspend fun saveTimeToDb() {
@@ -336,7 +347,7 @@ class TimerService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         runBlocking {
-            timerJob.cancel()
+            job.cancel()
             saveTimeToDb()
             notificationManager.cancel(1)
         }

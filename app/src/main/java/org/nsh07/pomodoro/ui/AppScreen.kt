@@ -7,8 +7,10 @@
 
 package org.nsh07.pomodoro.ui
 
+import android.content.Intent
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleOut
@@ -33,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -44,19 +47,26 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass
 import org.nsh07.pomodoro.MainActivity.Companion.screens
+import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalAnimationApi::class
+)
 @Composable
 fun AppScreen(
     modifier: Modifier = Modifier,
     timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory),
     statsViewModel: StatsViewModel = viewModel(factory = StatsViewModel.Factory)
 ) {
+    val context = LocalContext.current
+
     val uiState by timerViewModel.timerState.collectAsStateWithLifecycle()
     val remainingTime by timerViewModel.time.collectAsStateWithLifecycle()
 
@@ -139,7 +149,33 @@ fun AppScreen(
                     TimerScreen(
                         timerState = uiState,
                         progress = { progress },
-                        onAction = timerViewModel::onAction,
+                        onAction = { action ->
+                            when (action) {
+                                TimerAction.ResetTimer ->
+                                    Intent(context, TimerService::class.java).also {
+                                        it.action = TimerService.Actions.RESET.toString()
+                                        context.startService(it)
+                                    }
+
+                                is TimerAction.SkipTimer ->
+                                    Intent(context, TimerService::class.java).also {
+                                        it.action = TimerService.Actions.SKIP.toString()
+                                        context.startService(it)
+                                    }
+
+                                TimerAction.StopAlarm ->
+                                    Intent(context, TimerService::class.java).also {
+                                        it.action = TimerService.Actions.STOP_ALARM.toString()
+                                        context.startService(it)
+                                    }
+
+                                TimerAction.ToggleTimer ->
+                                    Intent(context, TimerService::class.java).also {
+                                        it.action = TimerService.Actions.TOGGLE.toString()
+                                        context.startService(it)
+                                    }
+                            }
+                        },
                         modifier = modifier.padding(
                             start = contentPadding.calculateStartPadding(layoutDirection),
                             end = contentPadding.calculateEndPadding(layoutDirection),

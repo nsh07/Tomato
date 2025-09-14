@@ -7,6 +7,7 @@
 
 package org.nsh07.pomodoro.data
 
+import android.app.PendingIntent
 import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -47,6 +48,14 @@ class DefaultAppContainer(context: Context) : AppContainer {
         NotificationCompat.Builder(context, "timer")
             .setSmallIcon(R.drawable.tomato_logo_notification)
             .setColor(Color.Red.toArgb())
+            .setContentIntent(
+                PendingIntent.getActivity(
+                    context,
+                    0,
+                    context.packageManager.getLaunchIntentForPackage(context.packageName),
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+            )
             .setShowWhen(true)
             .setSilent(true)
             .setOngoing(true)

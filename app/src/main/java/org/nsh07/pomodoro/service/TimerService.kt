@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.IBinder
 import android.os.SystemClock
 import android.provider.Settings
@@ -107,20 +108,27 @@ class TimerService : Service() {
     }
 
     private fun toggleTimer() {
-        notificationBuilder
-            .clearActions()
-            .addTimerActions(
-                this,
-                if (timerState.value.timerRunning) R.drawable.pause else R.drawable.play,
-                if (timerState.value.timerRunning) "Stop" else "Start"
-            )
         if (timerState.value.timerRunning) {
+            notificationBuilder
+                .clearActions()
+                .addTimerActions(
+                    this,
+                    R.drawable.play,
+                    "Start"
+                )
             showTimerNotification(time.toInt(), paused = true)
             _timerState.update { currentState ->
                 currentState.copy(timerRunning = false)
             }
             pauseTime = SystemClock.elapsedRealtime()
         } else {
+            notificationBuilder
+                .clearActions()
+                .addTimerActions(
+                    this,
+                    R.drawable.pause,
+                    "Stop"
+                )
             _timerState.update { it.copy(timerRunning = true) }
             if (pauseTime != 0L) pauseDuration += SystemClock.elapsedRealtime() - pauseTime
 
@@ -202,26 +210,42 @@ class TimerService : Service() {
                 .setStyle(
                     NotificationCompat.ProgressStyle().also {
                         // Add all the Focus, Short break and long break intervals in order
-                        for (i in 0..<timerRepository.sessionLength * 2) {
-                            if (i % 2 == 0) it.addProgressSegment(
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                            // Android 16 and later supports live updates
+                            // Set progress bar sections if on Baklava or later
+                            for (i in 0..<timerRepository.sessionLength * 2) {
+                                if (i % 2 == 0) it.addProgressSegment(
+                                    NotificationCompat.ProgressStyle.Segment(
+                                        timerRepository.focusTime.toInt()
+                                    ).setColor(cs.primary.toArgb())
+                                )
+                                else if (i != (timerRepository.sessionLength * 2 - 1)) it.addProgressSegment(
+                                    NotificationCompat.ProgressStyle.Segment(
+                                        timerRepository.shortBreakTime.toInt()
+                                    ).setColor(cs.tertiary.toArgb())
+                                )
+                                else it.addProgressSegment(
+                                    NotificationCompat.ProgressStyle.Segment(
+                                        timerRepository.longBreakTime.toInt()
+                                    ).setColor(cs.tertiary.toArgb())
+                                )
+                            }
+                        } else {
+                            it.addProgressSegment(
                                 NotificationCompat.ProgressStyle.Segment(
-                                    timerRepository.focusTime.toInt()
-                                ).setColor(cs.primary.toArgb())
-                            )
-                            else if (i != (timerRepository.sessionLength * 2 - 1)) it.addProgressSegment(
-                                NotificationCompat.ProgressStyle.Segment(
-                                    timerRepository.shortBreakTime.toInt()
-                                ).setColor(cs.tertiary.toArgb())
-                            )
-                            else it.addProgressSegment(
-                                NotificationCompat.ProgressStyle.Segment(
-                                    timerRepository.longBreakTime.toInt()
-                                ).setColor(cs.tertiary.toArgb())
+                                    when (timerState.value.timerMode) {
+                                        TimerMode.FOCUS -> timerRepository.focusTime.toInt()
+                                        TimerMode.SHORT_BREAK -> timerRepository.shortBreakTime.toInt()
+                                        else -> timerRepository.longBreakTime.toInt()
+                                    }
+                                )
                             )
                         }
                     }
                         .setProgress( // Set the current progress by filling the previous intervals and part of the current interval
-                            (totalTime - remainingTime) + ((cycles + 1) / 2) * timerRepository.focusTime.toInt() + (cycles / 2) * timerRepository.shortBreakTime.toInt()
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                                (totalTime - remainingTime) + ((cycles + 1) / 2) * timerRepository.focusTime.toInt() + (cycles / 2) * timerRepository.shortBreakTime.toInt()
+                            } else (totalTime - remainingTime)
                         )
                 )
                 .setWhen(System.currentTimeMillis() + remainingTime) // Sets the Live Activity/Now Bar chip time
@@ -310,7 +334,7 @@ class TimerService : Service() {
         _timerState.update { currentState ->
             currentState.copy(alarmRinging = false)
         }
-        notificationBuilder.clearActions().addTimerActions(this, R.drawable.play, "Start")
+        notificationBuilder.clearActions().addTimerActions(this, R.drawable.play, "Start next")
         showTimerNotification(
             when (timerState.value.timerMode) {
                 TimerMode.FOCUS -> timerRepository.focusTime.toInt()

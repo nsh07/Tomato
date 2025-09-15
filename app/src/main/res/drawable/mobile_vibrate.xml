@@ -1,0 +1,16 @@
+<!--
+  ~ Copyright (c) 2025 Nishant Mishra
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+    <path
+        android:fillColor="#e3e3e3"
+        android:pathData="M320,840q-33,0 -56.5,-23.5T240,760v-560q0,-33 23.5,-56.5T320,120h320q33,0 56.5,23.5T720,200v560q0,33 -23.5,56.5T640,840L320,840ZM480,320q17,0 28.5,-11.5T520,280q0,-17 -11.5,-28.5T480,240q-17,0 -28.5,11.5T440,280q0,17 11.5,28.5T480,320ZM0,560v-160q0,-17 11.5,-28.5T40,360q17,0 28.5,11.5T80,400v160q0,17 -11.5,28.5T40,600q-17,0 -28.5,-11.5T0,560ZM120,640v-320q0,-17 11.5,-28.5T160,280q17,0 28.5,11.5T200,320v320q0,17 -11.5,28.5T160,680q-17,0 -28.5,-11.5T120,640ZM880,560v-160q0,-17 11.5,-28.5T920,360q17,0 28.5,11.5T960,400v160q0,17 -11.5,28.5T920,600q-17,0 -28.5,-11.5T880,560ZM760,640v-320q0,-17 11.5,-28.5T800,280q17,0 28.5,11.5T840,320v320q0,17 -11.5,28.5T800,680q-17,0 -28.5,-11.5T760,640Z" />
+</vector>

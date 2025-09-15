@@ -19,6 +19,9 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
@@ -43,6 +46,14 @@ class SettingsViewModel(
         valueRange = 1f..6f,
         onValueChangeFinished = ::updateSessionLength
     )
+
+    private val _alarmEnabled: MutableStateFlow<Boolean> =
+        MutableStateFlow(timerRepository.alarmEnabled)
+    val alarmEnabled: StateFlow<Boolean> = _alarmEnabled.asStateFlow()
+
+    private val _vibrateEnabled: MutableStateFlow<Boolean> =
+        MutableStateFlow(timerRepository.alarmEnabled)
+    val vibrateEnabled: StateFlow<Boolean> = _vibrateEnabled.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -89,6 +100,22 @@ class SettingsViewModel(
                 "session_length",
                 sessionsSliderState.value.toInt()
             )
+        }
+    }
+
+    fun saveAlarmEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            timerRepository.alarmEnabled = preferenceRepository
+                .saveIntPreference("alarm_enabled", if (enabled) 1 else 0) == 1
+            _alarmEnabled.value = enabled
+        }
+    }
+
+    fun saveVibrateEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            timerRepository.vibrateEnabled = preferenceRepository
+                .saveIntPreference("vibrate_enabled", if (enabled) 1 else 0) == 1
+            _vibrateEnabled.value = enabled
         }
     }
 

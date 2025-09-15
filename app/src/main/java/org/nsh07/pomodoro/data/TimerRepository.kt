@@ -17,6 +17,8 @@ interface TimerRepository {
     var longBreakTime: Long
     var sessionLength: Int
     var timerFrequency: Float
+    var alarmEnabled: Boolean
+    var vibrateEnabled: Boolean
 }
 
 /**
@@ -28,4 +30,6 @@ class AppTimerRepository : TimerRepository {
     override var longBreakTime = 15 * 60 * 1000L
     override var sessionLength = 4
     override var timerFrequency: Float = 10f
+    override var alarmEnabled = true
+    override var vibrateEnabled = true
 }

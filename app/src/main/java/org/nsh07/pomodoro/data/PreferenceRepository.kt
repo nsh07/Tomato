@@ -13,8 +13,8 @@ import kotlinx.coroutines.withContext
 
 /**
  * Interface for reading/writing app preferences to the app's database. This style of storage aims
- * to mimic the Preferences DataStore library, preventing the requirement of migration if the
- * database schema changes.
+ * to mimic the Preferences DataStore library, preventing the requirement of migration if new
+ * preferences are added
  */
 interface PreferenceRepository {
     /**

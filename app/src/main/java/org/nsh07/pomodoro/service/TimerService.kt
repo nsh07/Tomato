@@ -344,23 +344,28 @@ class TimerService : Service() {
     }
 
     fun startAlarm() {
-        alarm.start()
+        if (timerRepository.alarmEnabled) alarm.start()
 
-        if (!vibrator.hasVibrator()) {
-            return
+        if (timerRepository.vibrateEnabled) {
+            if (!vibrator.hasVibrator()) {
+                return
+            }
+            val vibrationPattern = longArrayOf(0, 1000, 1000, 1000)
+            val repeat = 2
+            val effect = VibrationEffect.createWaveform(vibrationPattern, repeat)
+            vibrator.vibrate(effect)
         }
-
-        val vibrationPattern = longArrayOf(0, 1000, 1000, 1000)
-        val repeat = 2
-
-        val effect = VibrationEffect.createWaveform(vibrationPattern, repeat)
-        vibrator.vibrate(effect)
     }
 
     fun stopAlarm() {
-        alarm.pause()
-        alarm.seekTo(0)
-        vibrator.cancel()
+        if (timerRepository.alarmEnabled) {
+            alarm.pause()
+            alarm.seekTo(0)
+        }
+
+        if (timerRepository.vibrateEnabled) {
+            vibrator.cancel()
+        }
 
         _timerState.update { currentState ->
             currentState.copy(alarmRinging = false)

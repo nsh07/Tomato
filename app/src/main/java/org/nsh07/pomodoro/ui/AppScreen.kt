@@ -47,6 +47,7 @@ import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
+import org.nsh07.pomodoro.ui.timerScreen.AlarmDialog
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
@@ -70,6 +71,14 @@ fun AppScreen(
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 
     val backStack = rememberNavBackStack<Screen>(Screen.Timer)
+
+    if (uiState.alarmRinging)
+        AlarmDialog {
+            Intent(context, TimerService::class.java).also {
+                it.action = TimerService.Actions.STOP_ALARM.toString()
+                context.startService(it)
+            }
+        }
 
     Scaffold(
         bottomBar = {

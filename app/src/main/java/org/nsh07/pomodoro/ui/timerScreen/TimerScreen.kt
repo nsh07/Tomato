@@ -114,9 +114,6 @@ fun TimerScreen(
         onResult = {}
     )
 
-    if (timerState.alarmRinging)
-        AlarmDialog { onAction(TimerAction.StopAlarm) }
-
     Column(modifier = modifier) {
         TopAppBar(
             title = {

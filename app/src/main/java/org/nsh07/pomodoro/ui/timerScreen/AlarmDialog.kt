@@ -69,7 +69,7 @@ fun AlarmDialog(
                     onClick = stopAlarm,
                     modifier = Modifier.align(Alignment.End),
                 ) {
-                    Text("Ok")
+                    Text("Dismiss")
                 }
             }
         }

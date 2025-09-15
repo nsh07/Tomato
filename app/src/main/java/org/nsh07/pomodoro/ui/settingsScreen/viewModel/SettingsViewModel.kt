@@ -20,10 +20,8 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.AppPreferenceRepository
@@ -48,16 +46,12 @@ class SettingsViewModel(
         onValueChangeFinished = ::updateSessionLength
     )
 
-    private val _alarmSound = MutableStateFlow(timerRepository.alarmSoundUri)
-    val alarmSound: StateFlow<Uri?> = _alarmSound.asStateFlow()
-
-    private val _alarmEnabled: MutableStateFlow<Boolean> =
-        MutableStateFlow(timerRepository.alarmEnabled)
-    val alarmEnabled: StateFlow<Boolean> = _alarmEnabled.asStateFlow()
-
-    private val _vibrateEnabled: MutableStateFlow<Boolean> =
-        MutableStateFlow(timerRepository.alarmEnabled)
-    val vibrateEnabled: StateFlow<Boolean> = _vibrateEnabled.asStateFlow()
+    val alarmSound =
+        preferenceRepository.getStringPreferenceFlow("alarm_sound").distinctUntilChanged()
+    val alarmEnabled =
+        preferenceRepository.getBooleanPreferenceFlow("alarm_enabled").distinctUntilChanged()
+    val vibrateEnabled =
+        preferenceRepository.getBooleanPreferenceFlow("vibrate_enabled").distinctUntilChanged()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -109,17 +103,15 @@ class SettingsViewModel(
 
     fun saveAlarmEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            timerRepository.alarmEnabled = preferenceRepository
-                .saveBooleanPreference("alarm_enabled", enabled)
-            _alarmEnabled.value = enabled
+            preferenceRepository.saveBooleanPreference("alarm_enabled", enabled)
+            timerRepository.alarmEnabled = enabled
         }
     }
 
     fun saveVibrateEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            timerRepository.vibrateEnabled = preferenceRepository
-                .saveBooleanPreference("vibrate_enabled", enabled)
-            _vibrateEnabled.value = enabled
+            preferenceRepository.saveBooleanPreference("vibrate_enabled", enabled)
+            timerRepository.vibrateEnabled = enabled
         }
     }
 
@@ -127,7 +119,6 @@ class SettingsViewModel(
         viewModelScope.launch {
             preferenceRepository.saveStringPreference("alarm_sound", uri.toString())
             timerRepository.alarmSoundUri = uri
-            _alarmSound.value = uri
         }
     }
 

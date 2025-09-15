@@ -9,6 +9,7 @@ package org.nsh07.pomodoro.data
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 /**
@@ -43,9 +44,19 @@ interface PreferenceRepository {
     suspend fun getBooleanPreference(key: String): Boolean?
 
     /**
+     * Retrieves a boolean preference key-value pair as a flow from the database.
+     */
+    fun getBooleanPreferenceFlow(key: String): Flow<Boolean>
+
+    /**
      * Retrieves a string preference key-value pair from the database.
      */
     suspend fun getStringPreference(key: String): String?
+
+    /**
+     * Retrieves a string preference key-value pair as a flow from the database.
+     */
+    fun getStringPreferenceFlow(key: String): Flow<String>
 
     /**
      * Erases all integer preference key-value pairs in the database. Do note that the default values
@@ -87,9 +98,15 @@ class AppPreferenceRepository(
         preferenceDao.getBooleanPreference(key)
     }
 
+    override fun getBooleanPreferenceFlow(key: String): Flow<Boolean> =
+        preferenceDao.getBooleanPreferenceFlow(key)
+
     override suspend fun getStringPreference(key: String): String? = withContext(ioDispatcher) {
         preferenceDao.getStringPreference(key)
     }
+
+    override fun getStringPreferenceFlow(key: String): Flow<String> =
+        preferenceDao.getStringPreferenceFlow(key)
 
     override suspend fun resetSettings() = withContext(ioDispatcher) {
         preferenceDao.resetIntPreferences()

@@ -71,6 +71,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.nsh07.pomodoro.R
@@ -101,9 +102,9 @@ fun SettingsScreenRoot(
         viewModel.longBreakTimeTextFieldState
     }
 
-    val alarmEnabled by viewModel.alarmEnabled.collectAsStateWithLifecycle()
-    val vibrateEnabled by viewModel.vibrateEnabled.collectAsStateWithLifecycle()
-    val alarmSound by viewModel.alarmSound.collectAsStateWithLifecycle()
+    val alarmEnabled by viewModel.alarmEnabled.collectAsStateWithLifecycle(true)
+    val vibrateEnabled by viewModel.vibrateEnabled.collectAsStateWithLifecycle(true)
+    val alarmSound by viewModel.alarmSound.collectAsStateWithLifecycle("")
 
     val sessionsSliderState = rememberSaveable(
         saver = SliderState.Saver(
@@ -144,7 +145,7 @@ private fun SettingsScreen(
     sessionsSliderState: SliderState,
     alarmEnabled: Boolean,
     vibrateEnabled: Boolean,
-    alarmSound: Uri?,
+    alarmSound: String,
     onAlarmEnabledChange: (Boolean) -> Unit,
     onVibrateEnabledChange: (Boolean) -> Unit,
     onAlarmSoundChanged: (Uri?) -> Unit,
@@ -155,7 +156,7 @@ private fun SettingsScreen(
         checkedIconColor = colorScheme.primary,
     )
 
-    var selectedSoundUri by remember { mutableStateOf(alarmSound) }
+    var selectedSoundUri by remember(alarmSound) { mutableStateOf(alarmSound.toUri()) }
     var selectedSoundName by remember { mutableStateOf("...") }
     val context = LocalContext.current
 
@@ -173,7 +174,6 @@ private fun SettingsScreen(
                     @Suppress("DEPRECATION")
                     result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
                 }
-            selectedSoundUri = uri
             onAlarmSoundChanged(uri)
         }
     }
@@ -436,7 +436,7 @@ fun SettingsScreenPreview() {
             sessionsSliderState = rememberSliderState(value = 3f, steps = 3, valueRange = 1f..5f),
             alarmEnabled = true,
             vibrateEnabled = true,
-            alarmSound = Settings.System.DEFAULT_ALARM_ALERT_URI,
+            alarmSound = Settings.System.DEFAULT_ALARM_ALERT_URI.toString(),
             onAlarmEnabledChange = {},
             onVibrateEnabledChange = {},
             onAlarmSoundChanged = {},

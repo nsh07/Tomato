@@ -11,6 +11,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PreferenceDao {
@@ -38,6 +39,12 @@ interface PreferenceDao {
     @Query("SELECT value FROM boolean_preference WHERE `key` = :key")
     suspend fun getBooleanPreference(key: String): Boolean?
 
+    @Query("SELECT value FROM boolean_preference WHERE `key` = :key")
+    fun getBooleanPreferenceFlow(key: String): Flow<Boolean>
+
     @Query("SELECT value FROM string_preference WHERE `key` = :key")
     suspend fun getStringPreference(key: String): String?
+
+    @Query("SELECT value FROM string_preference WHERE `key` = :key")
+    fun getStringPreferenceFlow(key: String): Flow<String>
 }

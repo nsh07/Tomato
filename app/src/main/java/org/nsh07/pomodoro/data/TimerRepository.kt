@@ -16,6 +16,7 @@ interface TimerRepository {
     var shortBreakTime: Long
     var longBreakTime: Long
     var sessionLength: Int
+    var timerFrequency: Float
 }
 
 /**
@@ -26,4 +27,5 @@ class AppTimerRepository : TimerRepository {
     override var shortBreakTime = 5 * 60 * 1000L
     override var longBreakTime = 15 * 60 * 1000L
     override var sessionLength = 4
+    override var timerFrequency: Float = 10f
 }

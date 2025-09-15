@@ -18,6 +18,10 @@ class MainActivity : ComponentActivity() {
     private val timerViewModel: TimerViewModel by viewModels(factoryProducer = { TimerViewModel.Factory })
     private val statsViewModel: StatsViewModel by viewModels(factoryProducer = { StatsViewModel.Factory })
 
+    private val appContainer by lazy {
+        (application as TomatoApplication).container
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -27,6 +31,18 @@ class MainActivity : ComponentActivity() {
                 AppScreen(timerViewModel = timerViewModel, statsViewModel = statsViewModel)
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // Reduce the timer loop frequency when not visible to save battery power
+        appContainer.appTimerRepository.timerFrequency = 1f
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Increase the timer loop frequency again when visible to make the progress smoother
+        appContainer.appTimerRepository.timerFrequency = 10f
     }
 
     companion object {

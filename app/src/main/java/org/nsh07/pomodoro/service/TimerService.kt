@@ -7,6 +7,9 @@ import android.media.MediaPlayer
 import android.os.Build
 import android.os.IBinder
 import android.os.SystemClock
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.provider.Settings
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -62,7 +65,23 @@ class TimerService : Service() {
     private val scope = CoroutineScope(Dispatchers.IO + job)
     private val skipScope = CoroutineScope(Dispatchers.IO + job)
 
-    private lateinit var alarm: MediaPlayer
+    private val alarm by lazy {
+        MediaPlayer.create(
+            this,
+            Settings.System.DEFAULT_ALARM_ALERT_URI ?: Settings.System.DEFAULT_RINGTONE_URI
+        )
+    }
+
+    private val vibrator by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager =
+                getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            getSystemService(VIBRATOR_SERVICE) as Vibrator
+        }
+    }
 
     private var cs: ColorScheme = lightColorScheme()
 
@@ -80,11 +99,6 @@ class TimerService : Service() {
         _time = appContainer.time
 
         timerState = _timerState.asStateFlow()
-
-        alarm = MediaPlayer.create(
-            this,
-            Settings.System.DEFAULT_ALARM_ALERT_URI ?: Settings.System.DEFAULT_RINGTONE_URI
-        )
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -147,7 +161,8 @@ class TimerService : Service() {
                         else -> timerRepository.longBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
                     }
 
-                    iterations = (iterations + 1) % 10
+                    iterations =
+                        (iterations + 1) % timerRepository.timerFrequency.toInt().coerceAtLeast(1)
 
                     if (iterations == 0) showTimerNotification(time.toInt())
 
@@ -165,7 +180,7 @@ class TimerService : Service() {
                         }
                     }
 
-                    delay(100)
+                    delay((1000f / timerRepository.timerFrequency).toLong())
                 }
             }
         }
@@ -254,7 +269,7 @@ class TimerService : Service() {
         )
 
         if (complete) {
-            alarm.start()
+            startAlarm()
             _timerState.update { currentState ->
                 currentState.copy(alarmRinging = true)
             }
@@ -328,9 +343,25 @@ class TimerService : Service() {
         }
     }
 
+    fun startAlarm() {
+        alarm.start()
+
+        if (!vibrator.hasVibrator()) {
+            return
+        }
+
+        val vibrationPattern = longArrayOf(0, 1000, 1000, 1000)
+        val repeat = 2
+
+        val effect = VibrationEffect.createWaveform(vibrationPattern, repeat)
+        vibrator.vibrate(effect)
+    }
+
     fun stopAlarm() {
         alarm.pause()
         alarm.seekTo(0)
+        vibrator.cancel()
+
         _timerState.update { currentState ->
             currentState.copy(alarmRinging = false)
         }

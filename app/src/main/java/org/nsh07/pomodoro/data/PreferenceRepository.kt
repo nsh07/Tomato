@@ -23,9 +23,29 @@ interface PreferenceRepository {
     suspend fun saveIntPreference(key: String, value: Int): Int
 
     /**
+     * Saves a boolean preference key-value pair to the database.
+     */
+    suspend fun saveBooleanPreference(key: String, value: Boolean): Boolean
+
+    /**
+     * Saves a string preference key-value pair to the database.
+     */
+    suspend fun saveStringPreference(key: String, value: String): String
+
+    /**
      * Retrieves an integer preference key-value pair from the database.
      */
     suspend fun getIntPreference(key: String): Int?
+
+    /**
+     * Retrieves a boolean preference key-value pair from the database.
+     */
+    suspend fun getBooleanPreference(key: String): Boolean?
+
+    /**
+     * Retrieves a string preference key-value pair from the database.
+     */
+    suspend fun getStringPreference(key: String): String?
 
     /**
      * Erases all integer preference key-value pairs in the database. Do note that the default values
@@ -47,11 +67,33 @@ class AppPreferenceRepository(
             value
         }
 
+    override suspend fun saveBooleanPreference(key: String, value: Boolean): Boolean =
+        withContext(ioDispatcher) {
+            preferenceDao.insertBooleanPreference(BooleanPreference(key, value))
+            value
+        }
+
+    override suspend fun saveStringPreference(key: String, value: String): String =
+        withContext(ioDispatcher) {
+            preferenceDao.insertStringPreference(StringPreference(key, value))
+            value
+        }
+
     override suspend fun getIntPreference(key: String): Int? = withContext(ioDispatcher) {
         preferenceDao.getIntPreference(key)
     }
 
+    override suspend fun getBooleanPreference(key: String): Boolean? = withContext(ioDispatcher) {
+        preferenceDao.getBooleanPreference(key)
+    }
+
+    override suspend fun getStringPreference(key: String): String? = withContext(ioDispatcher) {
+        preferenceDao.getStringPreference(key)
+    }
+
     override suspend fun resetSettings() = withContext(ioDispatcher) {
         preferenceDao.resetIntPreferences()
+        preferenceDao.resetBooleanPreferences()
+        preferenceDao.resetStringPreferences()
     }
 }

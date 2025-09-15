@@ -110,7 +110,7 @@ class SettingsViewModel(
     fun saveAlarmEnabled(enabled: Boolean) {
         viewModelScope.launch {
             timerRepository.alarmEnabled = preferenceRepository
-                .saveIntPreference("alarm_enabled", if (enabled) 1 else 0) == 1
+                .saveBooleanPreference("alarm_enabled", enabled)
             _alarmEnabled.value = enabled
         }
     }
@@ -118,14 +118,17 @@ class SettingsViewModel(
     fun saveVibrateEnabled(enabled: Boolean) {
         viewModelScope.launch {
             timerRepository.vibrateEnabled = preferenceRepository
-                .saveIntPreference("vibrate_enabled", if (enabled) 1 else 0) == 1
+                .saveBooleanPreference("vibrate_enabled", enabled)
             _vibrateEnabled.value = enabled
         }
     }
 
     fun saveAlarmSound(uri: Uri?) {
-        timerRepository.alarmSoundUri = uri
-        _alarmSound.value = uri
+        viewModelScope.launch {
+            preferenceRepository.saveStringPreference("alarm_sound", uri.toString())
+            timerRepository.alarmSoundUri = uri
+            _alarmSound.value = uri
+        }
     }
 
     companion object {

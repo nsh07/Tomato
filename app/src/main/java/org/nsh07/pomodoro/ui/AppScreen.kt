@@ -28,14 +28,11 @@ import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -69,13 +66,8 @@ fun AppScreen(
     val progress by rememberUpdatedState((uiState.totalTime.toFloat() - remainingTime) / uiState.totalTime)
 
     val layoutDirection = LocalLayoutDirection.current
-    val haptic = LocalHapticFeedback.current
     val motionScheme = motionScheme
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-
-    LaunchedEffect(uiState.timerMode) {
-        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-    }
 
     val backStack = rememberNavBackStack<Screen>(Screen.Timer)
 

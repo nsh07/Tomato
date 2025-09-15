@@ -138,14 +138,14 @@ private fun SettingsScreen(
                 checked = alarmEnabled,
                 icon = R.drawable.alarm_on,
                 label = "Alarm",
-                description = "Ring your system alarm sound when a timer completes",
+                description = "Ring alarm when a timer completes",
                 onClick = onAlarmEnabledChange
             ),
             SettingsSwitchItem(
                 checked = vibrateEnabled,
                 icon = R.drawable.mobile_vibrate,
                 label = "Vibrate",
-                description = "Vibrate in a repeating pattern when a timer completes",
+                description = "Vibrate when a timer completes",
                 onClick = onVibrateEnabledChange
             )
         )

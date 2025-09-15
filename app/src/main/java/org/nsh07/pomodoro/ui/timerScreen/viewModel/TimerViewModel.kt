@@ -77,17 +77,20 @@ class TimerViewModel(
                     timerRepository.sessionLength
                 )
 
-            timerRepository.alarmEnabled = (preferenceRepository.getIntPreference("alarm_enabled")
-                ?: preferenceRepository.saveIntPreference(
-                    "alarm_enabled",
-                    1
-                )) == 1
-            timerRepository.vibrateEnabled =
-                (preferenceRepository.getIntPreference("vibrate_enabled")
-                    ?: preferenceRepository.saveIntPreference(
-                        "vibrate_enabled",
-                        1
-                    )) == 1
+            timerRepository.alarmEnabled = (
+                    preferenceRepository.getIntPreference("alarm_enabled")
+                        ?: preferenceRepository.saveIntPreference(
+                            "alarm_enabled",
+                            1
+                        )
+                    ) == 1
+            timerRepository.vibrateEnabled = (
+                    preferenceRepository.getIntPreference("vibrate_enabled")
+                        ?: preferenceRepository.saveIntPreference(
+                            "vibrate_enabled",
+                            1
+                        )
+                    ) == 1
 
             resetTimer()
 

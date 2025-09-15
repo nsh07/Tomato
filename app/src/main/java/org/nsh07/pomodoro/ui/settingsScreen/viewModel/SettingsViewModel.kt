@@ -7,6 +7,7 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
+import android.net.Uri
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
@@ -46,6 +47,9 @@ class SettingsViewModel(
         valueRange = 1f..6f,
         onValueChangeFinished = ::updateSessionLength
     )
+
+    private val _alarmSound = MutableStateFlow(timerRepository.alarmSoundUri)
+    val alarmSound: StateFlow<Uri?> = _alarmSound.asStateFlow()
 
     private val _alarmEnabled: MutableStateFlow<Boolean> =
         MutableStateFlow(timerRepository.alarmEnabled)
@@ -117,6 +121,11 @@ class SettingsViewModel(
                 .saveIntPreference("vibrate_enabled", if (enabled) 1 else 0) == 1
             _vibrateEnabled.value = enabled
         }
+    }
+
+    fun saveAlarmSound(uri: Uri?) {
+        timerRepository.alarmSoundUri = uri
+        _alarmSound.value = uri
     }
 
     companion object {

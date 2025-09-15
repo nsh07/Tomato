@@ -74,6 +74,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
@@ -89,6 +90,7 @@ fun SettingsScreenRoot(
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
 ) {
+    val context = LocalContext.current
     val focusTimeInputFieldState = rememberSaveable(saver = TextFieldState.Saver) {
         viewModel.focusTimeTextFieldState
     }
@@ -99,8 +101,9 @@ fun SettingsScreenRoot(
         viewModel.longBreakTimeTextFieldState
     }
 
-    val alarmEnabled = viewModel.alarmEnabled.collectAsStateWithLifecycle()
-    val vibrateEnabled = viewModel.vibrateEnabled.collectAsStateWithLifecycle()
+    val alarmEnabled by viewModel.alarmEnabled.collectAsStateWithLifecycle()
+    val vibrateEnabled by viewModel.vibrateEnabled.collectAsStateWithLifecycle()
+    val alarmSound by viewModel.alarmSound.collectAsStateWithLifecycle()
 
     val sessionsSliderState = rememberSaveable(
         saver = SliderState.Saver(
@@ -116,10 +119,18 @@ fun SettingsScreenRoot(
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
         sessionsSliderState = sessionsSliderState,
-        alarmEnabled = alarmEnabled.value,
-        vibrateEnabled = vibrateEnabled.value,
+        alarmEnabled = alarmEnabled,
+        vibrateEnabled = vibrateEnabled,
+        alarmSound = alarmSound,
         onAlarmEnabledChange = viewModel::saveAlarmEnabled,
         onVibrateEnabledChange = viewModel::saveVibrateEnabled,
+        onAlarmSoundChanged = {
+            viewModel.saveAlarmSound(it)
+            Intent(context, TimerService::class.java).apply {
+                action = TimerService.Actions.RESET.toString()
+                context.startService(this)
+            }
+        },
         modifier = modifier
     )
 }
@@ -133,8 +144,10 @@ private fun SettingsScreen(
     sessionsSliderState: SliderState,
     alarmEnabled: Boolean,
     vibrateEnabled: Boolean,
+    alarmSound: Uri?,
     onAlarmEnabledChange: (Boolean) -> Unit,
     onVibrateEnabledChange: (Boolean) -> Unit,
+    onAlarmSoundChanged: (Uri?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -142,15 +155,13 @@ private fun SettingsScreen(
         checkedIconColor = colorScheme.primary,
     )
 
-    var selectedSoundUri by remember { mutableStateOf<Uri?>(Settings.System.DEFAULT_ALARM_ALERT_URI) }
+    var selectedSoundUri by remember { mutableStateOf(alarmSound) }
     var selectedSoundName by remember { mutableStateOf("...") }
     val context = LocalContext.current
 
-    // 2. The Activity Result Launcher
     val ringtonePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        // This block is executed when the user picks a sound and returns to the app
         if (result.resultCode == Activity.RESULT_OK) {
             val uri =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -163,6 +174,7 @@ private fun SettingsScreen(
                     result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
                 }
             selectedSoundUri = uri
+            onAlarmSoundChanged(uri)
         }
     }
 
@@ -424,8 +436,10 @@ fun SettingsScreenPreview() {
             sessionsSliderState = rememberSliderState(value = 3f, steps = 3, valueRange = 1f..5f),
             alarmEnabled = true,
             vibrateEnabled = true,
+            alarmSound = Settings.System.DEFAULT_ALARM_ALERT_URI,
             onAlarmEnabledChange = {},
             onVibrateEnabledChange = {},
+            onAlarmSoundChanged = {},
             modifier = Modifier.fillMaxSize()
         )
     }

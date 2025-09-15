@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.runtime.LaunchedEffect
 import org.nsh07.pomodoro.ui.AppScreen
 import org.nsh07.pomodoro.ui.NavItem
 import org.nsh07.pomodoro.ui.Screen
@@ -27,6 +28,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TomatoTheme {
+                val colorScheme = colorScheme
+                LaunchedEffect(colorScheme) {
+                    appContainer.appTimerRepository.colorScheme = colorScheme
+                }
+
                 timerViewModel.setCompositionLocals(colorScheme)
                 AppScreen(timerViewModel = timerViewModel, statsViewModel = statsViewModel)
             }

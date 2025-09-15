@@ -11,8 +11,6 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.provider.Settings
-import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -74,7 +72,7 @@ class TimerService : Service() {
         }
     }
 
-    private var cs: ColorScheme = lightColorScheme()
+    private val cs by lazy { timerRepository.colorScheme }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -185,52 +183,61 @@ class TimerService : Service() {
         else (remainingTime.toFloat() / 60000f).toInt()
 
         notificationManager.notify(
-            1, notificationBuilder.setContentTitle(
-                if (!complete) {
-                    "$currentTimer $middleDot  $remainingTimeString min remaining" + if (paused) "  $middleDot  Paused" else ""
-                } else "$currentTimer $middleDot Completed"
-            ).setContentText("Up next: $nextTimer (${timerState.value.nextTimeStr})")
-                .setStyle(NotificationCompat.ProgressStyle().also {
-                    // Add all the Focus, Short break and long break intervals in order
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-                        // Android 16 and later supports live updates
-                        // Set progress bar sections if on Baklava or later
-                        for (i in 0..<timerRepository.sessionLength * 2) {
-                            if (i % 2 == 0) it.addProgressSegment(
-                                NotificationCompat.ProgressStyle.Segment(
-                                    timerRepository.focusTime.toInt()
-                                ).setColor(cs.primary.toArgb())
-                            )
-                            else if (i != (timerRepository.sessionLength * 2 - 1)) it.addProgressSegment(
-                                NotificationCompat.ProgressStyle.Segment(
-                                    timerRepository.shortBreakTime.toInt()
-                                ).setColor(cs.tertiary.toArgb())
-                            )
-                            else it.addProgressSegment(
-                                NotificationCompat.ProgressStyle.Segment(
-                                    timerRepository.longBreakTime.toInt()
-                                ).setColor(cs.tertiary.toArgb())
-                            )
-                        }
-                    } else {
-                        it.addProgressSegment(
-                            NotificationCompat.ProgressStyle.Segment(
-                                when (timerState.value.timerMode) {
-                                    TimerMode.FOCUS -> timerRepository.focusTime.toInt()
-                                    TimerMode.SHORT_BREAK -> timerRepository.shortBreakTime.toInt()
-                                    else -> timerRepository.longBreakTime.toInt()
+            1,
+            notificationBuilder
+                .setContentTitle(
+                    if (!complete) {
+                        "$currentTimer $middleDot  $remainingTimeString min remaining" + if (paused) "  $middleDot  Paused" else ""
+                    } else "$currentTimer $middleDot Completed"
+                )
+                .setContentText("Up next: $nextTimer (${timerState.value.nextTimeStr})")
+                .setStyle(
+                    NotificationCompat.ProgressStyle()
+                        .also {
+                            // Add all the Focus, Short break and long break intervals in order
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                                // Android 16 and later supports live updates
+                                // Set progress bar sections if on Baklava or later
+                                for (i in 0..<timerRepository.sessionLength * 2) {
+                                    if (i % 2 == 0) it.addProgressSegment(
+                                        NotificationCompat.ProgressStyle.Segment(
+                                            timerRepository.focusTime.toInt()
+                                        )
+                                            .setColor(cs.primary.toArgb())
+                                    )
+                                    else if (i != (timerRepository.sessionLength * 2 - 1)) it.addProgressSegment(
+                                        NotificationCompat.ProgressStyle.Segment(
+                                            timerRepository.shortBreakTime.toInt()
+                                        ).setColor(cs.tertiary.toArgb())
+                                    )
+                                    else it.addProgressSegment(
+                                        NotificationCompat.ProgressStyle.Segment(
+                                            timerRepository.longBreakTime.toInt()
+                                        ).setColor(cs.tertiary.toArgb())
+                                    )
                                 }
-                            )
+                            } else {
+                                it.addProgressSegment(
+                                    NotificationCompat.ProgressStyle.Segment(
+                                        when (timerState.value.timerMode) {
+                                            TimerMode.FOCUS -> timerRepository.focusTime.toInt()
+                                            TimerMode.SHORT_BREAK -> timerRepository.shortBreakTime.toInt()
+                                            else -> timerRepository.longBreakTime.toInt()
+                                        }
+                                    )
+                                )
+                            }
+                        }
+                        .setProgress( // Set the current progress by filling the previous intervals and part of the current interval
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                                (totalTime - remainingTime) + ((cycles + 1) / 2) * timerRepository.focusTime.toInt() + (cycles / 2) * timerRepository.shortBreakTime.toInt()
+                            } else (totalTime - remainingTime)
                         )
-                    }
-                }
-                    .setProgress( // Set the current progress by filling the previous intervals and part of the current interval
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-                            (totalTime - remainingTime) + ((cycles + 1) / 2) * timerRepository.focusTime.toInt() + (cycles / 2) * timerRepository.shortBreakTime.toInt()
-                        } else (totalTime - remainingTime)
-                    ))
+                )
                 .setWhen(System.currentTimeMillis() + remainingTime) // Sets the Live Activity/Now Bar chip time
-                .setShortCriticalText(millisecondsToStr(time.coerceAtLeast(0))).build())
+                .setShortCriticalText(millisecondsToStr(time.coerceAtLeast(0)))
+                .build()
+        )
 
         if (complete) {
             startAlarm()

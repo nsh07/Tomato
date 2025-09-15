@@ -7,9 +7,18 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen
 
+import android.app.Activity
+import android.content.Intent
+import android.media.RingtoneManager
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -45,6 +54,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,6 +64,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Devices
@@ -68,7 +79,6 @@ import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
@@ -132,6 +142,41 @@ private fun SettingsScreen(
         checkedIconColor = colorScheme.primary,
     )
 
+    var selectedSoundUri by remember { mutableStateOf<Uri?>(Settings.System.DEFAULT_ALARM_ALERT_URI) }
+    var selectedSoundName by remember { mutableStateOf("...") }
+    val context = LocalContext.current
+
+    // 2. The Activity Result Launcher
+    val ringtonePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        // This block is executed when the user picks a sound and returns to the app
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    result.data?.getParcelableExtra(
+                        RingtoneManager.EXTRA_RINGTONE_PICKED_URI,
+                        Uri::class.java
+                    )
+                } else {
+                    @Suppress("DEPRECATION")
+                    result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                }
+            selectedSoundUri = uri
+        }
+    }
+
+    // 3. The Intent to launch the picker
+    val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+        // We want to show only alarm sounds
+        putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+        // A title for the picker
+        putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Alarm sound")
+
+        // If a sound is already selected, show it as checked
+        putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, selectedSoundUri)
+    }
+
     val switchItems = remember(alarmEnabled, vibrateEnabled) {
         listOf(
             SettingsSwitchItem(
@@ -149,6 +194,12 @@ private fun SettingsScreen(
                 onClick = onVibrateEnabledChange
             )
         )
+    }
+
+    LaunchedEffect(selectedSoundUri) {
+        selectedSoundName =
+            RingtoneManager.getRingtone(context, selectedSoundUri)
+                .getTitle(context)
     }
 
     Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
@@ -266,7 +317,20 @@ private fun SettingsScreen(
                         }
                     },
                     colors = listItemColors,
-                    modifier = Modifier.clip(cardShape)
+                    modifier = Modifier.clip(topListItemShape)
+                )
+            }
+            item {
+                ListItem(
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.alarm), null)
+                    },
+                    headlineContent = { Text("Alarm sound") },
+                    supportingContent = { Text(selectedSoundName) },
+                    colors = listItemColors,
+                    modifier = Modifier
+                        .clip(bottomListItemShape)
+                        .clickable(onClick = { ringtonePickerLauncher.launch(intent) })
                 )
             }
             item { Spacer(Modifier.height(12.dp)) }

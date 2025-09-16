@@ -7,8 +7,17 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen
 
+import android.app.Activity
+import android.content.Intent
+import android.media.RingtoneManager
+import android.net.Uri
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,8 +27,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
@@ -32,10 +43,11 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderState
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -50,18 +62,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,6 +89,7 @@ fun SettingsScreenRoot(
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
 ) {
+    val context = LocalContext.current
     val focusTimeInputFieldState = rememberSaveable(saver = TextFieldState.Saver) {
         viewModel.focusTimeTextFieldState
     }
@@ -79,6 +99,10 @@ fun SettingsScreenRoot(
     val longBreakTimeInputFieldState = rememberSaveable(saver = TextFieldState.Saver) {
         viewModel.longBreakTimeTextFieldState
     }
+
+    val alarmEnabled by viewModel.alarmEnabled.collectAsStateWithLifecycle(true)
+    val vibrateEnabled by viewModel.vibrateEnabled.collectAsStateWithLifecycle(true)
+    val alarmSound by viewModel.alarmSound.collectAsStateWithLifecycle(viewModel.currentAlarmSound)
 
     val sessionsSliderState = rememberSaveable(
         saver = SliderState.Saver(
@@ -94,6 +118,18 @@ fun SettingsScreenRoot(
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
         sessionsSliderState = sessionsSliderState,
+        alarmEnabled = alarmEnabled,
+        vibrateEnabled = vibrateEnabled,
+        alarmSound = alarmSound,
+        onAlarmEnabledChange = viewModel::saveAlarmEnabled,
+        onVibrateEnabledChange = viewModel::saveVibrateEnabled,
+        onAlarmSoundChanged = {
+            viewModel.saveAlarmSound(it)
+            Intent(context, TimerService::class.java).apply {
+                action = TimerService.Actions.RESET.toString()
+                context.startService(this)
+            }
+        },
         modifier = modifier
     )
 }
@@ -105,9 +141,63 @@ private fun SettingsScreen(
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
     sessionsSliderState: SliderState,
+    alarmEnabled: Boolean,
+    vibrateEnabled: Boolean,
+    alarmSound: String,
+    onAlarmEnabledChange: (Boolean) -> Unit,
+    onVibrateEnabledChange: (Boolean) -> Unit,
+    onAlarmSoundChanged: (Uri?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val switchColors = SwitchDefaults.colors(
+        checkedIconColor = colorScheme.primary,
+    )
+
+    val context = LocalContext.current
+
+    val ringtonePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    result.data?.getParcelableExtra(
+                        RingtoneManager.EXTRA_RINGTONE_PICKED_URI,
+                        Uri::class.java
+                    )
+                } else {
+                    @Suppress("DEPRECATION")
+                    result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                }
+            onAlarmSoundChanged(uri)
+        }
+    }
+
+    val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+        putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+        putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Alarm sound")
+        putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmSound.toUri())
+    }
+
+    val switchItems = remember(alarmEnabled, vibrateEnabled) {
+        listOf(
+            SettingsSwitchItem(
+                checked = alarmEnabled,
+                icon = R.drawable.alarm_on,
+                label = "Alarm",
+                description = "Ring alarm when a timer completes",
+                onClick = onAlarmEnabledChange
+            ),
+            SettingsSwitchItem(
+                checked = vibrateEnabled,
+                icon = R.drawable.mobile_vibrate,
+                label = "Vibrate",
+                description = "Vibrate when a timer completes",
+                onClick = onVibrateEnabledChange
+            )
+        )
+    }
 
     Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
         TopAppBar(
@@ -155,10 +245,10 @@ private fun SettingsScreen(
                         MinuteInputField(
                             state = focusTimeInputFieldState,
                             shape = RoundedCornerShape(
-                                topStart = 16.dp,
-                                bottomStart = 16.dp,
-                                topEnd = 4.dp,
-                                bottomEnd = 4.dp
+                                topStart = topListItemShape.topStart,
+                                bottomStart = topListItemShape.topStart,
+                                topEnd = topListItemShape.bottomStart,
+                                bottomEnd = topListItemShape.bottomStart
                             ),
                             imeAction = ImeAction.Next
                         )
@@ -174,7 +264,7 @@ private fun SettingsScreen(
                         )
                         MinuteInputField(
                             state = shortBreakTimeInputFieldState,
-                            shape = RoundedCornerShape(4.dp),
+                            shape = RoundedCornerShape(middleListItemShape.topStart),
                             imeAction = ImeAction.Next
                         )
                     }
@@ -190,10 +280,10 @@ private fun SettingsScreen(
                         MinuteInputField(
                             state = longBreakTimeInputFieldState,
                             shape = RoundedCornerShape(
-                                topStart = 4.dp,
-                                bottomStart = 4.dp,
-                                topEnd = 16.dp,
-                                bottomEnd = 16.dp
+                                topStart = bottomListItemShape.topStart,
+                                bottomStart = bottomListItemShape.topStart,
+                                topEnd = bottomListItemShape.bottomStart,
+                                bottomEnd = bottomListItemShape.bottomStart
                             ),
                             imeAction = ImeAction.Done
                         )
@@ -224,7 +314,68 @@ private fun SettingsScreen(
                         }
                     },
                     colors = listItemColors,
-                    modifier = Modifier.clip(shapes.large)
+                    modifier = Modifier.clip(topListItemShape)
+                )
+            }
+            item {
+                ListItem(
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.alarm), null)
+                    },
+                    headlineContent = { Text("Alarm sound") },
+                    supportingContent = {
+                        Text(
+                            remember(alarmSound) {
+                                RingtoneManager.getRingtone(context, alarmSound.toUri())
+                                    .getTitle(context)
+                            }
+                        )
+                    },
+                    colors = listItemColors,
+                    modifier = Modifier
+                        .clip(bottomListItemShape)
+                        .clickable(onClick = { ringtonePickerLauncher.launch(intent) })
+                )
+            }
+            item { Spacer(Modifier.height(12.dp)) }
+            itemsIndexed(switchItems) { index, item ->
+                ListItem(
+                    leadingContent = {
+                        Icon(painterResource(item.icon), contentDescription = null)
+                    },
+                    headlineContent = { Text(item.label) },
+                    supportingContent = { Text(item.description) },
+                    trailingContent = {
+                        Switch(
+                            checked = item.checked,
+                            onCheckedChange = { item.onClick(it) },
+                            thumbContent = {
+                                if (item.checked) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.check),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                    )
+                                } else {
+                                    Icon(
+                                        painter = painterResource(R.drawable.clear),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                    )
+                                }
+                            },
+                            colors = switchColors
+                        )
+                    },
+                    colors = listItemColors,
+                    modifier = Modifier
+                        .clip(
+                            when (index) {
+                                0 -> topListItemShape
+                                switchItems.lastIndex -> bottomListItemShape
+                                else -> middleListItemShape
+                            }
+                        )
                 )
             }
             item {
@@ -275,7 +426,21 @@ fun SettingsScreenPreview() {
             shortBreakTimeInputFieldState = rememberTextFieldState((5 * 60 * 1000).toString()),
             longBreakTimeInputFieldState = rememberTextFieldState((15 * 60 * 1000).toString()),
             sessionsSliderState = rememberSliderState(value = 3f, steps = 3, valueRange = 1f..5f),
+            alarmEnabled = true,
+            vibrateEnabled = true,
+            alarmSound = "null",
+            onAlarmEnabledChange = {},
+            onVibrateEnabledChange = {},
+            onAlarmSoundChanged = {},
             modifier = Modifier.fillMaxSize()
         )
     }
 }
+
+data class SettingsSwitchItem(
+    val checked: Boolean,
+    @DrawableRes val icon: Int,
+    val label: String,
+    val description: String,
+    val onClick: (Boolean) -> Unit
+)

@@ -63,7 +63,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -89,6 +91,7 @@ fun TimerScreen(
     modifier: Modifier = Modifier
 ) {
     val motionScheme = motionScheme
+    val haptic = LocalHapticFeedback.current
 
     val color by animateColorAsState(
         if (timerState.timerMode == TimerMode.FOCUS) colorScheme.primary
@@ -110,9 +113,6 @@ fun TimerScreen(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = {}
     )
-
-    if (timerState.alarmRinging)
-        AlarmDialog { onAction(TimerAction.StopAlarm) }
 
     Column(modifier = modifier) {
         TopAppBar(
@@ -301,6 +301,10 @@ fun TimerScreen(
                             FilledIconToggleButton(
                                 onCheckedChange = { checked ->
                                     onAction(TimerAction.ToggleTimer)
+
+                                    if (checked) haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                    else haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
+
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checked) {
                                         permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                                     }
@@ -358,7 +362,10 @@ fun TimerScreen(
                     customItem(
                         {
                             FilledTonalIconButton(
-                                onClick = { onAction(TimerAction.ResetTimer) },
+                                onClick = {
+                                    onAction(TimerAction.ResetTimer)
+                                    haptic.performHapticFeedback(HapticFeedbackType.VirtualKey)
+                                },
                                 colors = IconButtonDefaults.filledTonalIconButtonColors(
                                     containerColor = colorContainer
                                 ),
@@ -395,7 +402,10 @@ fun TimerScreen(
                     customItem(
                         {
                             FilledTonalIconButton(
-                                onClick = { onAction(TimerAction.SkipTimer(fromButton = true)) },
+                                onClick = {
+                                    onAction(TimerAction.SkipTimer(fromButton = true))
+                                    haptic.performHapticFeedback(HapticFeedbackType.VirtualKey)
+                                },
                                 colors = IconButtonDefaults.filledTonalIconButtonColors(
                                     containerColor = colorContainer
                                 ),

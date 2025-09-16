@@ -7,9 +7,9 @@ import android.media.MediaPlayer
 import android.os.Build
 import android.os.IBinder
 import android.os.SystemClock
-import android.provider.Settings
-import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.lightColorScheme
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -17,41 +17,35 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.TomatoApplication
-import org.nsh07.pomodoro.data.AppContainer
-import org.nsh07.pomodoro.data.StatRepository
-import org.nsh07.pomodoro.data.TimerRepository
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
-import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import kotlin.text.Typography.middleDot
 
 class TimerService : Service() {
-    private lateinit var appContainer: AppContainer
-
-    private lateinit var timerRepository: TimerRepository
-    private lateinit var statRepository: StatRepository
-    private lateinit var notificationManager: NotificationManagerCompat
-    private lateinit var notificationBuilder: NotificationCompat.Builder
-    private lateinit var _timerState: MutableStateFlow<TimerState>
-    private lateinit var _time: MutableStateFlow<Long>
-
-    val timeStateFlow by lazy {
-        _time.asStateFlow()
+    private val appContainer by lazy {
+        (application as TomatoApplication).container
     }
 
-    var time: Long
+    private val timerRepository by lazy { appContainer.appTimerRepository }
+    private val statRepository by lazy { appContainer.appStatRepository }
+    private val notificationManager by lazy { NotificationManagerCompat.from(this) }
+    private val notificationBuilder by lazy { appContainer.notificationBuilder }
+    private val _timerState by lazy { appContainer.timerState }
+    private val _time by lazy { appContainer.time }
+
+    private val timeStateFlow by lazy { _time.asStateFlow() }
+
+    private var time: Long
         get() = timeStateFlow.value
         set(value) = _time.update { value }
 
-    lateinit var timerState: StateFlow<TimerState>
+    private val timerState by lazy { _timerState.asStateFlow() }
 
     private var cycles = 0
     private var startTime = 0L
@@ -62,29 +56,26 @@ class TimerService : Service() {
     private val scope = CoroutineScope(Dispatchers.IO + job)
     private val skipScope = CoroutineScope(Dispatchers.IO + job)
 
-    private lateinit var alarm: MediaPlayer
+    private var alarm: MediaPlayer? = null
 
-    private var cs: ColorScheme = lightColorScheme()
+    private val vibrator by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION") getSystemService(VIBRATOR_SERVICE) as Vibrator
+        }
+    }
+
+    private val cs by lazy { timerRepository.colorScheme }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     override fun onCreate() {
-        appContainer = (application as TomatoApplication).container
-        timerRepository = appContainer.appTimerRepository
-        statRepository = appContainer.appStatRepository
-        notificationManager = NotificationManagerCompat.from(this)
-        notificationBuilder = appContainer.notificationBuilder
-        _timerState = appContainer.timerState
-        _time = appContainer.time
-
-        timerState = _timerState.asStateFlow()
-
-        alarm = MediaPlayer.create(
-            this,
-            Settings.System.DEFAULT_ALARM_ALERT_URI ?: Settings.System.DEFAULT_RINGTONE_URI
-        )
+        super.onCreate()
+        alarm = MediaPlayer.create(this, timerRepository.alarmSoundUri)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -103,32 +94,26 @@ class TimerService : Service() {
             Actions.SKIP.toString() -> skipTimer(true)
 
             Actions.STOP_ALARM.toString() -> stopAlarm()
+
+            Actions.UPDATE_ALARM_TONE.toString() -> updateAlarmTone()
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
     private fun toggleTimer() {
         if (timerState.value.timerRunning) {
-            notificationBuilder
-                .clearActions()
-                .addTimerActions(
-                    this,
-                    R.drawable.play,
-                    "Start"
-                )
+            notificationBuilder.clearActions().addTimerActions(
+                this, R.drawable.play, "Start"
+            )
             showTimerNotification(time.toInt(), paused = true)
             _timerState.update { currentState ->
                 currentState.copy(timerRunning = false)
             }
             pauseTime = SystemClock.elapsedRealtime()
         } else {
-            notificationBuilder
-                .clearActions()
-                .addTimerActions(
-                    this,
-                    R.drawable.pause,
-                    "Stop"
-                )
+            notificationBuilder.clearActions().addTimerActions(
+                this, R.drawable.pause, "Stop"
+            )
             _timerState.update { it.copy(timerRunning = true) }
             if (pauseTime != 0L) pauseDuration += SystemClock.elapsedRealtime() - pauseTime
 
@@ -147,7 +132,8 @@ class TimerService : Service() {
                         else -> timerRepository.longBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
                     }
 
-                    iterations = (iterations + 1) % 10
+                    iterations =
+                        (iterations + 1) % timerRepository.timerFrequency.toInt().coerceAtLeast(1)
 
                     if (iterations == 0) showTimerNotification(time.toInt())
 
@@ -165,7 +151,7 @@ class TimerService : Service() {
                         }
                     }
 
-                    delay(100)
+                    delay((1000f / timerRepository.timerFrequency).toLong())
                 }
             }
         }
@@ -208,40 +194,42 @@ class TimerService : Service() {
                 )
                 .setContentText("Up next: $nextTimer (${timerState.value.nextTimeStr})")
                 .setStyle(
-                    NotificationCompat.ProgressStyle().also {
-                        // Add all the Focus, Short break and long break intervals in order
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-                            // Android 16 and later supports live updates
-                            // Set progress bar sections if on Baklava or later
-                            for (i in 0..<timerRepository.sessionLength * 2) {
-                                if (i % 2 == 0) it.addProgressSegment(
+                    NotificationCompat.ProgressStyle()
+                        .also {
+                            // Add all the Focus, Short break and long break intervals in order
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                                // Android 16 and later supports live updates
+                                // Set progress bar sections if on Baklava or later
+                                for (i in 0..<timerRepository.sessionLength * 2) {
+                                    if (i % 2 == 0) it.addProgressSegment(
+                                        NotificationCompat.ProgressStyle.Segment(
+                                            timerRepository.focusTime.toInt()
+                                        )
+                                            .setColor(cs.primary.toArgb())
+                                    )
+                                    else if (i != (timerRepository.sessionLength * 2 - 1)) it.addProgressSegment(
+                                        NotificationCompat.ProgressStyle.Segment(
+                                            timerRepository.shortBreakTime.toInt()
+                                        ).setColor(cs.tertiary.toArgb())
+                                    )
+                                    else it.addProgressSegment(
+                                        NotificationCompat.ProgressStyle.Segment(
+                                            timerRepository.longBreakTime.toInt()
+                                        ).setColor(cs.tertiary.toArgb())
+                                    )
+                                }
+                            } else {
+                                it.addProgressSegment(
                                     NotificationCompat.ProgressStyle.Segment(
-                                        timerRepository.focusTime.toInt()
-                                    ).setColor(cs.primary.toArgb())
-                                )
-                                else if (i != (timerRepository.sessionLength * 2 - 1)) it.addProgressSegment(
-                                    NotificationCompat.ProgressStyle.Segment(
-                                        timerRepository.shortBreakTime.toInt()
-                                    ).setColor(cs.tertiary.toArgb())
-                                )
-                                else it.addProgressSegment(
-                                    NotificationCompat.ProgressStyle.Segment(
-                                        timerRepository.longBreakTime.toInt()
-                                    ).setColor(cs.tertiary.toArgb())
+                                        when (timerState.value.timerMode) {
+                                            TimerMode.FOCUS -> timerRepository.focusTime.toInt()
+                                            TimerMode.SHORT_BREAK -> timerRepository.shortBreakTime.toInt()
+                                            else -> timerRepository.longBreakTime.toInt()
+                                        }
+                                    )
                                 )
                             }
-                        } else {
-                            it.addProgressSegment(
-                                NotificationCompat.ProgressStyle.Segment(
-                                    when (timerState.value.timerMode) {
-                                        TimerMode.FOCUS -> timerRepository.focusTime.toInt()
-                                        TimerMode.SHORT_BREAK -> timerRepository.shortBreakTime.toInt()
-                                        else -> timerRepository.longBreakTime.toInt()
-                                    }
-                                )
-                            )
                         }
-                    }
                         .setProgress( // Set the current progress by filling the previous intervals and part of the current interval
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
                                 (totalTime - remainingTime) + ((cycles + 1) / 2) * timerRepository.focusTime.toInt() + (cycles / 2) * timerRepository.shortBreakTime.toInt()
@@ -254,7 +242,7 @@ class TimerService : Service() {
         )
 
         if (complete) {
-            alarm.start()
+            startAlarm()
             _timerState.update { currentState ->
                 currentState.copy(alarmRinging = true)
             }
@@ -328,9 +316,30 @@ class TimerService : Service() {
         }
     }
 
+    fun startAlarm() {
+        if (timerRepository.alarmEnabled) alarm?.start()
+
+        if (timerRepository.vibrateEnabled) {
+            if (!vibrator.hasVibrator()) {
+                return
+            }
+            val vibrationPattern = longArrayOf(0, 1000, 1000, 1000)
+            val repeat = 2
+            val effect = VibrationEffect.createWaveform(vibrationPattern, repeat)
+            vibrator.vibrate(effect)
+        }
+    }
+
     fun stopAlarm() {
-        alarm.pause()
-        alarm.seekTo(0)
+        if (timerRepository.alarmEnabled) {
+            alarm?.pause()
+            alarm?.seekTo(0)
+        }
+
+        if (timerRepository.vibrateEnabled) {
+            vibrator.cancel()
+        }
+
         _timerState.update { currentState ->
             currentState.copy(alarmRinging = false)
         }
@@ -340,10 +349,13 @@ class TimerService : Service() {
                 TimerMode.FOCUS -> timerRepository.focusTime.toInt()
                 TimerMode.SHORT_BREAK -> timerRepository.shortBreakTime.toInt()
                 else -> timerRepository.longBreakTime.toInt()
-            },
-            paused = true,
-            complete = false
+            }, paused = true, complete = false
         )
+    }
+
+    fun updateAlarmTone() {
+        alarm?.release()
+        alarm = MediaPlayer.create(this, timerRepository.alarmSoundUri)
     }
 
     suspend fun saveTimeToDb() {
@@ -374,10 +386,11 @@ class TimerService : Service() {
             job.cancel()
             saveTimeToDb()
             notificationManager.cancel(1)
+            alarm?.release()
         }
     }
 
     enum class Actions {
-        TOGGLE, SKIP, RESET, STOP_ALARM
+        TOGGLE, SKIP, RESET, STOP_ALARM, UPDATE_ALARM_TONE
     }
 }

@@ -7,6 +7,7 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
+import android.net.Uri
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
@@ -20,6 +21,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.AppPreferenceRepository
@@ -43,6 +45,15 @@ class SettingsViewModel(
         valueRange = 1f..6f,
         onValueChangeFinished = ::updateSessionLength
     )
+
+    val currentAlarmSound = timerRepository.alarmSoundUri.toString()
+
+    val alarmSound =
+        preferenceRepository.getStringPreferenceFlow("alarm_sound").distinctUntilChanged()
+    val alarmEnabled =
+        preferenceRepository.getBooleanPreferenceFlow("alarm_enabled").distinctUntilChanged()
+    val vibrateEnabled =
+        preferenceRepository.getBooleanPreferenceFlow("vibrate_enabled").distinctUntilChanged()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -90,6 +101,27 @@ class SettingsViewModel(
                 sessionsSliderState.value.toInt()
             )
         }
+    }
+
+    fun saveAlarmEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            preferenceRepository.saveBooleanPreference("alarm_enabled", enabled)
+            timerRepository.alarmEnabled = enabled
+        }
+    }
+
+    fun saveVibrateEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            preferenceRepository.saveBooleanPreference("vibrate_enabled", enabled)
+            timerRepository.vibrateEnabled = enabled
+        }
+    }
+
+    fun saveAlarmSound(uri: Uri?) {
+        viewModelScope.launch {
+            preferenceRepository.saveStringPreference("alarm_sound", uri.toString())
+        }
+        timerRepository.alarmSoundUri = uri
     }
 
     companion object {

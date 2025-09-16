@@ -8,7 +8,9 @@
 package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
 import android.app.Application
+import android.provider.Settings
 import androidx.compose.material3.ColorScheme
+import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -30,6 +32,7 @@ import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.TimerRepository
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 @OptIn(FlowPreview::class)
 class TimerViewModel(
@@ -77,16 +80,33 @@ class TimerViewModel(
                     timerRepository.sessionLength
                 )
 
+            timerRepository.alarmEnabled =
+                preferenceRepository.getBooleanPreference("alarm_enabled")
+                    ?: preferenceRepository.saveBooleanPreference("alarm_enabled", true)
+            timerRepository.vibrateEnabled =
+                preferenceRepository.getBooleanPreference("vibrate_enabled")
+                    ?: preferenceRepository.saveBooleanPreference("vibrate_enabled", true)
+
+            timerRepository.alarmSoundUri = (
+                    preferenceRepository.getStringPreference("alarm_sound")
+                        ?: preferenceRepository.saveStringPreference(
+                            "alarm_sound",
+                            (Settings.System.DEFAULT_ALARM_ALERT_URI
+                                ?: Settings.System.DEFAULT_RINGTONE_URI).toString()
+                        )
+                    ).toUri()
+
             resetTimer()
 
             var lastDate = statRepository.getLastDate()
             val today = LocalDate.now()
 
             // Fills dates between today and lastDate with 0s to ensure continuous history
-            while ((lastDate?.until(today)?.days ?: -1) > 0) {
-                lastDate = lastDate?.plusDays(1)
-                statRepository.insertStat(Stat(lastDate!!, 0, 0, 0, 0, 0))
-            }
+            if (lastDate != null)
+                while (ChronoUnit.DAYS.between(lastDate, today) > 0) {
+                    lastDate = lastDate?.plusDays(1)
+                    statRepository.insertStat(Stat(lastDate!!, 0, 0, 0, 0, 0))
+                }
 
             delay(1500)
 

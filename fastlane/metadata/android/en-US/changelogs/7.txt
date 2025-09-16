@@ -1,0 +1,9 @@
+New features:
+- New custom alarm ringtone option
+- Vibration when a timer completes
+- New options in settings to disable alarm and vibration
+
+Fixes:
+- Alarm dialog not visible when on the stats or settings screen
+- Improved timer stability
+- System M3 colors not being used in Live Update/Now Bar progress bar

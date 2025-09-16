@@ -46,6 +46,8 @@ class SettingsViewModel(
         onValueChangeFinished = ::updateSessionLength
     )
 
+    val currentAlarmSound = timerRepository.alarmSoundUri.toString()
+
     val alarmSound =
         preferenceRepository.getStringPreferenceFlow("alarm_sound").distinctUntilChanged()
     val alarmEnabled =
@@ -118,8 +120,8 @@ class SettingsViewModel(
     fun saveAlarmSound(uri: Uri?) {
         viewModelScope.launch {
             preferenceRepository.saveStringPreference("alarm_sound", uri.toString())
-            timerRepository.alarmSoundUri = uri
         }
+        timerRepository.alarmSoundUri = uri
     }
 
     companion object {

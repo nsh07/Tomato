@@ -12,7 +12,6 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
@@ -54,7 +53,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -104,7 +102,7 @@ fun SettingsScreenRoot(
 
     val alarmEnabled by viewModel.alarmEnabled.collectAsStateWithLifecycle(true)
     val vibrateEnabled by viewModel.vibrateEnabled.collectAsStateWithLifecycle(true)
-    val alarmSound by viewModel.alarmSound.collectAsStateWithLifecycle("")
+    val alarmSound by viewModel.alarmSound.collectAsStateWithLifecycle(viewModel.currentAlarmSound)
 
     val sessionsSliderState = rememberSaveable(
         saver = SliderState.Saver(
@@ -156,8 +154,6 @@ private fun SettingsScreen(
         checkedIconColor = colorScheme.primary,
     )
 
-    var selectedSoundUri by remember(alarmSound) { mutableStateOf(alarmSound.toUri()) }
-    var selectedSoundName by remember { mutableStateOf("...") }
     val context = LocalContext.current
 
     val ringtonePickerLauncher = rememberLauncherForActivityResult(
@@ -178,15 +174,10 @@ private fun SettingsScreen(
         }
     }
 
-    // 3. The Intent to launch the picker
     val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-        // We want to show only alarm sounds
         putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-        // A title for the picker
         putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Alarm sound")
-
-        // If a sound is already selected, show it as checked
-        putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, selectedSoundUri)
+        putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmSound.toUri())
     }
 
     val switchItems = remember(alarmEnabled, vibrateEnabled) {
@@ -206,12 +197,6 @@ private fun SettingsScreen(
                 onClick = onVibrateEnabledChange
             )
         )
-    }
-
-    LaunchedEffect(selectedSoundUri) {
-        selectedSoundName =
-            RingtoneManager.getRingtone(context, selectedSoundUri)
-                .getTitle(context)
     }
 
     Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
@@ -338,7 +323,14 @@ private fun SettingsScreen(
                         Icon(painterResource(R.drawable.alarm), null)
                     },
                     headlineContent = { Text("Alarm sound") },
-                    supportingContent = { Text(selectedSoundName) },
+                    supportingContent = {
+                        Text(
+                            remember(alarmSound) {
+                                RingtoneManager.getRingtone(context, alarmSound.toUri())
+                                    .getTitle(context)
+                            }
+                        )
+                    },
                     colors = listItemColors,
                     modifier = Modifier
                         .clip(bottomListItemShape)
@@ -436,7 +428,7 @@ fun SettingsScreenPreview() {
             sessionsSliderState = rememberSliderState(value = 3f, steps = 3, valueRange = 1f..5f),
             alarmEnabled = true,
             vibrateEnabled = true,
-            alarmSound = Settings.System.DEFAULT_ALARM_ALERT_URI.toString(),
+            alarmSound = "null",
             onAlarmEnabledChange = {},
             onVibrateEnabledChange = {},
             onAlarmSoundChanged = {},

@@ -7,9 +7,17 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen
 
+import android.app.Activity
+import android.content.Intent
+import android.media.RingtoneManager
+import android.net.Uri
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -54,21 +62,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
@@ -79,6 +89,7 @@ fun SettingsScreenRoot(
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
 ) {
+    val context = LocalContext.current
     val focusTimeInputFieldState = rememberSaveable(saver = TextFieldState.Saver) {
         viewModel.focusTimeTextFieldState
     }
@@ -89,8 +100,9 @@ fun SettingsScreenRoot(
         viewModel.longBreakTimeTextFieldState
     }
 
-    val alarmEnabled = viewModel.alarmEnabled.collectAsStateWithLifecycle()
-    val vibrateEnabled = viewModel.vibrateEnabled.collectAsStateWithLifecycle()
+    val alarmEnabled by viewModel.alarmEnabled.collectAsStateWithLifecycle(true)
+    val vibrateEnabled by viewModel.vibrateEnabled.collectAsStateWithLifecycle(true)
+    val alarmSound by viewModel.alarmSound.collectAsStateWithLifecycle(viewModel.currentAlarmSound)
 
     val sessionsSliderState = rememberSaveable(
         saver = SliderState.Saver(
@@ -106,10 +118,18 @@ fun SettingsScreenRoot(
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
         sessionsSliderState = sessionsSliderState,
-        alarmEnabled = alarmEnabled.value,
-        vibrateEnabled = vibrateEnabled.value,
+        alarmEnabled = alarmEnabled,
+        vibrateEnabled = vibrateEnabled,
+        alarmSound = alarmSound,
         onAlarmEnabledChange = viewModel::saveAlarmEnabled,
         onVibrateEnabledChange = viewModel::saveVibrateEnabled,
+        onAlarmSoundChanged = {
+            viewModel.saveAlarmSound(it)
+            Intent(context, TimerService::class.java).apply {
+                action = TimerService.Actions.RESET.toString()
+                context.startService(this)
+            }
+        },
         modifier = modifier
     )
 }
@@ -123,8 +143,10 @@ private fun SettingsScreen(
     sessionsSliderState: SliderState,
     alarmEnabled: Boolean,
     vibrateEnabled: Boolean,
+    alarmSound: String,
     onAlarmEnabledChange: (Boolean) -> Unit,
     onVibrateEnabledChange: (Boolean) -> Unit,
+    onAlarmSoundChanged: (Uri?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -132,20 +154,46 @@ private fun SettingsScreen(
         checkedIconColor = colorScheme.primary,
     )
 
+    val context = LocalContext.current
+
+    val ringtonePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    result.data?.getParcelableExtra(
+                        RingtoneManager.EXTRA_RINGTONE_PICKED_URI,
+                        Uri::class.java
+                    )
+                } else {
+                    @Suppress("DEPRECATION")
+                    result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                }
+            onAlarmSoundChanged(uri)
+        }
+    }
+
+    val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+        putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+        putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Alarm sound")
+        putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmSound.toUri())
+    }
+
     val switchItems = remember(alarmEnabled, vibrateEnabled) {
         listOf(
             SettingsSwitchItem(
                 checked = alarmEnabled,
                 icon = R.drawable.alarm_on,
                 label = "Alarm",
-                description = "Ring your system alarm sound when a timer completes",
+                description = "Ring alarm when a timer completes",
                 onClick = onAlarmEnabledChange
             ),
             SettingsSwitchItem(
                 checked = vibrateEnabled,
                 icon = R.drawable.mobile_vibrate,
                 label = "Vibrate",
-                description = "Vibrate in a repeating pattern when a timer completes",
+                description = "Vibrate when a timer completes",
                 onClick = onVibrateEnabledChange
             )
         )
@@ -266,7 +314,27 @@ private fun SettingsScreen(
                         }
                     },
                     colors = listItemColors,
-                    modifier = Modifier.clip(cardShape)
+                    modifier = Modifier.clip(topListItemShape)
+                )
+            }
+            item {
+                ListItem(
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.alarm), null)
+                    },
+                    headlineContent = { Text("Alarm sound") },
+                    supportingContent = {
+                        Text(
+                            remember(alarmSound) {
+                                RingtoneManager.getRingtone(context, alarmSound.toUri())
+                                    .getTitle(context)
+                            }
+                        )
+                    },
+                    colors = listItemColors,
+                    modifier = Modifier
+                        .clip(bottomListItemShape)
+                        .clickable(onClick = { ringtonePickerLauncher.launch(intent) })
                 )
             }
             item { Spacer(Modifier.height(12.dp)) }
@@ -360,8 +428,10 @@ fun SettingsScreenPreview() {
             sessionsSliderState = rememberSliderState(value = 3f, steps = 3, valueRange = 1f..5f),
             alarmEnabled = true,
             vibrateEnabled = true,
+            alarmSound = "null",
             onAlarmEnabledChange = {},
             onVibrateEnabledChange = {},
+            onAlarmSoundChanged = {},
             modifier = Modifier.fillMaxSize()
         )
     }

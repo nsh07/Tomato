@@ -11,11 +11,31 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 /**
- * Class for storing app preferences (settings) in the app's database
+ * Class for storing boolean preferences in the app's database
+ */
+@Entity(tableName = "boolean_preference")
+data class BooleanPreference(
+    @PrimaryKey
+    val key: String,
+    val value: Boolean
+)
+
+/**
+ * Class for storing integer preferences in the app's database
  */
 @Entity(tableName = "int_preference")
 data class IntPreference(
     @PrimaryKey
     val key: String,
     val value: Int
+)
+
+/**
+ * Class for storing string preferences in the app's database
+ */
+@Entity(tableName = "string_preference")
+data class StringPreference(
+    @PrimaryKey
+    val key: String,
+    val value: String
 )

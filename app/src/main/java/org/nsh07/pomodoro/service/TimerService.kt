@@ -10,7 +10,6 @@ import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import android.provider.Settings
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -57,11 +56,7 @@ class TimerService : Service() {
     private val scope = CoroutineScope(Dispatchers.IO + job)
     private val skipScope = CoroutineScope(Dispatchers.IO + job)
 
-    private val alarm by lazy {
-        MediaPlayer.create(
-            this, Settings.System.DEFAULT_ALARM_ALERT_URI ?: Settings.System.DEFAULT_RINGTONE_URI
-        )
-    }
+    private var alarm: MediaPlayer? = null
 
     private val vibrator by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -76,6 +71,11 @@ class TimerService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        alarm = MediaPlayer.create(this, timerRepository.alarmSoundUri)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -94,6 +94,8 @@ class TimerService : Service() {
             Actions.SKIP.toString() -> skipTimer(true)
 
             Actions.STOP_ALARM.toString() -> stopAlarm()
+
+            Actions.UPDATE_ALARM_TONE.toString() -> updateAlarmTone()
         }
         return super.onStartCommand(intent, flags, startId)
     }
@@ -315,7 +317,7 @@ class TimerService : Service() {
     }
 
     fun startAlarm() {
-        if (timerRepository.alarmEnabled) alarm.start()
+        if (timerRepository.alarmEnabled) alarm?.start()
 
         if (timerRepository.vibrateEnabled) {
             if (!vibrator.hasVibrator()) {
@@ -330,8 +332,8 @@ class TimerService : Service() {
 
     fun stopAlarm() {
         if (timerRepository.alarmEnabled) {
-            alarm.pause()
-            alarm.seekTo(0)
+            alarm?.pause()
+            alarm?.seekTo(0)
         }
 
         if (timerRepository.vibrateEnabled) {
@@ -349,6 +351,11 @@ class TimerService : Service() {
                 else -> timerRepository.longBreakTime.toInt()
             }, paused = true, complete = false
         )
+    }
+
+    fun updateAlarmTone() {
+        alarm?.release()
+        alarm = MediaPlayer.create(this, timerRepository.alarmSoundUri)
     }
 
     suspend fun saveTimeToDb() {
@@ -379,10 +386,11 @@ class TimerService : Service() {
             job.cancel()
             saveTimeToDb()
             notificationManager.cancel(1)
+            alarm?.release()
         }
     }
 
     enum class Actions {
-        TOGGLE, SKIP, RESET, STOP_ALARM
+        TOGGLE, SKIP, RESET, STOP_ALARM, UPDATE_ALARM_TONE
     }
 }

@@ -55,8 +55,8 @@ class MainActivity : ComponentActivity() {
         val screens = listOf(
             NavItem(
                 Screen.Timer,
-                R.drawable.hourglass,
-                R.drawable.hourglass_filled,
+                R.drawable.timer_outlined,
+                R.drawable.timer_filled,
                 "Timer"
             ),
             NavItem(

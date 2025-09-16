@@ -7,6 +7,8 @@
 
 package org.nsh07.pomodoro.data
 
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.lightColorScheme
 
@@ -18,12 +20,17 @@ interface TimerRepository {
     var focusTime: Long
     var shortBreakTime: Long
     var longBreakTime: Long
+
     var sessionLength: Int
+
     var timerFrequency: Float
+
     var alarmEnabled: Boolean
     var vibrateEnabled: Boolean
 
     var colorScheme: ColorScheme
+
+    var alarmSoundUri: Uri?
 }
 
 /**
@@ -38,4 +45,6 @@ class AppTimerRepository : TimerRepository {
     override var alarmEnabled = true
     override var vibrateEnabled = true
     override var colorScheme = lightColorScheme()
+    override var alarmSoundUri: Uri? =
+        Settings.System.DEFAULT_ALARM_ALERT_URI ?: Settings.System.DEFAULT_RINGTONE_URI
 }

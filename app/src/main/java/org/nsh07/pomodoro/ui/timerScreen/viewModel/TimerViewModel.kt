@@ -8,7 +8,9 @@
 package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
 import android.app.Application
+import android.provider.Settings
 import androidx.compose.material3.ColorScheme
+import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -77,17 +79,21 @@ class TimerViewModel(
                     timerRepository.sessionLength
                 )
 
-            timerRepository.alarmEnabled = (preferenceRepository.getIntPreference("alarm_enabled")
-                ?: preferenceRepository.saveIntPreference(
-                    "alarm_enabled",
-                    1
-                )) == 1
+            timerRepository.alarmEnabled =
+                preferenceRepository.getBooleanPreference("alarm_enabled")
+                    ?: preferenceRepository.saveBooleanPreference("alarm_enabled", true)
             timerRepository.vibrateEnabled =
-                (preferenceRepository.getIntPreference("vibrate_enabled")
-                    ?: preferenceRepository.saveIntPreference(
-                        "vibrate_enabled",
-                        1
-                    )) == 1
+                preferenceRepository.getBooleanPreference("vibrate_enabled")
+                    ?: preferenceRepository.saveBooleanPreference("vibrate_enabled", true)
+
+            timerRepository.alarmSoundUri = (
+                    preferenceRepository.getStringPreference("alarm_sound")
+                        ?: preferenceRepository.saveStringPreference(
+                            "alarm_sound",
+                            (Settings.System.DEFAULT_ALARM_ALERT_URI
+                                ?: Settings.System.DEFAULT_RINGTONE_URI).toString()
+                        )
+                    ).toUri()
 
             resetTimer()
 

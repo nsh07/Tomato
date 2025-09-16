@@ -32,6 +32,7 @@ import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.TimerRepository
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 @OptIn(FlowPreview::class)
 class TimerViewModel(
@@ -101,10 +102,11 @@ class TimerViewModel(
             val today = LocalDate.now()
 
             // Fills dates between today and lastDate with 0s to ensure continuous history
-            while ((lastDate?.until(today)?.days ?: -1) > 0) {
-                lastDate = lastDate?.plusDays(1)
-                statRepository.insertStat(Stat(lastDate!!, 0, 0, 0, 0, 0))
-            }
+            if (lastDate != null)
+                while (ChronoUnit.DAYS.between(lastDate, today) > 0) {
+                    lastDate = lastDate?.plusDays(1)
+                    statRepository.insertStat(Stat(lastDate!!, 0, 0, 0, 0, 0))
+                }
 
             delay(1500)
 

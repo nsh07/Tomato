@@ -86,6 +86,7 @@ dependencies {
     implementation(libs.androidx.navigation3.ui)
 
     implementation(libs.vico.compose.m3)
+    implementation(libs.material.kolor)
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

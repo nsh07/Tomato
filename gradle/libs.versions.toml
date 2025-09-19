@@ -1,7 +1,7 @@
 [versions]
 activityCompose = "1.11.0"
 adaptive = "1.1.0"
-agp = "8.11.2"
+agp = "8.13.0"
 composeBom = "2025.09.00"
 coreKtx = "1.17.0"
 espressoCore = "3.7.0"
@@ -13,7 +13,7 @@ lifecycleRuntimeKtx = "2.9.4"
 materialKolor = "3.0.1"
 navigation3Runtime = "1.0.0-alpha09"
 room = "2.8.0"
-vico = "2.2.0-alpha.1"
+vico = "2.2.0"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }

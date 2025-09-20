@@ -9,7 +9,6 @@ package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
 import android.app.Application
 import android.provider.Settings
-import androidx.compose.material3.ColorScheme
 import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -51,8 +50,6 @@ class TimerViewModel(
     private var startTime = 0L
     private var pauseTime = 0L
     private var pauseDuration = 0L
-
-    private lateinit var cs: ColorScheme
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -114,10 +111,6 @@ class TimerViewModel(
                 currentState.copy(showBrandTitle = false)
             }
         }
-    }
-
-    fun setCompositionLocals(colorScheme: ColorScheme) {
-        cs = colorScheme
     }
 
     private fun resetTimer() {

@@ -46,7 +46,6 @@ import org.nsh07.pomodoro.MainActivity.Companion.screens
 import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
-import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.timerScreen.AlarmDialog
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
@@ -56,8 +55,7 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 @Composable
 fun AppScreen(
     modifier: Modifier = Modifier,
-    timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory),
-    statsViewModel: StatsViewModel = viewModel(factory = StatsViewModel.Factory)
+    timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory)
 ) {
     val context = LocalContext.current
 
@@ -194,7 +192,6 @@ fun AppScreen(
                 entry<Screen.Stats> {
                     StatsScreenRoot(
                         contentPadding = contentPadding,
-                        viewModel = statsViewModel,
                         modifier = modifier.padding(
                             start = contentPadding.calculateStartPadding(layoutDirection),
                             end = contentPadding.calculateEndPadding(layoutDirection),

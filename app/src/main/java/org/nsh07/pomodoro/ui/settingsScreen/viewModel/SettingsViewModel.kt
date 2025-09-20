@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -20,8 +21,11 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.AppPreferenceRepository
@@ -32,6 +36,9 @@ class SettingsViewModel(
     private val preferenceRepository: AppPreferenceRepository,
     private val timerRepository: TimerRepository
 ) : ViewModel() {
+    private val _preferencesState = MutableStateFlow(PreferencesState())
+    val preferencesState = _preferencesState.asStateFlow()
+
     val focusTimeTextFieldState =
         TextFieldState((timerRepository.focusTime / 60000).toString())
     val shortBreakTimeTextFieldState =
@@ -56,6 +63,22 @@ class SettingsViewModel(
         preferenceRepository.getBooleanPreferenceFlow("vibrate_enabled").distinctUntilChanged()
 
     init {
+        viewModelScope.launch {
+            val theme = preferenceRepository.getStringPreference("theme")
+                ?: preferenceRepository.saveStringPreference("theme", "system")
+            val colorScheme = preferenceRepository.getStringPreference("color_scheme")
+                ?: preferenceRepository.saveStringPreference("color_scheme", Color.White.toString())
+            val blackTheme = preferenceRepository.getBooleanPreference("black_theme")
+                ?: preferenceRepository.saveBooleanPreference("black_theme", false)
+
+            _preferencesState.update { currentState ->
+                currentState.copy(
+                    theme = theme,
+                    colorScheme = colorScheme,
+                    blackTheme = blackTheme
+                )
+            }
+        }
         viewModelScope.launch(Dispatchers.IO) {
             snapshotFlow { focusTimeTextFieldState.text }
                 .debounce(500)

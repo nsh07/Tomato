@@ -5,19 +5,23 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.nsh07.pomodoro.ui.AppScreen
 import org.nsh07.pomodoro.ui.NavItem
 import org.nsh07.pomodoro.ui.Screen
-import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
+import org.nsh07.pomodoro.utils.toColor
 
 class MainActivity : ComponentActivity() {
 
     private val timerViewModel: TimerViewModel by viewModels(factoryProducer = { TimerViewModel.Factory })
-    private val statsViewModel: StatsViewModel by viewModels(factoryProducer = { StatsViewModel.Factory })
+    private val settingsViewModel: SettingsViewModel by viewModels(factoryProducer = { SettingsViewModel.Factory })
 
     private val appContainer by lazy {
         (application as TomatoApplication).container
@@ -27,14 +31,27 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            TomatoTheme {
+            val preferencesState by settingsViewModel.preferencesState.collectAsStateWithLifecycle()
+
+            val darkTheme = when (preferencesState.theme) {
+                "dark" -> true
+                "light" -> false
+                else -> isSystemInDarkTheme()
+            }
+
+            val seed = preferencesState.colorScheme.toColor()
+
+            TomatoTheme(
+                darkTheme = darkTheme,
+                seedColor = seed,
+                blackTheme = preferencesState.blackTheme
+            ) {
                 val colorScheme = colorScheme
                 LaunchedEffect(colorScheme) {
                     appContainer.appTimerRepository.colorScheme = colorScheme
                 }
 
-                timerViewModel.setCompositionLocals(colorScheme)
-                AppScreen(timerViewModel = timerViewModel, statsViewModel = statsViewModel)
+                AppScreen(timerViewModel = timerViewModel)
             }
         }
     }

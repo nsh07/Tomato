@@ -147,6 +147,33 @@ class SettingsViewModel(
         timerRepository.alarmSoundUri = uri
     }
 
+    fun saveColorScheme(colorScheme: Color) {
+        viewModelScope.launch {
+            preferenceRepository.saveStringPreference("color_scheme", colorScheme.toString())
+        }
+        _preferencesState.update { currentState ->
+            currentState.copy(colorScheme = colorScheme.toString())
+        }
+    }
+
+    fun saveTheme(theme: String) {
+        viewModelScope.launch {
+            preferenceRepository.saveStringPreference("theme", theme)
+        }
+        _preferencesState.update { currentState ->
+            currentState.copy(theme = theme)
+        }
+    }
+
+    fun saveBlackTheme(blackTheme: Boolean) {
+        viewModelScope.launch {
+            preferenceRepository.saveBooleanPreference("black_theme", blackTheme)
+        }
+        _preferencesState.update { currentState ->
+            currentState.copy(blackTheme = blackTheme)
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {

@@ -130,7 +130,7 @@ fun SettingsScreenRoot(
         alarmSound = alarmSound,
         onAlarmEnabledChange = viewModel::saveAlarmEnabled,
         onVibrateEnabledChange = viewModel::saveVibrateEnabled,
-        onBlackThemeChange = {},
+        onBlackThemeChange = viewModel::saveBlackTheme,
         onAlarmSoundChanged = {
             viewModel.saveAlarmSound(it)
             Intent(context, TimerService::class.java).apply {
@@ -138,6 +138,7 @@ fun SettingsScreenRoot(
                 context.startService(this)
             }
         },
+        onThemeChange = viewModel::saveTheme,
         modifier = modifier
     )
 }
@@ -157,12 +158,31 @@ private fun SettingsScreen(
     onVibrateEnabledChange: (Boolean) -> Unit,
     onBlackThemeChange: (Boolean) -> Unit,
     onAlarmSoundChanged: (Uri?) -> Unit,
+    onThemeChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val switchColors = SwitchDefaults.colors(
         checkedIconColor = colorScheme.primary,
     )
+
+    val themeMap: Map<String, Pair<Int, String>> = remember {
+        mapOf(
+            "auto" to Pair(
+                R.drawable.brightness_auto,
+                "System default"
+            ),
+            "light" to Pair(R.drawable.light_mode, "Light"),
+            "dark" to Pair(R.drawable.dark_mode, "Dark")
+        )
+    }
+    val reverseThemeMap: Map<String, String> = remember {
+        mapOf(
+            "System default" to "auto",
+            "Light" to "light",
+            "Dark" to "dark"
+        )
+    }
 
     val context = LocalContext.current
 
@@ -190,7 +210,7 @@ private fun SettingsScreen(
         putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmSound.toUri())
     }
 
-    val switchItems = remember(alarmEnabled, vibrateEnabled) {
+    val switchItems = remember(preferencesState.blackTheme, alarmEnabled, vibrateEnabled) {
         listOf(
             SettingsSwitchItem(
                 checked = preferencesState.blackTheme,
@@ -360,33 +380,13 @@ private fun SettingsScreen(
                 )
             }
             item {
-                ListItem(
-                    leadingContent = {
-                        Icon(
-                            painter = painterResource(
-                                when (preferencesState.theme) {
-                                    "dark" -> R.drawable.dark_mode
-                                    "light" -> R.drawable.light_mode
-                                    else -> R.drawable.brightness_auto
-                                }
-                            ),
-                            contentDescription = null
-                        )
-                    },
-                    headlineContent = { Text("Theme") },
-                    supportingContent = {
-                        Text(
-                            when (preferencesState.theme) {
-                                "dark" -> "Dark"
-                                "light" -> "Light"
-                                else -> "System default"
-                            }
-                        )
-                    },
-                    colors = listItemColors,
+                ThemePickerListItem(
+                    theme = preferencesState.theme,
+                    themeMap = themeMap,
+                    reverseThemeMap = reverseThemeMap,
+                    onThemeChange = onThemeChange,
                     modifier = Modifier
                         .clip(middleListItemShape)
-                        .clickable(onClick = {})
                 )
             }
             item {
@@ -436,7 +436,7 @@ private fun SettingsScreen(
                         Text(
                             remember(alarmSound) {
                                 RingtoneManager.getRingtone(context, alarmSound.toUri())
-                                    .getTitle(context)
+                                    ?.getTitle(context) ?: ""
                             }
                         )
                     },
@@ -530,9 +530,9 @@ fun SettingsScreenPreview() {
     TomatoTheme {
         SettingsScreen(
             preferencesState = PreferencesState(),
-            focusTimeInputFieldState = rememberTextFieldState((25 * 60 * 1000).toString()),
-            shortBreakTimeInputFieldState = rememberTextFieldState((5 * 60 * 1000).toString()),
-            longBreakTimeInputFieldState = rememberTextFieldState((15 * 60 * 1000).toString()),
+            focusTimeInputFieldState = rememberTextFieldState((25).toString()),
+            shortBreakTimeInputFieldState = rememberTextFieldState((5).toString()),
+            longBreakTimeInputFieldState = rememberTextFieldState((15).toString()),
             sessionsSliderState = rememberSliderState(value = 3f, steps = 3, valueRange = 1f..5f),
             alarmEnabled = true,
             vibrateEnabled = true,
@@ -541,6 +541,7 @@ fun SettingsScreenPreview() {
             onVibrateEnabledChange = {},
             onBlackThemeChange = {},
             onAlarmSoundChanged = {},
+            onThemeChange = {},
             modifier = Modifier.fillMaxSize()
         )
     }

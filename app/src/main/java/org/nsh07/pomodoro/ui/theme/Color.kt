@@ -18,15 +18,17 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 object CustomColors {
+    var black = false
+
     @OptIn(ExperimentalMaterial3Api::class)
     val topBarColors: TopAppBarColors
-        @Composable get() {
-            return TopAppBarDefaults.topAppBarColors(
-                containerColor = colorScheme.surfaceContainer,
-                scrolledContainerColor = colorScheme.surfaceContainer
+        @Composable get() =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = if (!black) colorScheme.surfaceContainer else colorScheme.surface,
+                scrolledContainerColor = if (!black) colorScheme.surfaceContainer else colorScheme.surface
             )
-        }
 
     val listItemColors: ListItemColors
-        @Composable get() = ListItemDefaults.colors(containerColor = colorScheme.surfaceBright)
+        @Composable get() =
+            ListItemDefaults.colors(containerColor = if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainer)
 }

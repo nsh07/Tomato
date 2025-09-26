@@ -65,7 +65,7 @@ class SettingsViewModel(
     init {
         viewModelScope.launch {
             val theme = preferenceRepository.getStringPreference("theme")
-                ?: preferenceRepository.saveStringPreference("theme", "system")
+                ?: preferenceRepository.saveStringPreference("theme", "auto")
             val colorScheme = preferenceRepository.getStringPreference("color_scheme")
                 ?: preferenceRepository.saveStringPreference("color_scheme", Color.White.toString())
             val blackTheme = preferenceRepository.getBooleanPreference("black_theme")
@@ -128,49 +128,49 @@ class SettingsViewModel(
 
     fun saveAlarmEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            preferenceRepository.saveBooleanPreference("alarm_enabled", enabled)
             timerRepository.alarmEnabled = enabled
+            preferenceRepository.saveBooleanPreference("alarm_enabled", enabled)
         }
     }
 
     fun saveVibrateEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            preferenceRepository.saveBooleanPreference("vibrate_enabled", enabled)
             timerRepository.vibrateEnabled = enabled
+            preferenceRepository.saveBooleanPreference("vibrate_enabled", enabled)
         }
     }
 
     fun saveAlarmSound(uri: Uri?) {
         viewModelScope.launch {
+            timerRepository.alarmSoundUri = uri
             preferenceRepository.saveStringPreference("alarm_sound", uri.toString())
         }
-        timerRepository.alarmSoundUri = uri
     }
 
     fun saveColorScheme(colorScheme: Color) {
         viewModelScope.launch {
+            _preferencesState.update { currentState ->
+                currentState.copy(colorScheme = colorScheme.toString())
+            }
             preferenceRepository.saveStringPreference("color_scheme", colorScheme.toString())
-        }
-        _preferencesState.update { currentState ->
-            currentState.copy(colorScheme = colorScheme.toString())
         }
     }
 
     fun saveTheme(theme: String) {
         viewModelScope.launch {
+            _preferencesState.update { currentState ->
+                currentState.copy(theme = theme)
+            }
             preferenceRepository.saveStringPreference("theme", theme)
-        }
-        _preferencesState.update { currentState ->
-            currentState.copy(theme = theme)
         }
     }
 
     fun saveBlackTheme(blackTheme: Boolean) {
         viewModelScope.launch {
+            _preferencesState.update { currentState ->
+                currentState.copy(blackTheme = blackTheme)
+            }
             preferenceRepository.saveBooleanPreference("black_theme", blackTheme)
-        }
-        _preferencesState.update { currentState ->
-            currentState.copy(blackTheme = blackTheme)
         }
     }
 

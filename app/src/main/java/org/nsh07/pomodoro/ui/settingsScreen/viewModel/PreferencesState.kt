@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 
 @Immutable
 data class PreferencesState(
-    val theme: String = "system",
+    val theme: String = "auto",
     val colorScheme: String = Color.White.toString(),
     val blackTheme: Boolean = false
 )

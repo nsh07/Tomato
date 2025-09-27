@@ -22,7 +22,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -60,10 +59,9 @@ class SettingsViewModel(
 
     val currentAlarmSound = timerRepository.alarmSoundUri.toString()
 
-    private val flowCollectionJob = SupervisorJob()
-    private val focusFlowCollectionJob = Job(flowCollectionJob)
-    private val shortBreakFlowCollectionJob = Job(flowCollectionJob)
-    private val longBreakFlowCollectionJob = Job(flowCollectionJob)
+    private var focusFlowCollectionJob: Job? = null
+    private var shortBreakFlowCollectionJob: Job? = null
+    private var longBreakFlowCollectionJob: Job? = null
 
     val alarmSound =
         preferenceRepository.getStringPreferenceFlow("alarm_sound").distinctUntilChanged()
@@ -101,7 +99,7 @@ class SettingsViewModel(
     }
 
     fun runTextFieldFlowCollection() {
-        viewModelScope.launch(focusFlowCollectionJob + Dispatchers.IO) {
+        focusFlowCollectionJob = viewModelScope.launch(Dispatchers.IO) {
             snapshotFlow { focusTimeTextFieldState.text }
                 .debounce(500)
                 .collect {
@@ -114,7 +112,7 @@ class SettingsViewModel(
                     }
                 }
         }
-        viewModelScope.launch(shortBreakFlowCollectionJob + Dispatchers.IO) {
+        shortBreakFlowCollectionJob = viewModelScope.launch(Dispatchers.IO) {
             snapshotFlow { shortBreakTimeTextFieldState.text }
                 .debounce(500)
                 .collect {
@@ -127,7 +125,7 @@ class SettingsViewModel(
                     }
                 }
         }
-        viewModelScope.launch(longBreakFlowCollectionJob + Dispatchers.IO) {
+        longBreakFlowCollectionJob = viewModelScope.launch(Dispatchers.IO) {
             snapshotFlow { longBreakTimeTextFieldState.text }
                 .debounce(500)
                 .collect {
@@ -142,7 +140,11 @@ class SettingsViewModel(
         }
     }
 
-    fun cancelTextFieldFlowCollection() = flowCollectionJob.cancel()
+    fun cancelTextFieldFlowCollection() {
+        focusFlowCollectionJob?.cancel()
+        shortBreakFlowCollectionJob?.cancel()
+        longBreakFlowCollectionJob?.cancel()
+    }
 
     fun saveAlarmEnabled(enabled: Boolean) {
         viewModelScope.launch {

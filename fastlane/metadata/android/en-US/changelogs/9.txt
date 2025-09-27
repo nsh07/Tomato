@@ -1,0 +1,10 @@
+This release contains bug fixes on top of the existing new features of 1.4.0:
+
+New features:
+- You can now choose a custom theme and color scheme for the app's UI
+- New pure black dark theme mode
+
+Fixes:
+- Average focus durations now do not include days with no activity
+- Fix a critical bug that caused the app's timer state to reset to Focus whenever the app was closed from recents and then opened
+- Replace the word "Reset" with "Exit" in the notification to make its purpose less ambiguous

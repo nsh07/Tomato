@@ -34,7 +34,7 @@ fun NotificationCompat.Builder.addTimerActions(
     )
     .addAction(
         R.drawable.restart,
-        "Reset",
+        "Exit",
         PendingIntent.getService(
             context,
             0,

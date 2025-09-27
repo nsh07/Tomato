@@ -82,7 +82,6 @@ class TimerService : Service() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         timerRepository.serviceRunning = false
         runBlocking {
             job.cancel()
@@ -90,6 +89,7 @@ class TimerService : Service() {
             notificationManager.cancel(1)
             alarm?.release()
         }
+        super.onDestroy()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

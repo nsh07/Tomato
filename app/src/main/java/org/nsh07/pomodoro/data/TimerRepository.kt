@@ -31,6 +31,8 @@ interface TimerRepository {
     var colorScheme: ColorScheme
 
     var alarmSoundUri: Uri?
+
+    var serviceRunning: Boolean
 }
 
 /**
@@ -47,4 +49,5 @@ class AppTimerRepository : TimerRepository {
     override var colorScheme = lightColorScheme()
     override var alarmSoundUri: Uri? =
         Settings.System.DEFAULT_ALARM_ALERT_URI ?: Settings.System.DEFAULT_RINGTONE_URI
+    override var serviceRunning = false
 }

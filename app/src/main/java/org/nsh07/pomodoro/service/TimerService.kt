@@ -77,7 +77,19 @@ class TimerService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        timerRepository.serviceRunning = true
         alarm = MediaPlayer.create(this, timerRepository.alarmSoundUri)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        timerRepository.serviceRunning = false
+        runBlocking {
+            job.cancel()
+            saveTimeToDb()
+            notificationManager.cancel(1)
+            alarm?.release()
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -283,6 +295,7 @@ class TimerService : Service() {
     private fun skipTimer(fromButton: Boolean = false) {
         skipScope.launch {
             saveTimeToDb()
+            updateProgressSegments()
             showTimerNotification(0, paused = true, complete = !fromButton)
             startTime = 0L
             pauseTime = 0L
@@ -386,16 +399,6 @@ class TimerService : Service() {
         notificationManager.cancel(1)
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        runBlocking {
-            job.cancel()
-            saveTimeToDb()
-            notificationManager.cancel(1)
-            alarm?.release()
-        }
     }
 
     enum class Actions {

@@ -21,6 +21,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -39,12 +40,15 @@ class SettingsViewModel(
     private val _preferencesState = MutableStateFlow(PreferencesState())
     val preferencesState = _preferencesState.asStateFlow()
 
-    val focusTimeTextFieldState =
+    val focusTimeTextFieldState by lazy {
         TextFieldState((timerRepository.focusTime / 60000).toString())
-    val shortBreakTimeTextFieldState =
+    }
+    val shortBreakTimeTextFieldState by lazy {
         TextFieldState((timerRepository.shortBreakTime / 60000).toString())
-    val longBreakTimeTextFieldState =
+    }
+    val longBreakTimeTextFieldState by lazy {
         TextFieldState((timerRepository.longBreakTime / 60000).toString())
+    }
 
     val sessionsSliderState = SliderState(
         value = timerRepository.sessionLength.toFloat(),
@@ -54,6 +58,8 @@ class SettingsViewModel(
     )
 
     val currentAlarmSound = timerRepository.alarmSoundUri.toString()
+
+    private val flowCollectionJob = SupervisorJob()
 
     val alarmSound =
         preferenceRepository.getStringPreferenceFlow("alarm_sound").distinctUntilChanged()
@@ -79,7 +85,19 @@ class SettingsViewModel(
                 )
             }
         }
-        viewModelScope.launch(Dispatchers.IO) {
+    }
+
+    private fun updateSessionLength() {
+        viewModelScope.launch {
+            timerRepository.sessionLength = preferenceRepository.saveIntPreference(
+                "session_length",
+                sessionsSliderState.value.toInt()
+            )
+        }
+    }
+
+    fun runTextFieldFlowCollection() {
+        viewModelScope.launch(flowCollectionJob + Dispatchers.IO) {
             snapshotFlow { focusTimeTextFieldState.text }
                 .debounce(500)
                 .collect {
@@ -91,7 +109,7 @@ class SettingsViewModel(
                     }
                 }
         }
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(flowCollectionJob + Dispatchers.IO) {
             snapshotFlow { shortBreakTimeTextFieldState.text }
                 .debounce(500)
                 .collect {
@@ -103,7 +121,7 @@ class SettingsViewModel(
                     }
                 }
         }
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(flowCollectionJob + Dispatchers.IO) {
             snapshotFlow { longBreakTimeTextFieldState.text }
                 .debounce(500)
                 .collect {
@@ -117,14 +135,7 @@ class SettingsViewModel(
         }
     }
 
-    private fun updateSessionLength() {
-        viewModelScope.launch {
-            timerRepository.sessionLength = preferenceRepository.saveIntPreference(
-                "session_length",
-                sessionsSliderState.value.toInt()
-            )
-        }
-    }
+    fun cancelTextFieldFlowCollection() = flowCollectionJob.cancel()
 
     fun saveAlarmEnabled(enabled: Boolean) {
         viewModelScope.launch {

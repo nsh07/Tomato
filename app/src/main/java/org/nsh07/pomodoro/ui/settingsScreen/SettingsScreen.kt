@@ -53,6 +53,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -95,6 +96,12 @@ fun SettingsScreenRoot(
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
 ) {
     val context = LocalContext.current
+
+    DisposableEffect(Unit) {
+        viewModel.runTextFieldFlowCollection()
+        onDispose { viewModel.cancelTextFieldFlowCollection() }
+    }
+
     val focusTimeInputFieldState = rememberSaveable(saver = TextFieldState.Saver) {
         viewModel.focusTimeTextFieldState
     }

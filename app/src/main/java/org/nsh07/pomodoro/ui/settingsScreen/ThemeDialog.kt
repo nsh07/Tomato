@@ -7,6 +7,7 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,11 +22,11 @@ import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -35,9 +36,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
+import org.nsh07.pomodoro.ui.theme.CustomColors.selectedListItemColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
@@ -70,28 +74,30 @@ fun ThemeDialog(
                     text = "Choose theme",
                     style = MaterialTheme.typography.headlineSmall
                 )
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 Column(
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                     modifier = Modifier.selectableGroup()
                 ) {
                     themeMap.entries.forEachIndexed { index: Int, pair: Map.Entry<String, Pair<Int, String>> ->
                         val text = pair.value.second
+                        val selected = text == selectedOption.value
+
                         ListItem(
                             leadingContent = {
-                                RadioButton(
-                                    selected = (text == selectedOption.value),
-                                    onClick = null // null recommended for accessibility with screenreaders
-                                )
+                                AnimatedContent(selected) {
+                                    if (it)
+                                        Icon(painterResource(R.drawable.check), null)
+                                    else
+                                        Icon(painterResource(pair.value.first), null)
+                                }
                             },
                             headlineContent = {
-                                Text(
-                                    text = text,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                )
+                                Text(text = text, style = MaterialTheme.typography.bodyLarge)
                             },
-                            colors = listItemColors,
+                            colors = if (!selected) listItemColors else selectedListItemColors,
                             modifier = Modifier
+                                .height(64.dp)
                                 .clip(
                                     when (index) {
                                         0 -> topListItemShape
@@ -110,7 +116,7 @@ fun ThemeDialog(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 TextButton(
                     shapes = ButtonDefaults.shapes(),
                     onClick = { setShowThemeDialog(false) },

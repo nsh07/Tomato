@@ -30,5 +30,15 @@ object CustomColors {
 
     val listItemColors: ListItemColors
         @Composable get() =
-            ListItemDefaults.colors(containerColor = if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainer)
+            ListItemDefaults.colors(containerColor = if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainerHigh)
+
+    val selectedListItemColors: ListItemColors
+        @Composable get() =
+            ListItemDefaults.colors(
+                containerColor = colorScheme.secondaryContainer,
+                headlineColor = colorScheme.secondary,
+                leadingIconColor = colorScheme.onSecondaryContainer,
+                supportingColor = colorScheme.onSecondaryFixedVariant,
+                trailingIconColor = colorScheme.onSecondaryFixedVariant
+            )
 }

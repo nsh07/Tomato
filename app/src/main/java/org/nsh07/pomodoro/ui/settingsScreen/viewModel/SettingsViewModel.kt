@@ -21,6 +21,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -60,6 +61,9 @@ class SettingsViewModel(
     val currentAlarmSound = timerRepository.alarmSoundUri.toString()
 
     private val flowCollectionJob = SupervisorJob()
+    private val focusFlowCollectionJob = Job(flowCollectionJob)
+    private val shortBreakFlowCollectionJob = Job(flowCollectionJob)
+    private val longBreakFlowCollectionJob = Job(flowCollectionJob)
 
     val alarmSound =
         preferenceRepository.getStringPreferenceFlow("alarm_sound").distinctUntilChanged()
@@ -97,39 +101,42 @@ class SettingsViewModel(
     }
 
     fun runTextFieldFlowCollection() {
-        viewModelScope.launch(flowCollectionJob + Dispatchers.IO) {
+        viewModelScope.launch(focusFlowCollectionJob + Dispatchers.IO) {
             snapshotFlow { focusTimeTextFieldState.text }
                 .debounce(500)
                 .collect {
                     if (it.isNotEmpty()) {
-                        timerRepository.focusTime = preferenceRepository.saveIntPreference(
+                        timerRepository.focusTime = it.toString().toLong() * 60 * 1000
+                        preferenceRepository.saveIntPreference(
                             "focus_time",
-                            it.toString().toInt() * 60 * 1000
-                        ).toLong()
+                            timerRepository.focusTime.toInt()
+                        )
                     }
                 }
         }
-        viewModelScope.launch(flowCollectionJob + Dispatchers.IO) {
+        viewModelScope.launch(shortBreakFlowCollectionJob + Dispatchers.IO) {
             snapshotFlow { shortBreakTimeTextFieldState.text }
                 .debounce(500)
                 .collect {
                     if (it.isNotEmpty()) {
-                        timerRepository.shortBreakTime = preferenceRepository.saveIntPreference(
+                        timerRepository.shortBreakTime = it.toString().toLong() * 60 * 1000
+                        preferenceRepository.saveIntPreference(
                             "short_break_time",
-                            it.toString().toInt() * 60 * 1000
-                        ).toLong()
+                            timerRepository.shortBreakTime.toInt()
+                        )
                     }
                 }
         }
-        viewModelScope.launch(flowCollectionJob + Dispatchers.IO) {
+        viewModelScope.launch(longBreakFlowCollectionJob + Dispatchers.IO) {
             snapshotFlow { longBreakTimeTextFieldState.text }
                 .debounce(500)
                 .collect {
                     if (it.isNotEmpty()) {
-                        timerRepository.longBreakTime = preferenceRepository.saveIntPreference(
+                        timerRepository.longBreakTime = it.toString().toLong() * 60 * 1000
+                        preferenceRepository.saveIntPreference(
                             "long_break_time",
-                            it.toString().toInt() * 60 * 1000
-                        ).toLong()
+                            timerRepository.longBreakTime.toInt()
+                        )
                     }
                 }
         }

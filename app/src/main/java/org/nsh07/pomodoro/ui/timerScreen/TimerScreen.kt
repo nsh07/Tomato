@@ -121,11 +121,11 @@ fun TimerScreen(
                     if (!timerState.showBrandTitle) timerState.timerMode else TimerMode.BRAND,
                     transitionSpec = {
                         slideInVertically(
-                            animationSpec = motionScheme.slowSpatialSpec(),
+                            animationSpec = motionScheme.defaultSpatialSpec(),
                             initialOffsetY = { (-it * 1.25).toInt() }
                         ).togetherWith(
                             slideOutVertically(
-                                animationSpec = motionScheme.slowSpatialSpec(),
+                                animationSpec = motionScheme.defaultSpatialSpec(),
                                 targetOffsetY = { (it * 1.25).toInt() }
                             )
                         )
@@ -159,7 +159,7 @@ fun TimerScreen(
                             )
 
                         TimerMode.SHORT_BREAK -> Text(
-                            "Short Break",
+                            "Short break",
                             style = TextStyle(
                                 fontFamily = robotoFlexTopBar,
                                 fontSize = 32.sp,
@@ -458,7 +458,7 @@ fun TimerScreen(
                 Text(
                     when (timerState.nextTimerMode) {
                         TimerMode.FOCUS -> "Focus"
-                        TimerMode.SHORT_BREAK -> "Short Break"
+                        TimerMode.SHORT_BREAK -> "Short break"
                         else -> "Long Break"
                     },
                     style = typography.titleMediumEmphasized

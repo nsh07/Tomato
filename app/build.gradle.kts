@@ -33,8 +33,8 @@ android {
         applicationId = "org.nsh07.pomodoro"
         minSdk = 26
         targetSdk = 36
-        versionCode = 7
-        versionName = "1.3.0"
+        versionCode = 8
+        versionName = "1.4.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -86,6 +86,7 @@ dependencies {
     implementation(libs.androidx.navigation3.ui)
 
     implementation(libs.vico.compose.m3)
+    implementation(libs.material.kolor)
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

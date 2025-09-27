@@ -53,6 +53,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,6 +63,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -74,14 +77,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.service.TimerService
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import org.nsh07.pomodoro.utils.toColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,6 +96,12 @@ fun SettingsScreenRoot(
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
 ) {
     val context = LocalContext.current
+
+    DisposableEffect(Unit) {
+        viewModel.runTextFieldFlowCollection()
+        onDispose { viewModel.cancelTextFieldFlowCollection() }
+    }
+
     val focusTimeInputFieldState = rememberSaveable(saver = TextFieldState.Saver) {
         viewModel.focusTimeTextFieldState
     }
@@ -104,6 +116,8 @@ fun SettingsScreenRoot(
     val vibrateEnabled by viewModel.vibrateEnabled.collectAsStateWithLifecycle(true)
     val alarmSound by viewModel.alarmSound.collectAsStateWithLifecycle(viewModel.currentAlarmSound)
 
+    val preferencesState by viewModel.preferencesState.collectAsStateWithLifecycle()
+
     val sessionsSliderState = rememberSaveable(
         saver = SliderState.Saver(
             viewModel.sessionsSliderState.onValueChangeFinished,
@@ -114,6 +128,7 @@ fun SettingsScreenRoot(
     }
 
     SettingsScreen(
+        preferencesState = preferencesState,
         focusTimeInputFieldState = focusTimeInputFieldState,
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
@@ -123,6 +138,7 @@ fun SettingsScreenRoot(
         alarmSound = alarmSound,
         onAlarmEnabledChange = viewModel::saveAlarmEnabled,
         onVibrateEnabledChange = viewModel::saveVibrateEnabled,
+        onBlackThemeChange = viewModel::saveBlackTheme,
         onAlarmSoundChanged = {
             viewModel.saveAlarmSound(it)
             Intent(context, TimerService::class.java).apply {
@@ -130,6 +146,8 @@ fun SettingsScreenRoot(
                 context.startService(this)
             }
         },
+        onThemeChange = viewModel::saveTheme,
+        onColorSchemeChange = viewModel::saveColorScheme,
         modifier = modifier
     )
 }
@@ -137,6 +155,7 @@ fun SettingsScreenRoot(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SettingsScreen(
+    preferencesState: PreferencesState,
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
@@ -146,7 +165,10 @@ private fun SettingsScreen(
     alarmSound: String,
     onAlarmEnabledChange: (Boolean) -> Unit,
     onVibrateEnabledChange: (Boolean) -> Unit,
+    onBlackThemeChange: (Boolean) -> Unit,
     onAlarmSoundChanged: (Uri?) -> Unit,
+    onThemeChange: (String) -> Unit,
+    onColorSchemeChange: (Color) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -154,7 +176,31 @@ private fun SettingsScreen(
         checkedIconColor = colorScheme.primary,
     )
 
+    val themeMap: Map<String, Pair<Int, String>> = remember {
+        mapOf(
+            "auto" to Pair(
+                R.drawable.brightness_auto,
+                "System default"
+            ),
+            "light" to Pair(R.drawable.light_mode, "Light"),
+            "dark" to Pair(R.drawable.dark_mode, "Dark")
+        )
+    }
+    val reverseThemeMap: Map<String, String> = remember {
+        mapOf(
+            "System default" to "auto",
+            "Light" to "light",
+            "Dark" to "dark"
+        )
+    }
+
     val context = LocalContext.current
+    var alarmName by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        alarmName = RingtoneManager.getRingtone(context, alarmSound.toUri())
+            ?.getTitle(context) ?: ""
+    }
 
     val ringtonePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -180,8 +226,15 @@ private fun SettingsScreen(
         putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmSound.toUri())
     }
 
-    val switchItems = remember(alarmEnabled, vibrateEnabled) {
+    val switchItems = remember(preferencesState.blackTheme, alarmEnabled, vibrateEnabled) {
         listOf(
+            SettingsSwitchItem(
+                checked = preferencesState.blackTheme,
+                icon = R.drawable.contrast,
+                label = "Black theme",
+                description = "Use a pure black dark theme",
+                onClick = onBlackThemeChange
+            ),
             SettingsSwitchItem(
                 checked = alarmEnabled,
                 icon = R.drawable.alarm_on,
@@ -314,31 +367,83 @@ private fun SettingsScreen(
                         }
                     },
                     colors = listItemColors,
-                    modifier = Modifier.clip(topListItemShape)
+                    modifier = Modifier.clip(cardShape)
                 )
             }
+
+            item { Spacer(Modifier.height(12.dp)) }
+
+            item {
+                ColorSchemePickerListItem(
+                    color = preferencesState.colorScheme.toColor(),
+                    items = 3,
+                    index = 0,
+                    onColorChange = onColorSchemeChange
+                )
+            }
+            item {
+                ThemePickerListItem(
+                    theme = preferencesState.theme,
+                    themeMap = themeMap,
+                    reverseThemeMap = reverseThemeMap,
+                    onThemeChange = onThemeChange,
+                    items = 3,
+                    index = 1,
+                    modifier = Modifier
+                        .clip(middleListItemShape)
+                )
+            }
+            item {
+                val item = switchItems[0]
+                ListItem(
+                    leadingContent = {
+                        Icon(painterResource(item.icon), contentDescription = null)
+                    },
+                    headlineContent = { Text(item.label) },
+                    supportingContent = { Text(item.description) },
+                    trailingContent = {
+                        Switch(
+                            checked = item.checked,
+                            onCheckedChange = { item.onClick(it) },
+                            thumbContent = {
+                                if (item.checked) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.check),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                    )
+                                } else {
+                                    Icon(
+                                        painter = painterResource(R.drawable.clear),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                    )
+                                }
+                            },
+                            colors = switchColors
+                        )
+                    },
+                    colors = listItemColors,
+                    modifier = Modifier.clip(bottomListItemShape)
+                )
+            }
+
+            item { Spacer(Modifier.height(12.dp)) }
+
             item {
                 ListItem(
                     leadingContent = {
                         Icon(painterResource(R.drawable.alarm), null)
                     },
                     headlineContent = { Text("Alarm sound") },
-                    supportingContent = {
-                        Text(
-                            remember(alarmSound) {
-                                RingtoneManager.getRingtone(context, alarmSound.toUri())
-                                    .getTitle(context)
-                            }
-                        )
-                    },
+                    supportingContent = { Text(alarmName) },
                     colors = listItemColors,
                     modifier = Modifier
-                        .clip(bottomListItemShape)
+                        .clip(topListItemShape)
                         .clickable(onClick = { ringtonePickerLauncher.launch(intent) })
                 )
             }
-            item { Spacer(Modifier.height(12.dp)) }
-            itemsIndexed(switchItems) { index, item ->
+            itemsIndexed(switchItems.drop(1)) { index, item ->
                 ListItem(
                     leadingContent = {
                         Icon(painterResource(item.icon), contentDescription = null)
@@ -371,8 +476,7 @@ private fun SettingsScreen(
                     modifier = Modifier
                         .clip(
                             when (index) {
-                                0 -> topListItemShape
-                                switchItems.lastIndex -> bottomListItemShape
+                                switchItems.lastIndex - 1 -> bottomListItemShape
                                 else -> middleListItemShape
                             }
                         )
@@ -422,16 +526,20 @@ private fun SettingsScreen(
 fun SettingsScreenPreview() {
     TomatoTheme {
         SettingsScreen(
-            focusTimeInputFieldState = rememberTextFieldState((25 * 60 * 1000).toString()),
-            shortBreakTimeInputFieldState = rememberTextFieldState((5 * 60 * 1000).toString()),
-            longBreakTimeInputFieldState = rememberTextFieldState((15 * 60 * 1000).toString()),
+            preferencesState = PreferencesState(),
+            focusTimeInputFieldState = rememberTextFieldState((25).toString()),
+            shortBreakTimeInputFieldState = rememberTextFieldState((5).toString()),
+            longBreakTimeInputFieldState = rememberTextFieldState((15).toString()),
             sessionsSliderState = rememberSliderState(value = 3f, steps = 3, valueRange = 1f..5f),
             alarmEnabled = true,
             vibrateEnabled = true,
             alarmSound = "null",
             onAlarmEnabledChange = {},
             onVibrateEnabledChange = {},
+            onBlackThemeChange = {},
             onAlarmSoundChanged = {},
+            onThemeChange = {},
+            onColorSchemeChange = {},
             modifier = Modifier.fillMaxSize()
         )
     }

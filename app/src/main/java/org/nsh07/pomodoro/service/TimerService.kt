@@ -69,13 +69,27 @@ class TimerService : Service() {
 
     private val cs by lazy { timerRepository.colorScheme }
 
+    private lateinit var notificationStyle: NotificationCompat.ProgressStyle
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     override fun onCreate() {
         super.onCreate()
+        timerRepository.serviceRunning = true
         alarm = MediaPlayer.create(this, timerRepository.alarmSoundUri)
+    }
+
+    override fun onDestroy() {
+        timerRepository.serviceRunning = false
+        runBlocking {
+            job.cancel()
+            saveTimeToDb()
+            notificationManager.cancel(1)
+            alarm?.release()
+        }
+        super.onDestroy()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -101,6 +115,8 @@ class TimerService : Service() {
     }
 
     private fun toggleTimer() {
+        updateProgressSegments()
+
         if (timerState.value.timerRunning) {
             notificationBuilder.clearActions().addTimerActions(
                 this, R.drawable.play, "Start"
@@ -194,42 +210,7 @@ class TimerService : Service() {
                 )
                 .setContentText("Up next: $nextTimer (${timerState.value.nextTimeStr})")
                 .setStyle(
-                    NotificationCompat.ProgressStyle()
-                        .also {
-                            // Add all the Focus, Short break and long break intervals in order
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-                                // Android 16 and later supports live updates
-                                // Set progress bar sections if on Baklava or later
-                                for (i in 0..<timerRepository.sessionLength * 2) {
-                                    if (i % 2 == 0) it.addProgressSegment(
-                                        NotificationCompat.ProgressStyle.Segment(
-                                            timerRepository.focusTime.toInt()
-                                        )
-                                            .setColor(cs.primary.toArgb())
-                                    )
-                                    else if (i != (timerRepository.sessionLength * 2 - 1)) it.addProgressSegment(
-                                        NotificationCompat.ProgressStyle.Segment(
-                                            timerRepository.shortBreakTime.toInt()
-                                        ).setColor(cs.tertiary.toArgb())
-                                    )
-                                    else it.addProgressSegment(
-                                        NotificationCompat.ProgressStyle.Segment(
-                                            timerRepository.longBreakTime.toInt()
-                                        ).setColor(cs.tertiary.toArgb())
-                                    )
-                                }
-                            } else {
-                                it.addProgressSegment(
-                                    NotificationCompat.ProgressStyle.Segment(
-                                        when (timerState.value.timerMode) {
-                                            TimerMode.FOCUS -> timerRepository.focusTime.toInt()
-                                            TimerMode.SHORT_BREAK -> timerRepository.shortBreakTime.toInt()
-                                            else -> timerRepository.longBreakTime.toInt()
-                                        }
-                                    )
-                                )
-                            }
-                        }
+                    notificationStyle
                         .setProgress( // Set the current progress by filling the previous intervals and part of the current interval
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
                                 (totalTime - remainingTime) + ((cycles + 1) / 2) * timerRepository.focusTime.toInt() + (cycles / 2) * timerRepository.shortBreakTime.toInt()
@@ -247,6 +228,45 @@ class TimerService : Service() {
                 currentState.copy(alarmRinging = true)
             }
         }
+    }
+
+    private fun updateProgressSegments() {
+        notificationStyle = NotificationCompat.ProgressStyle()
+            .also {
+                // Add all the Focus, Short break and long break intervals in order
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                    // Android 16 and later supports live updates
+                    // Set progress bar sections if on Baklava or later
+                    for (i in 0..<timerRepository.sessionLength * 2) {
+                        if (i % 2 == 0) it.addProgressSegment(
+                            NotificationCompat.ProgressStyle.Segment(
+                                timerRepository.focusTime.toInt()
+                            )
+                                .setColor(cs.primary.toArgb())
+                        )
+                        else if (i != (timerRepository.sessionLength * 2 - 1)) it.addProgressSegment(
+                            NotificationCompat.ProgressStyle.Segment(
+                                timerRepository.shortBreakTime.toInt()
+                            ).setColor(cs.tertiary.toArgb())
+                        )
+                        else it.addProgressSegment(
+                            NotificationCompat.ProgressStyle.Segment(
+                                timerRepository.longBreakTime.toInt()
+                            ).setColor(cs.tertiary.toArgb())
+                        )
+                    }
+                } else {
+                    it.addProgressSegment(
+                        NotificationCompat.ProgressStyle.Segment(
+                            when (timerState.value.timerMode) {
+                                TimerMode.FOCUS -> timerRepository.focusTime.toInt()
+                                TimerMode.SHORT_BREAK -> timerRepository.shortBreakTime.toInt()
+                                else -> timerRepository.longBreakTime.toInt()
+                            }
+                        )
+                    )
+                }
+            }
     }
 
     private fun resetTimer() {
@@ -275,6 +295,7 @@ class TimerService : Service() {
     private fun skipTimer(fromButton: Boolean = false) {
         skipScope.launch {
             saveTimeToDb()
+            updateProgressSegments()
             showTimerNotification(0, paused = true, complete = !fromButton)
             startTime = 0L
             pauseTime = 0L
@@ -378,16 +399,6 @@ class TimerService : Service() {
         notificationManager.cancel(1)
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        runBlocking {
-            job.cancel()
-            saveTimeToDb()
-            notificationManager.cancel(1)
-            alarm?.release()
-        }
     }
 
     enum class Actions {

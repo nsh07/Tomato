@@ -9,7 +9,6 @@ package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
 import android.app.Application
 import android.provider.Settings
-import androidx.compose.material3.ColorScheme
 import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -52,105 +51,84 @@ class TimerViewModel(
     private var pauseTime = 0L
     private var pauseDuration = 0L
 
-    private lateinit var cs: ColorScheme
-
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            timerRepository.focusTime =
-                preferenceRepository.getIntPreference("focus_time")?.toLong()
-                    ?: preferenceRepository.saveIntPreference(
-                        "focus_time",
-                        timerRepository.focusTime.toInt()
-                    ).toLong()
-            timerRepository.shortBreakTime =
-                preferenceRepository.getIntPreference("short_break_time")?.toLong()
-                    ?: preferenceRepository.saveIntPreference(
-                        "short_break_time",
-                        timerRepository.shortBreakTime.toInt()
-                    ).toLong()
-            timerRepository.longBreakTime =
-                preferenceRepository.getIntPreference("long_break_time")?.toLong()
-                    ?: preferenceRepository.saveIntPreference(
-                        "long_break_time",
-                        timerRepository.longBreakTime.toInt()
-                    ).toLong()
-            timerRepository.sessionLength = preferenceRepository.getIntPreference("session_length")
-                ?: preferenceRepository.saveIntPreference(
-                    "session_length",
-                    timerRepository.sessionLength
-                )
-
-            timerRepository.alarmEnabled =
-                preferenceRepository.getBooleanPreference("alarm_enabled")
-                    ?: preferenceRepository.saveBooleanPreference("alarm_enabled", true)
-            timerRepository.vibrateEnabled =
-                preferenceRepository.getBooleanPreference("vibrate_enabled")
-                    ?: preferenceRepository.saveBooleanPreference("vibrate_enabled", true)
-
-            timerRepository.alarmSoundUri = (
-                    preferenceRepository.getStringPreference("alarm_sound")
-                        ?: preferenceRepository.saveStringPreference(
-                            "alarm_sound",
-                            (Settings.System.DEFAULT_ALARM_ALERT_URI
-                                ?: Settings.System.DEFAULT_RINGTONE_URI).toString()
+        if (!timerRepository.serviceRunning)
+            viewModelScope.launch(Dispatchers.IO) {
+                timerRepository.focusTime =
+                    preferenceRepository.getIntPreference("focus_time")?.toLong()
+                        ?: preferenceRepository.saveIntPreference(
+                            "focus_time",
+                            timerRepository.focusTime.toInt()
+                        ).toLong()
+                timerRepository.shortBreakTime =
+                    preferenceRepository.getIntPreference("short_break_time")?.toLong()
+                        ?: preferenceRepository.saveIntPreference(
+                            "short_break_time",
+                            timerRepository.shortBreakTime.toInt()
+                        ).toLong()
+                timerRepository.longBreakTime =
+                    preferenceRepository.getIntPreference("long_break_time")?.toLong()
+                        ?: preferenceRepository.saveIntPreference(
+                            "long_break_time",
+                            timerRepository.longBreakTime.toInt()
+                        ).toLong()
+                timerRepository.sessionLength =
+                    preferenceRepository.getIntPreference("session_length")
+                        ?: preferenceRepository.saveIntPreference(
+                            "session_length",
+                            timerRepository.sessionLength
                         )
-                    ).toUri()
 
-            resetTimer()
+                timerRepository.alarmEnabled =
+                    preferenceRepository.getBooleanPreference("alarm_enabled")
+                        ?: preferenceRepository.saveBooleanPreference("alarm_enabled", true)
+                timerRepository.vibrateEnabled =
+                    preferenceRepository.getBooleanPreference("vibrate_enabled")
+                        ?: preferenceRepository.saveBooleanPreference("vibrate_enabled", true)
 
-            var lastDate = statRepository.getLastDate()
-            val today = LocalDate.now()
+                timerRepository.alarmSoundUri = (
+                        preferenceRepository.getStringPreference("alarm_sound")
+                            ?: preferenceRepository.saveStringPreference(
+                                "alarm_sound",
+                                (Settings.System.DEFAULT_ALARM_ALERT_URI
+                                    ?: Settings.System.DEFAULT_RINGTONE_URI).toString()
+                            )
+                        ).toUri()
 
-            // Fills dates between today and lastDate with 0s to ensure continuous history
-            if (lastDate != null)
-                while (ChronoUnit.DAYS.between(lastDate, today) > 0) {
-                    lastDate = lastDate?.plusDays(1)
-                    statRepository.insertStat(Stat(lastDate!!, 0, 0, 0, 0, 0))
+                _time.update { timerRepository.focusTime }
+                cycles = 0
+                startTime = 0L
+                pauseTime = 0L
+                pauseDuration = 0L
+
+                _timerState.update { currentState ->
+                    currentState.copy(
+                        timerMode = TimerMode.FOCUS,
+                        timeStr = millisecondsToStr(time.value),
+                        totalTime = time.value,
+                        nextTimerMode = if (timerRepository.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
+                        nextTimeStr = millisecondsToStr(if (timerRepository.sessionLength > 1) timerRepository.shortBreakTime else timerRepository.longBreakTime),
+                        currentFocusCount = 1,
+                        totalFocusCount = timerRepository.sessionLength
+                    )
                 }
 
-            delay(1500)
+                var lastDate = statRepository.getLastDate()
+                val today = LocalDate.now()
 
-            _timerState.update { currentState ->
-                currentState.copy(showBrandTitle = false)
+                // Fills dates between today and lastDate with 0s to ensure continuous history
+                if (lastDate != null)
+                    while (ChronoUnit.DAYS.between(lastDate, today) > 0) {
+                        lastDate = lastDate?.plusDays(1)
+                        statRepository.insertStat(Stat(lastDate!!, 0, 0, 0, 0, 0))
+                    }
+
+                delay(1500)
+
+                _timerState.update { currentState ->
+                    currentState.copy(showBrandTitle = false)
+                }
             }
-        }
-    }
-
-    fun setCompositionLocals(colorScheme: ColorScheme) {
-        cs = colorScheme
-    }
-
-    private fun resetTimer() {
-        viewModelScope.launch {
-            saveTimeToDb()
-            _time.update { timerRepository.focusTime }
-            cycles = 0
-            startTime = 0L
-            pauseTime = 0L
-            pauseDuration = 0L
-
-            _timerState.update { currentState ->
-                currentState.copy(
-                    timerMode = TimerMode.FOCUS,
-                    timeStr = millisecondsToStr(time.value),
-                    totalTime = time.value,
-                    nextTimerMode = if (timerRepository.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
-                    nextTimeStr = millisecondsToStr(if (timerRepository.sessionLength > 1) timerRepository.shortBreakTime else timerRepository.longBreakTime),
-                    currentFocusCount = 1,
-                    totalFocusCount = timerRepository.sessionLength
-                )
-            }
-        }
-    }
-
-    suspend fun saveTimeToDb() {
-        when (timerState.value.timerMode) {
-            TimerMode.FOCUS -> statRepository
-                .addFocusTime((timerState.value.totalTime - time.value).coerceAtLeast(0L))
-
-            else -> statRepository
-                .addBreakTime((timerState.value.totalTime - time.value).coerceAtLeast(0L))
-        }
     }
 
     companion object {

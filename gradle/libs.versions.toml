@@ -2,7 +2,7 @@
 activityCompose = "1.11.0"
 adaptive = "1.1.0"
 agp = "8.11.2"
-composeBom = "2025.09.00"
+composeBom = "2025.09.01"
 coreKtx = "1.17.0"
 espressoCore = "3.7.0"
 junit = "4.13.2"
@@ -11,9 +11,9 @@ kotlin = "2.2.20"
 ksp = "2.2.20-2.0.3"
 lifecycleRuntimeKtx = "2.9.4"
 materialKolor = "3.0.1"
-navigation3Runtime = "1.0.0-alpha09"
-room = "2.8.0"
-vico = "2.2.0-alpha.1"
+navigation3 = "1.0.0-alpha10"
+room = "2.8.1"
+vico = "2.2.0"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -26,8 +26,8 @@ androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecyc
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3Runtime" }
-androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3Runtime" }
+androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
+androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }

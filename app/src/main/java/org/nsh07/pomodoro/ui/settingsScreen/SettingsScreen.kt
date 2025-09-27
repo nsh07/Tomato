@@ -53,6 +53,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -139,6 +140,7 @@ fun SettingsScreenRoot(
             }
         },
         onThemeChange = viewModel::saveTheme,
+        onColorSchemeChange = viewModel::saveColorScheme,
         modifier = modifier
     )
 }
@@ -159,6 +161,7 @@ private fun SettingsScreen(
     onBlackThemeChange: (Boolean) -> Unit,
     onAlarmSoundChanged: (Uri?) -> Unit,
     onThemeChange: (String) -> Unit,
+    onColorSchemeChange: (Color) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -185,6 +188,12 @@ private fun SettingsScreen(
     }
 
     val context = LocalContext.current
+    var alarmName by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        alarmName = RingtoneManager.getRingtone(context, alarmSound.toUri())
+            ?.getTitle(context) ?: ""
+    }
 
     val ringtonePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -358,25 +367,11 @@ private fun SettingsScreen(
             item { Spacer(Modifier.height(12.dp)) }
 
             item {
-                ListItem(
-                    leadingContent = {
-                        Icon(
-                            painter = painterResource(R.drawable.palette),
-                            contentDescription = null,
-                            tint = colorScheme.primary
-                        )
-                    },
-                    headlineContent = { Text("Color scheme") },
-                    supportingContent = {
-                        Text(
-                            if (preferencesState.colorScheme.toColor() == Color.White) "Dynamic"
-                            else "Color"
-                        )
-                    },
-                    colors = listItemColors,
-                    modifier = Modifier
-                        .clip(topListItemShape)
-                        .clickable(onClick = {})
+                ColorSchemePickerListItem(
+                    color = preferencesState.colorScheme.toColor(),
+                    items = 3,
+                    index = 0,
+                    onColorChange = onColorSchemeChange
                 )
             }
             item {
@@ -385,6 +380,8 @@ private fun SettingsScreen(
                     themeMap = themeMap,
                     reverseThemeMap = reverseThemeMap,
                     onThemeChange = onThemeChange,
+                    items = 3,
+                    index = 1,
                     modifier = Modifier
                         .clip(middleListItemShape)
                 )
@@ -432,14 +429,7 @@ private fun SettingsScreen(
                         Icon(painterResource(R.drawable.alarm), null)
                     },
                     headlineContent = { Text("Alarm sound") },
-                    supportingContent = {
-                        Text(
-                            remember(alarmSound) {
-                                RingtoneManager.getRingtone(context, alarmSound.toUri())
-                                    ?.getTitle(context) ?: ""
-                            }
-                        )
-                    },
+                    supportingContent = { Text(alarmName) },
                     colors = listItemColors,
                     modifier = Modifier
                         .clip(topListItemShape)
@@ -542,6 +532,7 @@ fun SettingsScreenPreview() {
             onBlackThemeChange = {},
             onAlarmSoundChanged = {},
             onThemeChange = {},
+            onColorSchemeChange = {},
             modifier = Modifier.fillMaxSize()
         )
     }

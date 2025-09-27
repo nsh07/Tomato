@@ -9,6 +9,7 @@ package org.nsh07.pomodoro.ui.settingsScreen
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,42 +17,44 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.ClickableListItem
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 
 @Composable
-fun ThemePickerListItem(
-    theme: String,
-    themeMap: Map<String, Pair<Int, String>>,
-    reverseThemeMap: Map<String, String>,
+fun ColorSchemePickerListItem(
+    color: Color,
     items: Int,
     index: Int,
-    onThemeChange: (String) -> Unit,
+    onColorChange: (Color) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showDialog) {
-        ThemeDialog(
-            themeMap = themeMap,
-            reverseThemeMap = reverseThemeMap,
-            theme = theme,
-            setShowThemeDialog = { showDialog = it },
-            onThemeChange = onThemeChange
+        ColorSchemePickerDialog(
+            currentColor = color,
+            setShowDialog = { showDialog = it },
+            onColorChange = onColorChange
         )
     }
 
     ClickableListItem(
         leadingContent = {
             Icon(
-                painter = painterResource(themeMap[theme]!!.first),
-                contentDescription = null
+                painter = painterResource(R.drawable.palette),
+                contentDescription = null,
+                tint = colorScheme.primary
             )
         },
-        headlineContent = { Text("Theme") },
+        headlineContent = { Text("Color scheme") },
         supportingContent = {
-            Text(themeMap[theme]!!.second)
+            Text(
+                if (color == Color.White) "Dynamic"
+                else "Color"
+            )
         },
         colors = listItemColors,
         items = items,

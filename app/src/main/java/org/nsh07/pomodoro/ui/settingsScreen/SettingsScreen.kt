@@ -203,7 +203,8 @@ private fun SettingsScreen(
 
     LaunchedEffect(alarmSound) {
         withContext(Dispatchers.IO) {
-            alarmName = RingtoneManager.getRingtone(context, alarmSound.toUri()).getTitle(context)
+            alarmName =
+                RingtoneManager.getRingtone(context, alarmSound.toUri())?.getTitle(context) ?: ""
         }
     }
 

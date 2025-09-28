@@ -117,11 +117,14 @@ class TimerViewModel(
                 val today = LocalDate.now()
 
                 // Fills dates between today and lastDate with 0s to ensure continuous history
-                if (lastDate != null)
+                if (lastDate != null) {
                     while (ChronoUnit.DAYS.between(lastDate, today) > 0) {
                         lastDate = lastDate?.plusDays(1)
                         statRepository.insertStat(Stat(lastDate!!, 0, 0, 0, 0, 0))
                     }
+                } else {
+                    statRepository.insertStat(Stat(today, 0, 0, 0, 0, 0))
+                }
 
                 delay(1500)
 

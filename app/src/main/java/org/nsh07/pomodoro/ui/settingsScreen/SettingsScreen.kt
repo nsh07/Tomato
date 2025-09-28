@@ -12,7 +12,6 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
@@ -74,10 +73,11 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.fastCoerceAtLeast
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
@@ -199,19 +199,12 @@ private fun SettingsScreen(
         )
     }
 
-    var alarmName by remember { mutableStateOf("") }
+    var alarmName by remember { mutableStateOf("...") }
 
     LaunchedEffect(alarmSound) {
-        val returnCursor = context.contentResolver.query(alarmSound.toUri(), null, null, null, null)
-        returnCursor?.moveToFirst()
-        alarmName =
-            returnCursor
-                ?.getString(
-                    returnCursor
-                        .getColumnIndex(MediaStore.MediaColumns.TITLE)
-                        .fastCoerceAtLeast(0)
-                ) ?: ""
-        returnCursor?.close()
+        withContext(Dispatchers.IO) {
+            alarmName = RingtoneManager.getRingtone(context, alarmSound.toUri()).getTitle(context)
+        }
     }
 
     val ringtonePickerLauncher = rememberLauncherForActivityResult(

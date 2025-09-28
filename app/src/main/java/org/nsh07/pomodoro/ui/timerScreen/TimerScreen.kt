@@ -67,6 +67,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -134,7 +135,7 @@ fun TimerScreen(
                     when (it) {
                         TimerMode.BRAND ->
                             Text(
-                                "Tomato",
+                                stringResource(R.string.app_name),
                                 style = TextStyle(
                                     fontFamily = robotoFlexTopBar,
                                     fontSize = 32.sp,
@@ -147,7 +148,7 @@ fun TimerScreen(
 
                         TimerMode.FOCUS ->
                             Text(
-                                "Focus",
+                                stringResource(R.string.focus),
                                 style = TextStyle(
                                     fontFamily = robotoFlexTopBar,
                                     fontSize = 32.sp,
@@ -159,7 +160,7 @@ fun TimerScreen(
                             )
 
                         TimerMode.SHORT_BREAK -> Text(
-                            "Short break",
+                            stringResource(R.string.short_break),
                             style = TextStyle(
                                 fontFamily = robotoFlexTopBar,
                                 fontSize = 32.sp,
@@ -171,7 +172,7 @@ fun TimerScreen(
                         )
 
                         TimerMode.LONG_BREAK -> Text(
-                            "Long Break",
+                            stringResource(R.string.long_break),
                             style = TextStyle(
                                 fontFamily = robotoFlexTopBar,
                                 fontSize = 32.sp,
@@ -261,7 +262,11 @@ fun TimerScreen(
                                     shrinkVertically(motionScheme.defaultSpatialSpec())
                         ) {
                             Text(
-                                "${timerState.currentFocusCount} of ${timerState.totalFocusCount}",
+                                stringResource(
+                                    R.string.timer_session_count,
+                                    timerState.currentFocusCount,
+                                    timerState.totalFocusCount
+                                ),
                                 fontFamily = openRundeClock,
                                 style = typography.titleLarge,
                                 color = colorScheme.outline
@@ -289,7 +294,7 @@ fun TimerScreen(
                         ) {
                             Icon(
                                 painterResource(R.drawable.more_vert_large),
-                                contentDescription = "More",
+                                contentDescription = stringResource(R.string.more),
                                 modifier = Modifier.size(32.dp)
                             )
                         }
@@ -323,13 +328,13 @@ fun TimerScreen(
                                 if (timerState.timerRunning) {
                                     Icon(
                                         painterResource(R.drawable.pause_large),
-                                        contentDescription = "Pause",
+                                        contentDescription = stringResource(R.string.pause),
                                         modifier = Modifier.size(32.dp)
                                     )
                                 } else {
                                     Icon(
                                         painterResource(R.drawable.play_large),
-                                        contentDescription = "Play",
+                                        contentDescription = stringResource(R.string.play),
                                         modifier = Modifier.size(32.dp)
                                     )
                                 }
@@ -341,16 +346,22 @@ fun TimerScreen(
                                     if (timerState.timerRunning) {
                                         Icon(
                                             painterResource(R.drawable.pause),
-                                            contentDescription = "Pause"
+                                            contentDescription = stringResource(R.string.pause)
                                         )
                                     } else {
                                         Icon(
                                             painterResource(R.drawable.play),
-                                            contentDescription = "Play"
+                                            contentDescription = stringResource(R.string.play)
                                         )
                                     }
                                 },
-                                text = { Text(if (timerState.timerRunning) "Pause" else "Play") },
+                                text = {
+                                    Text(
+                                        if (timerState.timerRunning) stringResource(R.string.pause) else stringResource(
+                                            R.string.play
+                                        )
+                                    )
+                                },
                                 onClick = {
                                     onAction(TimerAction.ToggleTimer)
                                     state.dismiss()
@@ -377,7 +388,7 @@ fun TimerScreen(
                             ) {
                                 Icon(
                                     painterResource(R.drawable.restart_large),
-                                    contentDescription = "Restart",
+                                    contentDescription = stringResource(R.string.restart),
                                     modifier = Modifier.size(32.dp)
                                 )
                             }
@@ -387,10 +398,10 @@ fun TimerScreen(
                                 leadingIcon = {
                                     Icon(
                                         painterResource(R.drawable.restart),
-                                        "Restart"
+                                        stringResource(R.string.restart)
                                     )
                                 },
-                                text = { Text("Restart") },
+                                text = { Text(stringResource(R.string.restart)) },
                                 onClick = {
                                     onAction(TimerAction.ResetTimer)
                                     state.dismiss()
@@ -417,7 +428,7 @@ fun TimerScreen(
                             ) {
                                 Icon(
                                     painterResource(R.drawable.skip_next_large),
-                                    contentDescription = "Skip to next",
+                                    contentDescription = stringResource(R.string.skip_to_next),
                                     modifier = Modifier.size(32.dp)
                                 )
                             }
@@ -427,10 +438,10 @@ fun TimerScreen(
                                 leadingIcon = {
                                     Icon(
                                         painterResource(R.drawable.skip_next),
-                                        "Skip to next"
+                                        stringResource(R.string.skip_to_next)
                                     )
                                 },
-                                text = { Text("Skip to next") },
+                                text = { Text(stringResource(R.string.skip_to_next)) },
                                 onClick = {
                                     onAction(TimerAction.SkipTimer(fromButton = true))
                                     state.dismiss()
@@ -444,7 +455,7 @@ fun TimerScreen(
             Spacer(Modifier.height(32.dp))
 
             Column(horizontalAlignment = CenterHorizontally) {
-                Text("Up next", style = typography.titleSmall)
+                Text(stringResource(R.string.up_next), style = typography.titleSmall)
                 Text(
                     timerState.nextTimeStr,
                     style = TextStyle(
@@ -457,9 +468,9 @@ fun TimerScreen(
                 )
                 Text(
                     when (timerState.nextTimerMode) {
-                        TimerMode.FOCUS -> "Focus"
-                        TimerMode.SHORT_BREAK -> "Short break"
-                        else -> "Long Break"
+                        TimerMode.FOCUS -> stringResource(R.string.focus)
+                        TimerMode.SHORT_BREAK -> stringResource(R.string.short_break)
+                        else -> stringResource(R.string.long_break)
                     },
                     style = typography.titleMediumEmphasized
                 )

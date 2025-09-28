@@ -74,19 +74,19 @@ class MainActivity : ComponentActivity() {
                 Screen.Timer,
                 R.drawable.timer_outlined,
                 R.drawable.timer_filled,
-                "Timer"
+                R.string.timer
             ),
             NavItem(
                 Screen.Stats,
                 R.drawable.monitoring,
                 R.drawable.monitoring_filled,
-                "Stats"
+                R.string.stats
             ),
             NavItem(
                 Screen.Settings,
                 R.drawable.settings,
                 R.drawable.settings_filled,
-                "Settings"
+                R.string.settings
             )
         )
     }

@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.ClickableListItem
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
@@ -49,11 +50,11 @@ fun ColorSchemePickerListItem(
                 tint = colorScheme.primary
             )
         },
-        headlineContent = { Text("Color scheme") },
+        headlineContent = { Text(stringResource(R.string.color_scheme)) },
         supportingContent = {
             Text(
-                if (color == Color.White) "Dynamic"
-                else "Color"
+                if (color == Color.White) stringResource(R.string.dynamic)
+                else stringResource(R.string.color)
             )
         },
         colors = listItemColors,

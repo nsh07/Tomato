@@ -12,7 +12,6 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
@@ -68,15 +67,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.fastCoerceAtLeast
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
@@ -174,6 +175,7 @@ private fun SettingsScreen(
     onColorSchemeChange: (Color) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val switchColors = SwitchDefaults.colors(
         checkedIconColor = colorScheme.primary,
@@ -183,34 +185,27 @@ private fun SettingsScreen(
         mapOf(
             "auto" to Pair(
                 R.drawable.brightness_auto,
-                "System default"
+                context.getString(R.string.system_default)
             ),
-            "light" to Pair(R.drawable.light_mode, "Light"),
-            "dark" to Pair(R.drawable.dark_mode, "Dark")
+            "light" to Pair(R.drawable.light_mode, context.getString(R.string.light)),
+            "dark" to Pair(R.drawable.dark_mode, context.getString(R.string.dark))
         )
     }
     val reverseThemeMap: Map<String, String> = remember {
         mapOf(
-            "System default" to "auto",
-            "Light" to "light",
-            "Dark" to "dark"
+            context.getString(R.string.system_default) to "auto",
+            context.getString(R.string.light) to "light",
+            context.getString(R.string.dark) to "dark"
         )
     }
 
-    val context = LocalContext.current
-    var alarmName by remember { mutableStateOf("") }
+    var alarmName by remember { mutableStateOf("...") }
 
     LaunchedEffect(alarmSound) {
-        val returnCursor = context.contentResolver.query(alarmSound.toUri(), null, null, null, null)
-        returnCursor?.moveToFirst()
-        alarmName =
-            returnCursor
-                ?.getString(
-                    returnCursor
-                        .getColumnIndex(MediaStore.MediaColumns.TITLE)
-                        .fastCoerceAtLeast(0)
-                ) ?: ""
-        returnCursor?.close()
+        withContext(Dispatchers.IO) {
+            alarmName =
+                RingtoneManager.getRingtone(context, alarmSound.toUri())?.getTitle(context) ?: ""
+        }
     }
 
     val ringtonePickerLauncher = rememberLauncherForActivityResult(
@@ -233,7 +228,7 @@ private fun SettingsScreen(
 
     val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
         putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-        putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Alarm sound")
+        putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, stringResource(R.string.alarm_sound))
         putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmSound.toUri())
     }
 
@@ -242,22 +237,22 @@ private fun SettingsScreen(
             SettingsSwitchItem(
                 checked = preferencesState.blackTheme,
                 icon = R.drawable.contrast,
-                label = "Black theme",
-                description = "Use a pure black dark theme",
+                label = context.getString(R.string.black_theme),
+                description = context.getString(R.string.black_theme_desc),
                 onClick = onBlackThemeChange
             ),
             SettingsSwitchItem(
                 checked = alarmEnabled,
                 icon = R.drawable.alarm_on,
-                label = "Alarm",
-                description = "Ring alarm when a timer completes",
+                label = context.getString(R.string.alarm),
+                description = context.getString(R.string.alarm_desc),
                 onClick = onAlarmEnabledChange
             ),
             SettingsSwitchItem(
                 checked = vibrateEnabled,
                 icon = R.drawable.mobile_vibrate,
-                label = "Vibrate",
-                description = "Vibrate when a timer completes",
+                label = context.getString(R.string.vibrate),
+                description = context.getString(R.string.vibrate_desc),
                 onClick = onVibrateEnabledChange
             )
         )
@@ -267,7 +262,7 @@ private fun SettingsScreen(
         TopAppBar(
             title = {
                 Text(
-                    "Settings",
+                    stringResource(R.string.settings),
                     style = LocalTextStyle.current.copy(
                         fontFamily = robotoFlexTopBar,
                         fontSize = 32.sp,
@@ -303,7 +298,7 @@ private fun SettingsScreen(
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
                         Text(
-                            "Focus",
+                            stringResource(R.string.focus),
                             style = typography.titleSmallEmphasized
                         )
                         MinuteInputField(
@@ -323,7 +318,7 @@ private fun SettingsScreen(
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
                         Text(
-                            "Short break",
+                            stringResource(R.string.short_break),
                             style = typography.titleSmallEmphasized
                         )
                         MinuteInputField(
@@ -338,7 +333,7 @@ private fun SettingsScreen(
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
                         Text(
-                            "Long break",
+                            stringResource(R.string.long_break),
                             style = typography.titleSmallEmphasized
                         )
                         MinuteInputField(
@@ -366,11 +361,16 @@ private fun SettingsScreen(
                         )
                     },
                     headlineContent = {
-                        Text("Session length")
+                        Text(stringResource(R.string.session_length))
                     },
                     supportingContent = {
                         Column {
-                            Text("Focus intervals in one session: ${sessionsSliderState.value.toInt()}")
+                            Text(
+                                stringResource(
+                                    R.string.session_length_desc,
+                                    sessionsSliderState.value.toInt()
+                                )
+                            )
                             Slider(
                                 state = sessionsSliderState,
                                 modifier = Modifier.padding(vertical = 4.dp)
@@ -446,7 +446,7 @@ private fun SettingsScreen(
                     leadingContent = {
                         Icon(painterResource(R.drawable.alarm), null)
                     },
-                    headlineContent = { Text("Alarm sound") },
+                    headlineContent = { Text(stringResource(R.string.alarm_sound)) },
                     supportingContent = { Text(alarmName) },
                     colors = listItemColors,
                     modifier = Modifier
@@ -514,9 +514,7 @@ private fun SettingsScreen(
                     }
                     AnimatedVisibility(expanded) {
                         Text(
-                            "A \"session\" is a sequence of pomodoro intervals that contain focus" +
-                                    " intervals, short break intervals, and a long break interval. The " +
-                                    "last break of a session is always a long break.",
+                            stringResource(R.string.pomodoro_info),
                             style = typography.bodyMedium,
                             color = colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(8.dp)
@@ -558,7 +556,7 @@ fun SettingsScreenPreview() {
 
 data class SettingsSwitchItem(
     val checked: Boolean,
-    @DrawableRes val icon: Int,
+    @param:DrawableRes val icon: Int,
     val label: String,
     val description: String,
     val onClick: (Boolean) -> Unit

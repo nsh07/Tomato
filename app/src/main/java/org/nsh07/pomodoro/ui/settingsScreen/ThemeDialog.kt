@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
@@ -71,7 +72,7 @@ fun ThemeDialog(
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
                 Text(
-                    text = "Choose theme",
+                    text = stringResource(R.string.choose_theme),
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -122,7 +123,7 @@ fun ThemeDialog(
                     onClick = { setShowThemeDialog(false) },
                     modifier = Modifier.align(Alignment.End)
                 ) {
-                    Text("Ok")
+                    Text(stringResource(R.string.ok))
                 }
             }
         }

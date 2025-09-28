@@ -17,6 +17,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.ClickableListItem
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 
@@ -49,7 +51,7 @@ fun ThemePickerListItem(
                 contentDescription = null
             )
         },
-        headlineContent = { Text("Theme") },
+        headlineContent = { Text(stringResource(R.string.theme)) },
         supportingContent = {
             Text(themeMap[theme]!!.second)
         },

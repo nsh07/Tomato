@@ -57,7 +57,7 @@ class DefaultAppContainer(context: Context) : AppContainer {
                     PendingIntent.FLAG_IMMUTABLE
                 )
             )
-            .addTimerActions(context, R.drawable.play, "Start")
+            .addTimerActions(context, R.drawable.play, context.getString(R.string.start))
             .setShowWhen(true)
             .setSilent(true)
             .setOngoing(true)

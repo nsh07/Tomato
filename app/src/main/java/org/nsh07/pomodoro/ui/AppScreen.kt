@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
@@ -110,7 +111,7 @@ fun AppScreen(
                         iconPosition =
                             if (wide) NavigationItemIconPosition.Start
                             else NavigationItemIconPosition.Top,
-                        label = { Text(it.label) }
+                        label = { Text(stringResource(it.label)) }
                     )
                 }
             }

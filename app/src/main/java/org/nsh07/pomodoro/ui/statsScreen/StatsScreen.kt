@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -114,7 +115,7 @@ fun StatsScreen(
         TopAppBar(
             title = {
                 Text(
-                    "Stats",
+                    stringResource(R.string.stats),
                     style = LocalTextStyle.current.copy(
                         fontFamily = robotoFlexTopBar,
                         fontSize = 32.sp,
@@ -138,7 +139,7 @@ fun StatsScreen(
             item { Spacer(Modifier) }
             item {
                 Text(
-                    "Today",
+                    stringResource(R.string.today),
                     style = typography.headlineSmall,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -157,7 +158,7 @@ fun StatsScreen(
                     ) {
                         Column(Modifier.padding(16.dp)) {
                             Text(
-                                "Focus",
+                                stringResource(R.string.focus),
                                 style = typography.titleMedium,
                                 color = colorScheme.onPrimaryContainer
                             )
@@ -182,7 +183,7 @@ fun StatsScreen(
                     ) {
                         Column(Modifier.padding(16.dp)) {
                             Text(
-                                "Break",
+                                stringResource(R.string.break_),
                                 style = typography.titleMedium,
                                 color = colorScheme.onTertiaryContainer
                             )
@@ -201,7 +202,7 @@ fun StatsScreen(
             item { Spacer(Modifier) }
             item {
                 Text(
-                    "Last week",
+                    stringResource(R.string.last_week),
                     style = typography.headlineSmall,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -222,7 +223,7 @@ fun StatsScreen(
                         fontFamily = openRundeClock
                     )
                     Text(
-                        "focus per day (avg)",
+                        stringResource(R.string.focus_per_day_avg),
                         style = typography.titleSmall,
                         modifier = Modifier.padding(bottom = 6.3.dp)
                     )
@@ -258,14 +259,14 @@ fun StatsScreen(
                     ) {
                         Icon(
                             painterResource(R.drawable.arrow_down),
-                            "More info",
+                            stringResource(R.string.more_info),
                             modifier = Modifier.rotate(iconRotation)
                         )
                     }
                     ProductivityGraph(
                         lastWeekStatExpanded,
                         lastWeekSummaryAnalysisModelProducer,
-                        label = "Weekly productivity analysis",
+                        label = stringResource(R.string.weekly_productivity_analysis),
                         modifier = Modifier.padding(horizontal = 32.dp)
                     )
                 }
@@ -273,7 +274,7 @@ fun StatsScreen(
             item { Spacer(Modifier) }
             item {
                 Text(
-                    "Last month",
+                    stringResource(R.string.last_month),
                     style = typography.headlineSmall,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -294,7 +295,7 @@ fun StatsScreen(
                         fontFamily = openRundeClock
                     )
                     Text(
-                        "focus per day (avg)",
+                        text = stringResource(R.string.focus_per_day_avg),
                         style = typography.titleSmall,
                         modifier = Modifier.padding(bottom = 6.3.dp)
                     )
@@ -331,14 +332,14 @@ fun StatsScreen(
                     ) {
                         Icon(
                             painterResource(R.drawable.arrow_down),
-                            "More info",
+                            stringResource(R.string.more_info),
                             modifier = Modifier.rotate(iconRotation)
                         )
                     }
                     ProductivityGraph(
                         lastMonthStatExpanded,
                         lastMonthSummaryAnalysisModelProducer,
-                        label = "Monthly productivity analysis",
+                        label = stringResource(R.string.monthly_productivity_analysis),
                         modifier = Modifier.padding(horizontal = 32.dp)
                     )
                 }

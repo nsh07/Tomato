@@ -34,7 +34,7 @@ fun NotificationCompat.Builder.addTimerActions(
     )
     .addAction(
         R.drawable.restart,
-        "Exit",
+        context.getString(R.string.exit),
         PendingIntent.getService(
             context,
             0,
@@ -46,7 +46,7 @@ fun NotificationCompat.Builder.addTimerActions(
     )
     .addAction(
         R.drawable.skip_next,
-        "Skip",
+        context.getString(R.string.skip),
         PendingIntent.getService(
             context,
             0,
@@ -62,7 +62,7 @@ fun NotificationCompat.Builder.addStopAlarmAction(
 ): NotificationCompat.Builder = this
     .addAction(
         R.drawable.alarm,
-        "Stop alarm",
+        context.getString(R.string.stop_alarm),
         PendingIntent.getService(
             context,
             0,

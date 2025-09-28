@@ -14,7 +14,7 @@ class TomatoApplication : Application() {
 
         val notificationChannel = NotificationChannel(
             "timer",
-            "Timer progress",
+            getString(R.string.timer_progress),
             NotificationManager.IMPORTANCE_HIGH
         )
 

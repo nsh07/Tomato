@@ -119,7 +119,7 @@ class TimerService : Service() {
 
         if (timerState.value.timerRunning) {
             notificationBuilder.clearActions().addTimerActions(
-                this, R.drawable.play, "Start"
+                this, R.drawable.play, getString(R.string.start)
             )
             showTimerNotification(time.toInt(), paused = true)
             _timerState.update { currentState ->
@@ -128,7 +128,7 @@ class TimerService : Service() {
             pauseTime = SystemClock.elapsedRealtime()
         } else {
             notificationBuilder.clearActions().addTimerActions(
-                this, R.drawable.pause, "Stop"
+                this, R.drawable.pause, getString(R.string.stop)
             )
             _timerState.update { it.copy(timerRunning = true) }
             if (pauseTime != 0L) pauseDuration += SystemClock.elapsedRealtime() - pauseTime
@@ -186,15 +186,15 @@ class TimerService : Service() {
         }
 
         val currentTimer = when (timerState.value.timerMode) {
-            TimerMode.FOCUS -> "Focus"
-            TimerMode.SHORT_BREAK -> "Short break"
-            else -> "Long break"
+            TimerMode.FOCUS -> getString(R.string.focus)
+            TimerMode.SHORT_BREAK -> getString(R.string.short_break)
+            else -> getString(R.string.long_break)
         }
 
         val nextTimer = when (timerState.value.nextTimerMode) {
-            TimerMode.FOCUS -> "Focus"
-            TimerMode.SHORT_BREAK -> "Short break"
-            else -> "Long break"
+            TimerMode.FOCUS -> getString(R.string.focus)
+            TimerMode.SHORT_BREAK -> getString(R.string.short_break)
+            else -> getString(R.string.long_break)
         }
 
         val remainingTimeString = if ((remainingTime.toFloat() / 60000f) < 1.0f) "< 1"
@@ -205,10 +205,18 @@ class TimerService : Service() {
             notificationBuilder
                 .setContentTitle(
                     if (!complete) {
-                        "$currentTimer $middleDot  $remainingTimeString min remaining" + if (paused) "  $middleDot  Paused" else ""
-                    } else "$currentTimer $middleDot Completed"
+                        "$currentTimer  $middleDot  ${
+                            getString(R.string.min_remaining_notification, remainingTimeString)
+                        }" + if (paused) "  $middleDot  ${getString(R.string.paused)}" else ""
+                    } else "$currentTimer $middleDot ${getString(R.string.completed)}"
                 )
-                .setContentText("Up next: $nextTimer (${timerState.value.nextTimeStr})")
+                .setContentText(
+                    getString(
+                        R.string.up_next_notification,
+                        nextTimer,
+                        timerState.value.nextTimeStr
+                    )
+                )
                 .setStyle(
                     notificationStyle
                         .setProgress( // Set the current progress by filling the previous intervals and part of the current interval
@@ -364,7 +372,10 @@ class TimerService : Service() {
         _timerState.update { currentState ->
             currentState.copy(alarmRinging = false)
         }
-        notificationBuilder.clearActions().addTimerActions(this, R.drawable.play, "Start next")
+        notificationBuilder.clearActions().addTimerActions(
+            this, R.drawable.play,
+            getString(R.string.start_next)
+        )
         showTimerNotification(
             when (timerState.value.timerMode) {
                 TimerMode.FOCUS -> timerRepository.focusTime.toInt()

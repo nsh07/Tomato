@@ -456,24 +456,58 @@ fun TimerScreen(
 
             Column(horizontalAlignment = CenterHorizontally) {
                 Text(stringResource(R.string.up_next), style = typography.titleSmall)
-                Text(
+                AnimatedContent(
                     timerState.nextTimeStr,
-                    style = TextStyle(
-                        fontFamily = openRundeClock,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 22.sp,
-                        lineHeight = 28.sp,
-                        color = if (timerState.nextTimerMode == TimerMode.FOCUS) colorScheme.primary else colorScheme.tertiary
+                    transitionSpec = {
+                        slideInVertically(
+                            animationSpec = motionScheme.defaultSpatialSpec(),
+                            initialOffsetY = { (-it * 1.25).toInt() }
+                        ).togetherWith(
+                            slideOutVertically(
+                                animationSpec = motionScheme.defaultSpatialSpec(),
+                                targetOffsetY = { (it * 1.25).toInt() }
+                            )
+                        )
+                    }
+                ) {
+                    Text(
+                        it,
+                        style = TextStyle(
+                            fontFamily = openRundeClock,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 22.sp,
+                            lineHeight = 28.sp,
+                            color = if (timerState.nextTimerMode == TimerMode.FOCUS) colorScheme.primary else colorScheme.tertiary,
+                            textAlign = TextAlign.Center
+                        ),
+                        modifier = Modifier.width(200.dp)
                     )
-                )
-                Text(
-                    when (timerState.nextTimerMode) {
-                        TimerMode.FOCUS -> stringResource(R.string.focus)
-                        TimerMode.SHORT_BREAK -> stringResource(R.string.short_break)
-                        else -> stringResource(R.string.long_break)
-                    },
-                    style = typography.titleMediumEmphasized
-                )
+                }
+                AnimatedContent(
+                    timerState.nextTimerMode,
+                    transitionSpec = {
+                        slideInVertically(
+                            animationSpec = motionScheme.defaultSpatialSpec(),
+                            initialOffsetY = { (-it * 1.25).toInt() }
+                        ).togetherWith(
+                            slideOutVertically(
+                                animationSpec = motionScheme.defaultSpatialSpec(),
+                                targetOffsetY = { (it * 1.25).toInt() }
+                            )
+                        )
+                    }
+                ) {
+                    Text(
+                        when (it) {
+                            TimerMode.FOCUS -> stringResource(R.string.focus)
+                            TimerMode.SHORT_BREAK -> stringResource(R.string.short_break)
+                            else -> stringResource(R.string.long_break)
+                        },
+                        style = typography.titleMediumEmphasized,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.width(200.dp)
+                    )
+                }
             }
         }
     }

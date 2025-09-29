@@ -278,6 +278,7 @@ class TimerService : Service() {
     }
 
     private fun resetTimer() {
+        updateProgressSegments()
         skipScope.launch {
             saveTimeToDb()
             time = timerRepository.focusTime
@@ -301,6 +302,7 @@ class TimerService : Service() {
     }
 
     private fun skipTimer(fromButton: Boolean = false) {
+        updateProgressSegments()
         skipScope.launch {
             saveTimeToDb()
             updateProgressSegments()

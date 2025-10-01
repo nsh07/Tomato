@@ -31,11 +31,13 @@ import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.AppPreferenceRepository
 import org.nsh07.pomodoro.data.TimerRepository
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 
 @OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
 class SettingsViewModel(
     private val preferenceRepository: AppPreferenceRepository,
-    private val timerRepository: TimerRepository
+    private val timerRepository: TimerRepository,
+    private val _timerState: MutableStateFlow<TimerState>,
 ) : ViewModel() {
     private val _preferencesState = MutableStateFlow(PreferencesState())
     val preferencesState = _preferencesState.asStateFlow()
@@ -79,6 +81,11 @@ class SettingsViewModel(
             val blackTheme = preferenceRepository.getBooleanPreference("black_theme")
                 ?: preferenceRepository.saveBooleanPreference("black_theme", false)
 
+            // Load session length from preferences and update slider
+            val sessionLength = preferenceRepository.getIntPreference("session_length")
+                ?: timerRepository.sessionLength
+            sessionsSliderState.value = sessionLength.toFloat()
+
             _preferencesState.update { currentState ->
                 currentState.copy(
                     theme = theme,
@@ -87,6 +94,7 @@ class SettingsViewModel(
                 )
             }
         }
+        observeCurrentFocusCount()
     }
 
     private fun updateSessionLength() {
@@ -194,16 +202,26 @@ class SettingsViewModel(
         }
     }
 
+    private fun observeCurrentFocusCount() {
+        viewModelScope.launch {
+            _timerState.collect {
+                sessionsSliderState.value = it.currentFocusCount.toFloat()
+            }
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as TomatoApplication)
                 val appPreferenceRepository = application.container.appPreferenceRepository
                 val appTimerRepository = application.container.appTimerRepository
+                val timerState = application.container.timerState
 
                 SettingsViewModel(
                     preferenceRepository = appPreferenceRepository,
-                    timerRepository = appTimerRepository
+                    timerRepository = appTimerRepository,
+                    _timerState = timerState
                 )
             }
         }

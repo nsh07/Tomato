@@ -52,12 +52,14 @@ class SettingsViewModel(
         TextFieldState((timerRepository.longBreakTime / 60000).toString())
     }
 
-    val sessionsSliderState = SliderState(
-        value = timerRepository.sessionLength.toFloat(),
-        steps = 4,
-        valueRange = 1f..6f,
-        onValueChangeFinished = ::updateSessionLength
-    )
+    val sessionsSliderState by lazy {
+        SliderState(
+            value = timerRepository.sessionLength.toFloat(),
+            steps = 4,
+            valueRange = 1f..6f,
+            onValueChangeFinished = ::updateSessionLength
+        )
+    }
 
     val currentAlarmSound = timerRepository.alarmSoundUri.toString()
 
@@ -81,11 +83,6 @@ class SettingsViewModel(
             val blackTheme = preferenceRepository.getBooleanPreference("black_theme")
                 ?: preferenceRepository.saveBooleanPreference("black_theme", false)
 
-            // Load session length from preferences and update slider
-            val sessionLength = preferenceRepository.getIntPreference("session_length")
-                ?: timerRepository.sessionLength
-            sessionsSliderState.value = sessionLength.toFloat()
-
             _preferencesState.update { currentState ->
                 currentState.copy(
                     theme = theme,
@@ -94,7 +91,6 @@ class SettingsViewModel(
                 )
             }
         }
-        observeCurrentFocusCount()
     }
 
     private fun updateSessionLength() {
@@ -199,14 +195,6 @@ class SettingsViewModel(
                 currentState.copy(blackTheme = blackTheme)
             }
             preferenceRepository.saveBooleanPreference("black_theme", blackTheme)
-        }
-    }
-
-    private fun observeCurrentFocusCount() {
-        viewModelScope.launch {
-            _timerState.collect {
-                sessionsSliderState.value = it.currentFocusCount.toFloat()
-            }
         }
     }
 

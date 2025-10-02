@@ -31,7 +31,6 @@ import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.AppPreferenceRepository
 import org.nsh07.pomodoro.data.TimerRepository
-import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 
 @OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
 class SettingsViewModel(

@@ -37,7 +37,6 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 class SettingsViewModel(
     private val preferenceRepository: AppPreferenceRepository,
     private val timerRepository: TimerRepository,
-    private val _timerState: MutableStateFlow<TimerState>,
 ) : ViewModel() {
     private val _preferencesState = MutableStateFlow(PreferencesState())
     val preferencesState = _preferencesState.asStateFlow()
@@ -204,12 +203,10 @@ class SettingsViewModel(
                 val application = (this[APPLICATION_KEY] as TomatoApplication)
                 val appPreferenceRepository = application.container.appPreferenceRepository
                 val appTimerRepository = application.container.appTimerRepository
-                val timerState = application.container.timerState
 
                 SettingsViewModel(
                     preferenceRepository = appPreferenceRepository,
                     timerRepository = appTimerRepository,
-                    _timerState = timerState
                 )
             }
         }

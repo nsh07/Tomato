@@ -35,7 +35,7 @@ import org.nsh07.pomodoro.data.TimerRepository
 @OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
 class SettingsViewModel(
     private val preferenceRepository: AppPreferenceRepository,
-    private val timerRepository: TimerRepository
+    private val timerRepository: TimerRepository,
 ) : ViewModel() {
     private val _preferencesState = MutableStateFlow(PreferencesState())
     val preferencesState = _preferencesState.asStateFlow()
@@ -50,12 +50,14 @@ class SettingsViewModel(
         TextFieldState((timerRepository.longBreakTime / 60000).toString())
     }
 
-    val sessionsSliderState = SliderState(
-        value = timerRepository.sessionLength.toFloat(),
-        steps = 4,
-        valueRange = 1f..6f,
-        onValueChangeFinished = ::updateSessionLength
-    )
+    val sessionsSliderState by lazy {
+        SliderState(
+            value = timerRepository.sessionLength.toFloat(),
+            steps = 4,
+            valueRange = 1f..6f,
+            onValueChangeFinished = ::updateSessionLength
+        )
+    }
 
     val currentAlarmSound = timerRepository.alarmSoundUri.toString()
 
@@ -203,7 +205,7 @@ class SettingsViewModel(
 
                 SettingsViewModel(
                     preferenceRepository = appPreferenceRepository,
-                    timerRepository = appTimerRepository
+                    timerRepository = appTimerRepository,
                 )
             }
         }

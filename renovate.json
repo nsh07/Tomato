@@ -16,7 +16,7 @@
       ]
     }
   ],
-  "baseBranches": [
+  "baseBranchPatterns": [
     "dev"
   ]
 }

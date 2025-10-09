@@ -30,6 +30,15 @@ fun millisecondsToHours(t: Long): String {
     )
 }
 
+fun millisecondsToMinutes(t: Long): String {
+    require(t >= 0L)
+    return String.format(
+        Locale.getDefault(),
+        "%dm",
+        TimeUnit.MILLISECONDS.toMinutes(t)
+    )
+}
+
 fun millisecondsToHoursMinutes(t: Long): String {
     require(t >= 0L)
     return String.format(

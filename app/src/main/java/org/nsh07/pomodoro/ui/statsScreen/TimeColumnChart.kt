@@ -34,6 +34,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import org.nsh07.pomodoro.utils.millisecondsToHours
+import org.nsh07.pomodoro.utils.millisecondsToMinutes
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -43,8 +44,12 @@ internal fun TimeColumnChart(
     thickness: Dp = 40.dp,
     columnCollectionSpacing: Dp = 4.dp,
     xValueFormatter: CartesianValueFormatter = CartesianValueFormatter.Default,
-    yValueFormatter: CartesianValueFormatter = CartesianValueFormatter { measuringContext, value, _ ->
-        millisecondsToHours(value.toLong())
+    yValueFormatter: CartesianValueFormatter = CartesianValueFormatter { _, value, _ ->
+        if (value >= 60 * 60 * 1000) {
+            millisecondsToHours(value.toLong())
+        } else {
+            millisecondsToMinutes(value.toLong())
+        }
     },
     animationSpec: AnimationSpec<Float>? = motionScheme.slowEffectsSpec()
 ) {

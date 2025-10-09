@@ -3,6 +3,7 @@ package org.nsh07.pomodoro.service
 import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
+import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.IBinder
@@ -78,7 +79,7 @@ class TimerService : Service() {
     override fun onCreate() {
         super.onCreate()
         timerRepository.serviceRunning = true
-        alarm = MediaPlayer.create(this, timerRepository.alarmSoundUri)
+        alarm = initializeMediaPlayer()
     }
 
     override fun onDestroy() {
@@ -387,9 +388,29 @@ class TimerService : Service() {
         )
     }
 
+    private fun initializeMediaPlayer(): MediaPlayer? {
+        return try {
+            MediaPlayer().apply {
+                setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .build()
+                )
+                timerRepository.alarmSoundUri?.let {
+                    setDataSource(applicationContext, it)
+                    prepare()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     fun updateAlarmTone() {
         alarm?.release()
-        alarm = MediaPlayer.create(this, timerRepository.alarmSoundUri)
+        alarm = initializeMediaPlayer()
     }
 
     suspend fun saveTimeToDb() {

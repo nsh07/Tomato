@@ -7,14 +7,11 @@
 
 package org.nsh07.pomodoro.ui.statsScreen
 
-import android.graphics.Path
-import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -35,7 +32,9 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.common.Fill
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import org.nsh07.pomodoro.utils.millisecondsToHours
+import org.nsh07.pomodoro.utils.millisecondsToMinutes
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -45,14 +44,15 @@ internal fun TimeColumnChart(
     thickness: Dp = 40.dp,
     columnCollectionSpacing: Dp = 4.dp,
     xValueFormatter: CartesianValueFormatter = CartesianValueFormatter.Default,
-    yValueFormatter: CartesianValueFormatter = CartesianValueFormatter { measuringContext, value, _ ->
-        millisecondsToHours(value.toLong())
+    yValueFormatter: CartesianValueFormatter = CartesianValueFormatter { _, value, _ ->
+        if (value >= 60 * 60 * 1000) {
+            millisecondsToHours(value.toLong())
+        } else {
+            millisecondsToMinutes(value.toLong())
+        }
     },
     animationSpec: AnimationSpec<Float>? = motionScheme.slowEffectsSpec()
 ) {
-    val radius = with(LocalDensity.current) {
-        (thickness / 2).toPx()
-    }
     ProvideVicoTheme(rememberM3VicoTheme()) {
         CartesianChartHost(
             chart =
@@ -63,29 +63,7 @@ internal fun TimeColumnChart(
                                 rememberLineComponent(
                                     fill = fill(color),
                                     thickness = thickness,
-                                    shape = { _, path, left, top, right, bottom ->
-                                        if (top + radius <= bottom - radius) {
-                                            path.arcTo(
-                                                RectF(left, top, right, top + 2 * radius),
-                                                180f,
-                                                180f
-                                            )
-                                            path.lineTo(right, bottom - radius)
-                                            path.arcTo(
-                                                RectF(left, bottom - 2 * radius, right, bottom),
-                                                0f,
-                                                180f
-                                            )
-                                            path.close()
-                                        } else {
-                                            path.addCircle(
-                                                left + radius,
-                                                bottom - radius,
-                                                radius,
-                                                Path.Direction.CW
-                                            )
-                                        }
-                                    }
+                                    shape = CorneredShape.Pill
                                 )
                             }
                         ),

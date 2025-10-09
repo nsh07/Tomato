@@ -47,9 +47,10 @@ interface StatDao {
                 "AVG(focusTimeQ3) AS focusTimeQ3, " +
                 "AVG(focusTimeQ4) AS focusTimeQ4 " +
                 "FROM (" +
-                "SELECT focusTimeQ1, focusTimeQ2, focusTimeQ3, focusTimeQ4 FROM stat " +
+                "SELECT * FROM (" +
+                "SELECT focusTimeQ1, focusTimeQ2, focusTimeQ3, focusTimeQ4 FROM stat ORDER BY date DESC LIMIT :n" +
+                ") " +
                 "WHERE focusTimeQ1 != 0 OR focusTimeQ2 != 0 OR focusTimeQ3 != 0 OR focusTimeQ4 != 0 " +
-                "ORDER BY date DESC LIMIT :n" +
                 ")"
     )
     fun getLastNDaysAvgFocusTimes(n: Int): Flow<StatFocusTime?>

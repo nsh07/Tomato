@@ -1,0 +1,8 @@
+New features:
+- The app is now translated into 6 languages (Chinese (Simplified), English, Hebrew, Hindi, Persian, Ukrainian). You can help translate by going to the app's Weblate page!
+- Alarms now use your phone's alarm volume instead of the media volume
+
+Bug fixes:
+- Fixed incorrect calculation of average durations
+- Fixed a bug that caused the set session length to not show in the settings slider
+- Fixed a bug that caused the focus time on graphs show 0 when it was less than an hour

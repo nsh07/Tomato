@@ -5,6 +5,13 @@
 
 Tomato is a minimalist Pomodoro timer for Android based on Material 3 Expressive.
 
+</div>
+
+> [!NOTE]
+> Tomato is available on Google Play in closed testing. Please [use this link to join the testers Google Group](https://groups.google.com/g/nsh07-app-testers) and then install Tomato from the Play Store. Tomato needs 12 testers for at least 14 days for the app to be available on Google Play publicly.
+
+<div align="center">
+
 <a href="https://hosted.weblate.org/engage/tomato/?utm_source=widget">
   <img src="https://img.shields.io/weblate/progress/tomato?logo=weblate&labelColor=1a1a1a&color=2ecba9">
 </a>
@@ -41,10 +48,9 @@ Tomato is a minimalist Pomodoro timer for Android based on Material 3 Expressive
 
 <br/>
 
-> *"It's probably the most minimal yet thoughtfully designed timer application I've used in a
-while"*
+> *"... an app to support this habit helps me stay focused and get things done. Currently, that app is Tomato."*
 
-\- [*Enoch Boateng* on YouTube](https://youtu.be/T1hOiBwyddo)
+\- [*Android Authority*](https://www.androidauthority.com/best-new-android-apps-october-2025-3602966/)
 
 <br/>
 
@@ -86,6 +92,9 @@ translating this project into languages you know.
 
 ## Download
 
+- **Google Play** (recommended): Tomato is available for closed testing on Google Play. Use
+  [this link to join the Google Group](https://groups.google.com/g/nsh07-app-testers), then
+  install Tomato from the Play Store and help Tomato to get an official Play Store release.
 - **F-Droid** (recommended): Tomato is available on the official F-Droid repository. Simply open
   your preferred F-Droid app and search for Tomato.
   Updates on F-Droid are generally a week late. To get faster updates, you can install it through

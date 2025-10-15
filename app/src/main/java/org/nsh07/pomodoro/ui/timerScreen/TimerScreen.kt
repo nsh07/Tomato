@@ -140,7 +140,7 @@ fun TimerScreen(
                                     fontFamily = robotoFlexTopBar,
                                     fontSize = 32.sp,
                                     lineHeight = 32.sp,
-                                    color = colorScheme.onErrorContainer
+                                    color = colorScheme.error
                                 ),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.width(210.dp)
@@ -153,7 +153,7 @@ fun TimerScreen(
                                     fontFamily = robotoFlexTopBar,
                                     fontSize = 32.sp,
                                     lineHeight = 32.sp,
-                                    color = colorScheme.onPrimaryContainer
+                                    color = colorScheme.primary
                                 ),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.width(210.dp)
@@ -165,7 +165,7 @@ fun TimerScreen(
                                 fontFamily = robotoFlexTopBar,
                                 fontSize = 32.sp,
                                 lineHeight = 32.sp,
-                                color = colorScheme.onTertiaryContainer
+                                color = colorScheme.tertiary
                             ),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.width(210.dp)
@@ -177,7 +177,7 @@ fun TimerScreen(
                                 fontFamily = robotoFlexTopBar,
                                 fontSize = 32.sp,
                                 lineHeight = 32.sp,
-                                color = colorScheme.onTertiaryContainer
+                                color = colorScheme.tertiary
                             ),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.width(210.dp)

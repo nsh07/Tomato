@@ -78,34 +78,18 @@ fun StatsScreenRoot(
     val lastMonthSummaryChartData by viewModel.lastMonthSummaryChartData.collectAsStateWithLifecycle()
     val lastMonthAnalysisValues by viewModel.lastMonthAverageFocusTimes.collectAsStateWithLifecycle()
 
-    val lastWeekSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
-    val lastMonthSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
-
-    LaunchedEffect(lastWeekAnalysisValues) {
-        lastWeekSummaryAnalysisModelProducer.runTransaction {
-            columnSeries {
-                series(lastWeekAnalysisValues)
-            }
-        }
-    }
-
-    LaunchedEffect(lastMonthAnalysisValues) {
-        lastMonthSummaryAnalysisModelProducer.runTransaction {
-            columnSeries {
-                series(lastMonthAnalysisValues)
-            }
-        }
-    }
+    val lastYearSummaryChartData by viewModel.lastYearSummaryChartData.collectAsStateWithLifecycle()
+    val lastYearAnalysisValues by viewModel.lastYearAverageFocusTimes.collectAsStateWithLifecycle()
 
     StatsScreen(
         contentPadding = contentPadding,
         lastWeekSummaryChartData = lastWeekSummaryChartData,
-        lastWeekSummaryAnalysisModelProducer = lastWeekSummaryAnalysisModelProducer,
         lastMonthSummaryChartData = lastMonthSummaryChartData,
-        lastMonthSummaryAnalysisModelProducer = lastMonthSummaryAnalysisModelProducer,
+        lastYearSummaryChartData = lastYearSummaryChartData,
         todayStat = todayStat,
         lastWeekAverageFocusTimes = lastWeekAnalysisValues,
         lastMonthAverageFocusTimes = lastMonthAnalysisValues,
+        lastYearAverageFocusTimes = lastYearAnalysisValues,
         modifier = modifier
     )
 }
@@ -115,18 +99,37 @@ fun StatsScreenRoot(
 fun StatsScreen(
     contentPadding: PaddingValues,
     lastWeekSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
-    lastWeekSummaryAnalysisModelProducer: CartesianChartModelProducer,
     lastMonthSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
-    lastMonthSummaryAnalysisModelProducer: CartesianChartModelProducer,
+    lastYearSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     todayStat: Stat?,
     lastWeekAverageFocusTimes: List<Int>,
     lastMonthAverageFocusTimes: List<Int>,
+    lastYearAverageFocusTimes: List<Int>,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     var lastWeekStatExpanded by rememberSaveable { mutableStateOf(false) }
     var lastMonthStatExpanded by rememberSaveable { mutableStateOf(false) }
+
+    val lastWeekSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
+    val lastMonthSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
+
+    LaunchedEffect(lastWeekAverageFocusTimes) {
+        lastWeekSummaryAnalysisModelProducer.runTransaction {
+            columnSeries {
+                series(lastWeekAverageFocusTimes)
+            }
+        }
+    }
+
+    LaunchedEffect(lastMonthAverageFocusTimes) {
+        lastMonthSummaryAnalysisModelProducer.runTransaction {
+            columnSeries {
+                series(lastMonthAverageFocusTimes)
+            }
+        }
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -371,8 +374,51 @@ fun StatsScreen(
                         modifier = Modifier.padding(horizontal = 32.dp)
                     )
                 }
-                Spacer(Modifier.height(16.dp))
             }
+            item { Spacer(Modifier) }
+            item {
+                Text(
+                    stringResource(R.string.last_year),
+                    style = typography.headlineSmall,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                )
+            }
+            item {
+                Row(
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text(
+                        millisecondsToHoursMinutes(
+                            remember(lastYearAverageFocusTimes) {
+                                lastYearAverageFocusTimes.sum().toLong()
+                            }
+                        ),
+                        style = typography.displaySmall,
+                        fontFamily = openRundeClock
+                    )
+                    Text(
+                        text = stringResource(R.string.focus_per_day_avg),
+                        style = typography.titleSmall,
+                        modifier = Modifier.padding(bottom = 6.3.dp)
+                    )
+                }
+            }
+            item {
+                TimeLineChart(
+                    lastYearSummaryChartData.first,
+                    modifier = Modifier.padding(start = 16.dp),
+                    xValueFormatter = CartesianValueFormatter { context, x, _ ->
+                        context.model.extraStore[lastYearSummaryChartData.second][x.toInt()]
+                    }
+                )
+            }
+            item { Spacer(Modifier.height(16.dp)) }
         }
     }
 }
@@ -398,10 +444,10 @@ fun StatsScreenPreview() {
     StatsScreen(
         PaddingValues(),
         Pair(modelProducer, keys),
-        modelProducer,
         Pair(modelProducer, keys),
-        modelProducer,
+        Pair(modelProducer, keys),
         null,
+        listOf(0, 0, 0, 0),
         listOf(0, 0, 0, 0),
         listOf(0, 0, 0, 0)
     )

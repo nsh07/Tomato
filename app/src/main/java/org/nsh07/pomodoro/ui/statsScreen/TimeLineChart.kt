@@ -49,7 +49,7 @@ import org.nsh07.pomodoro.utils.millisecondsToMinutes
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-internal fun TimeLineChart(
+fun TimeLineChart(
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier = Modifier,
     thickness: Float = 2f,

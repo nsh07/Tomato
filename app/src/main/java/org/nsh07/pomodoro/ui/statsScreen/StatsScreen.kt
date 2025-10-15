@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,10 +57,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import kotlinx.coroutines.runBlocking
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
-import org.nsh07.pomodoro.data.StatFocusTime
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
@@ -72,20 +71,41 @@ fun StatsScreenRoot(
     viewModel: StatsViewModel = viewModel(factory = StatsViewModel.Factory)
 ) {
     val todayStat by viewModel.todayStat.collectAsStateWithLifecycle(null)
-    val lastWeekAverageFocusTimes by viewModel
-        .lastWeekAverageFocusTimes.collectAsStateWithLifecycle(null)
-    val lastMonthAverageFocusTimes by viewModel
-        .lastMonthAverageFocusTimes.collectAsStateWithLifecycle(null)
+
+    val lastWeekSummaryChartData by viewModel.lastWeekSummaryChartData.collectAsStateWithLifecycle()
+    val lastWeekAnalysisValues by viewModel.lastWeekAverageFocusTimes.collectAsStateWithLifecycle()
+
+    val lastMonthSummaryChartData by viewModel.lastMonthSummaryChartData.collectAsStateWithLifecycle()
+    val lastMonthAnalysisValues by viewModel.lastMonthAverageFocusTimes.collectAsStateWithLifecycle()
+
+    val lastWeekSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
+    val lastMonthSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
+
+    LaunchedEffect(lastWeekAnalysisValues) {
+        lastWeekSummaryAnalysisModelProducer.runTransaction {
+            columnSeries {
+                series(lastWeekAnalysisValues)
+            }
+        }
+    }
+
+    LaunchedEffect(lastMonthAnalysisValues) {
+        lastMonthSummaryAnalysisModelProducer.runTransaction {
+            columnSeries {
+                series(lastMonthAnalysisValues)
+            }
+        }
+    }
 
     StatsScreen(
         contentPadding = contentPadding,
-        lastWeekSummaryChartData = remember { viewModel.lastWeekSummaryChartData },
-        lastWeekSummaryAnalysisModelProducer = remember { viewModel.lastWeekSummaryAnalysisModelProducer },
-        lastMonthSummaryChartData = remember { viewModel.lastMonthSummaryChartData },
-        lastMonthSummaryAnalysisModelProducer = remember { viewModel.lastMonthSummaryAnalysisModelProducer },
+        lastWeekSummaryChartData = lastWeekSummaryChartData,
+        lastWeekSummaryAnalysisModelProducer = lastWeekSummaryAnalysisModelProducer,
+        lastMonthSummaryChartData = lastMonthSummaryChartData,
+        lastMonthSummaryAnalysisModelProducer = lastMonthSummaryAnalysisModelProducer,
         todayStat = todayStat,
-        lastWeekAverageFocusTimes = lastWeekAverageFocusTimes,
-        lastMonthAverageFocusTimes = lastMonthAverageFocusTimes,
+        lastWeekAverageFocusTimes = lastWeekAnalysisValues,
+        lastMonthAverageFocusTimes = lastMonthAnalysisValues,
         modifier = modifier
     )
 }
@@ -99,8 +119,8 @@ fun StatsScreen(
     lastMonthSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     lastMonthSummaryAnalysisModelProducer: CartesianChartModelProducer,
     todayStat: Stat?,
-    lastWeekAverageFocusTimes: StatFocusTime?,
-    lastMonthAverageFocusTimes: StatFocusTime?,
+    lastWeekAverageFocusTimes: List<Int>,
+    lastMonthAverageFocusTimes: List<Int>,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -218,7 +238,11 @@ fun StatsScreen(
                         .padding(horizontal = 16.dp)
                 ) {
                     Text(
-                        millisecondsToHoursMinutes(lastWeekAverageFocusTimes?.total() ?: 0),
+                        millisecondsToHoursMinutes(
+                            remember(lastWeekAverageFocusTimes) {
+                                lastWeekAverageFocusTimes.sum().toLong()
+                            }
+                        ),
                         style = typography.displaySmall,
                         fontFamily = openRundeClock
                     )
@@ -290,7 +314,11 @@ fun StatsScreen(
                         .padding(horizontal = 16.dp)
                 ) {
                     Text(
-                        millisecondsToHoursMinutes(lastMonthAverageFocusTimes?.total() ?: 0),
+                        millisecondsToHoursMinutes(
+                            remember(lastMonthAverageFocusTimes) {
+                                lastMonthAverageFocusTimes.sum().toLong()
+                            }
+                        ),
                         style = typography.displaySmall,
                         fontFamily = openRundeClock
                     )
@@ -356,23 +384,25 @@ fun StatsScreen(
 @Composable
 fun StatsScreenPreview() {
     val modelProducer = remember { CartesianChartModelProducer() }
+    val keys = remember { ExtraStore.Key<List<String>>() }
 
-    runBlocking {
+    LaunchedEffect(Unit) {
         modelProducer.runTransaction {
             columnSeries {
                 series(5, 6, 5, 2, 11, 8, 5, 2, 15, 11, 8, 13, 12, 10, 2, 7)
             }
+            extras { it[keys] = listOf("M", "T", "W", "T", "F", "S", "S") }
         }
     }
 
     StatsScreen(
         PaddingValues(),
-        Pair(modelProducer, ExtraStore.Key()),
+        Pair(modelProducer, keys),
         modelProducer,
-        Pair(modelProducer, ExtraStore.Key()),
+        Pair(modelProducer, keys),
         modelProducer,
         null,
-        null,
-        null
+        listOf(0, 0, 0, 0),
+        listOf(0, 0, 0, 0)
     )
 }

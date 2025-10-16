@@ -35,6 +35,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
@@ -51,6 +53,7 @@ import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -64,6 +67,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
@@ -115,7 +119,9 @@ fun TimerScreen(
         onResult = {}
     )
 
-    Column(modifier = modifier) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+    Column(modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
         TopAppBar(
             title = {
                 AnimatedContent(
@@ -186,13 +192,16 @@ fun TimerScreen(
                 }
             },
             subtitle = {},
-            titleHorizontalAlignment = CenterHorizontally
+            titleHorizontalAlignment = CenterHorizontally,
+            scrollBehavior = scrollBehavior
         )
 
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
             Column(horizontalAlignment = CenterHorizontally) {
                 Box(contentAlignment = Alignment.Center) {
@@ -509,6 +518,8 @@ fun TimerScreen(
                     )
                 }
             }
+
+            Spacer(Modifier.height(16.dp))
         }
     }
 }

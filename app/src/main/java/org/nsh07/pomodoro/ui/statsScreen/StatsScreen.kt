@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconToggleButton
@@ -31,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -47,7 +49,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,12 +57,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 
 @Composable
@@ -191,7 +194,9 @@ fun StatsScreen(
                                 },
                                 style = typography.displaySmall,
                                 fontFamily = openRundeClock,
-                                color = colorScheme.onPrimaryContainer
+                                color = colorScheme.onPrimaryContainer,
+                                maxLines = 1,
+                                autoSize = TextAutoSize.StepBased(maxFontSize = typography.displaySmall.fontSize)
                             )
                         }
                     }
@@ -216,7 +221,9 @@ fun StatsScreen(
                                 },
                                 style = typography.displaySmall,
                                 fontFamily = openRundeClock,
-                                color = colorScheme.onTertiaryContainer
+                                color = colorScheme.onTertiaryContainer,
+                                maxLines = 1,
+                                autoSize = TextAutoSize.StepBased(maxFontSize = typography.displaySmall.fontSize)
                             )
                         }
                     }
@@ -424,8 +431,7 @@ fun StatsScreen(
 }
 
 @Preview(
-    showSystemUi = true,
-    device = Devices.PIXEL_9_PRO
+    widthDp = 400
 )
 @Composable
 fun StatsScreenPreview() {
@@ -435,20 +441,25 @@ fun StatsScreenPreview() {
     LaunchedEffect(Unit) {
         modelProducer.runTransaction {
             columnSeries {
-                series(5, 6, 5, 2, 11, 8, 5, 2, 15, 11, 8, 13, 12, 10, 2, 7)
+                series(5, 6, 5, 2, 11, 8, 5)
             }
+            lineSeries {}
             extras { it[keys] = listOf("M", "T", "W", "T", "F", "S", "S") }
         }
     }
 
-    StatsScreen(
-        PaddingValues(),
-        Pair(modelProducer, keys),
-        Pair(modelProducer, keys),
-        Pair(modelProducer, keys),
-        null,
-        listOf(0, 0, 0, 0),
-        listOf(0, 0, 0, 0),
-        listOf(0, 0, 0, 0)
-    )
+    TomatoTheme {
+        Surface {
+            StatsScreen(
+                PaddingValues(),
+                Pair(modelProducer, keys),
+                Pair(modelProducer, keys),
+                Pair(modelProducer, keys),
+                null,
+                listOf(0, 0, 0, 0),
+                listOf(0, 0, 0, 0),
+                listOf(0, 0, 0, 0)
+            )
+        }
+    }
 }

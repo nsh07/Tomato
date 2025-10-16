@@ -68,7 +68,7 @@ fun AppScreen(
     val motionScheme = motionScheme
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 
-    val backStack = rememberNavBackStack<Screen>(Screen.Timer)
+    val backStack = rememberNavBackStack(Screen.Timer)
 
     if (uiState.alarmRinging)
         AlarmDialog {

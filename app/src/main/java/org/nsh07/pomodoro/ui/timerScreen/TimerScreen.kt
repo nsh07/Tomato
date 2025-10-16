@@ -38,6 +38,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
@@ -51,6 +52,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -286,27 +288,11 @@ fun TimerScreen(
                 val interactionSources = remember { List(3) { MutableInteractionSource() } }
                 ButtonGroup(
                     overflowIndicator = { state ->
-                        FilledTonalIconButton(
-                            onClick = {
-                                if (state.isExpanded) {
-                                    state.dismiss()
-                                } else {
-                                    state.show()
-                                }
-                            },
-                            colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                containerColor = colorContainer
-                            ),
-                            shapes = IconButtonDefaults.shapes(),
-                            modifier = Modifier
-                                .size(64.dp, 96.dp)
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.more_vert_large),
-                                contentDescription = stringResource(R.string.more),
-                                modifier = Modifier.size(32.dp)
-                            )
-                        }
+                        ButtonGroupDefaults.OverflowIndicator(
+                            state,
+                            colors = IconButtonDefaults.filledTonalIconButtonColors(),
+                            modifier = Modifier.size(64.dp, 96.dp)
+                        )
                     },
                     modifier = Modifier.padding(16.dp)
                 ) {
@@ -534,10 +520,12 @@ fun TimerScreenPreview() {
         timeStr = "03:34", nextTimeStr = "5:00", timerMode = TimerMode.FOCUS, timerRunning = true
     )
     TomatoTheme {
-        TimerScreen(
-            timerState,
-            { 0.3f },
-            {}
-        )
+        Surface {
+            TimerScreen(
+                timerState,
+                { 0.3f },
+                {}
+            )
+        }
     }
 }

@@ -1,0 +1,12 @@
+New features:
+- The Stats screen now contains the data for the past year
+- Charts now have fading edges to indicate scrollable content
+
+Fixes:
+- Improved Stats screen performance
+- Notification now does not pop up on your screen
+- Fixed low contrast on the Timer screen heading
+- Improve app usability on smaller screens
+
+Translators on Weblate added support for:
+Arabic, Czech, German, Hungarian, Italian, Japanese, Kurdish (Central), Minnan (Traditional), Portuguese (Brazil), Spanish

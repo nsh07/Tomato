@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="start">دەستپێکردن</string>
+    <string name="stop">وەستاندن</string>
+    <string name="focus">سەرنجدان</string>
+    <string name="short_break">پشوویەکی کورت</string>
+    <string name="long_break">پشوویەکی درێژ</string>
+    <string name="exit">دەرچوون</string>
+    <string name="skip">پەڕاندن</string>
+    <string name="stop_alarm">وەستاندنی زەنگی ئاگادار کردنەوە</string>
+    <string name="min_remaining_notification">%1$s خولەک ماوە</string>
+    <string name="ok">باشە</string>
+    <string name="color_scheme">ڕەنگی رووکار</string>
+    <string name="dynamic">داینامیکی</string>
+    <string name="color">ڕەنگ</string>
+    <string name="choose_color_scheme">ڕەنگی ڕووکار هەڵبژێرە</string>
+    <string name="system_default">وەک سیستەم</string>
+    <string name="alarm">زەنگی ئاگادارکردنەوە</string>
+    <string name="dark">تاریک</string>
+    <string name="choose_theme">ڕووکارێک هەلبژێرە</string>
+    <string name="productivity_analysis">شرۆڤەی بە بەرهەمی</string>
+    <string name="productivity_analysis_desc">ماوەی سەرنجدان لە کاتە جیاوازەکانی ڕۆژ</string>
+    <string name="alarm_sound">زەنگی ئاگادارکردنەوە</string>
+    <string name="black_theme">ڕووکاری ڕەش</string>
+    <string name="black_theme_desc">بەکارهێنانی ڕووکاری تەواو ڕەش</string>
+    <string name="alarm_desc">زەنگی ئاگادارکردنەوە لێبدە لە کاتی تەواوبوونی کاتگرەوە</string>
+    <string name="vibrate">لەرینەوە</string>
+    <string name="vibrate_desc">لەرینەوە لە کاتی تەواوبوونی کاتگرەوە</string>
+    <string name="light">ڕووناک</string>
+    <string name="theme">ڕووکار</string>
+    <string name="settings">ڕێکخستنەکان</string>
+    <string name="today">ئەمڕۆ</string>
+    <string name="break_">پشوو</string>
+    <string name="last_week">هەفتەی ڕابردوو</string>
+    <string name="more">زیاتر</string>
+    <string name="stats">ئامار</string>
+    <string name="more_info">زانیاری زیاتر</string>
+    <string name="pause">وەستاندن</string>
+</resources>

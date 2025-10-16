@@ -56,4 +56,5 @@
     <string name="up_next">Up next</string>
     <string name="timer">Timer</string>
     <string name="timer_progress">Timer progress</string>
+    <string name="last_year">Last year</string>
 </resources>

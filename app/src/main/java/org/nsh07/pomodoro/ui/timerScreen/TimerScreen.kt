@@ -35,7 +35,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
@@ -49,8 +52,10 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -64,6 +69,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
@@ -115,7 +121,9 @@ fun TimerScreen(
         onResult = {}
     )
 
-    Column(modifier = modifier) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+    Column(modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
         TopAppBar(
             title = {
                 AnimatedContent(
@@ -140,7 +148,7 @@ fun TimerScreen(
                                     fontFamily = robotoFlexTopBar,
                                     fontSize = 32.sp,
                                     lineHeight = 32.sp,
-                                    color = colorScheme.onErrorContainer
+                                    color = colorScheme.error
                                 ),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.width(210.dp)
@@ -153,7 +161,7 @@ fun TimerScreen(
                                     fontFamily = robotoFlexTopBar,
                                     fontSize = 32.sp,
                                     lineHeight = 32.sp,
-                                    color = colorScheme.onPrimaryContainer
+                                    color = colorScheme.primary
                                 ),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.width(210.dp)
@@ -165,7 +173,7 @@ fun TimerScreen(
                                 fontFamily = robotoFlexTopBar,
                                 fontSize = 32.sp,
                                 lineHeight = 32.sp,
-                                color = colorScheme.onTertiaryContainer
+                                color = colorScheme.tertiary
                             ),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.width(210.dp)
@@ -177,7 +185,7 @@ fun TimerScreen(
                                 fontFamily = robotoFlexTopBar,
                                 fontSize = 32.sp,
                                 lineHeight = 32.sp,
-                                color = colorScheme.onTertiaryContainer
+                                color = colorScheme.tertiary
                             ),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.width(210.dp)
@@ -186,13 +194,16 @@ fun TimerScreen(
                 }
             },
             subtitle = {},
-            titleHorizontalAlignment = CenterHorizontally
+            titleHorizontalAlignment = CenterHorizontally,
+            scrollBehavior = scrollBehavior
         )
 
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
             Column(horizontalAlignment = CenterHorizontally) {
                 Box(contentAlignment = Alignment.Center) {
@@ -277,27 +288,11 @@ fun TimerScreen(
                 val interactionSources = remember { List(3) { MutableInteractionSource() } }
                 ButtonGroup(
                     overflowIndicator = { state ->
-                        FilledTonalIconButton(
-                            onClick = {
-                                if (state.isExpanded) {
-                                    state.dismiss()
-                                } else {
-                                    state.show()
-                                }
-                            },
-                            colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                containerColor = colorContainer
-                            ),
-                            shapes = IconButtonDefaults.shapes(),
-                            modifier = Modifier
-                                .size(64.dp, 96.dp)
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.more_vert_large),
-                                contentDescription = stringResource(R.string.more),
-                                modifier = Modifier.size(32.dp)
-                            )
-                        }
+                        ButtonGroupDefaults.OverflowIndicator(
+                            state,
+                            colors = IconButtonDefaults.filledTonalIconButtonColors(),
+                            modifier = Modifier.size(64.dp, 96.dp)
+                        )
                     },
                     modifier = Modifier.padding(16.dp)
                 ) {
@@ -509,6 +504,8 @@ fun TimerScreen(
                     )
                 }
             }
+
+            Spacer(Modifier.height(16.dp))
         }
     }
 }
@@ -523,10 +520,12 @@ fun TimerScreenPreview() {
         timeStr = "03:34", nextTimeStr = "5:00", timerMode = TimerMode.FOCUS, timerRunning = true
     )
     TomatoTheme {
-        TimerScreen(
-            timerState,
-            { 0.3f },
-            {}
-        )
+        Surface {
+            TimerScreen(
+                timerState,
+                { 0.3f },
+                {}
+            )
+        }
     }
 }

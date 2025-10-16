@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="start">開始</string>
+    <string name="stop">停止</string>
+    <string name="focus">專注</string>
+    <string name="short_break">小歇</string>
+    <string name="system_default">系統預設</string>
+    <string name="alarm">亂鐘</string>
+    <string name="light">淺色</string>
+    <string name="dark">深色</string>
+    <string name="choose_theme">選擇主題</string>
+    <string name="productivity_analysis">工課效率分析</string>
+    <string name="productivity_analysis_desc">無仝時段的專注連紲時間</string>
+    <string name="alarm_sound">亂鐘聲音</string>
+    <string name="black_theme">烏色的主題</string>
+    <string name="black_theme_desc">使用專烏色的主題</string>
+    <string name="alarm_desc">計時結束時喨喨仔</string>
+    <string name="vibrate">震動</string>
+    <string name="vibrate_desc">計時結束時震動</string>
+    <string name="theme">主題</string>
+    <string name="settings">設定</string>
+    <string name="session_length">小節長度</string>
+    <string name="session_length_desc">一个小節的專注時段：%1$d</string>
+    <string name="long_break">長歇</string>
+    <string name="exit">離開</string>
+    <string name="skip">跳過</string>
+    <string name="stop_alarm">止喨</string>
+    <string name="min_remaining_notification">閣賰 %1$s 分鐘</string>
+    <string name="paused">已暫停</string>
+    <string name="completed">已完成</string>
+    <string name="up_next_notification">紲落來：%1$s (%2$s)</string>
+    <string name="start_next">開始後一個</string>
+    <string name="choose_color_scheme">選擇配色方案</string>
+    <string name="ok">確認</string>
+    <string name="color_scheme">配色方案</string>
+    <string name="dynamic">動態</string>
+    <string name="color">色彩</string>
+</resources>

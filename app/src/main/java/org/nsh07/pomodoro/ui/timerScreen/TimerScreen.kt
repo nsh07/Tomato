@@ -138,7 +138,9 @@ fun TimerScreen(
                                 targetOffsetY = { (it * 1.25).toInt() }
                             )
                         )
-                    }
+                    },
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     when (it) {
                         TimerMode.BRAND ->
@@ -150,8 +152,7 @@ fun TimerScreen(
                                     lineHeight = 32.sp,
                                     color = colorScheme.error
                                 ),
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.width(210.dp)
+                                textAlign = TextAlign.Center
                             )
 
                         TimerMode.FOCUS ->
@@ -163,8 +164,7 @@ fun TimerScreen(
                                     lineHeight = 32.sp,
                                     color = colorScheme.primary
                                 ),
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.width(210.dp)
+                                textAlign = TextAlign.Center
                             )
 
                         TimerMode.SHORT_BREAK -> Text(
@@ -175,8 +175,7 @@ fun TimerScreen(
                                 lineHeight = 32.sp,
                                 color = colorScheme.tertiary
                             ),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.width(210.dp)
+                            textAlign = TextAlign.Center
                         )
 
                         TimerMode.LONG_BREAK -> Text(
@@ -187,8 +186,7 @@ fun TimerScreen(
                                 lineHeight = 32.sp,
                                 color = colorScheme.tertiary
                             ),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.width(210.dp)
+                            textAlign = TextAlign.Center
                         )
                     }
                 }

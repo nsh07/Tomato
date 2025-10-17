@@ -102,8 +102,10 @@ class TimerService : Service() {
 
             Actions.RESET.toString() -> {
                 if (timerState.value.timerRunning) toggleTimer()
-                resetTimer()
-                stopForegroundService()
+                skipScope.launch {
+                    resetTimer()
+                    stopForegroundService()
+                }
             }
 
             Actions.SKIP.toString() -> skipTimer(true)
@@ -278,27 +280,25 @@ class TimerService : Service() {
             }
     }
 
-    private fun resetTimer() {
+    private suspend fun resetTimer() {
         updateProgressSegments()
-        skipScope.launch {
-            saveTimeToDb()
-            time = timerRepository.focusTime
-            cycles = 0
-            startTime = 0L
-            pauseTime = 0L
-            pauseDuration = 0L
+        saveTimeToDb()
+        time = timerRepository.focusTime
+        cycles = 0
+        startTime = 0L
+        pauseTime = 0L
+        pauseDuration = 0L
 
-            _timerState.update { currentState ->
-                currentState.copy(
-                    timerMode = TimerMode.FOCUS,
-                    timeStr = millisecondsToStr(time),
-                    totalTime = time,
-                    nextTimerMode = if (timerRepository.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
-                    nextTimeStr = millisecondsToStr(if (timerRepository.sessionLength > 1) timerRepository.shortBreakTime else timerRepository.longBreakTime),
-                    currentFocusCount = 1,
-                    totalFocusCount = timerRepository.sessionLength
-                )
-            }
+        _timerState.update { currentState ->
+            currentState.copy(
+                timerMode = TimerMode.FOCUS,
+                timeStr = millisecondsToStr(time),
+                totalTime = time,
+                nextTimerMode = if (timerRepository.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
+                nextTimeStr = millisecondsToStr(if (timerRepository.sessionLength > 1) timerRepository.shortBreakTime else timerRepository.longBreakTime),
+                currentFocusCount = 1,
+                totalFocusCount = timerRepository.sessionLength
+            )
         }
     }
 

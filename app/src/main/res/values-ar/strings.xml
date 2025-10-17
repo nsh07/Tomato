@@ -28,7 +28,7 @@
     <string name="alarm_sound">صوت المنبه</string>
     <string name="black_theme">الوضع الاسود</string>
     <string name="black_theme_desc">استخدم سمة اسود نقي</string>
-    <string name="alarm_desc">نغمة انتهاء المؤقت</string>
+    <string name="alarm_desc">التنبيه عند انتهاء المؤقت</string>
     <string name="vibrate">اهتزاز</string>
     <string name="vibrate_desc">الاهتزاز عندما ينتهي المؤقت</string>
     <string name="theme">سمة</string>
@@ -46,7 +46,7 @@
     <string name="last_month">الشهر الماضي</string>
     <string name="monthly_productivity_analysis">تحليل الإنتاجية الشهري</string>
     <string name="stop_alarm_question">إيقاف المنبه؟</string>
-    <string name="stop_alarm_dialog_text">مؤقت الجلسة الحالي انتهي. اضغط في أي مكان لإيقاف المنبه.</string>
+    <string name="stop_alarm_dialog_text">مؤقت الجلسة الحالية انتهي. اضغط في أي مكان لإيقاف المنبه.</string>
     <string name="timer_session_count">%1$d من %2$d</string>
     <string name="more">أكثر</string>
     <string name="pause">إيقاف</string>
@@ -54,7 +54,7 @@
     <string name="restart">إعادة التعيين</string>
     <string name="skip_to_next">تخطي الي التالي</string>
     <string name="up_next">القادم</string>
-    <string name="timer">مؤقت</string>
+    <string name="timer">المؤقت</string>
     <string name="timer_progress">تقدم المؤقت</string>
     <string name="last_year">السنة الماضية</string>
 </resources>

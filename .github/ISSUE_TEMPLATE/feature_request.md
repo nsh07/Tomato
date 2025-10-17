@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest a new feature
 title: "[FEATURE] <enter your title here>"
-labels: enhancement
+labels: enhancement, priority-unassigned
 assignees: nsh07
 
 ---

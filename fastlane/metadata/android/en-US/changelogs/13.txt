@@ -1,0 +1,14 @@
+Bug fixes and translation expansion over 1.5.0-alpha01
+
+Full changelog for 1.5.0:
+New features:
+- The Stats screen now contains the data for the past year
+- Charts now have fading edges to indicate scrollable content
+
+Fixes:
+- Improved Stats screen performance
+- Notification now does not pop up on your screen
+- Fixed low contrast on the Timer screen heading
+- Improve app usability on smaller screens
+
+Expanded translations

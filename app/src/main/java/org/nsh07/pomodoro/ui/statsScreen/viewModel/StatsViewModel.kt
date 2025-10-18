@@ -22,14 +22,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.TomatoApplication
+import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
 class StatsViewModel(
-    statRepository: StatRepository
+    private val statRepository: StatRepository
 ) : ViewModel() {
 
     val todayStat = statRepository.getTodayStat().distinctUntilChanged()
@@ -150,6 +154,31 @@ class StatsViewModel(
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = listOf(0, 0, 0, 0)
             )
+
+    fun generateSampleData() {
+        if (BuildConfig.DEBUG) {
+            viewModelScope.launch {
+                val today = LocalDate.now().plusDays(1)
+                var it = today.minusDays(40)
+
+                while (it.isBefore(today)) {
+                    statRepository.insertStat(
+                        Stat(
+                            it,
+                            (0..30 * 60 * 1000L).random(),
+                            (1 * 60 * 60 * 1000L..3 * 60 * 60 * 1000L).random(),
+                            (0..3 * 60 * 60 * 1000L).random(),
+                            (0..1 * 60 * 60 * 1000L).random(),
+                            0
+                        )
+                    )
+                    it = it.plusDays(1)
+                }
+
+                statRepository.addBreakTime((0..30 * 60 * 60 * 1000L).random())
+            }
+        }
+    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

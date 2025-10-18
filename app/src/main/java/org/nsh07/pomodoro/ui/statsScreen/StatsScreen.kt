@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.TextAutoSize
@@ -26,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -59,6 +61,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
@@ -93,6 +96,7 @@ fun StatsScreenRoot(
         lastWeekAverageFocusTimes = lastWeekAnalysisValues,
         lastMonthAverageFocusTimes = lastMonthAnalysisValues,
         lastYearAverageFocusTimes = lastYearAnalysisValues,
+        generateSampleData = viewModel::generateSampleData,
         modifier = modifier
     )
 }
@@ -108,6 +112,7 @@ fun StatsScreen(
     lastWeekAverageFocusTimes: List<Int>,
     lastMonthAverageFocusTimes: List<Int>,
     lastYearAverageFocusTimes: List<Int>,
+    generateSampleData: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -151,6 +156,17 @@ fun StatsScreen(
                         .padding(top = contentPadding.calculateTopPadding())
                         .padding(vertical = 14.dp)
                 )
+            },
+            actions = if (BuildConfig.DEBUG) {
+                {
+                    IconButton(
+                        onClick = generateSampleData
+                    ) {
+                        Spacer(Modifier.size(24.dp))
+                    }
+                }
+            } else {
+                {}
             },
             subtitle = {},
             titleHorizontalAlignment = Alignment.CenterHorizontally,
@@ -458,7 +474,8 @@ fun StatsScreenPreview() {
                 null,
                 listOf(0, 0, 0, 0),
                 listOf(0, 0, 0, 0),
-                listOf(0, 0, 0, 0)
+                listOf(0, 0, 0, 0),
+                {}
             )
         }
     }

@@ -56,4 +56,5 @@
     <string name="timer">计时</string>
     <string name="timer_progress">计时器进度</string>
     <string name="timer_session_count">%2$d 中的 %1$d</string>
+    <string name="last_year">去年</string>
 </resources>

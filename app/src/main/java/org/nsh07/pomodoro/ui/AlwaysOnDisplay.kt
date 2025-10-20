@@ -155,7 +155,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
                     },
                     cap = StrokeCap.Round,
                 ),
-                wavelength = 94.dp,
+                wavelength = 42.dp,
                 gapSize = 8.dp
             )
         }

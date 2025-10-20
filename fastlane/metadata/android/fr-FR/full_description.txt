@@ -1,0 +1,12 @@
+<i>Tomato</i> est un minuteur Pomodoro minimaliste pour Android, conçu selon les principes de Material 3 Expressive.
+
+Tomato est entièrement gratuit et open-source, pour toujours. Le code source est disponible sur GitHub : https://github.com/nsh07/Tomato, où vous pouvez aussi signaler des bugs ou proposer de nouvelles fonctionnalités.
+
+<b>Fonctionnalités:</b>
+- Interface simple et minimaliste, conforme aux dernières recommandations Material 3 Expressive
+- Statistiques détaillées du temps de travail/étude, présentées de manière claire et intuitive
+    - Statistiques du jour accessibles immédiatement
+    - Graphiques simple et lisibles de votre semaine et votre mois
+    - Analyse de vos heures les plus productives dans la semaine et le mois
+- Paramètres du minuteur entièrement personnalisables
+- Compatibilité avec les Live Updates d’Android 16

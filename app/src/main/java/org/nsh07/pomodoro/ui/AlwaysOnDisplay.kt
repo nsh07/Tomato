@@ -65,6 +65,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
     val insetsController = remember { WindowCompat.getInsetsController(window, view) }
 
     DisposableEffect(Unit) {
+        view.keepScreenOn = true
         insetsController.apply {
             hide(WindowInsetsCompat.Type.statusBars())
             hide(WindowInsetsCompat.Type.navigationBars())
@@ -72,6 +73,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
         onDispose {
+            view.keepScreenOn = false
             insetsController.apply {
                 show(WindowInsetsCompat.Type.statusBars())
                 show(WindowInsetsCompat.Type.navigationBars())

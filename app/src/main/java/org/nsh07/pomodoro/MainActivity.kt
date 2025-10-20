@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
                     appContainer.appTimerRepository.colorScheme = colorScheme
                 }
 
-                AppScreen(timerViewModel = timerViewModel)
+                AppScreen(timerViewModel = timerViewModel, isAODEnabled = true)
             }
         }
     }

@@ -8,6 +8,8 @@
 package org.nsh07.pomodoro.ui
 
 import android.app.Activity
+import android.view.WindowManager
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
@@ -61,19 +63,29 @@ fun SharedTransitionScope.AlwaysOnDisplay(
     var sharedElementTransitionComplete by remember { mutableStateOf(false) }
 
     val view = LocalView.current
+    val activity = LocalActivity.current
     val window = remember { (view.context as Activity).window }
     val insetsController = remember { WindowCompat.getInsetsController(window, view) }
 
     DisposableEffect(Unit) {
-        view.keepScreenOn = true
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                    WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+        )
+        activity?.setShowWhenLocked(true)
         insetsController.apply {
             hide(WindowInsetsCompat.Type.statusBars())
             hide(WindowInsetsCompat.Type.navigationBars())
             systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
+
         onDispose {
-            view.keepScreenOn = false
+            window.clearFlags(
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+            )
+            activity?.setShowWhenLocked(false)
             insetsController.apply {
                 show(WindowInsetsCompat.Type.statusBars())
                 show(WindowInsetsCompat.Type.navigationBars())

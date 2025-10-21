@@ -15,6 +15,7 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -143,6 +144,7 @@ fun SettingsScreenRoot(
         onAlarmEnabledChange = viewModel::saveAlarmEnabled,
         onVibrateEnabledChange = viewModel::saveVibrateEnabled,
         onBlackThemeChange = viewModel::saveBlackTheme,
+        onAodEnabledChange = viewModel::saveAodEnabled,
         onAlarmSoundChanged = {
             viewModel.saveAlarmSound(it)
             Intent(context, TimerService::class.java).apply {
@@ -170,6 +172,7 @@ private fun SettingsScreen(
     onAlarmEnabledChange: (Boolean) -> Unit,
     onVibrateEnabledChange: (Boolean) -> Unit,
     onBlackThemeChange: (Boolean) -> Unit,
+    onAodEnabledChange: (Boolean) -> Unit,
     onAlarmSoundChanged: (Uri?) -> Unit,
     onThemeChange: (String) -> Unit,
     onColorSchemeChange: (Color) -> Unit,
@@ -181,14 +184,14 @@ private fun SettingsScreen(
         checkedIconColor = colorScheme.primary,
     )
 
-    val themeMap: Map<String, Pair<Int, String>> = remember {
+    val themeMap: Map<String, Pair<Int, Int>> = remember {
         mapOf(
             "auto" to Pair(
                 R.drawable.brightness_auto,
-                context.getString(R.string.system_default)
+                R.string.system_default
             ),
-            "light" to Pair(R.drawable.light_mode, context.getString(R.string.light)),
-            "dark" to Pair(R.drawable.dark_mode, context.getString(R.string.dark))
+            "light" to Pair(R.drawable.light_mode, R.string.light),
+            "dark" to Pair(R.drawable.dark_mode, R.string.dark)
         )
     }
     val reverseThemeMap: Map<String, String> = remember {
@@ -232,27 +235,39 @@ private fun SettingsScreen(
         putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmSound.toUri())
     }
 
-    val switchItems = remember(preferencesState.blackTheme, alarmEnabled, vibrateEnabled) {
+    val switchItems = remember(
+        preferencesState.blackTheme,
+        preferencesState.aodEnabled,
+        alarmEnabled,
+        vibrateEnabled
+    ) {
         listOf(
             SettingsSwitchItem(
                 checked = preferencesState.blackTheme,
                 icon = R.drawable.contrast,
-                label = context.getString(R.string.black_theme),
-                description = context.getString(R.string.black_theme_desc),
+                label = R.string.black_theme,
+                description = R.string.black_theme_desc,
                 onClick = onBlackThemeChange
+            ),
+            SettingsSwitchItem(
+                checked = preferencesState.aodEnabled,
+                icon = R.drawable.aod,
+                label = R.string.always_on_display,
+                description = R.string.always_on_display_desc,
+                onClick = onAodEnabledChange
             ),
             SettingsSwitchItem(
                 checked = alarmEnabled,
                 icon = R.drawable.alarm_on,
-                label = context.getString(R.string.alarm),
-                description = context.getString(R.string.alarm_desc),
+                label = R.string.alarm,
+                description = R.string.alarm_desc,
                 onClick = onAlarmEnabledChange
             ),
             SettingsSwitchItem(
                 checked = vibrateEnabled,
                 icon = R.drawable.mobile_vibrate,
-                label = context.getString(R.string.vibrate),
-                description = context.getString(R.string.vibrate_desc),
+                label = R.string.vibrate,
+                description = R.string.vibrate_desc,
                 onClick = onVibrateEnabledChange
             )
         )
@@ -404,14 +419,13 @@ private fun SettingsScreen(
                         .clip(middleListItemShape)
                 )
             }
-            item {
-                val item = switchItems[0]
+            itemsIndexed(switchItems.take(2)) { index, item ->
                 ListItem(
                     leadingContent = {
                         Icon(painterResource(item.icon), contentDescription = null)
                     },
-                    headlineContent = { Text(item.label) },
-                    supportingContent = { Text(item.description) },
+                    headlineContent = { Text(stringResource(item.label)) },
+                    supportingContent = { Text(stringResource(item.description)) },
                     trailingContent = {
                         Switch(
                             checked = item.checked,
@@ -435,7 +449,9 @@ private fun SettingsScreen(
                         )
                     },
                     colors = listItemColors,
-                    modifier = Modifier.clip(bottomListItemShape)
+                    modifier = Modifier
+                        .padding(top = if (index != 0) 16.dp else 0.dp)
+                        .clip(if (index == 0) bottomListItemShape else cardShape)
                 )
             }
 
@@ -454,13 +470,13 @@ private fun SettingsScreen(
                         .clickable(onClick = { ringtonePickerLauncher.launch(intent) })
                 )
             }
-            itemsIndexed(switchItems.drop(1)) { index, item ->
+            itemsIndexed(switchItems.drop(2)) { index, item ->
                 ListItem(
                     leadingContent = {
                         Icon(painterResource(item.icon), contentDescription = null)
                     },
-                    headlineContent = { Text(item.label) },
-                    supportingContent = { Text(item.description) },
+                    headlineContent = { Text(stringResource(item.label)) },
+                    supportingContent = { Text(stringResource(item.description)) },
                     trailingContent = {
                         Switch(
                             checked = item.checked,
@@ -487,7 +503,7 @@ private fun SettingsScreen(
                     modifier = Modifier
                         .clip(
                             when (index) {
-                                switchItems.lastIndex - 1 -> bottomListItemShape
+                                switchItems.lastIndex - 2 -> bottomListItemShape
                                 else -> middleListItemShape
                             }
                         )
@@ -546,6 +562,7 @@ fun SettingsScreenPreview() {
             onAlarmEnabledChange = {},
             onVibrateEnabledChange = {},
             onBlackThemeChange = {},
+            onAodEnabledChange = {},
             onAlarmSoundChanged = {},
             onThemeChange = {},
             onColorSchemeChange = {},
@@ -557,7 +574,7 @@ fun SettingsScreenPreview() {
 data class SettingsSwitchItem(
     val checked: Boolean,
     @param:DrawableRes val icon: Int,
-    val label: String,
-    val description: String,
+    @param:StringRes val label: Int,
+    @param:StringRes val description: Int,
     val onClick: (Boolean) -> Unit
 )

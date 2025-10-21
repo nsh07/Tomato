@@ -177,8 +177,8 @@ fun SharedTransitionScope.AlwaysOnDisplay(
         }
     }
 
-    val x by animateIntAsState(randomX)
-    val y by animateIntAsState(randomY)
+    val x by animateIntAsState(randomX, motionScheme.slowSpatialSpec())
+    val y by animateIntAsState(randomY, motionScheme.slowSpatialSpec())
 
     Box(
         modifier = modifier

@@ -25,7 +25,7 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 @Composable
 fun ThemePickerListItem(
     theme: String,
-    themeMap: Map<String, Pair<Int, String>>,
+    themeMap: Map<String, Pair<Int, Int>>,
     reverseThemeMap: Map<String, String>,
     items: Int,
     index: Int,
@@ -53,7 +53,7 @@ fun ThemePickerListItem(
         },
         headlineContent = { Text(stringResource(R.string.theme)) },
         supportingContent = {
-            Text(themeMap[theme]!!.second)
+            Text(stringResource(themeMap[theme]!!.second))
         },
         colors = listItemColors,
         items = items,

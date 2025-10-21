@@ -31,11 +31,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -50,14 +51,16 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ThemeDialog(
-    themeMap: Map<String, Pair<Int, String>>,
+    themeMap: Map<String, Pair<Int, Int>>,
     reverseThemeMap: Map<String, String>,
     theme: String,
     setShowThemeDialog: (Boolean) -> Unit,
     onThemeChange: (String) -> Unit
 ) {
     val selectedOption =
-        remember { mutableStateOf(themeMap[theme]!!.second) }
+        remember { mutableIntStateOf(themeMap[theme]!!.second) }
+
+    val context = LocalContext.current
 
     BasicAlertDialog(
         onDismissRequest = { setShowThemeDialog(false) }
@@ -80,7 +83,7 @@ fun ThemeDialog(
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                     modifier = Modifier.selectableGroup()
                 ) {
-                    themeMap.entries.forEachIndexed { index: Int, pair: Map.Entry<String, Pair<Int, String>> ->
+                    themeMap.entries.forEachIndexed { index: Int, pair: Map.Entry<String, Pair<Int, Int>> ->
                         val text = pair.value.second
                         val selected = text == selectedOption.value
 
@@ -94,7 +97,10 @@ fun ThemeDialog(
                                 }
                             },
                             headlineContent = {
-                                Text(text = text, style = MaterialTheme.typography.bodyLarge)
+                                Text(
+                                    text = stringResource(text),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
                             },
                             colors = if (!selected) listItemColors else selectedListItemColors,
                             modifier = Modifier
@@ -110,7 +116,11 @@ fun ThemeDialog(
                                     selected = (text == selectedOption.value),
                                     onClick = {
                                         selectedOption.value = text
-                                        onThemeChange(reverseThemeMap[selectedOption.value]!!)
+                                        onThemeChange(
+                                            reverseThemeMap[context.getString(
+                                                selectedOption.intValue
+                                            )]!!
+                                        )
                                     },
                                     role = Role.RadioButton
                                 )

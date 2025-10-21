@@ -80,12 +80,15 @@ class SettingsViewModel(
                 ?: preferenceRepository.saveStringPreference("color_scheme", Color.White.toString())
             val blackTheme = preferenceRepository.getBooleanPreference("black_theme")
                 ?: preferenceRepository.saveBooleanPreference("black_theme", false)
+            val aodEnabled = preferenceRepository.getBooleanPreference("aod_enabled")
+                ?: preferenceRepository.saveBooleanPreference("aod_enabled", false)
 
             _preferencesState.update { currentState ->
                 currentState.copy(
                     theme = theme,
                     colorScheme = colorScheme,
-                    blackTheme = blackTheme
+                    blackTheme = blackTheme,
+                    aodEnabled = aodEnabled
                 )
             }
         }
@@ -193,6 +196,15 @@ class SettingsViewModel(
                 currentState.copy(blackTheme = blackTheme)
             }
             preferenceRepository.saveBooleanPreference("black_theme", blackTheme)
+        }
+    }
+
+    fun saveAodEnabled(aodEnabled: Boolean) {
+        viewModelScope.launch {
+            _preferencesState.update { currentState ->
+                currentState.copy(aodEnabled = aodEnabled)
+            }
+            preferenceRepository.saveBooleanPreference("aod_enabled", aodEnabled)
         }
     }
 

@@ -10,6 +10,9 @@ sealed class Screen : NavKey {
     object Timer : Screen()
 
     @Serializable
+    object AOD : Screen()
+
+    @Serializable
     object Settings : Screen()
 
     @Serializable

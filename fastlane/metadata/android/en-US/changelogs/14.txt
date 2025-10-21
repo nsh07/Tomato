@@ -1,0 +1,6 @@
+New features:
+- New Always On Display option: click anywhere while on the Timer screen to turn on Always On Display mode, tap again to turn it off
+
+Translators on Weblate helped add support for French and Turkish in this update
+
+The AOD feature is still in development. Suggest features and report bugs at https://github.com/nsh07/tomato/issues

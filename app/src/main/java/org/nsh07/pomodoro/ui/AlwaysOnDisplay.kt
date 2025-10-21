@@ -13,9 +13,11 @@ import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
@@ -27,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,10 +40,14 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
@@ -50,9 +57,20 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import kotlinx.coroutines.delay
 import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
+import kotlin.random.Random
 
+/**
+ * Always On Display composable. Must be called within a [SharedTransitionScope] which allows
+ * animating the clock and progress indicator
+ *
+ * @param timerState [TimerState] instance. This must be the same instance as the one used on the
+ * root [TimerScreen] composable
+ * @param progress lambda that returns the current progress of the clock
+ * randomized offset for the clock to allow smooth motion with sharedBounds
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SharedTransitionScope.AlwaysOnDisplay(
@@ -62,8 +80,11 @@ fun SharedTransitionScope.AlwaysOnDisplay(
 ) {
     var sharedElementTransitionComplete by remember { mutableStateOf(false) }
 
-    val view = LocalView.current
     val activity = LocalActivity.current
+    val density = LocalDensity.current
+    val windowInfo = LocalWindowInfo.current
+    val view = LocalView.current
+
     val window = remember { (view.context as Activity).window }
     val insetsController = remember { WindowCompat.getInsetsController(window, view) }
 
@@ -126,70 +147,109 @@ fun SharedTransitionScope.AlwaysOnDisplay(
         animationSpec = motionScheme.slowEffectsSpec()
     )
 
+    var randomX by remember {
+        mutableIntStateOf(
+            Random.nextInt(
+                16.dp.toIntPx(density),
+                windowInfo.containerSize.width - 266.dp.toIntPx(density)
+            )
+        )
+    }
+    var randomY by remember {
+        mutableIntStateOf(
+            Random.nextInt(
+                16.dp.toIntPx(density),
+                windowInfo.containerSize.height - 266.dp.toIntPx(density)
+            )
+        )
+    }
+
+    LaunchedEffect(timerState.timeStr[1]) { // Randomize position every minute
+        if (sharedElementTransitionComplete) {
+            randomX = Random.nextInt(
+                16.dp.toIntPx(density),
+                windowInfo.containerSize.width - 266.dp.toIntPx(density)
+            )
+            randomY = Random.nextInt(
+                16.dp.toIntPx(density),
+                windowInfo.containerSize.height - 266.dp.toIntPx(density)
+            )
+        }
+    }
+
+    val x by animateIntAsState(randomX)
+    val y by animateIntAsState(randomY)
+
     Box(
-        contentAlignment = Alignment.Center,
         modifier = modifier
             .fillMaxSize()
             .background(surface)
     ) {
-        if (timerState.timerMode == TimerMode.FOCUS) {
-            CircularProgressIndicator(
-                progress = progress,
-                modifier = Modifier
-                    .sharedBounds(
-                        sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("focus progress"),
-                        animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                    )
-                    .size(250.dp),
-                color = primary,
-                trackColor = secondaryContainer,
-                strokeWidth = 12.dp,
-                gapSize = 8.dp,
-            )
-        } else {
-            CircularWavyProgressIndicator(
-                progress = progress,
-                modifier = Modifier
-                    .sharedBounds(
-                        sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("break progress"),
-                        animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                    )
-                    .size(250.dp),
-                color = primary,
-                trackColor = secondaryContainer,
-                stroke = Stroke(
-                    width = with(LocalDensity.current) {
-                        12.dp.toPx()
-                    },
-                    cap = StrokeCap.Round,
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.offset {
+                IntOffset(x, y)
+            }
+        ) {
+            if (timerState.timerMode == TimerMode.FOCUS) {
+                CircularProgressIndicator(
+                    progress = progress,
+                    modifier = Modifier
+                        .sharedBounds(
+                            sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("focus progress"),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                        )
+                        .size(250.dp),
+                    color = primary,
+                    trackColor = secondaryContainer,
+                    strokeWidth = 12.dp,
+                    gapSize = 8.dp,
+                )
+            } else {
+                CircularWavyProgressIndicator(
+                    progress = progress,
+                    modifier = Modifier
+                        .sharedBounds(
+                            sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("break progress"),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                        )
+                        .size(250.dp),
+                    color = primary,
+                    trackColor = secondaryContainer,
+                    stroke = Stroke(
+                        width = with(LocalDensity.current) {
+                            12.dp.toPx()
+                        },
+                        cap = StrokeCap.Round,
+                    ),
+                    trackStroke = Stroke(
+                        width = with(LocalDensity.current) {
+                            12.dp.toPx()
+                        },
+                        cap = StrokeCap.Round,
+                    ),
+                    wavelength = 42.dp,
+                    gapSize = 8.dp
+                )
+            }
+
+            Text(
+                text = timerState.timeStr,
+                style = TextStyle(
+                    fontFamily = openRundeClock,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 56.sp,
+                    letterSpacing = (-2).sp
                 ),
-                trackStroke = Stroke(
-                    width = with(LocalDensity.current) {
-                        12.dp.toPx()
-                    },
-                    cap = StrokeCap.Round,
-                ),
-                wavelength = 42.dp,
-                gapSize = 8.dp
+                textAlign = TextAlign.Center,
+                color = onSurface,
+                maxLines = 1,
+                modifier = Modifier.sharedBounds(
+                    sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("clock"),
+                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                )
             )
         }
-
-        Text(
-            text = timerState.timeStr,
-            style = TextStyle(
-                fontFamily = openRundeClock,
-                fontWeight = FontWeight.Bold,
-                fontSize = 56.sp,
-                letterSpacing = (-2).sp
-            ),
-            textAlign = TextAlign.Center,
-            color = onSurface,
-            maxLines = 1,
-            modifier = Modifier.sharedBounds(
-                sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("clock"),
-                animatedVisibilityScope = LocalNavAnimatedContentScope.current
-            )
-        )
     }
 }
 
@@ -208,3 +268,5 @@ private fun AlwaysOnDisplayPreview() {
         }
     }
 }
+
+fun Dp.toIntPx(density: Density) = with(density) { toPx().toInt() }

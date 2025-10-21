@@ -2,7 +2,6 @@ package org.nsh07.pomodoro.service
 
 import android.annotation.SuppressLint
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
 import android.media.MediaPlayer
@@ -124,7 +123,7 @@ class TimerService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    @Suppress("DEPRECATION")
+
     private fun toggleTimer() {
         updateProgressSegments()
 
@@ -167,8 +166,8 @@ class TimerService : Service() {
                     if (time < 0) {
                         val powerManager = this@TimerService.getSystemService(POWER_SERVICE) as PowerManager
                         wakeLock = powerManager.newWakeLock(
-                            PowerManager.FULL_WAKE_LOCK or
-                                    PowerManager.ACQUIRE_CAUSES_WAKEUP or
+                                PowerManager.SCREEN_BRIGHT_WAKE_LOCK or
+                                        PowerManager.ACQUIRE_CAUSES_WAKEUP or
                                     PowerManager.ON_AFTER_RELEASE,
                             "PomodoroApp:AlarmWakeLock"
                         )

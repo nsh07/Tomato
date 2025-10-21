@@ -7,6 +7,11 @@
 
 package org.nsh07.pomodoro.ui.timerScreen
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.os.Build
+import android.view.WindowManager
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,8 +29,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,6 +44,38 @@ fun AlarmDialog(
     modifier: Modifier = Modifier,
     stopAlarm: () -> Unit
 ) {
+    val context = LocalContext.current
+    val activity = context.findActivity()
+
+    // Set lockscreen flags when dialog appears, remove when it disappears
+    DisposableEffect(Unit) {
+        // Show over lockscreen
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            activity?.setShowWhenLocked(true)
+            activity?.setTurnScreenOn(true)
+        } else {
+            @Suppress("DEPRECATION")
+            activity?.window?.addFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+            )
+        }
+
+        onDispose {
+            // Remove lockscreen flags when dialog is dismissed
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                activity?.setShowWhenLocked(false)
+                activity?.setTurnScreenOn(false)
+            } else {
+                @Suppress("DEPRECATION")
+                activity?.window?.clearFlags(
+                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                )
+            }
+        }
+    }
+
     BasicAlertDialog(
         onDismissRequest = stopAlarm,
         modifier = modifier
@@ -75,4 +114,14 @@ fun AlarmDialog(
             }
         }
     }
+}
+
+// Add this helper function at the file level (outside the composable)
+fun Context.findActivity(): Activity? {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is Activity) return context
+        context = context.baseContext
+    }
+    return null
 }

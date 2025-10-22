@@ -1,97 +1,80 @@
 /*
  * Copyright (c) 2025 Nishant Mishra
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * This file is part of Tomato - a minimalist pomodoro timer for Android.
+ *
+ * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Tomato.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.nsh07.pomodoro.ui.settingsScreen
 
-import android.app.Activity
 import android.content.Intent
-import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderState
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.service.TimerService
+import org.nsh07.pomodoro.ui.ClickableListItem
+import org.nsh07.pomodoro.ui.Screen
+import org.nsh07.pomodoro.ui.settingsScreen.components.AboutCard
+import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
+import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
+import org.nsh07.pomodoro.ui.settingsScreen.screens.TimerSettings
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
+import org.nsh07.pomodoro.ui.settingsScreens
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
-import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
-import org.nsh07.pomodoro.ui.theme.TomatoTheme
-import org.nsh07.pomodoro.utils.toColor
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,6 +84,8 @@ fun SettingsScreenRoot(
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
 ) {
     val context = LocalContext.current
+
+    val backStack = viewModel.backStack
 
     DisposableEffect(Unit) {
         viewModel.runTextFieldFlowCollection()
@@ -134,6 +119,7 @@ fun SettingsScreenRoot(
 
     SettingsScreen(
         preferencesState = preferencesState,
+        backStack = backStack,
         focusTimeInputFieldState = focusTimeInputFieldState,
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
@@ -162,6 +148,7 @@ fun SettingsScreenRoot(
 @Composable
 private fun SettingsScreen(
     preferencesState: PreferencesState,
+    backStack: SnapshotStateList<Screen.Settings>,
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
@@ -179,402 +166,118 @@ private fun SettingsScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val switchColors = SwitchDefaults.colors(
-        checkedIconColor = colorScheme.primary,
-    )
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    val themeMap: Map<String, Pair<Int, Int>> = remember {
-        mapOf(
-            "auto" to Pair(
-                R.drawable.brightness_auto,
-                R.string.system_default
-            ),
-            "light" to Pair(R.drawable.light_mode, R.string.light),
-            "dark" to Pair(R.drawable.dark_mode, R.string.dark)
-        )
-    }
-    val reverseThemeMap: Map<String, String> = remember {
-        mapOf(
-            context.getString(R.string.system_default) to "auto",
-            context.getString(R.string.light) to "light",
-            context.getString(R.string.dark) to "dark"
-        )
-    }
-
-    var alarmName by remember { mutableStateOf("...") }
-
-    LaunchedEffect(alarmSound) {
-        withContext(Dispatchers.IO) {
-            alarmName =
-                RingtoneManager.getRingtone(context, alarmSound.toUri())?.getTitle(context) ?: ""
-        }
-    }
-
-    val ringtonePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val uri =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    result.data?.getParcelableExtra(
-                        RingtoneManager.EXTRA_RINGTONE_PICKED_URI,
-                        Uri::class.java
-                    )
-                } else {
-                    @Suppress("DEPRECATION")
-                    result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
-                }
-            onAlarmSoundChanged(uri)
-        }
-    }
-
-    val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-        putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-        putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, stringResource(R.string.alarm_sound))
-        putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmSound.toUri())
-    }
-
-    val switchItems = remember(
-        preferencesState.blackTheme,
-        preferencesState.aodEnabled,
-        alarmEnabled,
-        vibrateEnabled
-    ) {
-        listOf(
-            SettingsSwitchItem(
-                checked = preferencesState.blackTheme,
-                icon = R.drawable.contrast,
-                label = R.string.black_theme,
-                description = R.string.black_theme_desc,
-                onClick = onBlackThemeChange
-            ),
-            SettingsSwitchItem(
-                checked = preferencesState.aodEnabled,
-                icon = R.drawable.aod,
-                label = R.string.always_on_display,
-                description = R.string.always_on_display_desc,
-                onClick = onAodEnabledChange
-            ),
-            SettingsSwitchItem(
-                checked = alarmEnabled,
-                icon = R.drawable.alarm_on,
-                label = R.string.alarm,
-                description = R.string.alarm_desc,
-                onClick = onAlarmEnabledChange
-            ),
-            SettingsSwitchItem(
-                checked = vibrateEnabled,
-                icon = R.drawable.mobile_vibrate,
-                label = R.string.vibrate,
-                description = R.string.vibrate_desc,
-                onClick = onVibrateEnabledChange
-            )
-        )
-    }
-
-    Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
-        TopAppBar(
-            title = {
-                Text(
-                    stringResource(R.string.settings),
-                    style = LocalTextStyle.current.copy(
-                        fontFamily = robotoFlexTopBar,
-                        fontSize = 32.sp,
-                        lineHeight = 32.sp
-                    )
-                )
-            },
-            subtitle = {},
-            colors = topBarColors,
-            titleHorizontalAlignment = Alignment.CenterHorizontally,
-            scrollBehavior = scrollBehavior
-        )
-
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(2.dp),
-            modifier = Modifier
-                .background(topBarColors.containerColor)
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-        ) {
-            item {
-                Spacer(Modifier.height(12.dp))
-            }
-            item {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
-                        Text(
-                            stringResource(R.string.focus),
-                            style = typography.titleSmallEmphasized
-                        )
-                        MinuteInputField(
-                            state = focusTimeInputFieldState,
-                            shape = RoundedCornerShape(
-                                topStart = topListItemShape.topStart,
-                                bottomStart = topListItemShape.topStart,
-                                topEnd = topListItemShape.bottomStart,
-                                bottomEnd = topListItemShape.bottomStart
-                            ),
-                            imeAction = ImeAction.Next
-                        )
-                    }
-                    Spacer(Modifier.width(2.dp))
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
-                        Text(
-                            stringResource(R.string.short_break),
-                            style = typography.titleSmallEmphasized
-                        )
-                        MinuteInputField(
-                            state = shortBreakTimeInputFieldState,
-                            shape = RoundedCornerShape(middleListItemShape.topStart),
-                            imeAction = ImeAction.Next
-                        )
-                    }
-                    Spacer(Modifier.width(2.dp))
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
-                        Text(
-                            stringResource(R.string.long_break),
-                            style = typography.titleSmallEmphasized
-                        )
-                        MinuteInputField(
-                            state = longBreakTimeInputFieldState,
-                            shape = RoundedCornerShape(
-                                topStart = bottomListItemShape.topStart,
-                                bottomStart = bottomListItemShape.topStart,
-                                topEnd = bottomListItemShape.bottomStart,
-                                bottomEnd = bottomListItemShape.bottomStart
-                            ),
-                            imeAction = ImeAction.Done
-                        )
-                    }
-                }
-            }
-            item {
-                Spacer(Modifier.height(12.dp))
-            }
-            item {
-                ListItem(
-                    leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.clocks),
-                            null
-                        )
-                    },
-                    headlineContent = {
-                        Text(stringResource(R.string.session_length))
-                    },
-                    supportingContent = {
-                        Column {
+    NavDisplay(
+        backStack = backStack,
+        onBack = backStack::removeLastOrNull,
+        transitionSpec = {
+            (slideInHorizontally(initialOffsetX = { it }))
+                .togetherWith(slideOutHorizontally(targetOffsetX = { -it / 4 }) + fadeOut())
+        },
+        popTransitionSpec = {
+            (slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn())
+                .togetherWith(slideOutHorizontally(targetOffsetX = { it }))
+        },
+        predictivePopTransitionSpec = {
+            (slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn())
+                .togetherWith(slideOutHorizontally(targetOffsetX = { it }))
+        },
+        entryProvider = entryProvider {
+            entry<Screen.Settings.Main> {
+                Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
+                    TopAppBar(
+                        title = {
                             Text(
-                                stringResource(
-                                    R.string.session_length_desc,
-                                    sessionsSliderState.value.toInt()
+                                stringResource(R.string.settings),
+                                style = LocalTextStyle.current.copy(
+                                    fontFamily = robotoFlexTopBar,
+                                    fontSize = 32.sp,
+                                    lineHeight = 32.sp
                                 )
                             )
-                            Slider(
-                                state = sessionsSliderState,
-                                modifier = Modifier.padding(vertical = 4.dp)
-                            )
-                        }
-                    },
-                    colors = listItemColors,
-                    modifier = Modifier.clip(cardShape)
-                )
-            }
+                        },
+                        subtitle = {},
+                        colors = topBarColors,
+                        titleHorizontalAlignment = Alignment.CenterHorizontally,
+                        scrollBehavior = scrollBehavior
+                    )
 
-            item { Spacer(Modifier.height(12.dp)) }
-
-            item {
-                ColorSchemePickerListItem(
-                    color = preferencesState.colorScheme.toColor(),
-                    items = 3,
-                    index = 0,
-                    onColorChange = onColorSchemeChange
-                )
-            }
-            item {
-                ThemePickerListItem(
-                    theme = preferencesState.theme,
-                    themeMap = themeMap,
-                    reverseThemeMap = reverseThemeMap,
-                    onThemeChange = onThemeChange,
-                    items = 3,
-                    index = 1,
-                    modifier = Modifier
-                        .clip(middleListItemShape)
-                )
-            }
-            itemsIndexed(switchItems.take(2)) { index, item ->
-                ListItem(
-                    leadingContent = {
-                        Icon(painterResource(item.icon), contentDescription = null)
-                    },
-                    headlineContent = { Text(stringResource(item.label)) },
-                    supportingContent = { Text(stringResource(item.description)) },
-                    trailingContent = {
-                        Switch(
-                            checked = item.checked,
-                            onCheckedChange = { item.onClick(it) },
-                            thumbContent = {
-                                if (item.checked) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.check),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                } else {
-                                    Icon(
-                                        painter = painterResource(R.drawable.clear),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                }
-                            },
-                            colors = switchColors
-                        )
-                    },
-                    colors = listItemColors,
-                    modifier = Modifier
-                        .padding(top = if (index != 0) 16.dp else 0.dp)
-                        .clip(if (index == 0) bottomListItemShape else cardShape)
-                )
-            }
-
-            item { Spacer(Modifier.height(12.dp)) }
-
-            item {
-                ListItem(
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.alarm), null)
-                    },
-                    headlineContent = { Text(stringResource(R.string.alarm_sound)) },
-                    supportingContent = { Text(alarmName) },
-                    colors = listItemColors,
-                    modifier = Modifier
-                        .clip(topListItemShape)
-                        .clickable(onClick = { ringtonePickerLauncher.launch(intent) })
-                )
-            }
-            itemsIndexed(switchItems.drop(2)) { index, item ->
-                ListItem(
-                    leadingContent = {
-                        Icon(painterResource(item.icon), contentDescription = null)
-                    },
-                    headlineContent = { Text(stringResource(item.label)) },
-                    supportingContent = { Text(stringResource(item.description)) },
-                    trailingContent = {
-                        Switch(
-                            checked = item.checked,
-                            onCheckedChange = { item.onClick(it) },
-                            thumbContent = {
-                                if (item.checked) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.check),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                } else {
-                                    Icon(
-                                        painter = painterResource(R.drawable.clear),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                }
-                            },
-                            colors = switchColors
-                        )
-                    },
-                    colors = listItemColors,
-                    modifier = Modifier
-                        .clip(
-                            when (index) {
-                                switchItems.lastIndex - 2 -> bottomListItemShape
-                                else -> middleListItemShape
-                            }
-                        )
-                )
-            }
-            item {
-                var expanded by remember { mutableStateOf(false) }
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    modifier = Modifier
-                        .padding(vertical = 6.dp)
-                        .fillMaxWidth()
-                ) {
-                    FilledTonalIconToggleButton(
-                        checked = expanded,
-                        onCheckedChange = { expanded = it },
-                        shapes = IconButtonDefaults.toggleableShapes(),
-                        modifier = Modifier.width(52.dp)
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(2.dp),
+                        modifier = Modifier
+                            .background(topBarColors.containerColor)
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp)
                     ) {
-                        Icon(
-                            painterResource(R.drawable.info),
-                            null
-                        )
-                    }
-                    AnimatedVisibility(expanded) {
-                        Text(
-                            stringResource(R.string.pomodoro_info),
-                            style = typography.bodyMedium,
-                            color = colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(8.dp)
-                        )
+                        item { Spacer(Modifier.height(12.dp)) }
+
+                        item { AboutCard() }
+
+                        item { Spacer(Modifier.height(12.dp)) }
+
+                        itemsIndexed(settingsScreens) { index, item ->
+                            ClickableListItem(
+                                leadingContent = {
+                                    Icon(painterResource(item.icon), null)
+                                },
+                                headlineContent = { Text(stringResource(item.label)) },
+                                supportingContent = {
+                                    Text(
+                                        remember {
+                                            item.innerSettings.joinToString(", ") {
+                                                context.getString(it)
+                                            }
+                                        },
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                },
+                                trailingContent = {
+                                    Icon(painterResource(R.drawable.arrow_forward_big), null)
+                                },
+                                items = settingsScreens.size,
+                                index = index
+                            ) { backStack.add(item.route) }
+                        }
+
+                        item { Spacer(Modifier.height(12.dp)) }
                     }
                 }
             }
+
+            entry<Screen.Settings.Alarm> {
+                AlarmSettings(
+                    preferencesState = preferencesState,
+                    alarmEnabled = alarmEnabled,
+                    vibrateEnabled = vibrateEnabled,
+                    alarmSound = alarmSound,
+                    onAlarmEnabledChange = onAlarmEnabledChange,
+                    onVibrateEnabledChange = onVibrateEnabledChange,
+                    onAlarmSoundChanged = onAlarmSoundChanged,
+                    onBack = backStack::removeLastOrNull
+                )
+            }
+            entry<Screen.Settings.Appearance> {
+                AppearanceSettings(
+                    preferencesState = preferencesState,
+                    onBlackThemeChange = onBlackThemeChange,
+                    onThemeChange = onThemeChange,
+                    onColorSchemeChange = onColorSchemeChange,
+                    onBack = backStack::removeLastOrNull
+                )
+            }
+            entry<Screen.Settings.Timer> {
+                TimerSettings(
+                    aodEnabled = preferencesState.aodEnabled,
+                    focusTimeInputFieldState = focusTimeInputFieldState,
+                    shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
+                    longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                    sessionsSliderState = sessionsSliderState,
+                    onAodEnabledChange = onAodEnabledChange,
+                    onBack = backStack::removeLastOrNull
+                )
+            }
         }
-    }
+    )
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(
-    showSystemUi = true,
-    device = Devices.PIXEL_9_PRO
-)
-@Composable
-fun SettingsScreenPreview() {
-    TomatoTheme {
-        SettingsScreen(
-            preferencesState = PreferencesState(),
-            focusTimeInputFieldState = rememberTextFieldState((25).toString()),
-            shortBreakTimeInputFieldState = rememberTextFieldState((5).toString()),
-            longBreakTimeInputFieldState = rememberTextFieldState((15).toString()),
-            sessionsSliderState = rememberSliderState(value = 3f, steps = 3, valueRange = 1f..5f),
-            alarmEnabled = true,
-            vibrateEnabled = true,
-            alarmSound = "null",
-            onAlarmEnabledChange = {},
-            onVibrateEnabledChange = {},
-            onBlackThemeChange = {},
-            onAodEnabledChange = {},
-            onAlarmSoundChanged = {},
-            onThemeChange = {},
-            onColorSchemeChange = {},
-            modifier = Modifier.fillMaxSize()
-        )
-    }
-}
-
-data class SettingsSwitchItem(
-    val checked: Boolean,
-    @param:DrawableRes val icon: Int,
-    @param:StringRes val label: Int,
-    @param:StringRes val description: Int,
-    val onClick: (Boolean) -> Unit
-)

@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2025 Nishant Mishra
+ *
+ * This file is part of Tomato - a minimalist pomodoro timer for Android.
+ *
+ * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Tomato.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package org.nsh07.pomodoro
 
 import android.os.Bundle
@@ -11,8 +28,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.nsh07.pomodoro.ui.AppScreen
-import org.nsh07.pomodoro.ui.NavItem
-import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
@@ -70,28 +85,5 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         // Increase the timer loop frequency again when visible to make the progress smoother
         appContainer.appTimerRepository.timerFrequency = 10f
-    }
-
-    companion object {
-        val screens = listOf(
-            NavItem(
-                Screen.Timer,
-                R.drawable.timer_outlined,
-                R.drawable.timer_filled,
-                R.string.timer
-            ),
-            NavItem(
-                Screen.Stats,
-                R.drawable.monitoring,
-                R.drawable.monitoring_filled,
-                R.string.stats
-            ),
-            NavItem(
-                Screen.Settings,
-                R.drawable.settings,
-                R.drawable.settings_filled,
-                R.string.settings
-            )
-        )
     }
 }

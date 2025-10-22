@@ -15,17 +15,9 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.ui.settingsScreen
+package org.nsh07.pomodoro.ui.settingsScreen.screens
 
-import android.app.Activity
-import android.content.Intent
-import android.media.RingtoneManager
-import android.net.Uri
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -34,7 +26,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -46,22 +37,20 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
+import org.nsh07.pomodoro.ui.settingsScreen.components.ColorSchemePickerListItem
+import org.nsh07.pomodoro.ui.settingsScreen.components.ThemePickerListItem
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
@@ -69,87 +58,44 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import org.nsh07.pomodoro.utils.toColor
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AlarmSettings(
+fun AppearanceSettings(
     preferencesState: PreferencesState,
-    alarmEnabled: Boolean,
-    vibrateEnabled: Boolean,
-    alarmSound: String,
-    onAlarmEnabledChange: (Boolean) -> Unit,
-    onVibrateEnabledChange: (Boolean) -> Unit,
-    onAlarmSoundChanged: (Uri?) -> Unit,
+    onBlackThemeChange: (Boolean) -> Unit,
+    onThemeChange: (String) -> Unit,
+    onColorSchemeChange: (Color) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
 
-    var alarmName by remember { mutableStateOf("...") }
-
-    LaunchedEffect(alarmSound) {
-        withContext(Dispatchers.IO) {
-            alarmName =
-                RingtoneManager.getRingtone(context, alarmSound.toUri())?.getTitle(context) ?: ""
-        }
-    }
-
-    val ringtonePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val uri =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    result.data?.getParcelableExtra(
-                        RingtoneManager.EXTRA_RINGTONE_PICKED_URI,
-                        Uri::class.java
-                    )
-                } else {
-                    @Suppress("DEPRECATION")
-                    result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
-                }
-            onAlarmSoundChanged(uri)
-        }
-    }
-
-    val ringtonePickerIntent = remember(alarmSound) {
-        Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-            putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, context.getString(R.string.alarm_sound))
-            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmSound.toUri())
-        }
-    }
-
-    val switchItems = remember(
-        preferencesState.blackTheme,
-        preferencesState.aodEnabled,
-        alarmEnabled,
-        vibrateEnabled
-    ) {
-        listOf(
-            SettingsSwitchItem(
-                checked = alarmEnabled,
-                icon = R.drawable.alarm_on,
-                label = R.string.alarm,
-                description = R.string.alarm_desc,
-                onClick = onAlarmEnabledChange
+    val themeMap: Map<String, Pair<Int, Int>> = remember {
+        mapOf(
+            "auto" to Pair(
+                R.drawable.brightness_auto,
+                R.string.system_default
             ),
-            SettingsSwitchItem(
-                checked = vibrateEnabled,
-                icon = R.drawable.mobile_vibrate,
-                label = R.string.vibrate,
-                description = R.string.vibrate_desc,
-                onClick = onVibrateEnabledChange
-            )
+            "light" to Pair(R.drawable.light_mode, R.string.light),
+            "dark" to Pair(R.drawable.dark_mode, R.string.dark)
         )
     }
+    val reverseThemeMap: Map<String, String> = remember {
+        mapOf(
+            context.getString(R.string.system_default) to "auto",
+            context.getString(R.string.light) to "light",
+            context.getString(R.string.dark) to "dark"
+        )
+    }
+
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
         LargeFlexibleTopAppBar(
             title = {
-                Text("Alarm", fontFamily = robotoFlexTopBar)
+                Text("Appearance", fontFamily = robotoFlexTopBar)
             },
             subtitle = {
                 Text("Settings")
@@ -176,21 +122,34 @@ fun AlarmSettings(
             item {
                 Spacer(Modifier.height(14.dp))
             }
-
             item {
-                ListItem(
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.alarm), null)
-                    },
-                    headlineContent = { Text(stringResource(R.string.alarm_sound)) },
-                    supportingContent = { Text(alarmName) },
-                    colors = listItemColors,
-                    modifier = Modifier
-                        .clip(topListItemShape)
-                        .clickable(onClick = { ringtonePickerLauncher.launch(ringtonePickerIntent) })
+                ColorSchemePickerListItem(
+                    color = preferencesState.colorScheme.toColor(),
+                    items = 3,
+                    index = 0,
+                    onColorChange = onColorSchemeChange
                 )
             }
-            itemsIndexed(switchItems) { index, item ->
+            item {
+                ThemePickerListItem(
+                    theme = preferencesState.theme,
+                    themeMap = themeMap,
+                    reverseThemeMap = reverseThemeMap,
+                    onThemeChange = onThemeChange,
+                    items = 3,
+                    index = 1,
+                    modifier = Modifier
+                        .clip(middleListItemShape)
+                )
+            }
+            item {
+                val item = SettingsSwitchItem(
+                    checked = preferencesState.blackTheme,
+                    icon = R.drawable.contrast,
+                    label = R.string.black_theme,
+                    description = R.string.black_theme_desc,
+                    onClick = onBlackThemeChange
+                )
                 ListItem(
                     leadingContent = {
                         Icon(painterResource(item.icon), contentDescription = null)
@@ -220,17 +179,24 @@ fun AlarmSettings(
                         )
                     },
                     colors = listItemColors,
-                    modifier = Modifier
-                        .clip(
-                            when (index) {
-                                switchItems.lastIndex -> bottomListItemShape
-                                else -> middleListItemShape
-                            }
-                        )
+                    modifier = Modifier.clip(bottomListItemShape)
                 )
             }
 
             item { Spacer(Modifier.height(12.dp)) }
         }
     }
+}
+
+@Preview
+@Composable
+fun AppearanceSettingsPreview() {
+    val preferencesState = PreferencesState()
+    AppearanceSettings(
+        preferencesState = preferencesState,
+        onBlackThemeChange = {},
+        onThemeChange = {},
+        onColorSchemeChange = {},
+        onBack = {}
+    )
 }

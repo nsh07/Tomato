@@ -15,7 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.ui.settingsScreen
+package org.nsh07.pomodoro.ui.settingsScreen.components
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement

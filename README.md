@@ -137,7 +137,6 @@ This app was made possible by the following libraries:
   Navigation
 - [Room](https://developer.android.com/jetpack/androidx/releases/room) - SQLite Database
 - [Vico](https://github.com/patrykandpatrick/vico) - Graphs and charts
-- [MaterialKolor](https://github.com/jordond/materialkolor)- Material 3 color schemes
 
 ### Fonts:
 
@@ -146,9 +145,3 @@ This app was made possible by the following libraries:
 
 - [Open Runde](https://github.com/lauridskern/open-runde) by Laurids
   Kern<br/><img src=".github/repo_photos/open-runde-banner.png" width="400">
-
-## Star History
-
-Please give this repo a star if you liked my work
-
-[![Star History Chart](https://app.repohistory.com/api/svg?repo=nsh07/Tomato&type=Date&background=F9FAEF&color=4C662B)](https://app.repohistory.com/star-history)

@@ -34,7 +34,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -43,12 +42,12 @@ import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -57,14 +56,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.service.TimerService
@@ -79,7 +75,6 @@ import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.settingsScreens
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
-import org.nsh07.pomodoro.ui.theme.TomatoTheme
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,6 +84,8 @@ fun SettingsScreenRoot(
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
 ) {
     val context = LocalContext.current
+
+    val backStack = viewModel.backStack
 
     DisposableEffect(Unit) {
         viewModel.runTextFieldFlowCollection()
@@ -122,6 +119,7 @@ fun SettingsScreenRoot(
 
     SettingsScreen(
         preferencesState = preferencesState,
+        backStack = backStack,
         focusTimeInputFieldState = focusTimeInputFieldState,
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
@@ -150,6 +148,7 @@ fun SettingsScreenRoot(
 @Composable
 private fun SettingsScreen(
     preferencesState: PreferencesState,
+    backStack: SnapshotStateList<Screen.Settings>,
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
@@ -168,7 +167,6 @@ private fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backStack = rememberNavBackStack(Screen.Settings.Main)
 
     NavDisplay(
         backStack = backStack,
@@ -282,33 +280,4 @@ private fun SettingsScreen(
             }
         }
     )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(
-    showSystemUi = true,
-    device = Devices.PIXEL_9_PRO
-)
-@Composable
-fun SettingsScreenPreview() {
-    TomatoTheme {
-        SettingsScreen(
-            preferencesState = PreferencesState(),
-            focusTimeInputFieldState = rememberTextFieldState((25).toString()),
-            shortBreakTimeInputFieldState = rememberTextFieldState((5).toString()),
-            longBreakTimeInputFieldState = rememberTextFieldState((15).toString()),
-            sessionsSliderState = rememberSliderState(value = 3f, steps = 3, valueRange = 1f..5f),
-            alarmEnabled = true,
-            vibrateEnabled = true,
-            alarmSound = "null",
-            onAlarmEnabledChange = {},
-            onVibrateEnabledChange = {},
-            onBlackThemeChange = {},
-            onAodEnabledChange = {},
-            onAlarmSoundChanged = {},
-            onThemeChange = {},
-            onColorSchemeChange = {},
-            modifier = Modifier.fillMaxSize()
-        )
-    }
 }

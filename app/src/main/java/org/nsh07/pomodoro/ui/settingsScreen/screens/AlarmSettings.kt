@@ -151,10 +151,10 @@ fun AlarmSettings(
     Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
         LargeFlexibleTopAppBar(
             title = {
-                Text("Alarm", fontFamily = robotoFlexTopBar)
+                Text(stringResource(R.string.alarm), fontFamily = robotoFlexTopBar)
             },
             subtitle = {
-                Text("Settings")
+                Text(stringResource(R.string.settings))
             },
             navigationIcon = {
                 IconButton(onBack) {
@@ -241,12 +241,7 @@ fun AlarmSettings(
 @Preview
 @Composable
 fun AlarmSettingsPreview() {
-    val preferencesState = PreferencesState(
-        theme = "auto",
-        colorScheme = "White",
-        blackTheme = false,
-        aodEnabled = false
-    )
+    val preferencesState = PreferencesState()
     AlarmSettings(
         preferencesState = preferencesState,
         alarmEnabled = true,

@@ -19,6 +19,11 @@ package org.nsh07.pomodoro.ui.settingsScreen
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,10 +32,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
@@ -40,24 +47,36 @@ import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.service.TimerService
+import org.nsh07.pomodoro.ui.ClickableListItem
+import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.settingsScreen.components.AboutCard
+import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
+import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
+import org.nsh07.pomodoro.ui.settingsScreen.screens.TimerSettings
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
+import org.nsh07.pomodoro.ui.settingsScreens
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
@@ -147,44 +166,122 @@ private fun SettingsScreen(
     onColorSchemeChange: (Color) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val backStack = rememberNavBackStack(Screen.Settings.Main)
 
-    Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
-        TopAppBar(
-            title = {
-                Text(
-                    stringResource(R.string.settings),
-                    style = LocalTextStyle.current.copy(
-                        fontFamily = robotoFlexTopBar,
-                        fontSize = 32.sp,
-                        lineHeight = 32.sp
+    NavDisplay(
+        backStack = backStack,
+        onBack = backStack::removeLastOrNull,
+        transitionSpec = {
+            (slideInHorizontally(initialOffsetX = { it }))
+                .togetherWith(slideOutHorizontally(targetOffsetX = { -it / 4 }) + fadeOut())
+        },
+        popTransitionSpec = {
+            (slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn())
+                .togetherWith(slideOutHorizontally(targetOffsetX = { it }))
+        },
+        predictivePopTransitionSpec = {
+            (slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn())
+                .togetherWith(slideOutHorizontally(targetOffsetX = { it }))
+        },
+        entryProvider = entryProvider {
+            entry<Screen.Settings.Main> {
+                Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
+                    TopAppBar(
+                        title = {
+                            Text(
+                                stringResource(R.string.settings),
+                                style = LocalTextStyle.current.copy(
+                                    fontFamily = robotoFlexTopBar,
+                                    fontSize = 32.sp,
+                                    lineHeight = 32.sp
+                                )
+                            )
+                        },
+                        subtitle = {},
+                        colors = topBarColors,
+                        titleHorizontalAlignment = Alignment.CenterHorizontally,
+                        scrollBehavior = scrollBehavior
                     )
+
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(2.dp),
+                        modifier = Modifier
+                            .background(topBarColors.containerColor)
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        item { Spacer(Modifier.height(12.dp)) }
+
+                        item { AboutCard() }
+
+                        item { Spacer(Modifier.height(12.dp)) }
+
+                        itemsIndexed(settingsScreens) { index, item ->
+                            ClickableListItem(
+                                leadingContent = {
+                                    Icon(painterResource(item.icon), null)
+                                },
+                                headlineContent = { Text(stringResource(item.label)) },
+                                supportingContent = {
+                                    Text(
+                                        remember {
+                                            item.innerSettings.joinToString(", ") {
+                                                context.getString(it)
+                                            }
+                                        },
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                },
+                                trailingContent = {
+                                    Icon(painterResource(R.drawable.arrow_forward_big), null)
+                                },
+                                items = settingsScreens.size,
+                                index = index
+                            ) { backStack.add(item.route) }
+                        }
+
+                        item { Spacer(Modifier.height(12.dp)) }
+                    }
+                }
+            }
+
+            entry<Screen.Settings.Alarm> {
+                AlarmSettings(
+                    preferencesState = preferencesState,
+                    alarmEnabled = alarmEnabled,
+                    vibrateEnabled = vibrateEnabled,
+                    alarmSound = alarmSound,
+                    onAlarmEnabledChange = onAlarmEnabledChange,
+                    onVibrateEnabledChange = onVibrateEnabledChange,
+                    onAlarmSoundChanged = onAlarmSoundChanged,
+                    onBack = backStack::removeLastOrNull
                 )
-            },
-            subtitle = {},
-            colors = topBarColors,
-            titleHorizontalAlignment = Alignment.CenterHorizontally,
-            scrollBehavior = scrollBehavior
-        )
-
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(2.dp),
-            modifier = Modifier
-                .background(topBarColors.containerColor)
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-        ) {
-            item { Spacer(Modifier.height(12.dp)) }
-
-            item { AboutCard() }
-
-            item { Spacer(Modifier.height(12.dp)) }
-
-            item {}
-
-            item { Spacer(Modifier.height(12.dp)) }
+            }
+            entry<Screen.Settings.Appearance> {
+                AppearanceSettings(
+                    preferencesState = preferencesState,
+                    onBlackThemeChange = onBlackThemeChange,
+                    onThemeChange = onThemeChange,
+                    onColorSchemeChange = onColorSchemeChange,
+                    onBack = backStack::removeLastOrNull
+                )
+            }
+            entry<Screen.Settings.Timer> {
+                TimerSettings(
+                    aodEnabled = preferencesState.aodEnabled,
+                    focusTimeInputFieldState = focusTimeInputFieldState,
+                    shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
+                    longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                    sessionsSliderState = sessionsSliderState,
+                    onAodEnabledChange = onAodEnabledChange,
+                    onBack = backStack::removeLastOrNull
+                )
+            }
         }
-    }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

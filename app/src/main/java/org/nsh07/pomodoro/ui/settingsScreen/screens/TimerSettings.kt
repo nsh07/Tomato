@@ -93,10 +93,10 @@ fun TimerSettings(
     Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
         LargeFlexibleTopAppBar(
             title = {
-                Text("Timer", fontFamily = robotoFlexTopBar)
+                Text(stringResource(R.string.timer), fontFamily = robotoFlexTopBar)
             },
             subtitle = {
-                Text("Settings")
+                Text(stringResource(R.string.settings))
             },
             navigationIcon = {
                 IconButton(onBack) {

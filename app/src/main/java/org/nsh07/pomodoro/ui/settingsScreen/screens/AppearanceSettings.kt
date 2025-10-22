@@ -42,7 +42,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -70,8 +69,6 @@ fun AppearanceSettings(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-
     val themeMap: Map<String, Pair<Int, Int>> = remember {
         mapOf(
             "auto" to Pair(
@@ -82,23 +79,21 @@ fun AppearanceSettings(
             "dark" to Pair(R.drawable.dark_mode, R.string.dark)
         )
     }
-    val reverseThemeMap: Map<String, String> = remember {
-        mapOf(
-            context.getString(R.string.system_default) to "auto",
-            context.getString(R.string.light) to "light",
-            context.getString(R.string.dark) to "dark"
-        )
-    }
+    val reverseThemeMap: Map<String, String> = mapOf(
+        stringResource(R.string.system_default) to "auto",
+        stringResource(R.string.light) to "light",
+        stringResource(R.string.dark) to "dark"
+    )
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
         LargeFlexibleTopAppBar(
             title = {
-                Text("Appearance", fontFamily = robotoFlexTopBar)
+                Text(stringResource(R.string.appearance), fontFamily = robotoFlexTopBar)
             },
             subtitle = {
-                Text("Settings")
+                Text(stringResource(R.string.settings))
             },
             navigationIcon = {
                 IconButton(onBack) {

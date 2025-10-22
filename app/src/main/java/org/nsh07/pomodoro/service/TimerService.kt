@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2025 Nishant Mishra
+ *
+ * This file is part of Tomato - a minimalist pomodoro timer for Android.
+ *
+ * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Tomato.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package org.nsh07.pomodoro.service
 
 import android.annotation.SuppressLint
@@ -7,7 +24,6 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.IBinder
-import android.os.PowerManager
 import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -23,7 +39,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.nsh07.pomodoro.MainActivity
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -60,10 +75,6 @@ class TimerService : Service() {
     private val skipScope = CoroutineScope(Dispatchers.IO + job)
 
     private var alarm: MediaPlayer? = null
-
-
-    private var wakeLock: PowerManager.WakeLock? = null
-
     private val vibrator by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val vibratorManager = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
@@ -94,7 +105,6 @@ class TimerService : Service() {
             saveTimeToDb()
             notificationManager.cancel(1)
             alarm?.release()
-            wakeLock?.release()
         }
         super.onDestroy()
     }
@@ -122,7 +132,6 @@ class TimerService : Service() {
         }
         return super.onStartCommand(intent, flags, startId)
     }
-
 
     private fun toggleTimer() {
         updateProgressSegments()
@@ -164,20 +173,6 @@ class TimerService : Service() {
                     if (iterations == 0) showTimerNotification(time.toInt())
 
                     if (time < 0) {
-                        val powerManager = this@TimerService.getSystemService(POWER_SERVICE) as PowerManager
-                        wakeLock = powerManager.newWakeLock(
-                                PowerManager.SCREEN_BRIGHT_WAKE_LOCK or
-                                        PowerManager.ACQUIRE_CAUSES_WAKEUP or
-                                    PowerManager.ON_AFTER_RELEASE,
-                            "PomodoroApp:AlarmWakeLock"
-                        )
-                        wakeLock?.acquire(2 * 60 * 1000L)
-                        val intent = Intent(this@TimerService, MainActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                        }
-                        startActivity(intent)
-
-
                         skipTimer()
                         _timerState.update { currentState ->
                             currentState.copy(timerRunning = false)
@@ -197,7 +192,10 @@ class TimerService : Service() {
         }
     }
 
-    @SuppressLint("MissingPermission", "StringFormatInvalid") // We check for the permission when pressing the Play button in the UI
+    @SuppressLint(
+        "MissingPermission",
+        "StringFormatInvalid"
+    ) // We check for the permission when pressing the Play button in the UI
     fun showTimerNotification(
         remainingTime: Int, paused: Boolean = false, complete: Boolean = false
     ) {
@@ -372,6 +370,8 @@ class TimerService : Service() {
     fun startAlarm() {
         if (timerRepository.alarmEnabled) alarm?.start()
 
+        appContainer.activityTurnScreenOn(true)
+
         if (timerRepository.vibrateEnabled) {
             if (!vibrator.hasVibrator()) {
                 return
@@ -393,8 +393,7 @@ class TimerService : Service() {
             vibrator.cancel()
         }
 
-        wakeLock?.release()
-        wakeLock = null
+        appContainer.activityTurnScreenOn(false)
 
         _timerState.update { currentState ->
             currentState.copy(alarmRinging = false)

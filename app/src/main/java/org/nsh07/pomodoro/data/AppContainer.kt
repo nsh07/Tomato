@@ -1,8 +1,18 @@
 /*
  * Copyright (c) 2025 Nishant Mishra
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * This file is part of Tomato - a minimalist pomodoro timer for Android.
+ *
+ * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Tomato.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.nsh07.pomodoro.data
@@ -27,6 +37,7 @@ interface AppContainer {
     val notificationBuilder: NotificationCompat.Builder
     val timerState: MutableStateFlow<TimerState>
     val time: MutableStateFlow<Long>
+    var activityTurnScreenOn: (Boolean) -> Unit
 }
 
 class DefaultAppContainer(context: Context) : AppContainer {
@@ -77,5 +88,7 @@ class DefaultAppContainer(context: Context) : AppContainer {
     override val time: MutableStateFlow<Long> by lazy {
         MutableStateFlow(appTimerRepository.focusTime)
     }
+
+    override var activityTurnScreenOn: (Boolean) -> Unit = {}
 
 }

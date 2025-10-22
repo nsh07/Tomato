@@ -35,7 +35,7 @@ import org.nsh07.pomodoro.utils.toColor
 
 class MainActivity : ComponentActivity() {
 
-        private val timerViewModel: TimerViewModel by viewModels(factoryProducer = { TimerViewModel.Factory })
+    private val timerViewModel: TimerViewModel by viewModels(factoryProducer = { TimerViewModel.Factory })
     private val settingsViewModel: SettingsViewModel by viewModels(factoryProducer = { SettingsViewModel.Factory })
 
     private val appContainer by lazy {
@@ -45,6 +45,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        appContainer.activityTurnScreenOn = {
+            setShowWhenLocked(it)
+            setTurnScreenOn(it)
+        }
         setContent {
             val preferencesState by settingsViewModel.preferencesState.collectAsStateWithLifecycle()
 

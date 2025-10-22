@@ -20,7 +20,7 @@ import org.nsh07.pomodoro.utils.toColor
 
 class MainActivity : ComponentActivity() {
 
-    private val timerViewModel: TimerViewModel by viewModels(factoryProducer = { TimerViewModel.Factory })
+        private val timerViewModel: TimerViewModel by viewModels(factoryProducer = { TimerViewModel.Factory })
     private val settingsViewModel: SettingsViewModel by viewModels(factoryProducer = { SettingsViewModel.Factory })
 
     private val appContainer by lazy {
@@ -58,6 +58,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 
     override fun onStop() {
         super.onStop()

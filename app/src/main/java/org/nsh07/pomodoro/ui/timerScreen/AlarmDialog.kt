@@ -7,6 +7,7 @@
 
 package org.nsh07.pomodoro.ui.timerScreen
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +25,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -37,6 +39,21 @@ fun AlarmDialog(
     modifier: Modifier = Modifier,
     stopAlarm: () -> Unit
 ) {
+    val activity = LocalActivity.current
+
+    // Set lockscreen flags when dialog appears, remove when it disappears
+    DisposableEffect(Unit) {
+        // Show over lockscreen
+        activity?.setShowWhenLocked(true)
+        activity?.setTurnScreenOn(true)
+
+        onDispose {
+            // Remove lockscreen flags when dialog is dismissed
+            activity?.setShowWhenLocked(false)
+            activity?.setTurnScreenOn(false)
+        }
+    }
+
     BasicAlertDialog(
         onDismissRequest = stopAlarm,
         modifier = modifier
@@ -76,3 +93,4 @@ fun AlarmDialog(
         }
     }
 }
+

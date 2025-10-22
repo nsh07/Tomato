@@ -1,8 +1,18 @@
 /*
  * Copyright (c) 2025 Nishant Mishra
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * This file is part of Tomato - a minimalist pomodoro timer for Android.
+ *
+ * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Tomato.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.nsh07.pomodoro.ui.settingsScreen
@@ -36,7 +46,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexHeadline
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 
 // Taken from https://github.com/shub39/Grit/blob/master/app/src/main/java/com/shub39/grit/core/presentation/settings/ui/component/AboutApp.kt
@@ -71,10 +80,7 @@ fun AboutCard(modifier: Modifier = Modifier) {
                     style = MaterialTheme.typography.titleLarge,
                     fontFamily = robotoFlexTopBar
                 )
-                Text(
-                    text = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
-                    fontFamily = robotoFlexHeadline
-                )
+                Text(text = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})")
             }
 
             Spacer(modifier = Modifier.weight(1f))

@@ -57,4 +57,6 @@
     <string name="timer">Minuteur</string>
     <string name="timer_progress">Progression du minuteur</string>
     <string name="last_year">12 derniers mois</string>
+    <string name="always_on_display_desc">Appuyez n\'importe où lors de l\'affichage du minuteur pour passer en mode AOD</string>
+    <string name="always_on_display">Affichage Permanent</string>
 </resources>

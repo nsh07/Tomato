@@ -57,4 +57,6 @@
     <string name="timer_progress">Zamanlayıcı İlerlemesi</string>
     <string name="last_year">Geçen yıl</string>
     <string name="alarm">Alarm</string>
+    <string name="always_on_display">Her zaman açık ekran</string>
+    <string name="always_on_display_desc">Zamanlayıcıyı görüntülerken AOD moduna geçmek için herhangi bir yere dokunun</string>
 </resources>

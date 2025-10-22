@@ -57,4 +57,6 @@
     <string name="timer_progress">计时器进度</string>
     <string name="timer_session_count">%2$d 中的 %1$d</string>
     <string name="last_year">去年</string>
+    <string name="always_on_display">息屏显示</string>
+    <string name="always_on_display_desc">查看计时器时点击任意位置切换至 AOD 模式</string>
 </resources>

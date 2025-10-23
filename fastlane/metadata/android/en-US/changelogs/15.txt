@@ -1,0 +1,8 @@
+New features:
+- New Always On Display option
+- Redesigned and simplified Settings screen
+  - New theme and color scheme selector
+- You can now dismiss alarms without unlocking your phone
+
+Enhancements:
+- Alarms now automatically stop ringing after 1 minute

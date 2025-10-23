@@ -1,4 +1,21 @@
-package org.nsh07.pomodoro.ui
+/*
+ * Copyright (c) 2025 Nishant Mishra
+ *
+ * This file is part of Tomato - a minimalist pomodoro timer for Android.
+ *
+ * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Tomato.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package org.nsh07.pomodoro.ui.settingsScreen.components
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
@@ -17,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -27,7 +45,7 @@ fun ClickableListItem(
     supportingContent: @Composable (() -> Unit)? = null,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
-    colors: ListItemColors = ListItemDefaults.colors(),
+    colors: ListItemColors = listItemColors,
     tonalElevation: Dp = ListItemDefaults.Elevation,
     shadowElevation: Dp = ListItemDefaults.Elevation,
     items: Int,

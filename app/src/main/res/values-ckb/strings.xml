@@ -36,4 +36,7 @@
     <string name="stats">ئامار</string>
     <string name="more_info">زانیاری زیاتر</string>
     <string name="pause">وەستاندن</string>
+    <string name="paused">پشوو</string>
+    <string name="completed">تەواوکراو</string>
+    <string name="up_next_notification">دوای ئەمە</string>
 </resources>

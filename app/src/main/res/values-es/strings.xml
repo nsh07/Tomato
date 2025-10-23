@@ -16,7 +16,7 @@
     <string name="productivity_analysis_desc">Duración de la concentración en diferentes momentos del día</string>
     <string name="alarm_sound">Sonido de la alarma</string>
     <string name="black_theme">Tema negro</string>
-    <string name="black_theme_desc">Utiliza un tema oscuro negro puro</string>
+    <string name="black_theme_desc">Utilizar un tema oscuro negro puro</string>
     <string name="alarm_desc">Sonar alarma cuando el temporizador finalice</string>
     <string name="vibrate">Vibrar</string>
     <string name="vibrate_desc">Vibrar cuando el temporizador finalice</string>
@@ -30,7 +30,7 @@
     <string name="break_">Descanso</string>
     <string name="last_week">Semana pasada</string>
     <string name="focus_per_day_avg">concentración por día (avg)</string>
-    <string name="more_info">Más informes</string>
+    <string name="more_info">Más información</string>
     <string name="weekly_productivity_analysis">Análisis de productividad semanal</string>
     <string name="last_month">Mes pasado</string>
     <string name="monthly_productivity_analysis">Análisis de productividad mensual</string>
@@ -56,4 +56,5 @@
     <string name="color">Color</string>
     <string name="light">Luz</string>
     <string name="dark">Oscuro</string>
+    <string name="last_year">Año pasado</string>
 </resources>

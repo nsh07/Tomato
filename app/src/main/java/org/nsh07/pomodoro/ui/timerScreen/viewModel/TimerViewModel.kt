@@ -95,6 +95,9 @@ class TimerViewModel(
                             )
                         ).toUri()
 
+                preferenceRepository.getBooleanPreference("aod_enabled")
+                    ?: preferenceRepository.saveBooleanPreference("aod_enabled", false)
+
                 _time.update { timerRepository.focusTime }
                 cycles = 0
                 startTime = 0L

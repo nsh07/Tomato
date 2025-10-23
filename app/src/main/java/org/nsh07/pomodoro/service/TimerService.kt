@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2025 Nishant Mishra
+ *
+ * This file is part of Tomato - a minimalist pomodoro timer for Android.
+ *
+ * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Tomato.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package org.nsh07.pomodoro.service
 
 import android.annotation.SuppressLint
@@ -16,6 +33,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asStateFlow
@@ -54,11 +72,12 @@ class TimerService : Service() {
     private var pauseDuration = 0L
 
     private var job = SupervisorJob()
-    private val scope = CoroutineScope(Dispatchers.IO + job)
+    private val timerScope = CoroutineScope(Dispatchers.IO + job)
     private val skipScope = CoroutineScope(Dispatchers.IO + job)
 
-    private var alarm: MediaPlayer? = null
+    private var autoAlarmStopScope: Job? = null
 
+    private var alarm: MediaPlayer? = null
     private val vibrator by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val vibratorManager = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
@@ -138,7 +157,7 @@ class TimerService : Service() {
 
             var iterations = -1
 
-            scope.launch {
+            timerScope.launch {
                 while (true) {
                     if (!timerState.value.timerRunning) break
                     if (startTime == 0L) startTime = SystemClock.elapsedRealtime()
@@ -176,7 +195,10 @@ class TimerService : Service() {
         }
     }
 
-    @SuppressLint("MissingPermission") // We check for the permission when pressing the Play button in the UI
+    @SuppressLint(
+        "MissingPermission",
+        "StringFormatInvalid"
+    ) // We check for the permission when pressing the Play button in the UI
     fun showTimerNotification(
         remainingTime: Int, paused: Boolean = false, complete: Boolean = false
     ) {
@@ -351,6 +373,13 @@ class TimerService : Service() {
     fun startAlarm() {
         if (timerRepository.alarmEnabled) alarm?.start()
 
+        appContainer.activityTurnScreenOn(true)
+
+        autoAlarmStopScope = CoroutineScope(Dispatchers.IO).launch {
+            delay(1 * 60 * 1000)
+            stopAlarm()
+        }
+
         if (timerRepository.vibrateEnabled) {
             if (!vibrator.hasVibrator()) {
                 return
@@ -363,6 +392,8 @@ class TimerService : Service() {
     }
 
     fun stopAlarm() {
+        autoAlarmStopScope?.cancel()
+
         if (timerRepository.alarmEnabled) {
             alarm?.pause()
             alarm?.seekTo(0)
@@ -371,6 +402,8 @@ class TimerService : Service() {
         if (timerRepository.vibrateEnabled) {
             vibrator.cancel()
         }
+
+        appContainer.activityTurnScreenOn(false)
 
         _timerState.update { currentState ->
             currentState.copy(alarmRinging = false)

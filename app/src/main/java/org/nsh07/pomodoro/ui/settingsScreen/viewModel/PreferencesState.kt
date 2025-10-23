@@ -14,5 +14,6 @@ import androidx.compose.ui.graphics.Color
 data class PreferencesState(
     val theme: String = "auto",
     val colorScheme: String = Color.White.toString(),
-    val blackTheme: Boolean = false
+    val blackTheme: Boolean = false,
+    val aodEnabled: Boolean = false
 )

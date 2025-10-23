@@ -15,49 +15,15 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.ui
+package org.nsh07.pomodoro.ui.settingsScreen
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.navigation3.runtime.NavKey
-import kotlinx.serialization.Serializable
 
-sealed class Screen : NavKey {
-    @Serializable
-    object Timer : Screen()
-
-    @Serializable
-    object AOD : Screen()
-
-    @Serializable
-    sealed class Settings : Screen() {
-        @Serializable
-        object Main : Settings()
-
-        @Serializable
-        object Alarm : Settings()
-
-        @Serializable
-        object Appearance : Settings()
-
-        @Serializable
-        object Timer : Settings()
-    }
-
-    @Serializable
-    object Stats : Screen()
-}
-
-data class NavItem(
-    val route: Screen,
-    @param:DrawableRes val unselectedIcon: Int,
-    @param:DrawableRes val selectedIcon: Int,
-    @param:StringRes val label: Int
-)
-
-data class SettingsNavItem(
-    val route: Screen.Settings,
+data class SettingsSwitchItem(
+    val checked: Boolean,
     @param:DrawableRes val icon: Int,
     @param:StringRes val label: Int,
-    val innerSettings: List<Int>
+    @param:StringRes val description: Int,
+    val onClick: (Boolean) -> Unit
 )

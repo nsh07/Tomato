@@ -13,6 +13,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -81,6 +83,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
@@ -91,7 +94,7 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun TimerScreen(
+fun SharedTransitionScope.TimerScreen(
     timerState: TimerState,
     progress: () -> Float,
     onAction: (TimerAction) -> Unit,
@@ -209,6 +212,12 @@ fun TimerScreen(
                         CircularProgressIndicator(
                             progress = progress,
                             modifier = Modifier
+                                .sharedBounds(
+                                    sharedContentState = this@TimerScreen.rememberSharedContentState(
+                                        "focus progress"
+                                    ),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
                                 .widthIn(max = 350.dp)
                                 .fillMaxWidth(0.9f)
                                 .aspectRatio(1f),
@@ -221,6 +230,12 @@ fun TimerScreen(
                         CircularWavyProgressIndicator(
                             progress = progress,
                             modifier = Modifier
+                                .sharedBounds(
+                                    sharedContentState = this@TimerScreen.rememberSharedContentState(
+                                        "break progress"
+                                    ),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
                                 .widthIn(max = 350.dp)
                                 .fillMaxWidth(0.9f)
                                 .aspectRatio(1f),
@@ -261,7 +276,11 @@ fun TimerScreen(
                                 letterSpacing = (-2).sp
                             ),
                             textAlign = TextAlign.Center,
-                            maxLines = 1
+                            maxLines = 1,
+                            modifier = Modifier.sharedBounds(
+                                sharedContentState = this@TimerScreen.rememberSharedContentState("clock"),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
                         )
                         AnimatedVisibility(
                             expanded,
@@ -519,11 +538,13 @@ fun TimerScreenPreview() {
     )
     TomatoTheme {
         Surface {
-            TimerScreen(
-                timerState,
-                { 0.3f },
-                {}
-            )
+            SharedTransitionLayout {
+                TimerScreen(
+                    timerState,
+                    { 0.3f },
+                    {}
+                )
+            }
         }
     }
 }

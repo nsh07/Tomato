@@ -1,0 +1,12 @@
+<i>Tomato</i>, Material 3 Expressive tabanlı, Android için minimalist bir Pomodoro sayacıdır.
+
+Tomato tamamen ücretsizdir ve sonsuza kadar açık kaynaklı kalacaktır. Kaynak koduna ulaşmak, hata bildirmek veya özellik önermek için: https://github.com/nsh07/Tomato
+
+<b>Özellikler:</b>
+- En son Material 3 Expressive yönergelerine dayalı basit, minimalist kullanıcı arayüzü
+- Çalışma/ders çalışma sürelerinizin kolay anlaşılır şekilde sunulan ayrıntılı istatistikleri
+    - Güncel güne ait istatistikler bir bakışta görülebilir
+    - Son hafta ve son aya ait istatistikler, okunması kolay ve temiz bir grafikte gösterilir
+    - Son hafta ve son aya ait, günün hangi saatinde en üretken olduğunuzu gösteren ek istatistikler
+- Özelleştirilebilir zamanlayıcı parametreleri
+- Android 16 Canlı Güncellemeler (Live Updates) desteği

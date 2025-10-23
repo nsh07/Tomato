@@ -67,7 +67,8 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 fun AppScreen(
     modifier: Modifier = Modifier,
     timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory),
-    isAODEnabled: Boolean
+    isAODEnabled: Boolean,
+    setTimerFrequency: (Float) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -204,6 +205,7 @@ fun AppScreen(
                         AlwaysOnDisplay(
                             timerState = uiState,
                             progress = { progress },
+                            setTimerFrequency = setTimerFrequency,
                             modifier = Modifier
                                 .then(
                                     if (isAODEnabled) Modifier.clickable {

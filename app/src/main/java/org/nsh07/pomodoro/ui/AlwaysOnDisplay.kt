@@ -1,8 +1,18 @@
 /*
  * Copyright (c) 2025 Nishant Mishra
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * This file is part of Tomato - a minimalist pomodoro timer for Android.
+ *
+ * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Tomato.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.nsh07.pomodoro.ui
@@ -76,6 +86,7 @@ import kotlin.random.Random
 fun SharedTransitionScope.AlwaysOnDisplay(
     timerState: TimerState,
     progress: () -> Float,
+    setTimerFrequency: (Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var sharedElementTransitionComplete by remember { mutableStateOf(false) }
@@ -89,6 +100,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
     val insetsController = remember { WindowCompat.getInsetsController(window, view) }
 
     DisposableEffect(Unit) {
+        setTimerFrequency(1f)
         window.addFlags(
             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
                     WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
@@ -102,6 +114,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
         }
 
         onDispose {
+            setTimerFrequency(10f)
             window.clearFlags(
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
                         WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
@@ -263,7 +276,8 @@ private fun AlwaysOnDisplayPreview() {
         SharedTransitionLayout {
             AlwaysOnDisplay(
                 timerState = timerState,
-                progress = progress
+                progress = progress,
+                setTimerFrequency = {}
             )
         }
     }

@@ -74,7 +74,10 @@ class MainActivity : ComponentActivity() {
 
                 AppScreen(
                     timerViewModel = timerViewModel,
-                    isAODEnabled = preferencesState.aodEnabled
+                    isAODEnabled = preferencesState.aodEnabled,
+                    setTimerFrequency = {
+                        appContainer.appTimerRepository.timerFrequency = it
+                    }
                 )
             }
         }

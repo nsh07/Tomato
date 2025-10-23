@@ -33,6 +33,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asStateFlow
@@ -71,8 +72,10 @@ class TimerService : Service() {
     private var pauseDuration = 0L
 
     private var job = SupervisorJob()
-    private val scope = CoroutineScope(Dispatchers.IO + job)
+    private val timerScope = CoroutineScope(Dispatchers.IO + job)
     private val skipScope = CoroutineScope(Dispatchers.IO + job)
+
+    private var autoAlarmStopScope: Job? = null
 
     private var alarm: MediaPlayer? = null
     private val vibrator by lazy {
@@ -154,7 +157,7 @@ class TimerService : Service() {
 
             var iterations = -1
 
-            scope.launch {
+            timerScope.launch {
                 while (true) {
                     if (!timerState.value.timerRunning) break
                     if (startTime == 0L) startTime = SystemClock.elapsedRealtime()
@@ -372,6 +375,11 @@ class TimerService : Service() {
 
         appContainer.activityTurnScreenOn(true)
 
+        autoAlarmStopScope = CoroutineScope(Dispatchers.IO).launch {
+            delay(1 * 60 * 1000)
+            stopAlarm()
+        }
+
         if (timerRepository.vibrateEnabled) {
             if (!vibrator.hasVibrator()) {
                 return
@@ -384,6 +392,8 @@ class TimerService : Service() {
     }
 
     fun stopAlarm() {
+        autoAlarmStopScope?.cancel()
+
         if (timerRepository.alarmEnabled) {
             alarm?.pause()
             alarm?.seekTo(0)

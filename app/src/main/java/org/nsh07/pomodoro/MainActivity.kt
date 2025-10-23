@@ -45,10 +45,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         appContainer.activityTurnScreenOn = {
             setShowWhenLocked(it)
             setTurnScreenOn(it)
         }
+
         setContent {
             val preferencesState by settingsViewModel.preferencesState.collectAsStateWithLifecycle()
 

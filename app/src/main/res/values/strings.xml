@@ -73,9 +73,10 @@
     <string name="today">Today</string>
     <string name="up_next">Up next</string>
     <string name="up_next_notification">Up next: %1$s (%2$s)</string>
-    <string name="vibrate">Vibrate</string>
+    <string name="vibrate">Vibration</string>
     <string name="vibrate_desc">Vibrate when a timer completes</string>
     <string name="weekly_productivity_analysis">Weekly productivity analysis</string>
     <string name="appearance">Appearance</string>
     <string name="durations">Durations</string>
+    <string name="sound">Sound</string>
 </resources>

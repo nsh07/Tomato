@@ -134,7 +134,7 @@ fun AlarmSettings(
             SettingsSwitchItem(
                 checked = alarmEnabled,
                 icon = R.drawable.alarm_on,
-                label = R.string.alarm,
+                label = R.string.sound,
                 description = R.string.alarm_desc,
                 onClick = onAlarmEnabledChange
             ),

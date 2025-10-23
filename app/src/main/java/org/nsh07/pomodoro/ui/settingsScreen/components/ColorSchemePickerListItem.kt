@@ -32,7 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.ClickableListItem
-import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 
 @Composable
 fun ColorSchemePickerListItem(
@@ -67,7 +66,6 @@ fun ColorSchemePickerListItem(
                 else stringResource(R.string.color)
             )
         },
-        colors = listItemColors,
         items = items,
         index = index,
         modifier = modifier.fillMaxWidth()

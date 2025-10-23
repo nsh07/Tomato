@@ -59,4 +59,6 @@
     <string name="alarm">Alarm</string>
     <string name="always_on_display">Her zaman açık ekran</string>
     <string name="always_on_display_desc">Zamanlayıcıyı görüntülerken AOD moduna geçmek için herhangi bir yere dokunun</string>
+    <string name="appearance">Görünüm</string>
+    <string name="durations">Süreler</string>
 </resources>

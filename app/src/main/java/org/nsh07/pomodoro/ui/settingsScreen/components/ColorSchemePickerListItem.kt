@@ -31,7 +31,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.ui.ClickableListItem
 
 @Composable
 fun ColorSchemePickerListItem(

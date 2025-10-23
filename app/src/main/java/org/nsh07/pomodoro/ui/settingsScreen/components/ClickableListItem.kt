@@ -15,7 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.ui
+package org.nsh07.pomodoro.ui.settingsScreen.components
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable

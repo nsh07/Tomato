@@ -64,9 +64,9 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.service.TimerService
-import org.nsh07.pomodoro.ui.ClickableListItem
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.settingsScreen.components.AboutCard
+import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.TimerSettings

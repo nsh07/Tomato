@@ -17,54 +17,109 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ThemePickerListItem(
     theme: String,
-    themeMap: Map<String, Pair<Int, Int>>,
-    reverseThemeMap: Map<String, String>,
     items: Int,
     index: Int,
     onThemeChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    var showDialog by rememberSaveable { mutableStateOf(false) }
-
-    if (showDialog) {
-        ThemeDialog(
-            themeMap = themeMap,
-            reverseThemeMap = reverseThemeMap,
-            theme = theme,
-            setShowThemeDialog = { showDialog = it },
-            onThemeChange = onThemeChange
+    val themeMap: Map<String, Pair<Int, Int>> = remember {
+        mapOf(
+            "auto" to Pair(
+                R.drawable.brightness_auto,
+                R.string.system_default
+            ),
+            "light" to Pair(R.drawable.light_mode, R.string.light),
+            "dark" to Pair(R.drawable.dark_mode, R.string.dark)
         )
     }
 
-    ClickableListItem(
-        leadingContent = {
-            Icon(
-                painter = painterResource(themeMap[theme]!!.first),
-                contentDescription = null
-            )
-        },
-        headlineContent = { Text(stringResource(R.string.theme)) },
-        supportingContent = {
-            Text(stringResource(themeMap[theme]!!.second))
-        },
-        items = items,
-        index = index,
-        modifier = modifier.fillMaxWidth()
-    ) { showDialog = true }
+    Column(
+        modifier
+            .clip(
+                when (index) {
+                    0 -> topListItemShape
+                    items - 1 -> bottomListItemShape
+                    else -> middleListItemShape
+                },
+            ),
+    ) {
+        ListItem(
+            leadingContent = {
+                AnimatedContent(themeMap[theme]!!.first) {
+                    Icon(
+                        painter = painterResource(it),
+                        contentDescription = null,
+                    )
+                }
+            },
+            headlineContent = { Text(stringResource(R.string.theme)) },
+            colors = listItemColors,
+        )
+
+        val options = themeMap.toList()
+        val selectedIndex = options.indexOf(Pair(theme, themeMap[theme]))
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+            modifier = Modifier
+                .background(listItemColors.containerColor)
+                .padding(start = 52.dp, end = 16.dp, bottom = 8.dp)
+        ) {
+            options.forEachIndexed { index, theme ->
+                val isSelected = selectedIndex == index
+                ToggleButton(
+                    checked = isSelected,
+                    onCheckedChange = { onThemeChange(theme.first) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .semantics { role = Role.RadioButton },
+                    shapes =
+                        when (index) {
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                            options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                        },
+                ) {
+                    Text(
+                        stringResource(theme.second.second),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
+    }
 }

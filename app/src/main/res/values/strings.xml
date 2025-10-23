@@ -65,7 +65,7 @@
     <string name="stop_alarm">Stop alarm</string>
     <string name="stop_alarm_dialog_text">Current timer session is complete. Tap anywhere to stop the alarm.</string>
     <string name="stop_alarm_question">Stop Alarm?</string>
-    <string name="system_default">System default</string>
+    <string name="system_default">System</string>
     <string name="theme">Theme</string>
     <string name="timer">Timer</string>
     <string name="timer_progress">Timer progress</string>

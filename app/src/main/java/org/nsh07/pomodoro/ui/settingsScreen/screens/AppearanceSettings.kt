@@ -37,7 +37,6 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -69,22 +68,6 @@ fun AppearanceSettings(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val themeMap: Map<String, Pair<Int, Int>> = remember {
-        mapOf(
-            "auto" to Pair(
-                R.drawable.brightness_auto,
-                R.string.system_default
-            ),
-            "light" to Pair(R.drawable.light_mode, R.string.light),
-            "dark" to Pair(R.drawable.dark_mode, R.string.dark)
-        )
-    }
-    val reverseThemeMap: Map<String, String> = mapOf(
-        stringResource(R.string.system_default) to "auto",
-        stringResource(R.string.light) to "light",
-        stringResource(R.string.dark) to "dark"
-    )
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
@@ -128,8 +111,6 @@ fun AppearanceSettings(
             item {
                 ThemePickerListItem(
                     theme = preferencesState.theme,
-                    themeMap = themeMap,
-                    reverseThemeMap = reverseThemeMap,
                     onThemeChange = onThemeChange,
                     items = 3,
                     index = 1,

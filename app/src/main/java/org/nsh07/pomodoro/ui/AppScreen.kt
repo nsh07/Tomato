@@ -19,12 +19,11 @@ package org.nsh07.pomodoro.ui
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -142,23 +141,16 @@ fun AppScreen(
                 backStack = backStack,
                 onBack = backStack::removeLastOrNull,
                 transitionSpec = {
-                    ContentTransform(
-                        fadeIn(motionScheme.defaultEffectsSpec()),
-                        fadeOut(motionScheme.defaultEffectsSpec())
-                    )
+                    fadeIn(motionScheme.defaultEffectsSpec())
+                        .togetherWith(fadeOut(motionScheme.defaultEffectsSpec()))
                 },
                 popTransitionSpec = {
-                    ContentTransform(
-                        fadeIn(motionScheme.defaultEffectsSpec()),
-                        fadeOut(motionScheme.defaultEffectsSpec())
-                    )
+                    fadeIn(motionScheme.defaultEffectsSpec())
+                        .togetherWith(fadeOut(motionScheme.defaultEffectsSpec()))
                 },
                 predictivePopTransitionSpec = {
-                    ContentTransform(
-                        fadeIn(motionScheme.defaultEffectsSpec()),
-                        fadeOut(motionScheme.defaultEffectsSpec()) +
-                                scaleOut(targetScale = 0.7f),
-                    )
+                    fadeIn(motionScheme.defaultEffectsSpec())
+                        .togetherWith(fadeOut(motionScheme.defaultEffectsSpec()))
                 },
                 entryProvider = entryProvider {
                     entry<Screen.Timer> {

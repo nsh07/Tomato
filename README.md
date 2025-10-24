@@ -8,7 +8,13 @@ Tomato is a minimalist Pomodoro timer for Android based on Material 3 Expressive
 </div>
 
 > [!NOTE]
-> Tomato is available on Google Play in closed testing. Please [use this link to join the testers Google Group](https://groups.google.com/g/nsh07-app-testers) and then install [Tomato from the Play Store with this link](https://play.google.com/store/apps/details?id=org.nsh07.pomodoro). Tomato needs 12 testers for at least 14 days for the app to be available on Google Play publicly.
+> Tomato is available on Google Play in closed testing.
+>
+Please [use this link to join the testers Google Group](https://groups.google.com/g/nsh07-app-testers)
+> and then
+>
+install [Tomato from the Play Store with this link](https://play.google.com/store/apps/details?id=org.nsh07.pomodoro).
+> Tomato needs 12 testers for at least 14 days for the app to be available on Google Play publicly.
 
 <div align="center">
 
@@ -24,7 +30,7 @@ Tomato is a minimalist Pomodoro timer for Android based on Material 3 Expressive
 <a href="https://github.com/nsh07/tomato/blob/main/LICENSE">
   <img src="https://img.shields.io/github/license/nsh07/tomato?logo=gnu&color=blue&labelColor=1a1a1a">
 </a>
-<img src="https://img.shields.io/badge/API-26+-blue?logo=android&labelColor=1a1a1a">
+<img src="https://img.shields.io/badge/API-27+-blue?logo=android&labelColor=1a1a1a">
 
 <p>
   <a href="https://apt.izzysoft.de/fdroid/index/apk/org.nsh07.pomodoro">
@@ -48,9 +54,11 @@ Tomato is a minimalist Pomodoro timer for Android based on Material 3 Expressive
 
 <br/>
 
-> *"... an app to support this habit helps me stay focused and get things done. Currently, that app is Tomato."*
+> *"... an app to support this habit helps me stay focused and get things done. Currently, that app
+is Tomato."*
 
-\- [*Android Authority*](https://www.androidauthority.com/best-new-android-apps-october-2025-3602966/)
+\- [*Android
+Authority*](https://www.androidauthority.com/best-new-android-apps-october-2025-3602966/)
 
 <br/>
 
@@ -94,7 +102,8 @@ translating this project into languages you know.
 
 - **Google Play Store** (recommended): Tomato is available for closed testing on Google Play. Use
   [this link to join the testers Google Group](https://groups.google.com/g/nsh07-app-testers), then
-  [install Tomato from the Play Store with this link](https://play.google.com/store/apps/details?id=org.nsh07.pomodoro) and help Tomato to get an official Play Store release.
+  [install Tomato from the Play Store with this link](https://play.google.com/store/apps/details?id=org.nsh07.pomodoro)
+  and help Tomato to get an official Play Store release.
 - **F-Droid** (recommended): Tomato is available on the official F-Droid repository. Simply open
   your preferred F-Droid app and search for Tomato.
   Updates on F-Droid are generally a week late. To get faster updates, you can install it through

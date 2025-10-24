@@ -35,7 +35,7 @@
     <string name="ok">ОК</string>
     <string name="dynamic">Динамічна</string>
     <string name="color">Колір</string>
-    <string name="system_default">Налаштування системи</string>
+    <string name="system_default">Система</string>
     <string name="alarm">Сигнал</string>
     <string name="light">Світла</string>
     <string name="dark">Темна</string>
@@ -57,4 +57,9 @@
     <string name="pause">Пауза</string>
     <string name="play">Грати</string>
     <string name="last_year">Минулого року</string>
+    <string name="always_on_display">Always On Display</string>
+    <string name="always_on_display_desc">Натисніть будь-де під час перегляду таймера, щоб перейти в режим AOD</string>
+    <string name="appearance">Вигляд</string>
+    <string name="durations">Тривалість</string>
+    <string name="sound">Звук</string>
 </resources>

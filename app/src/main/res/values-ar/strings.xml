@@ -19,7 +19,7 @@
     <string name="dynamic">ديناميكي</string>
     <string name="color">لون</string>
     <string name="system_default">النظام (الافتراضي)</string>
-    <string name="alarm">منبه</string>
+    <string name="alarm">المنبه</string>
     <string name="light">فاتح</string>
     <string name="dark">داكن</string>
     <string name="choose_theme">اختر سمة</string>
@@ -31,7 +31,7 @@
     <string name="alarm_desc">التنبيه عند انتهاء المؤقت</string>
     <string name="vibrate">اهتزاز</string>
     <string name="vibrate_desc">الاهتزاز عندما ينتهي المؤقت</string>
-    <string name="theme">سمة</string>
+    <string name="theme">السمة</string>
     <string name="settings">الاعدادات</string>
     <string name="session_length">طول الجلسة</string>
     <string name="session_length_desc">فترات التركيز في الجلسة الواحدة: %1$d</string>
@@ -57,4 +57,9 @@
     <string name="timer">المؤقت</string>
     <string name="timer_progress">تقدم المؤقت</string>
     <string name="last_year">السنة الماضية</string>
+    <string name="always_on_display">العرض الدائم علي الشاشة</string>
+    <string name="always_on_display_desc">اضغط في أي مكان أثناء عرض المؤقت للتبديل إلى وضع العرض الدائم على الشاشة</string>
+    <string name="appearance">المظهر</string>
+    <string name="durations">الفترات</string>
+    <string name="sound">الصوت</string>
 </resources>

@@ -79,4 +79,6 @@
     <string name="appearance">Appearance</string>
     <string name="durations">Durations</string>
     <string name="sound">Sound</string>
+    <string name="dnd">Do Not Disturb</string>
+    <string name="dnd_desc">Turn on DND when running a Focus timer</string>
 </resources>

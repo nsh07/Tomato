@@ -85,6 +85,8 @@ class SettingsViewModel(
         preferenceRepository.getBooleanPreferenceFlow("alarm_enabled").distinctUntilChanged()
     val vibrateEnabled =
         preferenceRepository.getBooleanPreferenceFlow("vibrate_enabled").distinctUntilChanged()
+    val dndEnabled =
+        preferenceRepository.getBooleanPreferenceFlow("dnd_enabled").distinctUntilChanged()
 
     init {
         viewModelScope.launch {
@@ -176,6 +178,13 @@ class SettingsViewModel(
         viewModelScope.launch {
             timerRepository.vibrateEnabled = enabled
             preferenceRepository.saveBooleanPreference("vibrate_enabled", enabled)
+        }
+    }
+
+    fun saveDndEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            timerRepository.dndEnabled = enabled
+            preferenceRepository.saveBooleanPreference("dnd_enabled", enabled)
         }
     }
 

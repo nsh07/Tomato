@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.data
 
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import androidx.compose.ui.graphics.Color
@@ -34,6 +35,7 @@ interface AppContainer {
     val appStatRepository: AppStatRepository
     val appTimerRepository: AppTimerRepository
     val notificationManager: NotificationManagerCompat
+    val notificationManagerService: NotificationManager
     val notificationBuilder: NotificationCompat.Builder
     val timerState: MutableStateFlow<TimerState>
     val time: MutableStateFlow<Long>
@@ -55,6 +57,9 @@ class DefaultAppContainer(context: Context) : AppContainer {
     override val notificationManager: NotificationManagerCompat by lazy {
         NotificationManagerCompat.from(context)
     }
+
+    override val notificationManagerService: NotificationManager =
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     override val notificationBuilder: NotificationCompat.Builder by lazy {
         NotificationCompat.Builder(context, "timer")

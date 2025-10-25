@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.service
 
 import android.annotation.SuppressLint
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.media.AudioAttributes
@@ -106,6 +107,7 @@ class TimerService : Service() {
         runBlocking {
             job.cancel()
             saveTimeToDb()
+            setDoNotDisturb(false)
             notificationManager.cancel(1)
             alarm?.release()
         }
@@ -140,6 +142,7 @@ class TimerService : Service() {
         updateProgressSegments()
 
         if (timerState.value.timerRunning) {
+            setDoNotDisturb(false)
             notificationBuilder.clearActions().addTimerActions(
                 this, R.drawable.play, getString(R.string.start)
             )
@@ -149,6 +152,8 @@ class TimerService : Service() {
             }
             pauseTime = SystemClock.elapsedRealtime()
         } else {
+            if (timerState.value.timerMode == TimerMode.FOCUS) setDoNotDisturb(true)
+            else setDoNotDisturb(false)
             notificationBuilder.clearActions().addTimerActions(
                 this, R.drawable.pause, getString(R.string.stop)
             )
@@ -337,6 +342,7 @@ class TimerService : Service() {
             cycles = (cycles + 1) % (timerRepository.sessionLength * 2)
 
             if (cycles % 2 == 0) {
+                if (timerState.value.timerRunning) setDoNotDisturb(true)
                 time = timerRepository.focusTime
                 _timerState.update { currentState ->
                     currentState.copy(
@@ -354,6 +360,7 @@ class TimerService : Service() {
                     )
                 }
             } else {
+                if (timerState.value.timerRunning) setDoNotDisturb(false)
                 val long = cycles == (timerRepository.sessionLength * 2) - 1
                 time = if (long) timerRepository.longBreakTime else timerRepository.shortBreakTime
 
@@ -441,7 +448,15 @@ class TimerService : Service() {
         }
     }
 
-    fun updateAlarmTone() {
+    private fun setDoNotDisturb(doNotDisturb: Boolean) {
+        if (notificationManagerService.isNotificationPolicyAccessGranted()) {
+            if (doNotDisturb) {
+                notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALARMS)
+            } else notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
+        }
+    }
+
+    private fun updateAlarmTone() {
         alarm?.release()
         alarm = initializeMediaPlayer()
     }

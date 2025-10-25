@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -123,8 +124,9 @@ fun AboutCard(modifier: Modifier = Modifier) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painterResource(R.drawable.coffee),
+                        painterResource(R.drawable.bmc),
                         contentDescription = "Buy me a coffee",
+                        modifier = Modifier.height(24.dp)
                     )
 
                     Text(text = "Buy me a coffee")

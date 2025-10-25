@@ -129,7 +129,7 @@ class TimerService : Service() {
                 }
             }
 
-            Actions.SKIP.toString() -> skipTimer(true)
+            Actions.SKIP.toString() -> skipScope.launch { skipTimer(true) }
 
             Actions.STOP_ALARM.toString() -> stopAlarm()
 
@@ -329,50 +329,48 @@ class TimerService : Service() {
         }
     }
 
-    private fun skipTimer(fromButton: Boolean = false) {
+    private suspend fun skipTimer(fromButton: Boolean = false) {
         updateProgressSegments()
-        skipScope.launch {
-            saveTimeToDb()
-            updateProgressSegments()
-            showTimerNotification(0, paused = true, complete = !fromButton)
-            startTime = 0L
-            pauseTime = 0L
-            pauseDuration = 0L
+        saveTimeToDb()
+        updateProgressSegments()
+        showTimerNotification(0, paused = true, complete = !fromButton)
+        startTime = 0L
+        pauseTime = 0L
+        pauseDuration = 0L
 
-            cycles = (cycles + 1) % (timerRepository.sessionLength * 2)
+        cycles = (cycles + 1) % (timerRepository.sessionLength * 2)
 
-            if (cycles % 2 == 0) {
-                if (timerState.value.timerRunning) setDoNotDisturb(true)
-                time = timerRepository.focusTime
-                _timerState.update { currentState ->
-                    currentState.copy(
-                        timerMode = TimerMode.FOCUS,
-                        timeStr = millisecondsToStr(time),
-                        totalTime = time,
-                        nextTimerMode = if (cycles == (timerRepository.sessionLength - 1) * 2) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                        nextTimeStr = if (cycles == (timerRepository.sessionLength - 1) * 2) millisecondsToStr(
-                            timerRepository.longBreakTime
-                        ) else millisecondsToStr(
-                            timerRepository.shortBreakTime
-                        ),
-                        currentFocusCount = cycles / 2 + 1,
-                        totalFocusCount = timerRepository.sessionLength
-                    )
-                }
-            } else {
-                if (timerState.value.timerRunning) setDoNotDisturb(false)
-                val long = cycles == (timerRepository.sessionLength * 2) - 1
-                time = if (long) timerRepository.longBreakTime else timerRepository.shortBreakTime
+        if (cycles % 2 == 0) {
+            if (timerState.value.timerRunning) setDoNotDisturb(true)
+            time = timerRepository.focusTime
+            _timerState.update { currentState ->
+                currentState.copy(
+                    timerMode = TimerMode.FOCUS,
+                    timeStr = millisecondsToStr(time),
+                    totalTime = time,
+                    nextTimerMode = if (cycles == (timerRepository.sessionLength - 1) * 2) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
+                    nextTimeStr = if (cycles == (timerRepository.sessionLength - 1) * 2) millisecondsToStr(
+                        timerRepository.longBreakTime
+                    ) else millisecondsToStr(
+                        timerRepository.shortBreakTime
+                    ),
+                    currentFocusCount = cycles / 2 + 1,
+                    totalFocusCount = timerRepository.sessionLength
+                )
+            }
+        } else {
+            if (timerState.value.timerRunning) setDoNotDisturb(false)
+            val long = cycles == (timerRepository.sessionLength * 2) - 1
+            time = if (long) timerRepository.longBreakTime else timerRepository.shortBreakTime
 
-                _timerState.update { currentState ->
-                    currentState.copy(
-                        timerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                        timeStr = millisecondsToStr(time),
-                        totalTime = time,
-                        nextTimerMode = TimerMode.FOCUS,
-                        nextTimeStr = millisecondsToStr(timerRepository.focusTime)
-                    )
-                }
+            _timerState.update { currentState ->
+                currentState.copy(
+                    timerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
+                    timeStr = millisecondsToStr(time),
+                    totalTime = time,
+                    nextTimerMode = TimerMode.FOCUS,
+                    nextTimeStr = millisecondsToStr(timerRepository.focusTime)
+                )
             }
         }
     }
@@ -449,7 +447,7 @@ class TimerService : Service() {
     }
 
     private fun setDoNotDisturb(doNotDisturb: Boolean) {
-        if (notificationManagerService.isNotificationPolicyAccessGranted()) {
+        if (timerRepository.dndEnabled && notificationManagerService.isNotificationPolicyAccessGranted()) {
             if (doNotDisturb) {
                 notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALARMS)
             } else notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)

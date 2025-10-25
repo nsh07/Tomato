@@ -17,6 +17,11 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens
 
+import android.app.NotificationManager
+import android.content.Context
+import android.content.Intent
+import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -31,6 +36,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
@@ -51,6 +57,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,6 +66,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -76,19 +84,58 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TimerSettings(
     aodEnabled: Boolean,
+    dndEnabled: Boolean,
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
     sessionsSliderState: SliderState,
     onAodEnabledChange: (Boolean) -> Unit,
+    onDndEnabledChange: (Boolean) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val context = LocalContext.current
+    val appName = stringResource(R.string.app_name)
+    val notificationManagerService =
+        remember { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+
+    LaunchedEffect(Unit) {
+        if (!notificationManagerService.isNotificationPolicyAccessGranted())
+            onDndEnabledChange(false)
+    }
+
+    val switchItems = listOf(
+        SettingsSwitchItem(
+            checked = dndEnabled,
+            icon = R.drawable.dnd,
+            label = R.string.dnd,
+            description = R.string.dnd_desc,
+            onClick = {
+                if (it && !notificationManagerService.isNotificationPolicyAccessGranted()) {
+                    val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                    Toast.makeText(context, "Enable permission for \"$appName\"", Toast.LENGTH_LONG)
+                        .show()
+                    context.startActivity(intent)
+                } else if (!it && notificationManagerService.isNotificationPolicyAccessGranted()) {
+                    notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
+                }
+                onDndEnabledChange(it)
+            }
+        ),
+        SettingsSwitchItem(
+            checked = aodEnabled,
+            icon = R.drawable.aod,
+            label = R.string.always_on_display,
+            description = R.string.always_on_display_desc,
+            onClick = onAodEnabledChange
+        )
+    )
 
     Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
         LargeFlexibleTopAppBar(
@@ -213,14 +260,7 @@ fun TimerSettings(
                 )
             }
             item { Spacer(Modifier.height(12.dp)) }
-            item {
-                val item = SettingsSwitchItem(
-                    checked = aodEnabled,
-                    icon = R.drawable.aod,
-                    label = R.string.always_on_display,
-                    description = R.string.always_on_display_desc,
-                    onClick = onAodEnabledChange
-                )
+            itemsIndexed(switchItems) { index, item ->
                 ListItem(
                     leadingContent = {
                         Icon(
@@ -254,7 +294,13 @@ fun TimerSettings(
                         )
                     },
                     colors = listItemColors,
-                    modifier = Modifier.clip(cardShape)
+                    modifier = Modifier.clip(
+                        when (index) {
+                            0 -> topListItemShape
+                            switchItems.size - 1 -> bottomListItemShape
+                            else -> middleListItemShape
+                        }
+                    )
                 )
             }
 
@@ -311,7 +357,9 @@ private fun TimerSettingsPreview() {
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
         sessionsSliderState = sessionsSliderState,
         aodEnabled = true,
+        dndEnabled = false,
         onBack = {},
-        onAodEnabledChange = {}
+        onAodEnabledChange = {},
+        onDndEnabledChange = {}
     )
 }

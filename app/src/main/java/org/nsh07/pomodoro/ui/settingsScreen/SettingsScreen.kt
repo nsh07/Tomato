@@ -104,6 +104,7 @@ fun SettingsScreenRoot(
 
     val alarmEnabled by viewModel.alarmEnabled.collectAsStateWithLifecycle(true)
     val vibrateEnabled by viewModel.vibrateEnabled.collectAsStateWithLifecycle(true)
+    val dndEnabled by viewModel.dndEnabled.collectAsStateWithLifecycle(false)
     val alarmSound by viewModel.alarmSound.collectAsStateWithLifecycle(viewModel.currentAlarmSound)
 
     val preferencesState by viewModel.preferencesState.collectAsStateWithLifecycle()
@@ -126,11 +127,13 @@ fun SettingsScreenRoot(
         sessionsSliderState = sessionsSliderState,
         alarmEnabled = alarmEnabled,
         vibrateEnabled = vibrateEnabled,
+        dndEnabled = dndEnabled,
         alarmSound = alarmSound,
         onAlarmEnabledChange = viewModel::saveAlarmEnabled,
         onVibrateEnabledChange = viewModel::saveVibrateEnabled,
         onBlackThemeChange = viewModel::saveBlackTheme,
         onAodEnabledChange = viewModel::saveAodEnabled,
+        onDndEnabledChange = viewModel::saveDndEnabled,
         onAlarmSoundChanged = {
             viewModel.saveAlarmSound(it)
             Intent(context, TimerService::class.java).apply {
@@ -155,11 +158,13 @@ private fun SettingsScreen(
     sessionsSliderState: SliderState,
     alarmEnabled: Boolean,
     vibrateEnabled: Boolean,
+    dndEnabled: Boolean,
     alarmSound: String,
     onAlarmEnabledChange: (Boolean) -> Unit,
     onVibrateEnabledChange: (Boolean) -> Unit,
     onBlackThemeChange: (Boolean) -> Unit,
     onAodEnabledChange: (Boolean) -> Unit,
+    onDndEnabledChange: (Boolean) -> Unit,
     onAlarmSoundChanged: (Uri?) -> Unit,
     onThemeChange: (String) -> Unit,
     onColorSchemeChange: (Color) -> Unit,
@@ -270,11 +275,13 @@ private fun SettingsScreen(
             entry<Screen.Settings.Timer> {
                 TimerSettings(
                     aodEnabled = preferencesState.aodEnabled,
+                    dndEnabled = dndEnabled,
                     focusTimeInputFieldState = focusTimeInputFieldState,
                     shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                     longBreakTimeInputFieldState = longBreakTimeInputFieldState,
                     sessionsSliderState = sessionsSliderState,
                     onAodEnabledChange = onAodEnabledChange,
+                    onDndEnabledChange = onDndEnabledChange,
                     onBack = backStack::removeLastOrNull
                 )
             }

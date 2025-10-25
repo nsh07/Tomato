@@ -30,7 +30,6 @@ import android.os.Vibrator
 import android.os.VibratorManager
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -53,7 +52,8 @@ class TimerService : Service() {
 
     private val timerRepository by lazy { appContainer.appTimerRepository }
     private val statRepository by lazy { appContainer.appStatRepository }
-    private val notificationManager by lazy { NotificationManagerCompat.from(this) }
+    private val notificationManager by lazy { appContainer.notificationManager }
+    private val notificationManagerService by lazy { appContainer.notificationManagerService }
     private val notificationBuilder by lazy { appContainer.notificationBuilder }
     private val _timerState by lazy { appContainer.timerState }
     private val _time by lazy { appContainer.time }

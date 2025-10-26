@@ -58,6 +58,19 @@ android {
             )
         }
     }
+
+    flavorDimensions += "version"
+    productFlavors {
+        create("foss") {
+            dimension = "version"
+            isDefault = true
+        }
+        create("play") {
+            dimension = "version"
+            versionNameSuffix = "-play"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -102,6 +115,8 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+
+    "playImplementation"(libs.purchases)
 
     testImplementation(libs.junit)
 

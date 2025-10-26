@@ -18,7 +18,7 @@
     <string name="color_scheme">Farbschema</string>
     <string name="dynamic">Dynamisch</string>
     <string name="color">Farbe</string>
-    <string name="system_default">Systemstandard</string>
+    <string name="system_default">System</string>
     <string name="alarm">Alarm</string>
     <string name="light">Hell</string>
     <string name="dark">Dunkel</string>
@@ -56,4 +56,10 @@
     <string name="up_next">Als nächstes</string>
     <string name="timer">Timer</string>
     <string name="timer_progress">Timer-Fortschritt</string>
+    <string name="always_on_display">Always-On Display</string>
+    <string name="always_on_display_desc">Tippe irgendwo, während der Timer angezeigt wird, um in den AOD-Modus zu wechseln.</string>
+    <string name="last_year">Letztes Jahr</string>
+    <string name="appearance">Aussehen</string>
+    <string name="durations">Dauer</string>
+    <string name="sound">Sound</string>
 </resources>

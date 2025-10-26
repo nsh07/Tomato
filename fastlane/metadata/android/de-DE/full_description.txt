@@ -1,1 +1,12 @@
-<p><i>Tomato</i> ist ein minimalistischer Pomodoro-Timer für Android, der auf Material 3 Expressive basiert. </p><p><br><b>Funktionen:</b></p><ul><li>Einfache, minimalistische Benutzeroberfläche, die auf den neuesten Material 3 Expressive-Richtlinien basiert</li><li>Detaillierte Statistiken zu Arbeits-/Lernzeiten in leicht verständlicher Form<ul><li>Statistiken für den aktuellen Tag auf einen Blick sichtbar</li><li>Statistiken für die letzte Woche und den letzten Monat in einer übersichtlichen und sauberen Grafik dargestellt</li><li>Zusätzliche Statistiken für die letzte Woche und den letzten Monat zeigen, zu welcher Tageszeit Sie am produktivsten sind</li></ul></li><li>Anpassbare Timer Voreinstellungen</li></ul>
+<i>Tomato</i> ist ein minimalistischer Pomodoro-Timer für Android, der auf Material 3 Expressive basiert.
+
+Tomato ist vollständig kostenlos und Open Source, für immer. Unter https://github.com/nsh07/Tomato finden Sie den Quellcode und können Fehler melden oder Funktionen vorschlagen 
+
+<b>Funktionen:</b>
+-Einfache, minimalistische Benutzeroberfläche, die auf den neuesten Material 3 Expressive-Richtlinien basiert
+-Detaillierte Statistiken zu Arbeits-/Lernzeiten in leicht verständlicher Form
+    -Statistiken für den aktuellen Tag auf einen Blick sichtbar
+    -Statistiken für die letzte Woche und den letzten Monat in einer übersichtlichen und sauberen Grafik dargestellt
+    -Zusätzliche Statistiken für die letzte Woche und den letzten Monat zeigen, zu welcher Tageszeit Sie am produktivsten sind
+-Anpassbare Timer Voreinstellungen
+-Unterstützung für Android 16 Live-Updates

@@ -295,6 +295,7 @@ private fun SettingsScreen(
             }
             entry<Screen.Settings.Timer> {
                 TimerSettings(
+                    isPlus = isPlus,
                     aodEnabled = preferencesState.aodEnabled,
                     dndEnabled = dndEnabled,
                     focusTimeInputFieldState = focusTimeInputFieldState,
@@ -303,7 +304,8 @@ private fun SettingsScreen(
                     sessionsSliderState = sessionsSliderState,
                     onAodEnabledChange = onAodEnabledChange,
                     onDndEnabledChange = onDndEnabledChange,
-                    onBack = backStack::removeLastOrNull
+                    setShowPaywall = setShowPaywall,
+                    onBack = backStack::removeLastOrNull,
                 )
             }
         }

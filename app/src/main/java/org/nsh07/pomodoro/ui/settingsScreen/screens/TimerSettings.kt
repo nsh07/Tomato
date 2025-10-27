@@ -75,6 +75,7 @@ import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputField
+import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
@@ -88,6 +89,7 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TimerSettings(
+    isPlus: Boolean,
     aodEnabled: Boolean,
     dndEnabled: Boolean,
     focusTimeInputFieldState: TextFieldState,
@@ -97,7 +99,8 @@ fun TimerSettings(
     onAodEnabledChange: (Boolean) -> Unit,
     onDndEnabledChange: (Boolean) -> Unit,
     onBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    setShowPaywall: (Boolean) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
@@ -260,7 +263,8 @@ fun TimerSettings(
                 )
             }
             item { Spacer(Modifier.height(12.dp)) }
-            itemsIndexed(switchItems) { index, item ->
+
+            itemsIndexed(if (isPlus) switchItems else switchItems.take(1)) { index, item ->
                 ListItem(
                     leadingContent = {
                         Icon(
@@ -295,13 +299,58 @@ fun TimerSettings(
                     },
                     colors = listItemColors,
                     modifier = Modifier.clip(
-                        when (index) {
+                        if (isPlus) when (index) {
                             0 -> topListItemShape
                             switchItems.size - 1 -> bottomListItemShape
                             else -> middleListItemShape
                         }
+                        else cardShape
                     )
                 )
+            }
+
+            if (!isPlus) {
+                item {
+                    PlusDivider(setShowPaywall)
+                }
+                itemsIndexed(switchItems.drop(1)) { index, item ->
+                    ListItem(
+                        leadingContent = {
+                            Icon(
+                                painterResource(item.icon),
+                                contentDescription = null,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        },
+                        headlineContent = { Text(stringResource(item.label)) },
+                        supportingContent = { Text(stringResource(item.description)) },
+                        trailingContent = {
+                            Switch(
+                                checked = item.checked,
+                                onCheckedChange = { item.onClick(it) },
+                                enabled = isPlus,
+                                thumbContent = {
+                                    if (item.checked) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.check),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    } else {
+                                        Icon(
+                                            painter = painterResource(R.drawable.clear),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    }
+                                },
+                                colors = switchColors
+                            )
+                        },
+                        colors = listItemColors,
+                        modifier = Modifier.clip(cardShape)
+                    )
+                }
             }
 
             item {
@@ -352,14 +401,16 @@ private fun TimerSettingsPreview() {
         steps = 6
     )
     TimerSettings(
+        isPlus = false,
+        aodEnabled = true,
+        dndEnabled = false,
         focusTimeInputFieldState = focusTimeInputFieldState,
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
         sessionsSliderState = sessionsSliderState,
-        aodEnabled = true,
-        dndEnabled = false,
-        onBack = {},
         onAodEnabledChange = {},
-        onDndEnabledChange = {}
+        onDndEnabledChange = {},
+        setShowPaywall = {},
+        onBack = {}
     )
 }

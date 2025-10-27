@@ -56,6 +56,7 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.toColor
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -101,21 +102,21 @@ fun AppearanceSettings(
                 Spacer(Modifier.height(14.dp))
             }
             item {
-                ColorSchemePickerListItem(
-                    color = preferencesState.colorScheme.toColor(),
-                    items = 3,
-                    index = 0,
-                    onColorChange = onColorSchemeChange
-                )
-            }
-            item {
                 ThemePickerListItem(
                     theme = preferencesState.theme,
                     onThemeChange = onThemeChange,
                     items = 3,
-                    index = 1,
+                    index = 0,
                     modifier = Modifier
                         .clip(middleListItemShape)
+                )
+            }
+            item {
+                ColorSchemePickerListItem(
+                    color = preferencesState.colorScheme.toColor(),
+                    items = 3,
+                    index = 1,
+                    onColorChange = onColorSchemeChange
                 )
             }
             item {
@@ -168,11 +169,13 @@ fun AppearanceSettings(
 @Composable
 fun AppearanceSettingsPreview() {
     val preferencesState = PreferencesState()
-    AppearanceSettings(
-        preferencesState = preferencesState,
-        onBlackThemeChange = {},
-        onThemeChange = {},
-        onColorSchemeChange = {},
-        onBack = {}
-    )
+    TomatoTheme {
+        AppearanceSettings(
+            preferencesState = preferencesState,
+            onBlackThemeChange = {},
+            onThemeChange = {},
+            onColorSchemeChange = {},
+            onBack = {}
+        )
+    }
 }

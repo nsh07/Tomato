@@ -83,4 +83,6 @@
     <string name="dnd_desc">Turn on DND when running a Focus timer</string>
     <string name="app_name_plus">Tomato+</string>
     <string name="get_plus">Get Tomato+</string>
+    <string name="dynamic_color">Dynamic color</string>
+    <string name="dynamic_color_desc">Adapt theme colors from your wallpaper</string>
 </resources>

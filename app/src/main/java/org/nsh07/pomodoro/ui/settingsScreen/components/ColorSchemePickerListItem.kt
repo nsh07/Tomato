@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
+import android.os.Build
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +29,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,6 +41,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -65,6 +69,7 @@ fun ColorSchemePickerListItem(
         Color(0xff9fd75c), Color(0xffc1d02d), Color(0xfffabd00), Color(0xffffb86e),
         Color.White
     )
+    val zeroCorner = remember { CornerSize(0) }
 
     Column(
         modifier
@@ -76,45 +81,48 @@ fun ColorSchemePickerListItem(
                 }
             )
     ) {
-        ListItem(
-            leadingContent = {
-                Icon(
-                    painterResource(R.drawable.colors),
-                    null
-                )
-            },
-            headlineContent = { Text("Dynamic color") },
-            supportingContent = { Text("Adapt theme colors from your wallpaper") },
-            trailingContent = {
-                val checked = color == colorSchemes.last()
-                Switch(
-                    checked = checked,
-                    onCheckedChange = {
-                        if (it) onColorChange(colorSchemes.last())
-                        else onColorChange(colorSchemes.first())
-                    },
-                    thumbContent = {
-                        if (checked) {
-                            Icon(
-                                painter = painterResource(R.drawable.check),
-                                contentDescription = null,
-                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                            )
-                        } else {
-                            Icon(
-                                painter = painterResource(R.drawable.clear),
-                                contentDescription = null,
-                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                            )
-                        }
-                    },
-                    colors = switchColors
-                )
-            },
-            colors = listItemColors,
-            modifier = Modifier.clip(middleListItemShape)
-        )
-        Spacer(Modifier.height(2.dp))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            ListItem(
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.colors),
+                        null
+                    )
+                },
+                headlineContent = { Text(stringResource(R.string.dynamic_color)) },
+                supportingContent = { Text(stringResource(R.string.dynamic_color_desc)) },
+                trailingContent = {
+                    val checked = color == colorSchemes.last()
+                    Switch(
+                        checked = checked,
+                        onCheckedChange = {
+                            if (it) onColorChange(colorSchemes.last())
+                            else onColorChange(colorSchemes.first())
+                        },
+                        thumbContent = {
+                            if (checked) {
+                                Icon(
+                                    painter = painterResource(R.drawable.check),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                )
+                            } else {
+                                Icon(
+                                    painter = painterResource(R.drawable.clear),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                )
+                            }
+                        },
+                        colors = switchColors
+                    )
+                },
+                colors = listItemColors,
+                modifier = Modifier.clip(middleListItemShape)
+            )
+            Spacer(Modifier.height(2.dp))
+        }
+
         ListItem(
             leadingContent = {
                 Icon(
@@ -131,7 +139,14 @@ fun ColorSchemePickerListItem(
                 )
             },
             colors = listItemColors,
-            modifier = Modifier.clip(middleListItemShape)
+            modifier = Modifier.clip(
+                RoundedCornerShape(
+                    topStart = middleListItemShape.topStart,
+                    topEnd = middleListItemShape.topEnd,
+                    zeroCorner,
+                    zeroCorner
+                )
+            )
         )
 
         Column(

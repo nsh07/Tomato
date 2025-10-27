@@ -51,7 +51,10 @@ import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 
 // Taken from https://github.com/shub39/Grit/blob/master/app/src/main/java/com/shub39/grit/core/presentation/settings/ui/component/AboutApp.kt
 @Composable
-fun AboutCard(modifier: Modifier = Modifier) {
+fun AboutCard(
+    isPlus: Boolean,
+    modifier: Modifier = Modifier
+) {
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
 
@@ -77,7 +80,8 @@ fun AboutCard(modifier: Modifier = Modifier) {
         ) {
             Column {
                 Text(
-                    text = stringResource(R.string.app_name),
+                    if (!isPlus) stringResource(R.string.app_name)
+                    else stringResource(R.string.app_name_plus),
                     style = MaterialTheme.typography.titleLarge,
                     fontFamily = robotoFlexTopBar
                 )

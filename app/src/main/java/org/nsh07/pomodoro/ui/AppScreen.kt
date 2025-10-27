@@ -164,6 +164,7 @@ fun AppScreen(
                     entry<Screen.Timer> {
                         TimerScreen(
                             timerState = uiState,
+                            isPlus = isPlus,
                             progress = { progress },
                             onAction = { action ->
                                 when (action) {

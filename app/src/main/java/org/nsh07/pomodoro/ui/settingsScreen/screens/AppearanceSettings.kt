@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.ColorSchemePickerListItem
-import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
+import org.nsh07.pomodoro.ui.settingsScreen.components.ShowClockPickerListItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.ThemePickerListItem
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
@@ -69,6 +69,7 @@ fun AppearanceSettings(
     onColorSchemeChange: (Color) -> Unit,
     setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
+    onShowClockChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -125,6 +126,23 @@ fun AppearanceSettings(
                     onColorChange = onColorSchemeChange,
                 )
             }
+
+            item {
+                ShowClockPickerListItem(
+                    showClock = preferencesState.showClock,
+                    onShowClockChange = { newValue ->
+
+                        onShowClockChange(newValue)
+                    },
+                    items = 3,
+                    index = 2,
+                    modifier = Modifier.clip(middleListItemShape)
+                )
+            }
+
+
+
+
             item {
                 val item = SettingsSwitchItem(
                     checked = preferencesState.blackTheme,
@@ -176,15 +194,12 @@ fun AppearanceSettings(
 @Composable
 fun AppearanceSettingsPreview() {
     val preferencesState = PreferencesState()
-    TomatoTheme(dynamicColor = false) {
-        AppearanceSettings(
-            preferencesState = preferencesState,
-            isPlus = false,
-            onBlackThemeChange = {},
-            onThemeChange = {},
-            onColorSchemeChange = {},
-            setShowPaywall = {},
-            onBack = {}
-        )
-    }
+    AppearanceSettings(
+        preferencesState = preferencesState,
+        onBlackThemeChange = {},
+        onThemeChange = {},
+        onColorSchemeChange = {},
+        onBack = {},
+        onShowClockChange = {},
+    )
 }

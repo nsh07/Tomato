@@ -21,6 +21,9 @@ interface PreferenceRepository {
     /**
      * Saves an integer preference key-value pair to the database.
      */
+
+    val showClockFlow: Flow<String>
+
     suspend fun saveIntPreference(key: String, value: Int): Int
 
     /**
@@ -72,6 +75,11 @@ class AppPreferenceRepository(
     private val preferenceDao: PreferenceDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : PreferenceRepository {
+
+
+    override val showClockFlow: Flow<String> =
+        getStringPreferenceFlow("show_clock")
+
     override suspend fun saveIntPreference(key: String, value: Int): Int =
         withContext(ioDispatcher) {
             preferenceDao.insertIntPreference(IntPreference(key, value))

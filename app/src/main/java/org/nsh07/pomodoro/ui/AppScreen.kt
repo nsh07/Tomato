@@ -89,6 +89,15 @@ fun AppScreen(
 
     val backStack = rememberNavBackStack(Screen.Timer)
 
+
+    val showClockMode by timerViewModel.showClock.collectAsStateWithLifecycle()
+    val shouldShowClock =
+        (showClockMode == "Both" || showClockMode == "Timer") && !isAODEnabled ||
+                (showClockMode == "Both" || showClockMode == "AOD") && isAODEnabled
+
+
+
+
     if (uiState.alarmRinging)
         AlarmDialog {
             Intent(context, TimerService::class.java).also {
@@ -194,6 +203,7 @@ fun AppScreen(
                                         }
                                 }
                             },
+                            isAodEnabled = isAODEnabled,
                             modifier = modifier
                                 .padding(
                                     start = contentPadding.calculateStartPadding(layoutDirection),
@@ -203,11 +213,13 @@ fun AppScreen(
                                 .then(
                                     if (isAODEnabled) Modifier.clickable {
                                         if (backStack.size < 2) backStack.add(Screen.AOD)
-                                    }
-                                    else Modifier
+                                    } else Modifier
                                 ),
                         )
                     }
+
+
+
 
                     entry<Screen.AOD> {
                         AlwaysOnDisplay(

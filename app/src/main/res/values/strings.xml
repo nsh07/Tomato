@@ -81,10 +81,9 @@
     <string name="sound">Sound</string>
     <string name="dnd">Do Not Disturb</string>
     <string name="dnd_desc">Turn on DND when running a Focus timer</string>
-    <string name="app_name_plus">Tomato+</string>
-    <string name="get_plus">Get Tomato+</string>
-    <string name="dynamic_color">Dynamic color</string>
-    <string name="dynamic_color_desc">Adapt theme colors from your wallpaper</string>
-    <string name="tomato_foss">Tomato FOSS</string>
-    <string name="tomato_foss_desc">All features are unlocked in this version. If my app made a difference in your life, please consider supporting me by donating on %1$s.</string>
+    <string name="show_clock">Show Clock</string>
+    <string name="show_clock_both">Both</string>
+    <string name="show_clock_timer">Timer</string>
+    <string name="show_clock_aod">AOD</string>
+
 </resources>

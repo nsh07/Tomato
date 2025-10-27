@@ -19,6 +19,7 @@ package org.nsh07.pomodoro.ui.timerScreen
 
 import android.Manifest
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -93,6 +94,8 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
@@ -101,6 +104,7 @@ import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -110,6 +114,7 @@ fun SharedTransitionScope.TimerScreen(
     isPlus: Boolean,
     progress: () -> Float,
     onAction: (TimerAction) -> Unit,
+    isAodEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     val motionScheme = motionScheme
@@ -280,6 +285,38 @@ fun SharedTransitionScope.TimerScreen(
                         LaunchedEffect(timerState.showBrandTitle) {
                             expanded = timerState.showBrandTitle
                         }
+                        val timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory)
+                        val showClockMode by timerViewModel.showClock.collectAsStateWithLifecycle()
+                        val shouldShowClock =
+                            (showClockMode == "Both" || showClockMode == "Timer") && !isAodEnabled
+
+
+                        Log.d("TimerScreen", "showClockMode=$showClockMode, isAodEnabled=$isAodEnabled, shouldShowClock=$shouldShowClock")
+
+                        if (shouldShowClock) {
+                            Text(
+                                text = timerState.timeStr,
+                                style = TextStyle(
+                                    fontFamily = openRundeClock,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 72.sp,
+                                    letterSpacing = (-2).sp
+                                ),
+                                textAlign = TextAlign.Center,
+                                maxLines = 1,
+                                modifier = Modifier.sharedBounds(
+                                    sharedContentState = this@TimerScreen.rememberSharedContentState("clock"),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
+                            )
+                        }
+
+
+
+
+
+
+
                         Text(
                             text = timerState.timeStr,
                             style = TextStyle(
@@ -556,7 +593,8 @@ fun TimerScreenPreview() {
                     timerState,
                     isPlus = true,
                     { 0.3f },
-                    {}
+                    {},
+                    isAodEnabled = false
                 )
             }
         }

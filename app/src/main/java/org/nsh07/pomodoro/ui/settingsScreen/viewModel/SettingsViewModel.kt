@@ -17,7 +17,9 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
+import android.R.attr.value
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
@@ -98,8 +100,37 @@ class SettingsViewModel(
 
     init {
         viewModelScope.launch {
-            reloadSettings()
-            _isSettingsLoaded.value = true
+            val theme = preferenceRepository.getStringPreference("theme")
+                ?: preferenceRepository.saveStringPreference("theme", "auto")
+            val colorScheme = preferenceRepository.getStringPreference("color_scheme")
+                ?: preferenceRepository.saveStringPreference("color_scheme", Color.White.toString())
+            val blackTheme = preferenceRepository.getBooleanPreference("black_theme")
+                ?: preferenceRepository.saveBooleanPreference("black_theme", false)
+            val aodEnabled = preferenceRepository.getBooleanPreference("aod_enabled")
+                ?: preferenceRepository.saveBooleanPreference("aod_enabled", false)
+            val showClock = preferenceRepository.getStringPreference("show_clock")
+                ?: preferenceRepository.saveStringPreference("show_clock", "Both")
+
+
+            _preferencesState.update { currentState ->
+                currentState.copy(
+                    theme = theme,
+                    colorScheme = colorScheme,
+                    blackTheme = blackTheme,
+                    aodEnabled = aodEnabled
+                )
+            }
+
+            _preferencesState.update { currentState ->
+                currentState.copy(
+                    theme = theme,
+                    colorScheme = colorScheme,
+                    blackTheme = blackTheme,
+                    aodEnabled = aodEnabled,
+                    showClock = showClock
+                )
+            }
+
         }
     }
 
@@ -223,6 +254,22 @@ class SettingsViewModel(
             preferenceRepository.saveBooleanPreference("aod_enabled", aodEnabled)
         }
     }
+    fun saveShowClock(showClock: String) {
+        viewModelScope.launch {
+            _preferencesState.update { currentState ->
+                currentState.copy(showClock = showClock)
+            }
+            preferenceRepository.saveStringPreference("show_clock", showClock)
+            timerRepository.showClock = showClock
+            Log.d("SettingsViewModel", "saveShowClock saved=$value")
+
+        }
+    }
+
+
+
+
+
 
     fun resetPaywalledSettings() {
         _preferencesState.update { currentState ->

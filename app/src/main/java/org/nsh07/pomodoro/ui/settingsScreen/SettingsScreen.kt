@@ -148,7 +148,7 @@ fun SettingsScreenRoot(
         },
         onThemeChange = viewModel::saveTheme,
         onColorSchemeChange = viewModel::saveColorScheme,
-        setShowPaywall = setShowPaywall,
+        onShowClockChange = viewModel::saveShowClock,
         modifier = modifier
     )
 }
@@ -176,7 +176,8 @@ private fun SettingsScreen(
     onAlarmSoundChanged: (Uri?) -> Unit,
     onThemeChange: (String) -> Unit,
     onColorSchemeChange: (Color) -> Unit,
-    setShowPaywall: (Boolean) -> Unit,
+    onShowClockChange: (String) -> Unit,
+
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -289,7 +290,7 @@ private fun SettingsScreen(
                     onBlackThemeChange = onBlackThemeChange,
                     onThemeChange = onThemeChange,
                     onColorSchemeChange = onColorSchemeChange,
-                    setShowPaywall = setShowPaywall,
+                    onShowClockChange = onShowClockChange,
                     onBack = backStack::removeLastOrNull
                 )
             }

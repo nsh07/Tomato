@@ -18,7 +18,7 @@
     <string name="color_scheme">Renk şeması</string>
     <string name="dynamic">Dinamik</string>
     <string name="color">Renk</string>
-    <string name="system_default">Sistem varsayılanı</string>
+    <string name="system_default">Sistem</string>
     <string name="light">Açık</string>
     <string name="dark">Koyu</string>
     <string name="choose_theme">Tema seçin</string>
@@ -61,4 +61,7 @@
     <string name="always_on_display_desc">Zamanlayıcıyı görüntülerken AOD moduna geçmek için herhangi bir yere dokunun</string>
     <string name="appearance">Görünüm</string>
     <string name="durations">Süreler</string>
+    <string name="sound">Ses</string>
+    <string name="dnd">Rahatsız Etmeyin</string>
+    <string name="dnd_desc">Odaklanma sayacı çalışırken RE\'yi aç</string>
 </resources>

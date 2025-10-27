@@ -62,4 +62,6 @@
     <string name="appearance">Aussehen</string>
     <string name="durations">Dauer</string>
     <string name="sound">Sound</string>
+    <string name="dnd">Bitte nicht stören</string>
+    <string name="dnd_desc">‚Bitte nicht stören‘ aktivieren, wenn ein Fokus-Timer läuft</string>
 </resources>

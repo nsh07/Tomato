@@ -62,6 +62,6 @@
     <string name="appearance">外观</string>
     <string name="durations">时长</string>
     <string name="sound">声音</string>
-    <string name="dnd">勿扰</string>
-    <string name="dnd_desc">运行“专注”计时器时打开勿扰</string>
+    <string name="dnd">勿扰模式</string>
+    <string name="dnd_desc">运行「专注」计时器时打开勿扰</string>
 </resources>

@@ -62,4 +62,6 @@
     <string name="appearance">Вигляд</string>
     <string name="durations">Тривалість</string>
     <string name="sound">Звук</string>
+    <string name="dnd">Не турбувати</string>
+    <string name="dnd_desc">Активувати режим «Не турбувати», доки таймер активний</string>
 </resources>

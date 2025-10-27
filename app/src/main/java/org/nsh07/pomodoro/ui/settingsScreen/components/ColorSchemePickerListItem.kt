@@ -20,7 +20,6 @@ package org.nsh07.pomodoro.ui.settingsScreen.components
 import android.os.Build
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -60,6 +59,7 @@ fun ColorSchemePickerListItem(
     color: Color,
     items: Int,
     index: Int,
+    isPlus: Boolean,
     onColorChange: (Color) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -99,6 +99,7 @@ fun ColorSchemePickerListItem(
                             if (it) onColorChange(colorSchemes.last())
                             else onColorChange(colorSchemes.first())
                         },
+                        enabled = isPlus,
                         thumbContent = {
                             if (checked) {
                                 Icon(
@@ -149,21 +150,21 @@ fun ColorSchemePickerListItem(
             )
         )
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 48.dp),
+            userScrollEnabled = isPlus,
             modifier = Modifier
                 .background(listItemColors.containerColor)
                 .padding(bottom = 8.dp)
         ) {
-            LazyRow(contentPadding = PaddingValues(horizontal = 48.dp)) {
-                items(colorSchemes.dropLast(1)) {
-                    ColorPickerButton(
-                        it,
-                        it == color,
-                        modifier = Modifier.padding(4.dp)
-                    ) {
-                        onColorChange(it)
-                    }
+            items(colorSchemes.dropLast(1)) {
+                ColorPickerButton(
+                    color = it,
+                    isSelected = it == color,
+                    enabled = isPlus,
+                    modifier = Modifier.padding(4.dp)
+                ) {
+                    onColorChange(it)
                 }
             }
         }
@@ -175,12 +176,17 @@ fun ColorSchemePickerListItem(
 fun ColorPickerButton(
     color: Color,
     isSelected: Boolean,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     IconButton(
         shapes = IconButtonDefaults.shapes(),
-        colors = IconButtonDefaults.iconButtonColors(containerColor = color),
+        colors = IconButtonDefaults.iconButtonColors(
+            containerColor = color,
+            disabledContainerColor = color.copy(0.3f)
+        ),
+        enabled = enabled,
         modifier = modifier.size(48.dp),
         onClick = onClick
     ) {

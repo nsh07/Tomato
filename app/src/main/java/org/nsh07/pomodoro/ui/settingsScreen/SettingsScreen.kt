@@ -285,9 +285,11 @@ private fun SettingsScreen(
             entry<Screen.Settings.Appearance> {
                 AppearanceSettings(
                     preferencesState = preferencesState,
+                    isPlus = isPlus,
                     onBlackThemeChange = onBlackThemeChange,
                     onThemeChange = onThemeChange,
                     onColorSchemeChange = onColorSchemeChange,
+                    setShowPaywall = setShowPaywall,
                     onBack = backStack::removeLastOrNull
                 )
             }

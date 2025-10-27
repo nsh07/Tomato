@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
@@ -63,14 +64,14 @@ fun TomatoPlusPaywallDialog(
             )
             Spacer(Modifier.height(16.dp))
             Text(
-                "Tomato FOSS",
+                stringResource(R.string.tomato_foss),
                 style = typography.headlineSmall,
                 fontFamily = robotoFlexTopBar,
                 color = colorScheme.onSurface
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                "All features are unlocked in this version. If my app made a difference in your life, please consider supporting me by donating on ${"BuyMeACoffee"}.",
+                stringResource(R.string.tomato_foss_desc, "BuyMeACoffee"),
                 textAlign = TextAlign.Center,
                 color = colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 24.dp)

@@ -85,4 +85,6 @@
     <string name="get_plus">Get Tomato+</string>
     <string name="dynamic_color">Dynamic color</string>
     <string name="dynamic_color_desc">Adapt theme colors from your wallpaper</string>
+    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss_desc">All features are unlocked in this version. If my app made a difference in your life, please consider supporting me by donating on %1$s.</string>
 </resources>

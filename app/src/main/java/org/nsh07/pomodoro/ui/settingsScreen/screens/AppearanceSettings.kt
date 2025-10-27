@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.ColorSchemePickerListItem
+import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
 import org.nsh07.pomodoro.ui.settingsScreen.components.ThemePickerListItem
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
@@ -55,7 +56,6 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.toColor
 
@@ -63,9 +63,11 @@ import org.nsh07.pomodoro.utils.toColor
 @Composable
 fun AppearanceSettings(
     preferencesState: PreferencesState,
+    isPlus: Boolean,
     onBlackThemeChange: (Boolean) -> Unit,
     onThemeChange: (String) -> Unit,
     onColorSchemeChange: (Color) -> Unit,
+    setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -105,18 +107,22 @@ fun AppearanceSettings(
                 ThemePickerListItem(
                     theme = preferencesState.theme,
                     onThemeChange = onThemeChange,
-                    items = 3,
-                    index = 0,
-                    modifier = Modifier
-                        .clip(middleListItemShape)
+                    items = if (isPlus) 3 else 1,
+                    index = 0
                 )
             }
+
+            if (!isPlus) {
+                item { PlusDivider(setShowPaywall) }
+            }
+
             item {
                 ColorSchemePickerListItem(
                     color = preferencesState.colorScheme.toColor(),
                     items = 3,
-                    index = 1,
-                    onColorChange = onColorSchemeChange
+                    index = if (isPlus) 1 else 0,
+                    isPlus = isPlus,
+                    onColorChange = onColorSchemeChange,
                 )
             }
             item {
@@ -137,6 +143,7 @@ fun AppearanceSettings(
                         Switch(
                             checked = item.checked,
                             onCheckedChange = { item.onClick(it) },
+                            enabled = isPlus,
                             thumbContent = {
                                 if (item.checked) {
                                     Icon(
@@ -172,9 +179,11 @@ fun AppearanceSettingsPreview() {
     TomatoTheme {
         AppearanceSettings(
             preferencesState = preferencesState,
+            isPlus = false,
             onBlackThemeChange = {},
             onThemeChange = {},
             onColorSchemeChange = {},
+            setShowPaywall = {},
             onBack = {}
         )
     }

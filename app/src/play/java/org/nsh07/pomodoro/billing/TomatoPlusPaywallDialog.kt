@@ -37,8 +37,7 @@ fun TomatoPlusPaywallDialog(
     onDismiss: () -> Unit
 ) {
     val paywallOptions = remember {
-        PaywallOptions.Builder(dismissRequest = onDismiss)
-            .build()
+        PaywallOptions.Builder(dismissRequest = onDismiss).build()
     }
 
     Scaffold { innerPadding ->

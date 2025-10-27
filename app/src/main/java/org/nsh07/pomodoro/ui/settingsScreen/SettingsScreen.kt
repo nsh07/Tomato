@@ -233,7 +233,7 @@ private fun SettingsScreen(
                     ) {
                         item { Spacer(Modifier.height(12.dp)) }
 
-                        if (!isPlus) item {
+                        item {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
@@ -251,7 +251,8 @@ private fun SettingsScreen(
                                 )
                                 Spacer(Modifier.width(8.dp))
                                 Text(
-                                    "Get Tomato+",
+                                    if (!isPlus) stringResource(R.string.get_plus)
+                                    else stringResource(R.string.app_name_plus),
                                     style = typography.titleLarge,
                                     fontFamily = robotoFlexTopBar,
                                     color = colorScheme.onPrimary

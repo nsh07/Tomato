@@ -81,4 +81,6 @@
     <string name="sound">Sound</string>
     <string name="dnd">Do Not Disturb</string>
     <string name="dnd_desc">Turn on DND when running a Focus timer</string>
+    <string name="app_name_plus">Tomato+</string>
+    <string name="get_plus">Get Tomato+</string>
 </resources>

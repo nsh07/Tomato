@@ -40,16 +40,20 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
+import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.data.AppPreferenceRepository
 import org.nsh07.pomodoro.data.TimerRepository
 import org.nsh07.pomodoro.ui.Screen
 
 @OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
 class SettingsViewModel(
+    private val billingManager: BillingManager,
     private val preferenceRepository: AppPreferenceRepository,
     private val timerRepository: TimerRepository,
 ) : ViewModel() {
     val backStack = mutableStateListOf<Screen.Settings>(Screen.Settings.Main)
+
+    val isPlus = billingManager.isPlus
 
     private val _preferencesState = MutableStateFlow(PreferencesState())
     val preferencesState = _preferencesState.asStateFlow()
@@ -237,8 +241,10 @@ class SettingsViewModel(
                 val application = (this[APPLICATION_KEY] as TomatoApplication)
                 val appPreferenceRepository = application.container.appPreferenceRepository
                 val appTimerRepository = application.container.appTimerRepository
+                val appBillingManager = application.container.billingManager
 
                 SettingsViewModel(
+                    billingManager = appBillingManager,
                     preferenceRepository = appPreferenceRepository,
                     timerRepository = appTimerRepository,
                 )

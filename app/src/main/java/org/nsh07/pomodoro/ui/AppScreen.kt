@@ -41,8 +41,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -54,6 +56,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass
+import org.nsh07.pomodoro.billing.TomatoPlusPaywallDialog
 import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
@@ -65,10 +68,11 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppScreen(
-    modifier: Modifier = Modifier,
-    timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory),
     isAODEnabled: Boolean,
-    setTimerFrequency: (Float) -> Unit
+    isPlus: Boolean,
+    setTimerFrequency: (Float) -> Unit,
+    modifier: Modifier = Modifier,
+    timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory)
 ) {
     val context = LocalContext.current
 
@@ -91,6 +95,7 @@ fun AppScreen(
             }
         }
 
+    var showPaywall by remember { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = {
@@ -218,6 +223,7 @@ fun AppScreen(
 
                     entry<Screen.Settings.Main> {
                         SettingsScreenRoot(
+                            setShowPaywall = { showPaywall = it },
                             modifier = modifier.padding(
                                 start = contentPadding.calculateStartPadding(layoutDirection),
                                 end = contentPadding.calculateEndPadding(layoutDirection),
@@ -240,4 +246,5 @@ fun AppScreen(
             )
         }
     }
+    if (showPaywall) TomatoPlusPaywallDialog(isPlus = isPlus) { showPaywall = false }
 }

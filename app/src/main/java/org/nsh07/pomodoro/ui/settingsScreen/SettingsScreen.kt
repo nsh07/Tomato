@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.fadeIn
@@ -25,19 +26,26 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -50,6 +58,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -80,6 +89,7 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreenRoot(
+    setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
 ) {
@@ -102,6 +112,7 @@ fun SettingsScreenRoot(
         viewModel.longBreakTimeTextFieldState
     }
 
+    val isPlus by viewModel.isPlus.collectAsStateWithLifecycle()
     val alarmEnabled by viewModel.alarmEnabled.collectAsStateWithLifecycle(true)
     val vibrateEnabled by viewModel.vibrateEnabled.collectAsStateWithLifecycle(true)
     val dndEnabled by viewModel.dndEnabled.collectAsStateWithLifecycle(false)
@@ -119,6 +130,7 @@ fun SettingsScreenRoot(
     }
 
     SettingsScreen(
+        isPlus = isPlus,
         preferencesState = preferencesState,
         backStack = backStack,
         focusTimeInputFieldState = focusTimeInputFieldState,
@@ -143,13 +155,16 @@ fun SettingsScreenRoot(
         },
         onThemeChange = viewModel::saveTheme,
         onColorSchemeChange = viewModel::saveColorScheme,
+        setShowPaywall = setShowPaywall,
         modifier = modifier
     )
 }
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SettingsScreen(
+    isPlus: Boolean,
     preferencesState: PreferencesState,
     backStack: SnapshotStateList<Screen.Settings>,
     focusTimeInputFieldState: TextFieldState,
@@ -168,6 +183,7 @@ private fun SettingsScreen(
     onAlarmSoundChanged: (Uri?) -> Unit,
     onThemeChange: (String) -> Unit,
     onColorSchemeChange: (Color) -> Unit,
+    setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -216,6 +232,39 @@ private fun SettingsScreen(
                             .padding(horizontal = 16.dp)
                     ) {
                         item { Spacer(Modifier.height(12.dp)) }
+
+                        if (!isPlus) item {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .background(colorScheme.primary)
+                                    .padding(16.dp)
+                                    .clickable { setShowPaywall(true) }
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.tomato_logo_notification),
+                                    null,
+                                    tint = colorScheme.onPrimary,
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    "Get Tomato+",
+                                    style = typography.titleLarge,
+                                    fontFamily = robotoFlexTopBar,
+                                    color = colorScheme.onPrimary
+                                )
+                                Spacer(Modifier.weight(1f))
+                                Icon(
+                                    painterResource(R.drawable.arrow_forward_big),
+                                    null,
+                                    tint = colorScheme.onPrimary
+                                )
+                            }
+                            Spacer(Modifier.height(14.dp))
+                        }
 
                         item { AboutCard() }
 

@@ -30,12 +30,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.nsh07.pomodoro.ui.AppScreen
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
-import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 import org.nsh07.pomodoro.utils.toColor
 
 class MainActivity : ComponentActivity() {
 
-    private val timerViewModel: TimerViewModel by viewModels(factoryProducer = { TimerViewModel.Factory })
     private val settingsViewModel: SettingsViewModel by viewModels(factoryProducer = { SettingsViewModel.Factory })
 
     private val appContainer by lazy {
@@ -62,6 +60,8 @@ class MainActivity : ComponentActivity() {
 
             val seed = preferencesState.colorScheme.toColor()
 
+            val isPlus by settingsViewModel.isPlus.collectAsStateWithLifecycle()
+
             TomatoTheme(
                 darkTheme = darkTheme,
                 seedColor = seed,
@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 AppScreen(
-                    timerViewModel = timerViewModel,
+                    isPlus = isPlus,
                     isAODEnabled = preferencesState.aodEnabled,
                     setTimerFrequency = {
                         appContainer.appTimerRepository.timerFrequency = it

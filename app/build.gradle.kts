@@ -116,7 +116,8 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
-    "playImplementation"(libs.purchases)
+    "playImplementation"(libs.revenuecat.purchases)
+    "playImplementation"(libs.revenuecat.purchases.ui)
 
     testImplementation(libs.junit)
 

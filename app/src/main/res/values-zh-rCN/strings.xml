@@ -18,7 +18,7 @@
     <string name="color_scheme">配色方案</string>
     <string name="dynamic">动态</string>
     <string name="color">颜色</string>
-    <string name="system_default">系统默认</string>
+    <string name="system_default">系统</string>
     <string name="alarm">响铃</string>
     <string name="light">亮色</string>
     <string name="dark">暗色</string>
@@ -59,4 +59,9 @@
     <string name="last_year">去年</string>
     <string name="always_on_display">息屏显示</string>
     <string name="always_on_display_desc">查看计时器时点击任意位置切换至 AOD 模式</string>
+    <string name="appearance">外观</string>
+    <string name="durations">时长</string>
+    <string name="sound">声音</string>
+    <string name="dnd">勿扰模式</string>
+    <string name="dnd_desc">运行「专注」计时器时打开勿扰</string>
 </resources>

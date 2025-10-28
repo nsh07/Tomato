@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.ColorSchemePickerListItem
+import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
 import org.nsh07.pomodoro.ui.settingsScreen.components.ThemePickerListItem
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
@@ -55,16 +56,18 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.toColor
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppearanceSettings(
     preferencesState: PreferencesState,
+    isPlus: Boolean,
     onBlackThemeChange: (Boolean) -> Unit,
     onThemeChange: (String) -> Unit,
     onColorSchemeChange: (Color) -> Unit,
+    setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -101,21 +104,25 @@ fun AppearanceSettings(
                 Spacer(Modifier.height(14.dp))
             }
             item {
-                ColorSchemePickerListItem(
-                    color = preferencesState.colorScheme.toColor(),
-                    items = 3,
-                    index = 0,
-                    onColorChange = onColorSchemeChange
-                )
-            }
-            item {
                 ThemePickerListItem(
                     theme = preferencesState.theme,
                     onThemeChange = onThemeChange,
+                    items = if (isPlus) 3 else 1,
+                    index = 0
+                )
+            }
+
+            if (!isPlus) {
+                item { PlusDivider(setShowPaywall) }
+            }
+
+            item {
+                ColorSchemePickerListItem(
+                    color = preferencesState.colorScheme.toColor(),
                     items = 3,
-                    index = 1,
-                    modifier = Modifier
-                        .clip(middleListItemShape)
+                    index = if (isPlus) 1 else 0,
+                    isPlus = isPlus,
+                    onColorChange = onColorSchemeChange,
                 )
             }
             item {
@@ -136,6 +143,7 @@ fun AppearanceSettings(
                         Switch(
                             checked = item.checked,
                             onCheckedChange = { item.onClick(it) },
+                            enabled = isPlus,
                             thumbContent = {
                                 if (item.checked) {
                                     Icon(
@@ -168,11 +176,15 @@ fun AppearanceSettings(
 @Composable
 fun AppearanceSettingsPreview() {
     val preferencesState = PreferencesState()
-    AppearanceSettings(
-        preferencesState = preferencesState,
-        onBlackThemeChange = {},
-        onThemeChange = {},
-        onColorSchemeChange = {},
-        onBack = {}
-    )
+    TomatoTheme(dynamicColor = false) {
+        AppearanceSettings(
+            preferencesState = preferencesState,
+            isPlus = false,
+            onBlackThemeChange = {},
+            onThemeChange = {},
+            onColorSchemeChange = {},
+            setShowPaywall = {},
+            onBack = {}
+        )
+    }
 }

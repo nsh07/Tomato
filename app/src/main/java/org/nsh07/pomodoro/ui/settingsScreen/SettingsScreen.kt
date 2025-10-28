@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.fadeIn
@@ -67,6 +68,7 @@ import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.settingsScreen.components.AboutCard
 import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
+import org.nsh07.pomodoro.ui.settingsScreen.components.PlusPromo
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.TimerSettings
@@ -80,6 +82,7 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreenRoot(
+    setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
 ) {
@@ -102,8 +105,10 @@ fun SettingsScreenRoot(
         viewModel.longBreakTimeTextFieldState
     }
 
+    val isPlus by viewModel.isPlus.collectAsStateWithLifecycle()
     val alarmEnabled by viewModel.alarmEnabled.collectAsStateWithLifecycle(true)
     val vibrateEnabled by viewModel.vibrateEnabled.collectAsStateWithLifecycle(true)
+    val dndEnabled by viewModel.dndEnabled.collectAsStateWithLifecycle(false)
     val alarmSound by viewModel.alarmSound.collectAsStateWithLifecycle(viewModel.currentAlarmSound)
 
     val preferencesState by viewModel.preferencesState.collectAsStateWithLifecycle()
@@ -118,6 +123,7 @@ fun SettingsScreenRoot(
     }
 
     SettingsScreen(
+        isPlus = isPlus,
         preferencesState = preferencesState,
         backStack = backStack,
         focusTimeInputFieldState = focusTimeInputFieldState,
@@ -126,11 +132,13 @@ fun SettingsScreenRoot(
         sessionsSliderState = sessionsSliderState,
         alarmEnabled = alarmEnabled,
         vibrateEnabled = vibrateEnabled,
+        dndEnabled = dndEnabled,
         alarmSound = alarmSound,
         onAlarmEnabledChange = viewModel::saveAlarmEnabled,
         onVibrateEnabledChange = viewModel::saveVibrateEnabled,
         onBlackThemeChange = viewModel::saveBlackTheme,
         onAodEnabledChange = viewModel::saveAodEnabled,
+        onDndEnabledChange = viewModel::saveDndEnabled,
         onAlarmSoundChanged = {
             viewModel.saveAlarmSound(it)
             Intent(context, TimerService::class.java).apply {
@@ -140,13 +148,16 @@ fun SettingsScreenRoot(
         },
         onThemeChange = viewModel::saveTheme,
         onColorSchemeChange = viewModel::saveColorScheme,
+        setShowPaywall = setShowPaywall,
         modifier = modifier
     )
 }
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SettingsScreen(
+    isPlus: Boolean,
     preferencesState: PreferencesState,
     backStack: SnapshotStateList<Screen.Settings>,
     focusTimeInputFieldState: TextFieldState,
@@ -155,14 +166,17 @@ private fun SettingsScreen(
     sessionsSliderState: SliderState,
     alarmEnabled: Boolean,
     vibrateEnabled: Boolean,
+    dndEnabled: Boolean,
     alarmSound: String,
     onAlarmEnabledChange: (Boolean) -> Unit,
     onVibrateEnabledChange: (Boolean) -> Unit,
     onBlackThemeChange: (Boolean) -> Unit,
     onAodEnabledChange: (Boolean) -> Unit,
+    onDndEnabledChange: (Boolean) -> Unit,
     onAlarmSoundChanged: (Uri?) -> Unit,
     onThemeChange: (String) -> Unit,
     onColorSchemeChange: (Color) -> Unit,
+    setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -212,9 +226,19 @@ private fun SettingsScreen(
                     ) {
                         item { Spacer(Modifier.height(12.dp)) }
 
-                        item { AboutCard() }
+                        if (!isPlus) item {
+                            PlusPromo(isPlus, setShowPaywall)
+                            Spacer(Modifier.height(14.dp))
+                        }
+
+                        item { AboutCard(isPlus) }
 
                         item { Spacer(Modifier.height(12.dp)) }
+
+                        if (isPlus) item {
+                            PlusPromo(isPlus, setShowPaywall)
+                            Spacer(Modifier.height(14.dp))
+                        }
 
                         itemsIndexed(settingsScreens) { index, item ->
                             ClickableListItem(
@@ -261,21 +285,27 @@ private fun SettingsScreen(
             entry<Screen.Settings.Appearance> {
                 AppearanceSettings(
                     preferencesState = preferencesState,
+                    isPlus = isPlus,
                     onBlackThemeChange = onBlackThemeChange,
                     onThemeChange = onThemeChange,
                     onColorSchemeChange = onColorSchemeChange,
+                    setShowPaywall = setShowPaywall,
                     onBack = backStack::removeLastOrNull
                 )
             }
             entry<Screen.Settings.Timer> {
                 TimerSettings(
+                    isPlus = isPlus,
                     aodEnabled = preferencesState.aodEnabled,
+                    dndEnabled = dndEnabled,
                     focusTimeInputFieldState = focusTimeInputFieldState,
                     shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                     longBreakTimeInputFieldState = longBreakTimeInputFieldState,
                     sessionsSliderState = sessionsSliderState,
                     onAodEnabledChange = onAodEnabledChange,
-                    onBack = backStack::removeLastOrNull
+                    onDndEnabledChange = onDndEnabledChange,
+                    setShowPaywall = setShowPaywall,
+                    onBack = backStack::removeLastOrNull,
                 )
             }
         }

@@ -1,0 +1,12 @@
+<i>Tomato</i> 是一款基於 Material 3 Expressive 的 Android 極簡番茄鐘計時器。
+
+Tomato 完全免費且開源，永遠如此。你可以在 https://github.com/nsh07/Tomato 取得原始碼，並回報問題或提出功能建議。
+
+<b>功能：</b>
+- 依循最新 Material 3 Expressive 設計規範的簡潔、極簡介面
+- 以易懂方式呈現工作／讀書時間的詳細統計
+    - 當日統計一目了然
+    - 過去一週與一個月的統計，以清爽易讀的圖表呈現
+    - 另外提供過去一週與一個月在一天中何時最有效率的統計
+- 計時器參數可自訂
+- 支援 Android 16 的 Live Updates

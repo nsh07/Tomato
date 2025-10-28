@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -50,7 +51,10 @@ import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 
 // Taken from https://github.com/shub39/Grit/blob/master/app/src/main/java/com/shub39/grit/core/presentation/settings/ui/component/AboutApp.kt
 @Composable
-fun AboutCard(modifier: Modifier = Modifier) {
+fun AboutCard(
+    isPlus: Boolean,
+    modifier: Modifier = Modifier
+) {
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
 
@@ -76,7 +80,8 @@ fun AboutCard(modifier: Modifier = Modifier) {
         ) {
             Column {
                 Text(
-                    text = stringResource(R.string.app_name),
+                    if (!isPlus) stringResource(R.string.app_name)
+                    else stringResource(R.string.app_name_plus),
                     style = MaterialTheme.typography.titleLarge,
                     fontFamily = robotoFlexTopBar
                 )
@@ -123,8 +128,9 @@ fun AboutCard(modifier: Modifier = Modifier) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painterResource(R.drawable.coffee),
+                        painterResource(R.drawable.bmc),
                         contentDescription = "Buy me a coffee",
+                        modifier = Modifier.height(24.dp)
                     )
 
                     Text(text = "Buy me a coffee")

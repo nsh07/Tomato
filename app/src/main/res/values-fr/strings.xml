@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="start">Démarrer</string>
-    <string name="stop">Arrêter</string>
+    <string name="stop">Pause</string>
     <string name="focus">Concentration</string>
     <string name="short_break">Pause courte</string>
     <string name="long_break">Pause longue</string>
@@ -18,7 +18,7 @@
     <string name="color_scheme">Thème de couleurs</string>
     <string name="dynamic">Dynamique</string>
     <string name="color">Couleur</string>
-    <string name="system_default">Valeur par défaut du système</string>
+    <string name="system_default">Système</string>
     <string name="alarm">Alarme</string>
     <string name="light">Clair</string>
     <string name="dark">Sombre</string>
@@ -29,7 +29,7 @@
     <string name="black_theme">Thème noir</string>
     <string name="black_theme_desc">Utiliser un thème sombre noir pur</string>
     <string name="alarm_desc">Faire sonner l’alarme à la fin du minuteur</string>
-    <string name="vibrate">Vibrer</string>
+    <string name="vibrate">Vibration</string>
     <string name="vibrate_desc">Faire vibrer à la fin du minuteur</string>
     <string name="theme">Thème</string>
     <string name="settings">Paramètres</string>
@@ -38,7 +38,7 @@
     <string name="pomodoro_info">Une \"session\" est une séquence d’intervalles Pomodoro comprenant des phases de concentration, des pauses courtes et une pause longue. La dernière pause d’une session est toujours une pause longue.</string>
     <string name="stats">Statistiques</string>
     <string name="today">Aujourd\'hui</string>
-    <string name="break_">Pause</string>
+    <string name="break_">Pauses</string>
     <string name="last_week">7 derniers jours</string>
     <string name="focus_per_day_avg">concentration moyenne par jour</string>
     <string name="more_info">Plus d\'infos</string>
@@ -59,4 +59,15 @@
     <string name="last_year">12 derniers mois</string>
     <string name="always_on_display_desc">Appuyez n\'importe où lors de l\'affichage du minuteur pour passer en mode AOD</string>
     <string name="always_on_display">Affichage Permanent</string>
+    <string name="appearance">Apparence</string>
+    <string name="durations">Durées</string>
+    <string name="sound">Son</string>
+    <string name="dnd">Ne pas déranger</string>
+    <string name="dnd_desc">Activer le mode ne pas déranger pendant un minuteur de concentration</string>
+    <string name="dynamic_color">Couleur dynamique</string>
+    <string name="dynamic_color_desc">Adapter les couleurs à celles de votre fond d\'écran</string>
+    <string name="tomato_foss_desc">Toutes les fonctionnalités sont déverrouillées dans cette version. Si mon application a fait une différence dans votre vie, veuillez envisager de me soutenir en faisant un don de %1$s.</string>
+    <string name="app_name_plus">Tomato+</string>
+    <string name="get_plus">Obtenir Tomato+</string>
+    <string name="tomato_foss">Tomato FOSS</string>
 </resources>

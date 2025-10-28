@@ -35,7 +35,7 @@
     <string name="ok">ОК</string>
     <string name="dynamic">Динамічна</string>
     <string name="color">Колір</string>
-    <string name="system_default">Налаштування системи</string>
+    <string name="system_default">Система</string>
     <string name="alarm">Сигнал</string>
     <string name="light">Світла</string>
     <string name="dark">Темна</string>
@@ -57,4 +57,17 @@
     <string name="pause">Пауза</string>
     <string name="play">Грати</string>
     <string name="last_year">Минулого року</string>
+    <string name="always_on_display">Always On Display</string>
+    <string name="always_on_display_desc">Натисніть будь-де під час перегляду таймера, щоб перейти в режим AOD</string>
+    <string name="appearance">Вигляд</string>
+    <string name="durations">Тривалість</string>
+    <string name="sound">Звук</string>
+    <string name="dnd">Не турбувати</string>
+    <string name="dnd_desc">Активувати режим «Не турбувати», доки таймер активний</string>
+    <string name="app_name_plus">Tomato+</string>
+    <string name="get_plus">Отримати Tomato+</string>
+    <string name="dynamic_color">Динамічний колір</string>
+    <string name="dynamic_color_desc">Адаптуйте кольори теми зі своїх шпалер</string>
+    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss_desc">Усі функції розблоковано в цій версії. Якщо мій додаток допоміг Вам у житті, будь ласка, підтримайте мене, зробивши пожертву на %1$s.</string>
 </resources>

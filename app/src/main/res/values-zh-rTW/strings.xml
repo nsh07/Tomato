@@ -18,7 +18,7 @@
     <string name="color_scheme">配色方案</string>
     <string name="dynamic">動態</string>
     <string name="color">顏色</string>
-    <string name="system_default">系統默認</string>
+    <string name="system_default">系統</string>
     <string name="alarm">鬧鐘</string>
     <string name="light">亮色</string>
     <string name="dark">暗色</string>
@@ -57,4 +57,17 @@
     <string name="timer">计时</string>
     <string name="timer_progress">计时进度</string>
     <string name="last_year">上年</string>
+    <string name="always_on_display">熄屏模式</string>
+    <string name="appearance">外觀</string>
+    <string name="always_on_display_desc">在查看計時器時，點擊任意位置即可切換至熄屏模式</string>
+    <string name="durations">持續時間</string>
+    <string name="sound">聲音</string>
+    <string name="dnd">請勿打擾</string>
+    <string name="dnd_desc">在執行專注計時器時開啟勿擾模式</string>
+    <string name="get_plus">獲取 Tomato+</string>
+    <string name="app_name_plus">Tomato+</string>
+    <string name="dynamic_color">動態顔色</string>
+    <string name="dynamic_color_desc">調整主題顏色為你的壁紙顔色</string>
+    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss_desc">所有功能在此版本中均已解鎖。如果我的應用程式改變了您的生活，請考慮透過捐贈 %1$s 來支持我。</string>
 </resources>

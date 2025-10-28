@@ -1,8 +1,18 @@
 /*
  * Copyright (c) 2025 Nishant Mishra
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * This file is part of Tomato - a minimalist pomodoro timer for Android.
+ *
+ * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Tomato.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.nsh07.pomodoro.ui.timerScreen
@@ -92,10 +102,12 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SharedTransitionScope.TimerScreen(
     timerState: TimerState,
+    isPlus: Boolean,
     progress: () -> Float,
     onAction: (TimerAction) -> Unit,
     modifier: Modifier = Modifier
@@ -148,7 +160,8 @@ fun SharedTransitionScope.TimerScreen(
                     when (it) {
                         TimerMode.BRAND ->
                             Text(
-                                stringResource(R.string.app_name),
+                                if (!isPlus) stringResource(R.string.app_name)
+                                else stringResource(R.string.app_name_plus),
                                 style = TextStyle(
                                     fontFamily = robotoFlexTopBar,
                                     fontSize = 32.sp,
@@ -541,6 +554,7 @@ fun TimerScreenPreview() {
             SharedTransitionLayout {
                 TimerScreen(
                     timerState,
+                    isPlus = true,
                     { 0.3f },
                     {}
                 )

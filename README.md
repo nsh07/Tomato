@@ -7,15 +7,6 @@ Tomato is a minimalist Pomodoro timer for Android based on Material 3 Expressive
 
 </div>
 
-> [!NOTE]
-> Tomato is available on Google Play in closed testing.
->
-Please [use this link to join the testers Google Group](https://groups.google.com/g/nsh07-app-testers)
-> and then
->
-install [Tomato from the Play Store with this link](https://play.google.com/store/apps/details?id=org.nsh07.pomodoro).
-> Tomato needs 12 testers for at least 14 days for the app to be available on Google Play publicly.
-
 <div align="center">
 
 <a href="https://hosted.weblate.org/engage/tomato/?utm_source=widget">
@@ -33,11 +24,14 @@ install [Tomato from the Play Store with this link](https://play.google.com/stor
 <img src="https://img.shields.io/badge/API-27+-blue?logo=android&labelColor=1a1a1a">
 
 <p>
-  <a href="https://apt.izzysoft.de/fdroid/index/apk/org.nsh07.pomodoro">
-    <img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="200">
+  <a href="https://play.google.com/store/apps/details?id=org.nsh07.pomodoro">
+    <img src=".github/repo_photos/googleplay.png" width="200">
   </a>
   <a href="https://f-droid.org/packages/org.nsh07.pomodoro">
       <img src="https://f-droid.org/badge/get-it-on.png" width="200">
+  </a>
+  <a href="https://apt.izzysoft.de/fdroid/index/apk/org.nsh07.pomodoro">
+    <img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="200">
   </a>
 </p>
 <p>
@@ -100,24 +94,20 @@ translating this project into languages you know.
 
 ## Download
 
-- **Google Play Store** (recommended): Tomato is available for closed testing on Google Play. Use
-  [this link to join the testers Google Group](https://groups.google.com/g/nsh07-app-testers), then
-  [install Tomato from the Play Store with this link](https://play.google.com/store/apps/details?id=org.nsh07.pomodoro)
-  and help Tomato to get an official Play Store release.
+- **Google Play Store** (recommended): Tomato will soon be available (currently in closed testing)
+  on the Google Play Store.
+  [You can find it through this link](https://play.google.com/store/apps/details?id=org.nsh07.pomodoro).
 - **F-Droid** (recommended): Tomato is available on the official F-Droid repository. Simply open
-  your preferred F-Droid app and search for Tomato.
-  Updates on F-Droid are generally a week late. To get faster updates, you can install it through
+  your preferred F-Droid app and search for Tomato. Updates on F-Droid are generally a week late. To
+  get faster updates, you can install it through
   the [IzzyOnDroid repository](https://apt.izzysoft.de/fdroid/).
-- **Obtainium** (recommended): You can add this GitHub repository
-  on [Obtainium](https://obtainium.imranr.dev/) to get updates directly from GitHub releases. This
-  is the fastest way to install and update Tomato.
 - **GitHub releases**: Alternatively, you can manually download and install APKs from
-  the [Releases](https://github.com/nsh07/Tomato/releases/latest) section of this repo (This
-  method is not recommended, use Obtainium instead).
+  the [Releases](https://github.com/nsh07/Tomato/releases/latest) section of this repo (This method
+  is not recommended, use Google Play/F-Droid instead).
 
 > [!TIP]
 > To [verify](https://developer.android.com/studio/command-line/apksigner#usage-verify) the APK
-> downloaded from Obtainium/GitHub, use the following signing certificate fingerprints:
+> downloaded from GitHub, use the following signing certificate fingerprints:
 > ```
 > SHA1: B1:4E:17:93:11:E8:DB:D5:35:EF:8D:E9:FB:8F:FF:08:F8:EC:65:08
 > SHA256: 07:BE:F3:05:81:BA:EE:8F:45:EC:93:E4:7E:E6:8E:F2:08:74:E5:0E:F5:70:9C:78:B2:EE:67:AC:86:BE:4C:3D

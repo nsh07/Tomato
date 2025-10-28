@@ -64,6 +64,7 @@
     <string name="sound">Son</string>
     <string name="dnd">Ne pas déranger</string>
     <string name="dnd_desc">Activer le mode ne pas déranger pendant un minuteur de concentration</string>
+
     <string name="dynamic_color">Couleur dynamique</string>
     <string name="dynamic_color_desc">Adapter les couleurs à celles de votre fond d\'écran</string>
     <string name="tomato_foss_desc">Toutes les fonctionnalités sont déverrouillées dans cette version. Si mon application a fait une différence dans votre vie, veuillez envisager de me soutenir en faisant un don de %1$s.</string>

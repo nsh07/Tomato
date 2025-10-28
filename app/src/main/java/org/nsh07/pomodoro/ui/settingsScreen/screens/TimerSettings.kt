@@ -268,7 +268,7 @@ fun TimerSettings(
                 ListItem(
                     leadingContent = {
                         Icon(
-                            painterResource(item.icon),
+                            painter = painterResource(item.icon),
                             contentDescription = null,
                             modifier = Modifier.padding(top = 4.dp)
                         )
@@ -284,13 +284,13 @@ fun TimerSettings(
                                     Icon(
                                         painter = painterResource(R.drawable.check),
                                         contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        modifier = Modifier.size(SwitchDefaults.IconSize)
                                     )
                                 } else {
                                     Icon(
                                         painter = painterResource(R.drawable.clear),
                                         contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        modifier = Modifier.size(SwitchDefaults.IconSize)
                                     )
                                 }
                             },
@@ -301,7 +301,7 @@ fun TimerSettings(
                     modifier = Modifier.clip(
                         if (isPlus) when (index) {
                             0 -> topListItemShape
-                            switchItems.size - 1 -> bottomListItemShape
+                            (if (isPlus) switchItems else switchItems.take(1)).size - 1 -> bottomListItemShape
                             else -> middleListItemShape
                         }
                         else cardShape
@@ -317,7 +317,7 @@ fun TimerSettings(
                     ListItem(
                         leadingContent = {
                             Icon(
-                                painterResource(item.icon),
+                                painter = painterResource(item.icon),
                                 contentDescription = null,
                                 modifier = Modifier.padding(top = 4.dp)
                             )
@@ -334,13 +334,13 @@ fun TimerSettings(
                                         Icon(
                                             painter = painterResource(R.drawable.check),
                                             contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                            modifier = Modifier.size(SwitchDefaults.IconSize)
                                         )
                                     } else {
                                         Icon(
                                             painter = painterResource(R.drawable.clear),
                                             contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                            modifier = Modifier.size(SwitchDefaults.IconSize)
                                         )
                                     }
                                 },
@@ -408,9 +408,13 @@ private fun TimerSettingsPreview() {
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
         sessionsSliderState = sessionsSliderState,
+
+
+        onBack = {},
         onAodEnabledChange = {},
         onDndEnabledChange = {},
         setShowPaywall = {},
-        onBack = {}
+
+
     )
 }

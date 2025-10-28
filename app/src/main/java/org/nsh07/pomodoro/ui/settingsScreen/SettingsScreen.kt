@@ -149,6 +149,9 @@ fun SettingsScreenRoot(
         onThemeChange = viewModel::saveTheme,
         onColorSchemeChange = viewModel::saveColorScheme,
         onShowClockChange = viewModel::saveShowClock,
+
+        setShowPaywall = setShowPaywall,
+
         modifier = modifier
     )
 }
@@ -176,7 +179,11 @@ private fun SettingsScreen(
     onAlarmSoundChanged: (Uri?) -> Unit,
     onThemeChange: (String) -> Unit,
     onColorSchemeChange: (Color) -> Unit,
+
     onShowClockChange: (String) -> Unit,
+
+
+    setShowPaywall: (Boolean) -> Unit,
 
     modifier: Modifier = Modifier
 ) {
@@ -290,7 +297,11 @@ private fun SettingsScreen(
                     onBlackThemeChange = onBlackThemeChange,
                     onThemeChange = onThemeChange,
                     onColorSchemeChange = onColorSchemeChange,
+
                     onShowClockChange = onShowClockChange,
+
+                    setShowPaywall = setShowPaywall,
+
                     onBack = backStack::removeLastOrNull
                 )
             }
@@ -306,9 +317,10 @@ private fun SettingsScreen(
                     onAodEnabledChange = onAodEnabledChange,
                     onDndEnabledChange = onDndEnabledChange,
                     setShowPaywall = setShowPaywall,
-                    onBack = backStack::removeLastOrNull,
+                    onBack = backStack::removeLastOrNull
                 )
             }
+
         }
     )
 }

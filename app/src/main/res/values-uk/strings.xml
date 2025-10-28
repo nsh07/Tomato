@@ -64,10 +64,12 @@
     <string name="sound">Звук</string>
     <string name="dnd">Не турбувати</string>
     <string name="dnd_desc">Активувати режим «Не турбувати», доки таймер активний</string>
+
     <string name="app_name_plus">Tomato+</string>
     <string name="get_plus">Отримати Tomato+</string>
     <string name="dynamic_color">Динамічний колір</string>
     <string name="dynamic_color_desc">Адаптуйте кольори теми зі своїх шпалер</string>
     <string name="tomato_foss">Tomato FOSS</string>
     <string name="tomato_foss_desc">Усі функції розблоковано в цій версії. Якщо мій додаток допоміг Вам у житті, будь ласка, підтримайте мене, зробивши пожертву на %1$s.</string>
+
 </resources>

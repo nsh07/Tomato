@@ -98,6 +98,7 @@ class SettingsViewModel(
 
     init {
         viewModelScope.launch {
+
             val theme = preferenceRepository.getStringPreference("theme")
                 ?: preferenceRepository.saveStringPreference("theme", "auto")
             val colorScheme = preferenceRepository.getStringPreference("color_scheme")
@@ -128,6 +129,10 @@ class SettingsViewModel(
                     showClock = showClock
                 )
             }
+
+
+            reloadSettings()
+            _isSettingsLoaded.value = true
 
         }
     }

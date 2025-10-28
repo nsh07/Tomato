@@ -48,7 +48,9 @@ import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.ColorSchemePickerListItem
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.settingsScreen.components.ShowClockPickerListItem
+import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
 import org.nsh07.pomodoro.ui.settingsScreen.components.ThemePickerListItem
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
@@ -194,12 +196,17 @@ fun AppearanceSettings(
 @Composable
 fun AppearanceSettingsPreview() {
     val preferencesState = PreferencesState()
-    AppearanceSettings(
-        preferencesState = preferencesState,
-        onBlackThemeChange = {},
-        onThemeChange = {},
-        onColorSchemeChange = {},
-        onBack = {},
-        onShowClockChange = {},
-    )
+    TomatoTheme(dynamicColor = false) {
+        AppearanceSettings(
+            preferencesState = preferencesState,
+            isPlus = false,
+            onBlackThemeChange = {},
+            onThemeChange = {},
+            onColorSchemeChange = {},
+            setShowPaywall = {},
+            onShowClockChange = {},
+            onBack = {}
+        )
+    }
+
 }

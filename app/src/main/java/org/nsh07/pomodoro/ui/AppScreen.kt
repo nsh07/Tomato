@@ -25,6 +25,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -262,9 +263,15 @@ fun AppScreen(
             )
         }
     }
+
+
+    AnimatedVisibility(
+        showPaywall,
+        enter = slideInVertically { it },
+        exit = slideOutVertically { it }
+    ) {
+        TomatoPlusPaywallDialog(isPlus = isPlus) { showPaywall = false }
+    }
 }
-
-
-
 
 

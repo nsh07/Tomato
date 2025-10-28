@@ -87,6 +87,9 @@ fun SharedTransitionScope.AlwaysOnDisplay(
     timerState: TimerState,
     progress: () -> Float,
     setTimerFrequency: (Float) -> Unit,
+    showClockMode: String,
+
+
     modifier: Modifier = Modifier
 ) {
     var sharedElementTransitionComplete by remember { mutableStateOf(false) }
@@ -98,6 +101,8 @@ fun SharedTransitionScope.AlwaysOnDisplay(
 
     val window = remember { (view.context as Activity).window }
     val insetsController = remember { WindowCompat.getInsetsController(window, view) }
+
+
 
     DisposableEffect(Unit) {
         setTimerFrequency(1f)
@@ -159,6 +164,16 @@ fun SharedTransitionScope.AlwaysOnDisplay(
         else colorScheme.onSurface,
         animationSpec = motionScheme.slowEffectsSpec()
     )
+
+
+
+    val shouldShowClock = when (showClockMode) {
+        "Both" -> true
+        "AOD" -> true
+        "Timer" -> false
+        else -> false
+    }
+
 
     var randomX by remember {
         mutableIntStateOf(
@@ -246,22 +261,25 @@ fun SharedTransitionScope.AlwaysOnDisplay(
                 )
             }
 
-            Text(
-                text = timerState.timeStr,
-                style = TextStyle(
-                    fontFamily = openRundeClock,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 56.sp,
-                    letterSpacing = (-2).sp
-                ),
-                textAlign = TextAlign.Center,
-                color = onSurface,
-                maxLines = 1,
-                modifier = Modifier.sharedBounds(
-                    sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("clock"),
-                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+            if (shouldShowClock) {
+                Text(
+                    text = timerState.timeStr,
+                    style = TextStyle(
+                        fontFamily = openRundeClock,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 56.sp,
+                        letterSpacing = (-2).sp
+                    ),
+                    textAlign = TextAlign.Center,
+                    color = onSurface,
+                    maxLines = 1,
+                    modifier = Modifier.sharedBounds(
+                        sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("clock"),
+                        animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                    )
                 )
-            )
+            }
+
         }
     }
 }
@@ -277,7 +295,8 @@ private fun AlwaysOnDisplayPreview() {
             AlwaysOnDisplay(
                 timerState = timerState,
                 progress = progress,
-                setTimerFrequency = {}
+                setTimerFrequency = {},
+                showClockMode = "both",
             )
         }
     }

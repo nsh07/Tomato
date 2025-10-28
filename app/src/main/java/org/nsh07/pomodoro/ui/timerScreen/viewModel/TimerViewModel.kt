@@ -124,8 +124,14 @@ class TimerViewModel(
                             )
                         ).toUri()
 
+
+
+                preferenceRepository.getStringPreference("show_clock")
+                    ?: preferenceRepository.saveStringPreference("show_clock", "Both")
+
                 preferenceRepository.getBooleanPreference("aod_enabled")
                     ?: preferenceRepository.saveBooleanPreference("aod_enabled", false)
+
 
 
 

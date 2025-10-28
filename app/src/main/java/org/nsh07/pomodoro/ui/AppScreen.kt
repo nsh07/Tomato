@@ -90,10 +90,11 @@ fun AppScreen(
     val backStack = rememberNavBackStack(Screen.Timer)
 
 
+
     val showClockMode by timerViewModel.showClock.collectAsStateWithLifecycle()
-    val shouldShowClock =
-        (showClockMode == "Both" || showClockMode == "Timer") && !isAODEnabled ||
-                (showClockMode == "Both" || showClockMode == "AOD") && isAODEnabled
+    (showClockMode == "Both" || showClockMode == "Timer") && !isAODEnabled ||
+            (showClockMode == "Both" || showClockMode == "AOD") && isAODEnabled
+
 
 
 
@@ -191,8 +192,7 @@ fun AppScreen(
 
                                     TimerAction.StopAlarm ->
                                         Intent(context, TimerService::class.java).also {
-                                            it.action =
-                                                TimerService.Actions.STOP_ALARM.toString()
+                                            it.action = TimerService.Actions.STOP_ALARM.toString()
                                             context.startService(it)
                                         }
 
@@ -204,6 +204,7 @@ fun AppScreen(
                                 }
                             },
                             isAodEnabled = isAODEnabled,
+                            isAodScreen = false,
                             modifier = modifier
                                 .padding(
                                     start = contentPadding.calculateStartPadding(layoutDirection),
@@ -211,28 +212,28 @@ fun AppScreen(
                                     bottom = contentPadding.calculateBottomPadding()
                                 )
                                 .then(
-                                    if (isAODEnabled) Modifier.clickable {
-                                        if (backStack.size < 2) backStack.add(Screen.AOD)
+                                    if (isAODEnabled) {
+                                        Modifier.clickable {
+                                            if (backStack.size < 2) backStack.add(Screen.AOD)
+                                        }
                                     } else Modifier
-                                ),
+                                )
                         )
                     }
-
-
-
 
                     entry<Screen.AOD> {
                         AlwaysOnDisplay(
                             timerState = uiState,
                             progress = { progress },
                             setTimerFrequency = setTimerFrequency,
-                            modifier = Modifier
-                                .then(
-                                    if (isAODEnabled) Modifier.clickable {
+                            showClockMode = showClockMode,
+                            modifier = Modifier.then(
+                                if (isAODEnabled) {
+                                    Modifier.clickable {
                                         if (backStack.size > 1) backStack.removeLastOrNull()
                                     }
-                                    else Modifier
-                                )
+                                } else Modifier
+                            )
                         )
                     }
 
@@ -257,16 +258,13 @@ fun AppScreen(
                             )
                         )
                     }
-                }
-            )
-        }
-    }
-
-    AnimatedVisibility(
-        showPaywall,
-        enter = slideInVertically { it },
-        exit = slideOutVertically { it }
-    ) {
-        TomatoPlusPaywallDialog(isPlus = isPlus) { showPaywall = false }
+                } // end of entryProvider
+            ) // end of NavDisplay
+        } //
     }
 }
+
+
+
+
+

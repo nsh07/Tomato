@@ -19,7 +19,6 @@ package org.nsh07.pomodoro.ui.timerScreen
 
 import android.Manifest
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -115,6 +114,7 @@ fun SharedTransitionScope.TimerScreen(
     progress: () -> Float,
     onAction: (TimerAction) -> Unit,
     isAodEnabled: Boolean,
+    isAodScreen:Boolean=false,
     modifier: Modifier = Modifier
 ) {
     val motionScheme = motionScheme
@@ -287,11 +287,17 @@ fun SharedTransitionScope.TimerScreen(
                         }
                         val timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory)
                         val showClockMode by timerViewModel.showClock.collectAsStateWithLifecycle()
-                        val shouldShowClock =
-                            (showClockMode == "Both" || showClockMode == "Timer") && !isAodEnabled
+
+                        val shouldShowClock = when (showClockMode) {
+                            "Both" -> true
+                            "Timer" -> !isAodScreen
+                            "AOD" -> isAodScreen
+                            else -> false
+                        }
 
 
-                        Log.d("TimerScreen", "showClockMode=$showClockMode, isAodEnabled=$isAodEnabled, shouldShowClock=$shouldShowClock")
+
+
 
                         if (shouldShowClock) {
                             Text(
@@ -311,27 +317,6 @@ fun SharedTransitionScope.TimerScreen(
                             )
                         }
 
-
-
-
-
-
-
-                        Text(
-                            text = timerState.timeStr,
-                            style = TextStyle(
-                                fontFamily = openRundeClock,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 72.sp,
-                                letterSpacing = (-2).sp
-                            ),
-                            textAlign = TextAlign.Center,
-                            maxLines = 1,
-                            modifier = Modifier.sharedBounds(
-                                sharedContentState = this@TimerScreen.rememberSharedContentState("clock"),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                            )
-                        )
                         AnimatedVisibility(
                             expanded,
                             enter = fadeIn(motionScheme.defaultEffectsSpec()) +

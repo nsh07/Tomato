@@ -26,6 +26,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.billing.BillingManager
+import org.nsh07.pomodoro.billing.BillingManagerProvider
 import org.nsh07.pomodoro.service.addTimerActions
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import org.nsh07.pomodoro.utils.millisecondsToStr
@@ -34,6 +36,7 @@ interface AppContainer {
     val appPreferenceRepository: AppPreferenceRepository
     val appStatRepository: AppStatRepository
     val appTimerRepository: AppTimerRepository
+    val billingManager: BillingManager
     val notificationManager: NotificationManagerCompat
     val notificationManagerService: NotificationManager
     val notificationBuilder: NotificationCompat.Builder
@@ -53,6 +56,8 @@ class DefaultAppContainer(context: Context) : AppContainer {
     }
 
     override val appTimerRepository: AppTimerRepository by lazy { AppTimerRepository() }
+
+    override val billingManager: BillingManager by lazy { BillingManagerProvider.manager }
 
     override val notificationManager: NotificationManagerCompat by lazy {
         NotificationManagerCompat.from(context)

@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 
@@ -69,11 +70,13 @@ fun ThemePickerListItem(
     Column(
         modifier
             .clip(
-                when (index) {
-                    0 -> topListItemShape
-                    items - 1 -> bottomListItemShape
-                    else -> middleListItemShape
-                },
+                if (items > 1)
+                    when (index) {
+                        0 -> topListItemShape
+                        items - 1 -> bottomListItemShape
+                        else -> middleListItemShape
+                    }
+                else cardShape,
             ),
     ) {
         ListItem(

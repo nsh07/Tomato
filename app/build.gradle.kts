@@ -43,8 +43,8 @@ android {
         applicationId = "org.nsh07.pomodoro"
         minSdk = 27
         targetSdk = 36
-        versionCode = 15
-        versionName = "1.6.0"
+        versionCode = 16
+        versionName = "1.6.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -58,6 +58,19 @@ android {
             )
         }
     }
+
+    flavorDimensions += "version"
+    productFlavors {
+        create("foss") {
+            dimension = "version"
+            isDefault = true
+        }
+        create("play") {
+            dimension = "version"
+            versionNameSuffix = "-play"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -102,6 +115,9 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+
+    "playImplementation"(libs.revenuecat.purchases)
+    "playImplementation"(libs.revenuecat.purchases.ui)
 
     testImplementation(libs.junit)
 

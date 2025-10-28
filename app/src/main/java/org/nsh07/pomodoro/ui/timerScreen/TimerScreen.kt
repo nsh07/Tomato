@@ -107,6 +107,7 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 @Composable
 fun SharedTransitionScope.TimerScreen(
     timerState: TimerState,
+    isPlus: Boolean,
     progress: () -> Float,
     onAction: (TimerAction) -> Unit,
     modifier: Modifier = Modifier
@@ -159,7 +160,8 @@ fun SharedTransitionScope.TimerScreen(
                     when (it) {
                         TimerMode.BRAND ->
                             Text(
-                                stringResource(R.string.app_name),
+                                if (!isPlus) stringResource(R.string.app_name)
+                                else stringResource(R.string.app_name_plus),
                                 style = TextStyle(
                                     fontFamily = robotoFlexTopBar,
                                     fontSize = 32.sp,
@@ -552,6 +554,7 @@ fun TimerScreenPreview() {
             SharedTransitionLayout {
                 TimerScreen(
                     timerState,
+                    isPlus = true,
                     { 0.3f },
                     {}
                 )

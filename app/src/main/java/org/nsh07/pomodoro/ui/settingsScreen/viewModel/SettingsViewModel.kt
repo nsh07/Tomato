@@ -40,16 +40,24 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
+import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.data.AppPreferenceRepository
 import org.nsh07.pomodoro.data.TimerRepository
 import org.nsh07.pomodoro.ui.Screen
 
 @OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
 class SettingsViewModel(
+    private val billingManager: BillingManager,
     private val preferenceRepository: AppPreferenceRepository,
     private val timerRepository: TimerRepository,
 ) : ViewModel() {
     val backStack = mutableStateListOf<Screen.Settings>(Screen.Settings.Main)
+
+    val isPlus = billingManager.isPlus
+    val isPurchaseStateLoaded = billingManager.isLoaded
+
+    private val _isSettingsLoaded = MutableStateFlow(false)
+    val isSettingsLoaded = _isSettingsLoaded.asStateFlow()
 
     private val _preferencesState = MutableStateFlow(PreferencesState())
     val preferencesState = _preferencesState.asStateFlow()
@@ -90,23 +98,8 @@ class SettingsViewModel(
 
     init {
         viewModelScope.launch {
-            val theme = preferenceRepository.getStringPreference("theme")
-                ?: preferenceRepository.saveStringPreference("theme", "auto")
-            val colorScheme = preferenceRepository.getStringPreference("color_scheme")
-                ?: preferenceRepository.saveStringPreference("color_scheme", Color.White.toString())
-            val blackTheme = preferenceRepository.getBooleanPreference("black_theme")
-                ?: preferenceRepository.saveBooleanPreference("black_theme", false)
-            val aodEnabled = preferenceRepository.getBooleanPreference("aod_enabled")
-                ?: preferenceRepository.saveBooleanPreference("aod_enabled", false)
-
-            _preferencesState.update { currentState ->
-                currentState.copy(
-                    theme = theme,
-                    colorScheme = colorScheme,
-                    blackTheme = blackTheme,
-                    aodEnabled = aodEnabled
-                )
-            }
+            reloadSettings()
+            _isSettingsLoaded.value = true
         }
     }
 
@@ -231,14 +224,46 @@ class SettingsViewModel(
         }
     }
 
+    fun resetPaywalledSettings() {
+        _preferencesState.update { currentState ->
+            currentState.copy(
+                aodEnabled = false,
+                blackTheme = false,
+                colorScheme = Color.White.toString()
+            )
+        }
+    }
+
+    suspend fun reloadSettings() {
+        val theme = preferenceRepository.getStringPreference("theme")
+            ?: preferenceRepository.saveStringPreference("theme", "auto")
+        val colorScheme = preferenceRepository.getStringPreference("color_scheme")
+            ?: preferenceRepository.saveStringPreference("color_scheme", Color.White.toString())
+        val blackTheme = preferenceRepository.getBooleanPreference("black_theme")
+            ?: preferenceRepository.saveBooleanPreference("black_theme", false)
+        val aodEnabled = preferenceRepository.getBooleanPreference("aod_enabled")
+            ?: preferenceRepository.saveBooleanPreference("aod_enabled", false)
+
+        _preferencesState.update { currentState ->
+            currentState.copy(
+                theme = theme,
+                colorScheme = colorScheme,
+                blackTheme = blackTheme,
+                aodEnabled = aodEnabled
+            )
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as TomatoApplication)
                 val appPreferenceRepository = application.container.appPreferenceRepository
                 val appTimerRepository = application.container.appTimerRepository
+                val appBillingManager = application.container.billingManager
 
                 SettingsViewModel(
+                    billingManager = appBillingManager,
                     preferenceRepository = appPreferenceRepository,
                     timerRepository = appTimerRepository,
                 )

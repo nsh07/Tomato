@@ -258,9 +258,9 @@ fun AppScreen(
                             )
                         )
                     }
-                } // end of entryProvider
-            ) // end of NavDisplay
-        } //
+                }
+            )
+        }
     }
 }
 

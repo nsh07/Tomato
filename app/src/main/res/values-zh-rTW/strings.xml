@@ -64,4 +64,10 @@
     <string name="sound">聲音</string>
     <string name="dnd">請勿打擾</string>
     <string name="dnd_desc">在執行專注計時器時開啟勿擾模式</string>
+    <string name="get_plus">獲取 Tomato+</string>
+    <string name="app_name_plus">Tomato+</string>
+    <string name="dynamic_color">動態顔色</string>
+    <string name="dynamic_color_desc">調整主題顏色為你的壁紙顔色</string>
+    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss_desc">所有功能在此版本中均已解鎖。如果我的應用程式改變了您的生活，請考慮透過捐贈 %1$s 來支持我。</string>
 </resources>

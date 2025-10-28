@@ -1,0 +1,5 @@
+New features:
+- The app can now automatically turn on Do Not Disturb mode when a focus timer is running (this needs to be enabled in Settings)
+
+And other fixes.
+This update also contains a new paywall system (For Google Play only)

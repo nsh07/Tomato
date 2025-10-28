@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.asStateFlow
  */
 class FossBillingManager : BillingManager {
     override val isPlus = MutableStateFlow(true).asStateFlow()
+    override val isLoaded = MutableStateFlow(true).asStateFlow()
 }
 
 object BillingManagerProvider {

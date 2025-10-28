@@ -33,6 +33,9 @@ class PlayBillingManager : BillingManager {
     private val _isPlus = MutableStateFlow(false)
     override val isPlus = _isPlus.asStateFlow()
 
+    private val _isLoaded = MutableStateFlow(false)
+    override val isLoaded = _isLoaded.asStateFlow()
+
     private val purchases by lazy { Purchases.sharedInstance }
 
     init {
@@ -45,9 +48,11 @@ class PlayBillingManager : BillingManager {
         purchases.getCustomerInfoWith(
             onSuccess = { customerInfo ->
                 _isPlus.value = customerInfo.entitlements[ENTITLEMENT_ID]?.isActive == true
+                _isLoaded.value = true
             },
             onError = { error ->
                 Log.e("GooglePlayPaywallManager", "Error fetching customer info: $error")
+                _isLoaded.value = true
             }
         )
     }

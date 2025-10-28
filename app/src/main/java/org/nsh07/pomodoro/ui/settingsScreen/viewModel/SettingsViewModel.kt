@@ -54,6 +54,10 @@ class SettingsViewModel(
     val backStack = mutableStateListOf<Screen.Settings>(Screen.Settings.Main)
 
     val isPlus = billingManager.isPlus
+    val isPurchaseStateLoaded = billingManager.isLoaded
+
+    private val _isSettingsLoaded = MutableStateFlow(false)
+    val isSettingsLoaded = _isSettingsLoaded.asStateFlow()
 
     private val _preferencesState = MutableStateFlow(PreferencesState())
     val preferencesState = _preferencesState.asStateFlow()
@@ -94,23 +98,8 @@ class SettingsViewModel(
 
     init {
         viewModelScope.launch {
-            val theme = preferenceRepository.getStringPreference("theme")
-                ?: preferenceRepository.saveStringPreference("theme", "auto")
-            val colorScheme = preferenceRepository.getStringPreference("color_scheme")
-                ?: preferenceRepository.saveStringPreference("color_scheme", Color.White.toString())
-            val blackTheme = preferenceRepository.getBooleanPreference("black_theme")
-                ?: preferenceRepository.saveBooleanPreference("black_theme", false)
-            val aodEnabled = preferenceRepository.getBooleanPreference("aod_enabled")
-                ?: preferenceRepository.saveBooleanPreference("aod_enabled", false)
-
-            _preferencesState.update { currentState ->
-                currentState.copy(
-                    theme = theme,
-                    colorScheme = colorScheme,
-                    blackTheme = blackTheme,
-                    aodEnabled = aodEnabled
-                )
-            }
+            reloadSettings()
+            _isSettingsLoaded.value = true
         }
     }
 
@@ -232,6 +221,36 @@ class SettingsViewModel(
                 currentState.copy(aodEnabled = aodEnabled)
             }
             preferenceRepository.saveBooleanPreference("aod_enabled", aodEnabled)
+        }
+    }
+
+    fun resetPaywalledSettings() {
+        _preferencesState.update { currentState ->
+            currentState.copy(
+                aodEnabled = false,
+                blackTheme = false,
+                colorScheme = Color.White.toString()
+            )
+        }
+    }
+
+    suspend fun reloadSettings() {
+        val theme = preferenceRepository.getStringPreference("theme")
+            ?: preferenceRepository.saveStringPreference("theme", "auto")
+        val colorScheme = preferenceRepository.getStringPreference("color_scheme")
+            ?: preferenceRepository.saveStringPreference("color_scheme", Color.White.toString())
+        val blackTheme = preferenceRepository.getBooleanPreference("black_theme")
+            ?: preferenceRepository.saveBooleanPreference("black_theme", false)
+        val aodEnabled = preferenceRepository.getBooleanPreference("aod_enabled")
+            ?: preferenceRepository.saveBooleanPreference("aod_enabled", false)
+
+        _preferencesState.update { currentState ->
+            currentState.copy(
+                theme = theme,
+                colorScheme = colorScheme,
+                blackTheme = blackTheme,
+                aodEnabled = aodEnabled
+            )
         }
     }
 

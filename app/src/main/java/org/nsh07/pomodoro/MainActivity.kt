@@ -61,6 +61,18 @@ class MainActivity : ComponentActivity() {
             val seed = preferencesState.colorScheme.toColor()
 
             val isPlus by settingsViewModel.isPlus.collectAsStateWithLifecycle()
+            val isPurchaseStateLoaded by settingsViewModel.isPurchaseStateLoaded.collectAsStateWithLifecycle()
+            val isSettingsLoaded by settingsViewModel.isSettingsLoaded.collectAsStateWithLifecycle()
+
+            LaunchedEffect(isPurchaseStateLoaded, isPlus, isSettingsLoaded) {
+                if (isPurchaseStateLoaded && isSettingsLoaded) {
+                    if (!isPlus) {
+                        settingsViewModel.resetPaywalledSettings()
+                    } else {
+                        settingsViewModel.reloadSettings()
+                    }
+                }
+            }
 
             TomatoTheme(
                 darkTheme = darkTheme,

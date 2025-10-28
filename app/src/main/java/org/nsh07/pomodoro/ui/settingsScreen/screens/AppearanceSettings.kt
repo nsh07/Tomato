@@ -176,7 +176,7 @@ fun AppearanceSettings(
 @Composable
 fun AppearanceSettingsPreview() {
     val preferencesState = PreferencesState()
-    TomatoTheme {
+    TomatoTheme(dynamicColor = false) {
         AppearanceSettings(
             preferencesState = preferencesState,
             isPlus = false,

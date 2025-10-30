@@ -30,10 +30,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
@@ -54,7 +52,6 @@ class TimerViewModel(
     private val _timerState: MutableStateFlow<TimerState>,
     private val _time: MutableStateFlow<Long>,
 
-
 ) : AndroidViewModel(application) {
     val timerState: StateFlow<TimerState> = _timerState.asStateFlow()
 
@@ -64,18 +61,6 @@ class TimerViewModel(
     private var startTime = 0L
     private var pauseTime = 0L
     private var pauseDuration = 0L
-
-    val showClock: StateFlow<String> = preferenceRepository
-        .getStringPreferenceFlow("show_clock")
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            "Both"
-        )
-
-
-
-
 
     init {
         if (!timerRepository.serviceRunning)
@@ -123,20 +108,6 @@ class TimerViewModel(
                                     ?: Settings.System.DEFAULT_RINGTONE_URI).toString()
                             )
                         ).toUri()
-
-
-
-                preferenceRepository.getStringPreference("show_clock")
-                    ?: preferenceRepository.saveStringPreference("show_clock", "Both")
-
-                preferenceRepository.getBooleanPreference("aod_enabled")
-                    ?: preferenceRepository.saveBooleanPreference("aod_enabled", false)
-
-
-
-
-
-
                 _time.update { timerRepository.focusTime }
                 cycles = 0
                 startTime = 0L

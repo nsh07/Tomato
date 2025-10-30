@@ -25,7 +25,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -62,6 +61,7 @@ import androidx.window.core.layout.WindowSizeClass
 import org.nsh07.pomodoro.billing.TomatoPlusPaywallDialog
 import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
 import org.nsh07.pomodoro.ui.timerScreen.AlarmDialog
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
@@ -75,41 +75,28 @@ fun AppScreen(
     isPlus: Boolean,
     setTimerFrequency: (Float) -> Unit,
     modifier: Modifier = Modifier,
-    timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory)
+    timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory),
+    settingsViewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
 ) {
     val context = LocalContext.current
-
     val uiState by timerViewModel.timerState.collectAsStateWithLifecycle()
     val remainingTime by timerViewModel.time.collectAsStateWithLifecycle()
-
     val progress by rememberUpdatedState((uiState.totalTime.toFloat() - remainingTime) / uiState.totalTime)
-
+    val preferencesState by settingsViewModel.preferencesState.collectAsStateWithLifecycle()
+    val showClockMode = preferencesState.showClock.lowercase()
     val layoutDirection = LocalLayoutDirection.current
     val motionScheme = motionScheme
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-
     val backStack = rememberNavBackStack(Screen.Timer)
-
-
-
-    val showClockMode by timerViewModel.showClock.collectAsStateWithLifecycle()
-    (showClockMode == "Both" || showClockMode == "Timer") && !isAODEnabled ||
-            (showClockMode == "Both" || showClockMode == "AOD") && isAODEnabled
-
-
-
-
-
-    if (uiState.alarmRinging)
+    if (uiState.alarmRinging) {
         AlarmDialog {
             Intent(context, TimerService::class.java).also {
                 it.action = TimerService.Actions.STOP_ALARM.toString()
                 context.startService(it)
             }
         }
-
+    }
     var showPaywall by remember { mutableStateOf(false) }
-
     Scaffold(
         bottomBar = {
             AnimatedVisibility(
@@ -131,7 +118,7 @@ fun AppScreen(
                         val selected = backStack.last() == it.route
                         ShortNavigationBarItem(
                             selected = selected,
-                            onClick = if (it.route != Screen.Timer) { // Ensure the backstack does not accumulate screens
+                            onClick = if (it.route != Screen.Timer) {
                                 {
                                     if (backStack.size < 2) backStack.add(it.route)
                                     else backStack[1] = it.route
@@ -140,9 +127,13 @@ fun AppScreen(
                                 { if (backStack.size > 1) backStack.removeAt(1) }
                             },
                             icon = {
-                                Crossfade(selected) { selected ->
-                                    if (selected) Icon(painterResource(it.selectedIcon), null)
-                                    else Icon(painterResource(it.unselectedIcon), null)
+                                Crossfade(selected) { isSelected ->
+                                    Icon(
+                                        painterResource(
+                                            if (isSelected) it.selectedIcon else it.unselectedIcon
+                                        ),
+                                        contentDescription = null
+                                    )
                                 }
                             },
                             iconPosition =
@@ -156,6 +147,15 @@ fun AppScreen(
         }
     ) { contentPadding ->
         SharedTransitionLayout {
+
+            val showClockOnTimer = remember(showClockMode) {
+                showClockMode == "both" || showClockMode == "timer"
+            }
+
+            val showClockOnAOD = remember(showClockMode) {
+                showClockMode == "both" || showClockMode == "aod"
+            }
+
             NavDisplay(
                 backStack = backStack,
                 onBack = backStack::removeLastOrNull,
@@ -177,6 +177,7 @@ fun AppScreen(
                             timerState = uiState,
                             isPlus = isPlus,
                             progress = { progress },
+                            showClock = showClockOnTimer,
                             onAction = { action ->
                                 when (action) {
                                     TimerAction.ResetTimer ->
@@ -184,19 +185,16 @@ fun AppScreen(
                                             it.action = TimerService.Actions.RESET.toString()
                                             context.startService(it)
                                         }
-
                                     is TimerAction.SkipTimer ->
                                         Intent(context, TimerService::class.java).also {
                                             it.action = TimerService.Actions.SKIP.toString()
                                             context.startService(it)
                                         }
-
                                     TimerAction.StopAlarm ->
                                         Intent(context, TimerService::class.java).also {
                                             it.action = TimerService.Actions.STOP_ALARM.toString()
                                             context.startService(it)
                                         }
-
                                     TimerAction.ToggleTimer ->
                                         Intent(context, TimerService::class.java).also {
                                             it.action = TimerService.Actions.TOGGLE.toString()
@@ -204,8 +202,6 @@ fun AppScreen(
                                         }
                                 }
                             },
-                            isAodEnabled = isAODEnabled,
-                            isAodScreen = false,
                             modifier = modifier
                                 .padding(
                                     start = contentPadding.calculateStartPadding(layoutDirection),
@@ -227,7 +223,7 @@ fun AppScreen(
                             timerState = uiState,
                             progress = { progress },
                             setTimerFrequency = setTimerFrequency,
-                            showClockMode = showClockMode,
+                            showClock = showClockOnAOD, // ✅ pass correct boolean here
                             modifier = Modifier.then(
                                 if (isAODEnabled) {
                                     Modifier.clickable {
@@ -248,7 +244,6 @@ fun AppScreen(
                             )
                         )
                     }
-
                     entry<Screen.Stats> {
                         StatsScreenRoot(
                             contentPadding = contentPadding,
@@ -262,16 +257,12 @@ fun AppScreen(
                 }
             )
         }
-    }
-
-
-    AnimatedVisibility(
-        showPaywall,
-        enter = slideInVertically { it },
-        exit = slideOutVertically { it }
-    ) {
-        TomatoPlusPaywallDialog(isPlus = isPlus) { showPaywall = false }
+        AnimatedVisibility(
+            showPaywall,
+            enter = slideInVertically { it },
+            exit = slideOutVertically { it }
+        ) {
+            TomatoPlusPaywallDialog(isPlus = isPlus) { showPaywall = false }
+        }
     }
 }
-
-

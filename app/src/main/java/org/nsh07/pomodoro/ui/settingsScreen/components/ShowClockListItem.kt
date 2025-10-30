@@ -42,11 +42,12 @@ fun ShowClockPickerListItem(
 
     val showClockMap: Map<String, Pair<Int, Int>> = remember {
         mapOf(
-            "Both" to Pair(R.drawable.brightness_auto, R.string.show_clock_both),
-            "Timer" to Pair(R.drawable.light_mode, R.string.show_clock_timer),
-            "AOD" to Pair(R.drawable.dark_mode, R.string.show_clock_aod)
+            "both" to Pair(R.drawable.brightness_auto, R.string.show_clock_both),
+            "timer" to Pair(R.drawable.light_mode, R.string.show_clock_timer),
+            "aod" to Pair(R.drawable.dark_mode, R.string.show_clock_aod)
         )
     }
+
 
     Column(
         modifier
@@ -60,12 +61,15 @@ fun ShowClockPickerListItem(
     ) {
         ListItem(
             leadingContent = {
-                AnimatedContent(showClockMap[showClock]!!.first) {
+                val item = showClockMap[showClock.lowercase()] ?: showClockMap["both"]!!
+
+                AnimatedContent(item.first) {
                     Icon(
                         painter = painterResource(it),
                         contentDescription = null,
                     )
                 }
+
             },
             headlineContent = { Text(stringResource(R.string.show_clock)) },
             colors = listItemColors,

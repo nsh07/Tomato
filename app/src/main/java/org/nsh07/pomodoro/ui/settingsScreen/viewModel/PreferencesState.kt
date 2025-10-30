@@ -16,6 +16,6 @@ data class PreferencesState(
     val colorScheme: String = Color.White.toString(),
     val blackTheme: Boolean = false,
     val aodEnabled: Boolean = false,
-    val showClock: String = "Both"
+    val showClock: String = "both"
 
 )

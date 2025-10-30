@@ -87,9 +87,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
     timerState: TimerState,
     progress: () -> Float,
     setTimerFrequency: (Float) -> Unit,
-    showClockMode: String,
-
-
+    showClock: Boolean,
     modifier: Modifier = Modifier
 ) {
     var sharedElementTransitionComplete by remember { mutableStateOf(false) }
@@ -101,8 +99,6 @@ fun SharedTransitionScope.AlwaysOnDisplay(
 
     val window = remember { (view.context as Activity).window }
     val insetsController = remember { WindowCompat.getInsetsController(window, view) }
-
-
 
     DisposableEffect(Unit) {
         setTimerFrequency(1f)
@@ -164,16 +160,6 @@ fun SharedTransitionScope.AlwaysOnDisplay(
         else colorScheme.onSurface,
         animationSpec = motionScheme.slowEffectsSpec()
     )
-
-
-
-    val shouldShowClock = when (showClockMode) {
-        "Both" -> true
-        "AOD" -> true
-        "Timer" -> false
-        else -> false
-    }
-
 
     var randomX by remember {
         mutableIntStateOf(
@@ -261,7 +247,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
                 )
             }
 
-            if (shouldShowClock) {
+            if (showClock) {
                 Text(
                     text = timerState.timeStr,
                     style = TextStyle(
@@ -284,19 +270,19 @@ fun SharedTransitionScope.AlwaysOnDisplay(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview
 @Composable
 private fun AlwaysOnDisplayPreview() {
     val timerState = TimerState()
     val progress = { 0.5f }
+
     TomatoTheme {
         SharedTransitionLayout {
             AlwaysOnDisplay(
                 timerState = timerState,
                 progress = progress,
                 setTimerFrequency = {},
-                showClockMode = "both",
+                showClock = true // ✅ New boolean flag instead of showClockMode
             )
         }
     }

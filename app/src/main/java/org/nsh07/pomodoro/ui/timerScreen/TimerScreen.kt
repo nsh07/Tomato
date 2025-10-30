@@ -93,8 +93,6 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
@@ -103,8 +101,6 @@ import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
-import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
-
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -114,8 +110,7 @@ fun SharedTransitionScope.TimerScreen(
     isPlus: Boolean,
     progress: () -> Float,
     onAction: (TimerAction) -> Unit,
-    isAodEnabled: Boolean,
-    isAodScreen:Boolean=false,
+    showClock:Boolean=false,
     modifier: Modifier = Modifier
 ) {
     val motionScheme = motionScheme
@@ -286,21 +281,8 @@ fun SharedTransitionScope.TimerScreen(
                         LaunchedEffect(timerState.showBrandTitle) {
                             expanded = timerState.showBrandTitle
                         }
-                        val timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory)
-                        val showClockMode by timerViewModel.showClock.collectAsStateWithLifecycle()
 
-                        val shouldShowClock = when (showClockMode) {
-                            "Both" -> true
-                            "Timer" -> !isAodScreen
-                            "AOD" -> isAodScreen
-                            else -> false
-                        }
-
-
-
-
-
-                        if (shouldShowClock) {
+                        if (showClock) {
                             Text(
                                 text = timerState.timeStr,
                                 style = TextStyle(
@@ -567,22 +549,27 @@ fun SharedTransitionScope.TimerScreen(
     showSystemUi = true,
     device = Devices.PIXEL_9_PRO
 )
+
+@Preview(showSystemUi = true, device = Devices.PIXEL_9_PRO)
 @Composable
 fun TimerScreenPreview() {
     val timerState = TimerState(
-        timeStr = "03:34", nextTimeStr = "5:00", timerMode = TimerMode.FOCUS, timerRunning = true
+        timeStr = "03:34",
+        nextTimeStr = "5:00",
+        timerMode = TimerMode.FOCUS,
+        timerRunning = true
     )
     TomatoTheme {
         Surface {
             SharedTransitionLayout {
                 TimerScreen(
-                    timerState,
+                    timerState = timerState,
                     isPlus = true,
-                    { 0.3f },
-                    {},
-                    isAodEnabled = false
+                    progress = { 0.3f },
+                    onAction = {},
                 )
             }
         }
     }
 }
+

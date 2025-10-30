@@ -34,9 +34,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
@@ -96,9 +98,13 @@ class SettingsViewModel(
     val dndEnabled =
         preferenceRepository.getBooleanPreferenceFlow("dnd_enabled").distinctUntilChanged()
 
+    val showClock =
+        preferenceRepository
+            .getStringPreferenceFlow("show_clock")
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "both")
+
     init {
         viewModelScope.launch {
-
             val theme = preferenceRepository.getStringPreference("theme")
                 ?: preferenceRepository.saveStringPreference("theme", "auto")
             val colorScheme = preferenceRepository.getStringPreference("color_scheme")
@@ -108,18 +114,7 @@ class SettingsViewModel(
             val aodEnabled = preferenceRepository.getBooleanPreference("aod_enabled")
                 ?: preferenceRepository.saveBooleanPreference("aod_enabled", false)
             val showClock = preferenceRepository.getStringPreference("show_clock")
-                ?: preferenceRepository.saveStringPreference("show_clock", "Both")
-
-
-            _preferencesState.update { currentState ->
-                currentState.copy(
-                    theme = theme,
-                    colorScheme = colorScheme,
-                    blackTheme = blackTheme,
-                    aodEnabled = aodEnabled
-                )
-            }
-
+                ?: preferenceRepository.saveStringPreference("show_clock", "both")
             _preferencesState.update { currentState ->
                 currentState.copy(
                     theme = theme,
@@ -129,14 +124,10 @@ class SettingsViewModel(
                     showClock = showClock
                 )
             }
-
-
             reloadSettings()
             _isSettingsLoaded.value = true
-
         }
     }
-
     private fun updateSessionLength() {
         viewModelScope.launch {
             timerRepository.sessionLength = preferenceRepository.saveIntPreference(
@@ -263,16 +254,9 @@ class SettingsViewModel(
                 currentState.copy(showClock = showClock)
             }
             preferenceRepository.saveStringPreference("show_clock", showClock)
-            timerRepository.showClock = showClock
-
 
         }
     }
-
-
-
-
-
 
     fun resetPaywalledSettings() {
         _preferencesState.update { currentState ->

@@ -156,7 +156,6 @@ class TimerViewModel(
                 val appTimerRepository = application.container.appTimerRepository
                 val timerState = application.container.timerState
                 val time = application.container.time
-
                 TimerViewModel(
                     application = application,
                     preferenceRepository = appPreferenceRepository,

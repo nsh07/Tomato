@@ -408,13 +408,10 @@ private fun TimerSettingsPreview() {
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
         sessionsSliderState = sessionsSliderState,
-
-
         onBack = {},
         onAodEnabledChange = {},
         onDndEnabledChange = {},
         setShowPaywall = {},
-
 
     )
 }

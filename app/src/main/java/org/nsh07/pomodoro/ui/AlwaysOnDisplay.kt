@@ -282,7 +282,7 @@ private fun AlwaysOnDisplayPreview() {
                 timerState = timerState,
                 progress = progress,
                 setTimerFrequency = {},
-                showClock = true // ✅ New boolean flag instead of showClockMode
+                showClock = true
             )
         }
     }

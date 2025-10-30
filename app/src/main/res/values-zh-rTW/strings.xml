@@ -32,7 +32,7 @@
     <string name="pause">暫停</string>
     <string name="paused">已暫停</string>
     <string name="play">開始</string>
-    <string name="pomodoro_info">一個「循環」是由多個番茄工作階段組成，包含專注時間、短休息與長休息。每個循環的最後一段休息都會是長休息。</string>
+    <string name="pomodoro_info">「循環」是一系列番茄工作階段的組合，包含專注時間、短休息與長休息。每個循環的最後一段休息都是長休息。</string>
     <string name="productivity_analysis">生產力分析</string>
     <string name="productivity_analysis_desc">分析一天中不同時段的專注時長</string>
     <string name="restart">重新開始</string>
@@ -64,7 +64,7 @@
     <string name="durations">時長</string>
     <string name="sound">聲音</string>
     <string name="dnd">請勿打擾</string>
-    <string name="dnd_desc">執行專注計時器時開啟請勿打擾模式</string>
+    <string name="dnd_desc">執行專注計時器時自動開啟請勿打擾模式</string>
     <string name="app_name_plus">Tomato+</string>
     <string name="get_plus">取得 Tomato+</string>
     <string name="dynamic_color">動態配色</string>

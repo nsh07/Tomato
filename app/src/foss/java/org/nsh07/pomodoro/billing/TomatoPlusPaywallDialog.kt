@@ -78,7 +78,7 @@ fun TomatoPlusPaywallDialog(
             )
             Spacer(Modifier.height(16.dp))
             Button(onClick = { uriHandler.openUri("https://coff.ee/nsh07") }) {
-                Text("Buy Me A Coffee")
+                Text(stringResource(R.string.bmc))
             }
         }
     }

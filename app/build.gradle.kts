@@ -47,6 +47,10 @@ android {
         versionName = "1.6.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        androidResources {
+            generateLocaleConfig = true
+        }
     }
 
     buildTypes {

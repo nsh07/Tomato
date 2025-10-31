@@ -143,8 +143,8 @@ This app was made possible by the following libraries:
 - [Roboto Flex](https://fonts.google.com/specimen/Roboto+Flex) by
   Google<br/><img src=".github/repo_photos/roboto-flex-banner.jpg" width="400">
 
-- [Open Runde](https://github.com/lauridskern/open-runde) by Laurids
-  Kern<br/><img src=".github/repo_photos/open-runde-banner.png" width="400">
+- [Inter](https://rsms.me/inter/) by
+  Rasmus Andersson<br/><img src=".github/repo_photos/inter-banner.png" width="400">
 
 ## Star History
 

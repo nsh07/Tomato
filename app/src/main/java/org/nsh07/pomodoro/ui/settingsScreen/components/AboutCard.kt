@@ -129,11 +129,11 @@ fun AboutCard(
                 ) {
                     Icon(
                         painterResource(R.drawable.bmc),
-                        contentDescription = "Buy me a coffee",
+                        contentDescription = null,
                         modifier = Modifier.height(24.dp)
                     )
 
-                    Text(text = "Buy me a coffee")
+                    Text(text = stringResource(R.string.bmc))
                 }
             }
 
@@ -147,11 +147,11 @@ fun AboutCard(
                 ) {
                     Icon(
                         painterResource(R.drawable.play_store),
-                        contentDescription = "Rate on Google Play",
+                        contentDescription = null,
                         modifier = Modifier.size(20.dp)
                     )
 
-                    Text(text = "Rate on Google Play")
+                    Text(text = stringResource(R.string.rate_on_google_play))
                 }
             }
         }

@@ -34,13 +34,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
+import org.nsh07.pomodoro.ui.theme.AppFonts.interClock
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -61,8 +60,7 @@ fun MinuteInputField(
             imeAction = imeAction
         ),
         textStyle = TextStyle(
-            fontFamily = openRundeClock,
-            fontWeight = FontWeight.Bold,
+            fontFamily = interClock,
             fontSize = 57.sp,
             letterSpacing = (-2).sp,
             color = colorScheme.onSurfaceVariant,

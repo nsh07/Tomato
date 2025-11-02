@@ -69,4 +69,8 @@
     <string name="dynamic_color_desc">采用壁纸主题色</string>
     <string name="tomato_foss">Tomato FOSS</string>
     <string name="tomato_foss_desc">所有功能在此版本中处于解锁状态。如果我的应用让你的生活有所不同，请考虑在 %1$s 上捐款支持我。</string>
+    <string name="language">语言</string>
+    <string name="choose_language">选择语言</string>
+    <string name="rate_on_google_play">在 Google Play 上评价</string>
+    <string name="selected">已选中</string>
 </resources>

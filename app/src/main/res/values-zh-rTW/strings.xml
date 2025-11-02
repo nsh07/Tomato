@@ -71,4 +71,8 @@
     <string name="dynamic_color_desc">根據桌布自動調整主題顏色</string>
     <string name="tomato_foss">Tomato FOSS</string>
     <string name="tomato_foss_desc">此版本已解鎖所有功能。若這個 App 對你有所幫助，歡迎至 %1$s 贊助支持開發者。</string>
+    <string name="language">語言</string>
+    <string name="choose_language">選擇語言</string>
+    <string name="rate_on_google_play">在 Google Play 上評分</string>
+    <string name="selected">已選擇</string>
 </resources>

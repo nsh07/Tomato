@@ -66,7 +66,7 @@
     <string name="dnd_desc">运行「专注」计时器时打开勿扰</string>
     <string name="get_plus">获取 Tomato+</string>
     <string name="dynamic_color">动态颜色</string>
-    <string name="dynamic_color_desc">采用壁纸主题色</string>
+    <string name="dynamic_color_desc">从你的壁纸中提取主题色</string>
     <string name="tomato_foss">Tomato FOSS</string>
     <string name="tomato_foss_desc">所有功能在此版本中处于解锁状态。如果我的应用让你的生活有所不同，请考虑在 %1$s 上捐款支持我。</string>
     <string name="language">语言</string>

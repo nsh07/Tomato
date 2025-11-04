@@ -57,11 +57,20 @@
     <string name="timer">Timer</string>
     <string name="timer_progress">Timer-Fortschritt</string>
     <string name="always_on_display">Always-On Display</string>
-    <string name="always_on_display_desc">Tippe irgendwo, während der Timer angezeigt wird, um in den AOD-Modus zu wechseln.</string>
+    <string name="always_on_display_desc">Tippe irgendwo, während der Timer angezeigt wird, um in den AOD-Modus zu wechseln</string>
     <string name="last_year">Letztes Jahr</string>
     <string name="appearance">Aussehen</string>
     <string name="durations">Dauer</string>
     <string name="sound">Sound</string>
     <string name="dnd">Bitte nicht stören</string>
     <string name="dnd_desc">‚Bitte nicht stören‘ aktivieren, wenn ein Fokus-Timer läuft</string>
+    <string name="get_plus">Hole dir Tomato+</string>
+    <string name="dynamic_color">Dynamische Farben</string>
+    <string name="dynamic_color_desc">Design an Hintergrundbild anpassen</string>
+    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss_desc">In dieser Version sind alle Funktionen freigeschaltet. Wenn dir die App gefällt, kannst du mich gerne mit einer Spende auf %1$s unterstützen.</string>
+    <string name="language">Sprache</string>
+    <string name="choose_language">Sprache wählen</string>
+    <string name="rate_on_google_play">Im Play Store bewerten</string>
+    <string name="selected">Ausgewählt</string>
 </resources>

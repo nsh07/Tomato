@@ -23,6 +23,7 @@ import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.nsh07.pomodoro.R
@@ -83,6 +84,7 @@ class DefaultAppContainer(context: Context) : AppContainer {
             .setSilent(true)
             .setOngoing(true)
             .setRequestPromotedOngoing(true)
+            .setVisibility(VISIBILITY_PUBLIC)
     }
 
     override val timerState: MutableStateFlow<TimerState> by lazy {

@@ -70,4 +70,8 @@
     <string name="app_name_plus">Tomato+</string>
     <string name="get_plus">Obtenir Tomato+</string>
     <string name="tomato_foss">Tomato FOSS</string>
+    <string name="language">Langue</string>
+    <string name="choose_language">Choisissez la langue</string>
+    <string name="rate_on_google_play">Noter sur Google Play</string>
+    <string name="selected">Selectionné</string>
 </resources>

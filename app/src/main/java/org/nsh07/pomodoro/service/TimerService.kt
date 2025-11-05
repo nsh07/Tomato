@@ -168,11 +168,11 @@ class TimerService : Service() {
                     if (startTime == 0L) startTime = SystemClock.elapsedRealtime()
 
                     time = when (timerState.value.timerMode) {
-                        TimerMode.FOCUS -> timerRepository.focusTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
+                        TimerMode.FOCUS -> timerRepository.focusTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration)
 
-                        TimerMode.SHORT_BREAK -> timerRepository.shortBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
+                        TimerMode.SHORT_BREAK -> timerRepository.shortBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration)
 
-                        else -> timerRepository.longBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration).toInt()
+                        else -> timerRepository.longBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration)
                     }
 
                     iterations =

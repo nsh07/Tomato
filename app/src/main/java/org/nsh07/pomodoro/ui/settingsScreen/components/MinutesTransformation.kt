@@ -33,10 +33,9 @@ object MinutesInputTransformation : InputTransformation {
 
 object MinutesOutputTransformation : OutputTransformation {
     override fun TextFieldBuffer.transformOutput() {
-        if (this.length == 0) {
-            insert(0, "00")
-        } else if (this.toString().toInt() < 10) {
-            insert(0, "0")
+        when (this.length) {
+            0 -> insert(0, "00")
+            1 -> insert(0, "0")
         }
     }
 }

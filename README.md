@@ -94,9 +94,8 @@ translating this project into languages you know.
 
 ## Download
 
-- **Google Play Store** (recommended): Tomato will soon be available (currently in closed testing)
-  on the Google Play Store.
-  [You can find it through this link](https://play.google.com/store/apps/details?id=org.nsh07.pomodoro).
+- **Google Play Store** (recommended): Tomato is available on the Google Play Store.
+  [You can download it through this link](https://play.google.com/store/apps/details?id=org.nsh07.pomodoro).
 - **F-Droid** (recommended): Tomato is available on the official F-Droid repository. Simply open
   your preferred F-Droid app and search for Tomato. Updates on F-Droid are generally a week late. To
   get faster updates, you can install it through
@@ -109,7 +108,7 @@ translating this project into languages you know.
 > To [verify](https://developer.android.com/studio/command-line/apksigner#usage-verify) the APK
 > downloaded from GitHub, use the following signing certificate fingerprints:
 > ```
-> SHA1: B1:4E:17:93:11:E8:DB:D5:35:EF:8D:E9:FB:8F:FF:08:F8:EC:65:08
+>   SHA1: B1:4E:17:93:11:E8:DB:D5:35:EF:8D:E9:FB:8F:FF:08:F8:EC:65:08
 > SHA256: 07:BE:F3:05:81:BA:EE:8F:45:EC:93:E4:7E:E6:8E:F2:08:74:E5:0E:F5:70:9C:78:B2:EE:67:AC:86:BE:4C:3D
 > ```
 > The SHA256 and MD5 hashes of the individual APK files are also available in the `checksum.txt`
@@ -143,8 +142,8 @@ This app was made possible by the following libraries:
 - [Roboto Flex](https://fonts.google.com/specimen/Roboto+Flex) by
   Google<br/><img src=".github/repo_photos/roboto-flex-banner.jpg" width="400">
 
-- [Open Runde](https://github.com/lauridskern/open-runde) by Laurids
-  Kern<br/><img src=".github/repo_photos/open-runde-banner.png" width="400">
+- [Inter](https://rsms.me/inter/) by
+  Rasmus Andersson<br/><img src=".github/repo_photos/inter-banner.png" width="400">
 
 ## Star History
 

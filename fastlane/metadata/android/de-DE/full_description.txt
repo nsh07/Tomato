@@ -1,6 +1,6 @@
 <i>Tomato</i> ist ein minimalistischer Pomodoro-Timer für Android, der auf Material 3 Expressive basiert.
 
-Tomato ist vollständig kostenlos und Open Source, für immer. Unter https://github.com/nsh07/Tomato finden Sie den Quellcode und können Fehler melden oder Funktionen vorschlagen 
+Tomato ist vollständig kostenlos und Open Source, für immer. Unter https://github.com/nsh07/Tomato finden Sie den Quellcode und können Fehler melden oder Funktionen vorschlagen
 
 <b>Funktionen:</b>
 -Einfache, minimalistische Benutzeroberfläche, die auf den neuesten Material 3 Expressive-Richtlinien basiert

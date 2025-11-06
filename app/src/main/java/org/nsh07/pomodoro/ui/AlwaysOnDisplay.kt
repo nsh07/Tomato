@@ -52,7 +52,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
@@ -65,7 +64,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import kotlinx.coroutines.delay
-import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
+import org.nsh07.pomodoro.ui.theme.AppFonts.interClock
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -249,10 +248,10 @@ fun SharedTransitionScope.AlwaysOnDisplay(
             Text(
                 text = timerState.timeStr,
                 style = TextStyle(
-                    fontFamily = openRundeClock,
-                    fontWeight = FontWeight.Bold,
+                    fontFamily = interClock,
                     fontSize = 56.sp,
-                    letterSpacing = (-2).sp
+                    letterSpacing = (-2).sp,
+                    fontFeatureSettings = "tnum"
                 ),
                 textAlign = TextAlign.Center,
                 color = onSurface,

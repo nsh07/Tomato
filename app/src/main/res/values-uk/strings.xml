@@ -70,4 +70,8 @@
     <string name="dynamic_color_desc">Адаптуйте кольори теми зі своїх шпалер</string>
     <string name="tomato_foss">Tomato FOSS</string>
     <string name="tomato_foss_desc">Усі функції розблоковано в цій версії. Якщо мій додаток допоміг Вам у житті, будь ласка, підтримайте мене, зробивши пожертву на %1$s.</string>
+    <string name="language">Мова</string>
+    <string name="choose_language">Вибрати мову</string>
+    <string name="rate_on_google_play">Оцінити на Google Play</string>
+    <string name="selected">Обрано</string>
 </resources>

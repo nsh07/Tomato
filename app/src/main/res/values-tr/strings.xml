@@ -64,4 +64,13 @@
     <string name="sound">Ses</string>
     <string name="dnd">Rahatsız Etmeyin</string>
     <string name="dnd_desc">Odaklanma sayacı çalışırken RE\'yi aç</string>
+    <string name="get_plus">Tomato+ edin</string>
+    <string name="dynamic_color">Dinamik renk</string>
+    <string name="dynamic_color_desc">Tema renklerini duvar kağıdınızdan alın</string>
+    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss_desc">Bu sürümde tüm özelliklerin kilidi açılmıştır. Uygulamam hayatınızda bir fark yarattıysa, lütfen %1$s üzerinden bağış yaparak beni desteklemeyi düşünün.</string>
+    <string name="language">Dil</string>
+    <string name="choose_language">Dil seç</string>
+    <string name="rate_on_google_play">Google Play\'de değerlendir</string>
+    <string name="selected">Seçilen</string>
 </resources>

@@ -18,8 +18,10 @@
 package org.nsh07.pomodoro.ui.settingsScreen
 
 import android.annotation.SuppressLint
+import android.app.LocaleManager
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -46,8 +48,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,6 +72,7 @@ import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.settingsScreen.components.AboutCard
 import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
+import org.nsh07.pomodoro.ui.settingsScreen.components.LocaleBottomSheet
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusPromo
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
@@ -76,6 +81,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.settingsScreens
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 
 
@@ -182,6 +188,22 @@ private fun SettingsScreen(
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+    val currentLocales =
+        if (Build.VERSION.SDK_INT >= 33) {
+            context
+                .getSystemService(LocaleManager::class.java)
+                .applicationLocales
+        } else null
+    val currentLocalesSize = currentLocales?.size() ?: 0
+
+    var showLocaleSheet by remember { mutableStateOf(false) }
+
+    if (showLocaleSheet && currentLocales != null)
+        LocaleBottomSheet(
+            currentLocales = currentLocales,
+            setShowSheet = { showLocaleSheet = it }
+        )
+
     NavDisplay(
         backStack = backStack,
         onBack = backStack::removeLastOrNull,
@@ -264,6 +286,30 @@ private fun SettingsScreen(
                                 index = index
                             ) { backStack.add(item.route) }
                         }
+
+                        item { Spacer(Modifier.height(12.dp)) }
+
+                        if (currentLocales != null)
+                            item {
+                                ClickableListItem(
+                                    leadingContent = {
+                                        Icon(
+                                            painterResource(R.drawable.language),
+                                            contentDescription = null
+                                        )
+                                    },
+                                    headlineContent = { Text(stringResource(R.string.language)) },
+                                    supportingContent = {
+                                        Text(
+                                            if (currentLocalesSize > 0) currentLocales.get(0).displayName
+                                            else stringResource(R.string.system_default)
+                                        )
+                                    },
+                                    colors = listItemColors,
+                                    items = 1,
+                                    index = 0
+                                ) { showLocaleSheet = true }
+                            }
 
                         item { Spacer(Modifier.height(12.dp)) }
                     }

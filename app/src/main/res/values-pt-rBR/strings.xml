@@ -18,7 +18,7 @@
     <string name="color_scheme">Esquema de cores</string>
     <string name="dynamic">Dinâmico</string>
     <string name="color">Cor</string>
-    <string name="system_default">Padrão do sistema</string>
+    <string name="system_default">Sistema</string>
     <string name="alarm">Alarme</string>
     <string name="light">Claro</string>
     <string name="dark">Escuro</string>
@@ -29,7 +29,7 @@
     <string name="black_theme">Tema escuro</string>
     <string name="black_theme_desc">Use um tema preto escuro puro</string>
     <string name="alarm_desc">Tocar o alarme quando um timer for concluído</string>
-    <string name="vibrate">Vibrar</string>
+    <string name="vibrate">Vibração</string>
     <string name="vibrate_desc">Vibrar quanto um timer for concluído</string>
     <string name="theme">Tema</string>
     <string name="settings">Configurações</string>
@@ -56,4 +56,21 @@
     <string name="up_next">Próximo</string>
     <string name="timer">Timer</string>
     <string name="timer_progress">Progresso do timer</string>
+    <string name="always_on_display">Always On Display</string>
+    <string name="always_on_display_desc">Toque em qualquer lugar da tela enquanto visualiza o cronômetro para alternar para o modo Always On Display</string>
+    <string name="last_year">Último ano</string>
+    <string name="appearance">Aparência</string>
+    <string name="durations">Durações</string>
+    <string name="sound">Som</string>
+    <string name="dnd">Não perturbar</string>
+    <string name="dnd_desc">Ative o modo Não Perturbe ao usar o cronômetro de foco</string>
+    <string name="get_plus">Obtenha o Tomato+</string>
+    <string name="dynamic_color">Cor dinâmica</string>
+    <string name="dynamic_color_desc">Adapte as cores do tema à partir do seu papel de parede</string>
+    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss_desc">Todos os recursos estão desbloqueados nesta versão. Se meu app fez a diferença na sua vida, considere me apoiar fazendo uma doação em %1$s.</string>
+    <string name="language">Idioma</string>
+    <string name="choose_language">Escolher idioma</string>
+    <string name="rate_on_google_play">Avalie no Google Play</string>
+    <string name="selected">Selecionado</string>
 </resources>

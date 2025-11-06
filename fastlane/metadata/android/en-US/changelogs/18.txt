@@ -1,0 +1,11 @@
+New features:
+- New redesigned alarm screen
+- New font used across the UI
+- Language selection for Android 13+
+
+Fixes:
+- Fixed a crash that occurred when editing the time in settings
+- Clock now stays in place even when the time changes
+
+Enhancements:
+- Updated translations

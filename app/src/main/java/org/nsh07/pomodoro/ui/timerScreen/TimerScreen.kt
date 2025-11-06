@@ -87,7 +87,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -95,7 +94,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.ui.theme.AppFonts.openRundeClock
+import org.nsh07.pomodoro.ui.theme.AppFonts.interClock
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
@@ -283,10 +282,10 @@ fun SharedTransitionScope.TimerScreen(
                         Text(
                             text = timerState.timeStr,
                             style = TextStyle(
-                                fontFamily = openRundeClock,
-                                fontWeight = FontWeight.Bold,
+                                fontFamily = interClock,
                                 fontSize = 72.sp,
-                                letterSpacing = (-2).sp
+                                letterSpacing = (-2).sp,
+                                fontFeatureSettings = "tnum"
                             ),
                             textAlign = TextAlign.Center,
                             maxLines = 1,
@@ -308,7 +307,7 @@ fun SharedTransitionScope.TimerScreen(
                                     timerState.currentFocusCount,
                                     timerState.totalFocusCount
                                 ),
-                                fontFamily = openRundeClock,
+                                fontFamily = interClock,
                                 style = typography.titleLarge,
                                 color = colorScheme.outline
                             )
@@ -498,8 +497,7 @@ fun SharedTransitionScope.TimerScreen(
                     Text(
                         it,
                         style = TextStyle(
-                            fontFamily = openRundeClock,
-                            fontWeight = FontWeight.Bold,
+                            fontFamily = interClock,
                             fontSize = 22.sp,
                             lineHeight = 28.sp,
                             color = if (timerState.nextTimerMode == TimerMode.FOCUS) colorScheme.primary else colorScheme.tertiary,

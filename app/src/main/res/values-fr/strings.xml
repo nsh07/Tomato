@@ -66,8 +66,12 @@
     <string name="dnd_desc">Activer le mode ne pas déranger pendant un minuteur de concentration</string>
     <string name="dynamic_color">Couleur dynamique</string>
     <string name="dynamic_color_desc">Adapter les couleurs à celles de votre fond d\'écran</string>
-    <string name="tomato_foss_desc">Toutes les fonctionnalités sont déverrouillées dans cette version. Si mon application a fait une différence dans votre vie, veuillez envisager de me soutenir en faisant un don de %1$s.</string>
+    <string name="tomato_foss_desc">Toutes les fonctionnalités sont déverrouillées dans cette version. Si mon application a fait une différence dans votre vie, veuillez envisager de me soutenir en faisant un don sur %1$s.</string>
     <string name="app_name_plus">Tomato+</string>
     <string name="get_plus">Obtenir Tomato+</string>
     <string name="tomato_foss">Tomato FOSS</string>
+    <string name="language">Langue</string>
+    <string name="choose_language">Choisissez la langue</string>
+    <string name="rate_on_google_play">Noter sur Google Play</string>
+    <string name="selected">Selectionné</string>
 </resources>

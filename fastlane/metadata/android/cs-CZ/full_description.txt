@@ -1,0 +1,9 @@
+<i>Tomato</i> je minimalistický Pomodoro časovač pro Android vycházející ze stylu Material 3 Expressive.
+
+<b>Vlastnosti:</b>
+- Jednoduché, minimalistické UI založené na posledních pokynech Material 3 Expressive
+- Podrobné statistiky časů práce/učení v jednoduše pochopitelném stylu
+- Statistiky za poslední týden či měsíc zobrazené v jednoduše pochopitelném grafu
+- Další statistiky za poslední týden či měsíc zobrazující v jakém čase dne jsi nejproduktivnější.
+- Upravitelné parametry časomíry
+- Podpora Android 16 Live Updates

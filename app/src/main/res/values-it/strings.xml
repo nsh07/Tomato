@@ -56,4 +56,13 @@
     <string name="up_next">Prossimo</string>
     <string name="timer">Timer</string>
     <string name="timer_progress">Progresso timer</string>
+    <string name="last_year">L\'anno scorso</string>
+    <string name="always_on_display_desc">Tocca un punto qualsiasi durante la visualizzazione del timer per passare alla modalità AOD</string>
+    <string name="appearance">Aspetto</string>
+    <string name="sound">Suono</string>
+    <string name="dnd">Non disturbare</string>
+    <string name="get_plus">Ottieni Tomato+</string>
+    <string name="dynamic_color_desc">Adatta i colori del tema dal tuo sfondo</string>
+    <string name="language">Lingua</string>
+    <string name="choose_language">Scegli la lingua</string>
 </resources>

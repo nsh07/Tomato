@@ -62,4 +62,15 @@
     <string name="appearance">المظهر</string>
     <string name="durations">الفترات</string>
     <string name="sound">الصوت</string>
+    <string name="dnd">عدم الازعاج</string>
+    <string name="dnd_desc">تشغيل وضع عدم الازعاج عند تشغيل مؤقت التركيز</string>
+    <string name="get_plus">احصل علي Tomato+</string>
+    <string name="dynamic_color">اللون الديناميكي</string>
+    <string name="dynamic_color_desc">تعديل ألوان السمة من الخليفة الخاصة بك</string>
+    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss_desc">كل الميزات مفتوحة لي هذه النسخة، اذا كنت تريد صنع اختلاف في حياتك، فكر في التبرع لي علي %1$s.</string>
+    <string name="language">اللغة</string>
+    <string name="choose_language">اختيار لغة</string>
+    <string name="rate_on_google_play">قيم التطبيق علي جوجل بلاي</string>
+    <string name="selected">مُختار</string>
 </resources>

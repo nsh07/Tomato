@@ -103,6 +103,19 @@ class SettingsViewModel(
         }
     }
 
+    fun onAction(action: SettingsAction) {
+        when (action) {
+            is SettingsAction.SaveAlarmSound -> saveAlarmSound(action.uri)
+            is SettingsAction.SaveAlarmEnabled -> saveAlarmEnabled(action.enabled)
+            is SettingsAction.SaveVibrateEnabled -> saveVibrateEnabled(action.enabled)
+            is SettingsAction.SaveDndEnabled -> saveDndEnabled(action.enabled)
+            is SettingsAction.SaveColorScheme -> saveColorScheme(action.color)
+            is SettingsAction.SaveTheme -> saveTheme(action.theme)
+            is SettingsAction.SaveBlackTheme -> saveBlackTheme(action.enabled)
+            is SettingsAction.SaveAodEnabled -> saveAodEnabled(action.enabled)
+        }
+    }
+
     private fun updateSessionLength() {
         viewModelScope.launch {
             timerRepository.sessionLength = preferenceRepository.saveIntPreference(
@@ -160,35 +173,35 @@ class SettingsViewModel(
         longBreakFlowCollectionJob?.cancel()
     }
 
-    fun saveAlarmEnabled(enabled: Boolean) {
+    private fun saveAlarmEnabled(enabled: Boolean) {
         viewModelScope.launch {
             timerRepository.alarmEnabled = enabled
             preferenceRepository.saveBooleanPreference("alarm_enabled", enabled)
         }
     }
 
-    fun saveVibrateEnabled(enabled: Boolean) {
+    private fun saveVibrateEnabled(enabled: Boolean) {
         viewModelScope.launch {
             timerRepository.vibrateEnabled = enabled
             preferenceRepository.saveBooleanPreference("vibrate_enabled", enabled)
         }
     }
 
-    fun saveDndEnabled(enabled: Boolean) {
+    private fun saveDndEnabled(enabled: Boolean) {
         viewModelScope.launch {
             timerRepository.dndEnabled = enabled
             preferenceRepository.saveBooleanPreference("dnd_enabled", enabled)
         }
     }
 
-    fun saveAlarmSound(uri: Uri?) {
+    private fun saveAlarmSound(uri: Uri?) {
         viewModelScope.launch {
             timerRepository.alarmSoundUri = uri
             preferenceRepository.saveStringPreference("alarm_sound", uri.toString())
         }
     }
 
-    fun saveColorScheme(colorScheme: Color) {
+    private fun saveColorScheme(colorScheme: Color) {
         viewModelScope.launch {
             _preferencesState.update { currentState ->
                 currentState.copy(colorScheme = colorScheme.toString())
@@ -197,7 +210,7 @@ class SettingsViewModel(
         }
     }
 
-    fun saveTheme(theme: String) {
+    private fun saveTheme(theme: String) {
         viewModelScope.launch {
             _preferencesState.update { currentState ->
                 currentState.copy(theme = theme)
@@ -206,7 +219,7 @@ class SettingsViewModel(
         }
     }
 
-    fun saveBlackTheme(blackTheme: Boolean) {
+    private fun saveBlackTheme(blackTheme: Boolean) {
         viewModelScope.launch {
             _preferencesState.update { currentState ->
                 currentState.copy(blackTheme = blackTheme)
@@ -215,7 +228,7 @@ class SettingsViewModel(
         }
     }
 
-    fun saveAodEnabled(aodEnabled: Boolean) {
+    private fun saveAodEnabled(aodEnabled: Boolean) {
         viewModelScope.launch {
             _preferencesState.update { currentState ->
                 currentState.copy(aodEnabled = aodEnabled)

@@ -39,7 +39,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -51,6 +50,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.components.ColorSchemePickerListItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
 import org.nsh07.pomodoro.ui.settingsScreen.components.ThemePickerListItem
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
@@ -64,9 +64,7 @@ import org.nsh07.pomodoro.utils.toColor
 fun AppearanceSettings(
     preferencesState: PreferencesState,
     isPlus: Boolean,
-    onBlackThemeChange: (Boolean) -> Unit,
-    onThemeChange: (String) -> Unit,
-    onColorSchemeChange: (Color) -> Unit,
+    onAction: (SettingsAction) -> Unit,
     setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
@@ -106,7 +104,7 @@ fun AppearanceSettings(
             item {
                 ThemePickerListItem(
                     theme = preferencesState.theme,
-                    onThemeChange = onThemeChange,
+                    onThemeChange = { onAction(SettingsAction.SaveTheme(it)) },
                     items = if (isPlus) 3 else 1,
                     index = 0
                 )
@@ -122,7 +120,7 @@ fun AppearanceSettings(
                     items = 3,
                     index = if (isPlus) 1 else 0,
                     isPlus = isPlus,
-                    onColorChange = onColorSchemeChange,
+                    onColorChange = { onAction(SettingsAction.SaveColorScheme(it)) },
                 )
             }
             item {
@@ -131,7 +129,7 @@ fun AppearanceSettings(
                     icon = R.drawable.contrast,
                     label = R.string.black_theme,
                     description = R.string.black_theme_desc,
-                    onClick = onBlackThemeChange
+                    onClick = { onAction(SettingsAction.SaveBlackTheme(it)) }
                 )
                 ListItem(
                     leadingContent = {
@@ -180,9 +178,7 @@ fun AppearanceSettingsPreview() {
         AppearanceSettings(
             preferencesState = preferencesState,
             isPlus = false,
-            onBlackThemeChange = {},
-            onThemeChange = {},
-            onColorSchemeChange = {},
+            onAction = {},
             setShowPaywall = {},
             onBack = {}
         )

@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -76,6 +77,7 @@ import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputField
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
@@ -96,11 +98,10 @@ fun TimerSettings(
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
     sessionsSliderState: SliderState,
-    onAodEnabledChange: (Boolean) -> Unit,
-    onDndEnabledChange: (Boolean) -> Unit,
+    setShowPaywall: (Boolean) -> Unit,
+    onAction: (SettingsAction) -> Unit,
     onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-    setShowPaywall: (Boolean) -> Unit
+    modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
@@ -110,7 +111,7 @@ fun TimerSettings(
 
     LaunchedEffect(Unit) {
         if (!notificationManagerService.isNotificationPolicyAccessGranted())
-            onDndEnabledChange(false)
+            onAction(SettingsAction.SaveDndEnabled(false))
     }
 
     val switchItems = listOf(
@@ -128,7 +129,7 @@ fun TimerSettings(
                 } else if (!it && notificationManagerService.isNotificationPolicyAccessGranted()) {
                     notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
                 }
-                onDndEnabledChange(it)
+                onAction(SettingsAction.SaveDndEnabled(it))
             }
         ),
         SettingsSwitchItem(
@@ -136,7 +137,7 @@ fun TimerSettings(
             icon = R.drawable.aod,
             label = R.string.always_on_display,
             description = R.string.always_on_display_desc,
-            onClick = onAodEnabledChange
+            onClick = { onAction(SettingsAction.SaveAodEnabled(it)) }
         )
     )
 
@@ -313,7 +314,7 @@ fun TimerSettings(
                 item {
                     PlusDivider(setShowPaywall)
                 }
-                itemsIndexed(switchItems.drop(1)) { index, item ->
+                items(switchItems.drop(1)) { item ->
                     ListItem(
                         leadingContent = {
                             Icon(
@@ -408,8 +409,7 @@ private fun TimerSettingsPreview() {
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
         sessionsSliderState = sessionsSliderState,
-        onAodEnabledChange = {},
-        onDndEnabledChange = {},
+        onAction = {},
         setShowPaywall = {},
         onBack = {}
     )

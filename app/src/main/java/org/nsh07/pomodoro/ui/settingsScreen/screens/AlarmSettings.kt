@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.media.RingtoneManager
@@ -65,6 +66,7 @@ import kotlinx.coroutines.withContext
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
@@ -80,9 +82,7 @@ fun AlarmSettings(
     alarmEnabled: Boolean,
     vibrateEnabled: Boolean,
     alarmSound: String,
-    onAlarmEnabledChange: (Boolean) -> Unit,
-    onVibrateEnabledChange: (Boolean) -> Unit,
-    onAlarmSoundChanged: (Uri?) -> Unit,
+    onAction: (SettingsAction) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -112,10 +112,11 @@ fun AlarmSettings(
                     @Suppress("DEPRECATION")
                     result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
                 }
-            onAlarmSoundChanged(uri)
+            onAction(SettingsAction.SaveAlarmSound(uri))
         }
     }
 
+    @SuppressLint("LocalContextGetResourceValueCall")
     val ringtonePickerIntent = remember(alarmSound) {
         Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
             putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
@@ -136,14 +137,14 @@ fun AlarmSettings(
                 icon = R.drawable.alarm_on,
                 label = R.string.sound,
                 description = R.string.alarm_desc,
-                onClick = onAlarmEnabledChange
+                onClick = { onAction(SettingsAction.SaveAlarmEnabled(it)) }
             ),
             SettingsSwitchItem(
                 checked = vibrateEnabled,
                 icon = R.drawable.mobile_vibrate,
                 label = R.string.vibrate,
                 description = R.string.vibrate_desc,
-                onClick = onVibrateEnabledChange
+                onClick = { onAction(SettingsAction.SaveVibrateEnabled(it)) }
             )
         )
     }
@@ -247,8 +248,6 @@ fun AlarmSettingsPreview() {
         alarmEnabled = true,
         vibrateEnabled = false,
         alarmSound = "",
-        onAlarmEnabledChange = {},
-        onVibrateEnabledChange = {},
-        onAlarmSoundChanged = {},
+        onAction = {},
         onBack = {})
 }

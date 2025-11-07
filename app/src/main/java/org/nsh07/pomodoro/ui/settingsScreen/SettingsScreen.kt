@@ -101,15 +101,9 @@ fun SettingsScreenRoot(
         onDispose { viewModel.cancelTextFieldFlowCollection() }
     }
 
-    val focusTimeInputFieldState = rememberSaveable(saver = TextFieldState.Saver) {
-        viewModel.focusTimeTextFieldState
-    }
-    val shortBreakTimeInputFieldState = rememberSaveable(saver = TextFieldState.Saver) {
-        viewModel.shortBreakTimeTextFieldState
-    }
-    val longBreakTimeInputFieldState = rememberSaveable(saver = TextFieldState.Saver) {
-        viewModel.longBreakTimeTextFieldState
-    }
+    val focusTimeInputFieldState = viewModel.focusTimeTextFieldState
+    val shortBreakTimeInputFieldState = viewModel.shortBreakTimeTextFieldState
+    val longBreakTimeInputFieldState = viewModel.longBreakTimeTextFieldState
 
     val isPlus by viewModel.isPlus.collectAsStateWithLifecycle()
     val alarmEnabled by viewModel.alarmEnabled.collectAsStateWithLifecycle(true)

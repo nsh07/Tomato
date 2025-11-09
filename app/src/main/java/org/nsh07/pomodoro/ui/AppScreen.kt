@@ -45,7 +45,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -79,9 +78,7 @@ fun AppScreen(
     val context = LocalContext.current
 
     val uiState by timerViewModel.timerState.collectAsStateWithLifecycle()
-    val remainingTime by timerViewModel.time.collectAsStateWithLifecycle()
-
-    val progress by rememberUpdatedState((uiState.totalTime.toFloat() - remainingTime) / uiState.totalTime)
+    val progress by timerViewModel.progress.collectAsStateWithLifecycle()
 
     val layoutDirection = LocalLayoutDirection.current
     val motionScheme = motionScheme

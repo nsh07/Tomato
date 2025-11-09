@@ -30,8 +30,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
@@ -55,6 +58,11 @@ class TimerViewModel(
     val timerState: StateFlow<TimerState> = _timerState.asStateFlow()
 
     val time: StateFlow<Long> = _time.asStateFlow()
+
+    val progress = _time.combine(_timerState) { remainingTime, uiState ->
+        (uiState.totalTime.toFloat() - remainingTime) / uiState.totalTime
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0f)
+
     private var cycles = 0
 
     private var startTime = 0L
@@ -107,9 +115,6 @@ class TimerViewModel(
                                     ?: Settings.System.DEFAULT_RINGTONE_URI).toString()
                             )
                         ).toUri()
-
-                preferenceRepository.getBooleanPreference("aod_enabled")
-                    ?: preferenceRepository.saveBooleanPreference("aod_enabled", false)
 
                 _time.update { timerRepository.focusTime }
                 cycles = 0

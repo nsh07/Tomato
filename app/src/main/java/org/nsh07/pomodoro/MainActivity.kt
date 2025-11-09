@@ -50,34 +50,22 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val preferencesState by settingsViewModel.preferencesState.collectAsStateWithLifecycle()
+            val settingsState by settingsViewModel.settingsState.collectAsStateWithLifecycle()
 
-            val darkTheme = when (preferencesState.theme) {
+            val darkTheme = when (settingsState.theme) {
                 "dark" -> true
                 "light" -> false
                 else -> isSystemInDarkTheme()
             }
 
-            val seed = preferencesState.colorScheme.toColor()
+            val seed = settingsState.colorScheme.toColor()
 
             val isPlus by settingsViewModel.isPlus.collectAsStateWithLifecycle()
-            val isPurchaseStateLoaded by settingsViewModel.isPurchaseStateLoaded.collectAsStateWithLifecycle()
-            val isSettingsLoaded by settingsViewModel.isSettingsLoaded.collectAsStateWithLifecycle()
-
-            LaunchedEffect(isPurchaseStateLoaded, isPlus, isSettingsLoaded) {
-                if (isPurchaseStateLoaded && isSettingsLoaded) {
-                    if (!isPlus) {
-                        settingsViewModel.resetPaywalledSettings()
-                    } else {
-                        settingsViewModel.reloadSettings()
-                    }
-                }
-            }
 
             TomatoTheme(
                 darkTheme = darkTheme,
                 seedColor = seed,
-                blackTheme = preferencesState.blackTheme
+                blackTheme = settingsState.blackTheme
             ) {
                 val colorScheme = colorScheme
                 LaunchedEffect(colorScheme) {
@@ -86,7 +74,7 @@ class MainActivity : ComponentActivity() {
 
                 AppScreen(
                     isPlus = isPlus,
-                    isAODEnabled = preferencesState.aodEnabled,
+                    isAODEnabled = settingsState.aodEnabled,
                     setTimerFrequency = {
                         appContainer.appTimerRepository.timerFrequency = it
                     }
@@ -105,6 +93,6 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         // Increase the timer loop frequency again when visible to make the progress smoother
-        appContainer.appTimerRepository.timerFrequency = 10f
+        appContainer.appTimerRepository.timerFrequency = 60f
     }
 }

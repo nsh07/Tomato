@@ -61,6 +61,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
+        debug {
+            applicationIdSuffix = ".debug"
+        }
     }
 
     flavorDimensions += "version"

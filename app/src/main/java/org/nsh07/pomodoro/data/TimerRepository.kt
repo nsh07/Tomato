@@ -54,7 +54,7 @@ class AppTimerRepository : TimerRepository {
     override var shortBreakTime = 5 * 60 * 1000L
     override var longBreakTime = 15 * 60 * 1000L
     override var sessionLength = 4
-    override var timerFrequency: Float = 10f
+    override var timerFrequency: Float = 60f
     override var alarmEnabled = true
     override var vibrateEnabled = true
     override var dndEnabled: Boolean = false

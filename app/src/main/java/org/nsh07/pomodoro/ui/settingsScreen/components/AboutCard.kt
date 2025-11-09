@@ -24,10 +24,8 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -119,41 +117,8 @@ fun AboutCard(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Button(
-                colors = buttonColors,
-                onClick = { uriHandler.openUri("https://coff.ee/nsh07") }
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painterResource(R.drawable.bmc),
-                        contentDescription = null,
-                        modifier = Modifier.height(24.dp)
-                    )
-
-                    Text(text = stringResource(R.string.bmc))
-                }
-            }
-
-            Button(
-                colors = buttonColors,
-                onClick = { uriHandler.openUri("https://play.google.com/store/apps/details?id=org.nsh07.pomodoro") }
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painterResource(R.drawable.play_store),
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-
-                    Text(text = stringResource(R.string.rate_on_google_play))
-                }
-            }
+            TopButton(buttonColors)
+            BottomButton(buttonColors)
         }
     }
 }

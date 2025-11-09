@@ -65,4 +65,12 @@
     <string name="dynamic_color_desc">Adatta i colori del tema dal tuo sfondo</string>
     <string name="language">Lingua</string>
     <string name="choose_language">Scegli la lingua</string>
+    <string name="durations">Durate</string>
+    <string name="dnd_desc">Attiva la modalità non disturbare quando avvii un timer di concentrazione.</string>
+    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="rate_on_google_play">Valuta su Google Play</string>
+    <string name="selected">Selezionato</string>
+    <string name="dynamic_color">Colore dinamico</string>
+    <string name="tomato_foss_desc">Tutte le funzionalità sono sbloccate in questa versione. Se la mia app ha fatto la differenza nella tua vita, considera di supportarmi con una donazione su %1$s.</string>
+    <string name="always_on_display">Schermo sempre attivo</string>
 </resources>

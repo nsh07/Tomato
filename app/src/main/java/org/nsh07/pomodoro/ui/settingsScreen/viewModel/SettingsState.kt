@@ -15,18 +15,19 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.billing
+package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Color
 
-/**
- * Google Play implementation of BillingManager
- */
-class FossBillingManager : BillingManager {
-    override val isPlus = MutableStateFlow(true).asStateFlow()
-}
-
-object BillingManagerProvider {
-    val manager: BillingManager = FossBillingManager()
-}
+@Immutable
+data class SettingsState(
+    val theme: String = "auto",
+    val alarmSound: String = "",
+    val colorScheme: String = Color.White.toString(),
+    val blackTheme: Boolean = false,
+    val aodEnabled: Boolean = false,
+    val alarmEnabled: Boolean = true,
+    val vibrateEnabled: Boolean = true,
+    val dndEnabled: Boolean = false
+)

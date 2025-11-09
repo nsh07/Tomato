@@ -36,10 +36,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconToggleButton
@@ -48,6 +50,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Slider
@@ -56,8 +59,9 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -76,6 +80,8 @@ import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputField
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
@@ -90,17 +96,16 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 @Composable
 fun TimerSettings(
     isPlus: Boolean,
-    aodEnabled: Boolean,
-    dndEnabled: Boolean,
+    serviceRunning: Boolean,
+    settingsState: SettingsState,
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
     sessionsSliderState: SliderState,
-    onAodEnabledChange: (Boolean) -> Unit,
-    onDndEnabledChange: (Boolean) -> Unit,
+    onAction: (SettingsAction) -> Unit,
+    setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-    setShowPaywall: (Boolean) -> Unit
+    modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
@@ -108,14 +113,10 @@ fun TimerSettings(
     val notificationManagerService =
         remember { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
-    LaunchedEffect(Unit) {
-        if (!notificationManagerService.isNotificationPolicyAccessGranted())
-            onDndEnabledChange(false)
-    }
-
     val switchItems = listOf(
         SettingsSwitchItem(
-            checked = dndEnabled,
+            checked = settingsState.dndEnabled,
+            enabled = !serviceRunning,
             icon = R.drawable.dnd,
             label = R.string.dnd,
             description = R.string.dnd_desc,
@@ -128,15 +129,15 @@ fun TimerSettings(
                 } else if (!it && notificationManagerService.isNotificationPolicyAccessGranted()) {
                     notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
                 }
-                onDndEnabledChange(it)
+                onAction(SettingsAction.SaveDndEnabled(it))
             }
         ),
         SettingsSwitchItem(
-            checked = aodEnabled,
+            checked = settingsState.aodEnabled,
             icon = R.drawable.aod,
             label = R.string.always_on_display,
             description = R.string.always_on_display_desc,
-            onClick = onAodEnabledChange
+            onClick = { onAction(SettingsAction.SaveAodEnabled(it)) }
         )
     )
 
@@ -168,6 +169,20 @@ fun TimerSettings(
                 .padding(horizontal = 16.dp)
         ) {
             item {
+                CompositionLocalProvider(LocalContentColor provides colorScheme.error) {
+                    AnimatedVisibility(serviceRunning) {
+                        Column {
+                            Spacer(Modifier.height(8.dp))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(painterResource(R.drawable.info), null)
+                                Text(stringResource(R.string.timer_settings_reset_info))
+                            }
+                        }
+                    }
+                }
                 Spacer(Modifier.height(14.dp))
             }
             item {
@@ -187,6 +202,7 @@ fun TimerSettings(
                         )
                         MinuteInputField(
                             state = focusTimeInputFieldState,
+                            enabled = !serviceRunning,
                             shape = RoundedCornerShape(
                                 topStart = topListItemShape.topStart,
                                 bottomStart = topListItemShape.topStart,
@@ -207,6 +223,7 @@ fun TimerSettings(
                         )
                         MinuteInputField(
                             state = shortBreakTimeInputFieldState,
+                            enabled = !serviceRunning,
                             shape = RoundedCornerShape(middleListItemShape.topStart),
                             imeAction = ImeAction.Next
                         )
@@ -222,6 +239,7 @@ fun TimerSettings(
                         )
                         MinuteInputField(
                             state = longBreakTimeInputFieldState,
+                            enabled = !serviceRunning,
                             shape = RoundedCornerShape(
                                 topStart = bottomListItemShape.topStart,
                                 bottomStart = bottomListItemShape.topStart,
@@ -254,6 +272,7 @@ fun TimerSettings(
                             )
                             Slider(
                                 state = sessionsSliderState,
+                                enabled = !serviceRunning,
                                 modifier = Modifier.padding(vertical = 4.dp)
                             )
                         }
@@ -278,6 +297,7 @@ fun TimerSettings(
                     trailingContent = {
                         Switch(
                             checked = item.checked,
+                            enabled = item.enabled,
                             onCheckedChange = { item.onClick(it) },
                             thumbContent = {
                                 if (item.checked) {
@@ -313,7 +333,7 @@ fun TimerSettings(
                 item {
                     PlusDivider(setShowPaywall)
                 }
-                itemsIndexed(switchItems.drop(1)) { index, item ->
+                items(switchItems.drop(1)) { item ->
                     ListItem(
                         leadingContent = {
                             Icon(
@@ -392,24 +412,23 @@ fun TimerSettings(
 @Preview
 @Composable
 private fun TimerSettingsPreview() {
-    val focusTimeInputFieldState = TextFieldState("25")
-    val shortBreakTimeInputFieldState = TextFieldState("5")
-    val longBreakTimeInputFieldState = TextFieldState("15")
-    val sessionsSliderState = SliderState(
+    val focusTimeInputFieldState = rememberTextFieldState("25")
+    val shortBreakTimeInputFieldState = rememberTextFieldState("5")
+    val longBreakTimeInputFieldState = rememberTextFieldState("15")
+    val sessionsSliderState = rememberSliderState(
         value = 4f,
         valueRange = 1f..8f,
         steps = 6
     )
     TimerSettings(
         isPlus = false,
-        aodEnabled = true,
-        dndEnabled = false,
+        serviceRunning = true,
+        settingsState = remember { SettingsState() },
         focusTimeInputFieldState = focusTimeInputFieldState,
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
         sessionsSliderState = sessionsSliderState,
-        onAodEnabledChange = {},
-        onDndEnabledChange = {},
+        onAction = {},
         setShowPaywall = {},
         onBack = {}
     )

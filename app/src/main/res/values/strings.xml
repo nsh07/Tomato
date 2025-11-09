@@ -92,4 +92,6 @@
     <string name="rate_on_google_play">Rate on Google Play</string>
     <string name="bmc">BuyMeACoffee</string>
     <string name="selected">Selected</string>
+    <string name="help_with_translation">Help with translation</string>
+    <string name="timer_settings_reset_info">Reset the timer to change settings</string>
 </resources>

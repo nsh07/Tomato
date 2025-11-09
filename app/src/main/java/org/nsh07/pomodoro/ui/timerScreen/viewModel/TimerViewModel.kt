@@ -17,10 +17,9 @@
 
 package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
-import android.app.Application
 import android.provider.Settings
 import androidx.core.net.toUri
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
@@ -30,8 +29,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
@@ -39,22 +41,28 @@ import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.TimerRepository
+import org.nsh07.pomodoro.service.ServiceHelper
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 @OptIn(FlowPreview::class)
 class TimerViewModel(
-    application: Application,
     private val preferenceRepository: PreferenceRepository,
+    private val serviceHelper: ServiceHelper,
     private val statRepository: StatRepository,
     private val timerRepository: TimerRepository,
     private val _timerState: MutableStateFlow<TimerState>,
     private val _time: MutableStateFlow<Long>
-) : AndroidViewModel(application) {
+) : ViewModel() {
     val timerState: StateFlow<TimerState> = _timerState.asStateFlow()
 
     val time: StateFlow<Long> = _time.asStateFlow()
+
+    val progress = _time.combine(_timerState) { remainingTime, uiState ->
+        (uiState.totalTime.toFloat() - remainingTime) / uiState.totalTime
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0f)
+
     private var cycles = 0
 
     private var startTime = 0L
@@ -62,7 +70,7 @@ class TimerViewModel(
     private var pauseDuration = 0L
 
     init {
-        if (!timerRepository.serviceRunning)
+        if (!timerRepository.serviceRunning.value)
             viewModelScope.launch(Dispatchers.IO) {
                 timerRepository.focusTime =
                     preferenceRepository.getIntPreference("focus_time")?.toLong()
@@ -108,9 +116,6 @@ class TimerViewModel(
                             )
                         ).toUri()
 
-                preferenceRepository.getBooleanPreference("aod_enabled")
-                    ?: preferenceRepository.saveBooleanPreference("aod_enabled", false)
-
                 _time.update { timerRepository.focusTime }
                 cycles = 0
                 startTime = 0L
@@ -150,6 +155,10 @@ class TimerViewModel(
             }
     }
 
+    fun onAction(action: TimerAction) {
+        serviceHelper.startService(action)
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -157,12 +166,13 @@ class TimerViewModel(
                 val appPreferenceRepository = application.container.appPreferenceRepository
                 val appStatRepository = application.container.appStatRepository
                 val appTimerRepository = application.container.appTimerRepository
+                val serviceHelper = application.container.serviceHelper
                 val timerState = application.container.timerState
                 val time = application.container.time
 
                 TimerViewModel(
-                    application = application,
                     preferenceRepository = appPreferenceRepository,
+                    serviceHelper = serviceHelper,
                     statRepository = appStatRepository,
                     timerRepository = appTimerRepository,
                     _timerState = timerState,

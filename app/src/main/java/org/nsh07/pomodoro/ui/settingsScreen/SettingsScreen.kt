@@ -19,8 +19,6 @@ package org.nsh07.pomodoro.ui.settingsScreen
 
 import android.annotation.SuppressLint
 import android.app.LocaleManager
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -55,7 +53,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -68,7 +65,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.settingsScreen.components.AboutCard
 import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
@@ -77,7 +73,8 @@ import org.nsh07.pomodoro.ui.settingsScreen.components.PlusPromo
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.TimerSettings
-import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.settingsScreens
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
@@ -92,8 +89,6 @@ fun SettingsScreenRoot(
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
 ) {
-    val context = LocalContext.current
-
     val backStack = viewModel.backStack
 
     DisposableEffect(Unit) {
@@ -106,12 +101,9 @@ fun SettingsScreenRoot(
     val longBreakTimeInputFieldState = viewModel.longBreakTimeTextFieldState
 
     val isPlus by viewModel.isPlus.collectAsStateWithLifecycle()
-    val alarmEnabled by viewModel.alarmEnabled.collectAsStateWithLifecycle(true)
-    val vibrateEnabled by viewModel.vibrateEnabled.collectAsStateWithLifecycle(true)
-    val dndEnabled by viewModel.dndEnabled.collectAsStateWithLifecycle(false)
-    val alarmSound by viewModel.alarmSound.collectAsStateWithLifecycle(viewModel.currentAlarmSound)
+    val serviceRunning by viewModel.serviceRunning.collectAsStateWithLifecycle()
 
-    val preferencesState by viewModel.preferencesState.collectAsStateWithLifecycle()
+    val settingsState by viewModel.settingsState.collectAsStateWithLifecycle()
 
     val sessionsSliderState = rememberSaveable(
         saver = SliderState.Saver(
@@ -124,30 +116,14 @@ fun SettingsScreenRoot(
 
     SettingsScreen(
         isPlus = isPlus,
-        preferencesState = preferencesState,
+        serviceRunning = serviceRunning,
+        settingsState = settingsState,
         backStack = backStack,
         focusTimeInputFieldState = focusTimeInputFieldState,
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
         sessionsSliderState = sessionsSliderState,
-        alarmEnabled = alarmEnabled,
-        vibrateEnabled = vibrateEnabled,
-        dndEnabled = dndEnabled,
-        alarmSound = alarmSound,
-        onAlarmEnabledChange = viewModel::saveAlarmEnabled,
-        onVibrateEnabledChange = viewModel::saveVibrateEnabled,
-        onBlackThemeChange = viewModel::saveBlackTheme,
-        onAodEnabledChange = viewModel::saveAodEnabled,
-        onDndEnabledChange = viewModel::saveDndEnabled,
-        onAlarmSoundChanged = {
-            viewModel.saveAlarmSound(it)
-            Intent(context, TimerService::class.java).apply {
-                action = TimerService.Actions.RESET.toString()
-                context.startService(this)
-            }
-        },
-        onThemeChange = viewModel::saveTheme,
-        onColorSchemeChange = viewModel::saveColorScheme,
+        onAction = viewModel::onAction,
         setShowPaywall = setShowPaywall,
         modifier = modifier
     )
@@ -158,24 +134,14 @@ fun SettingsScreenRoot(
 @Composable
 private fun SettingsScreen(
     isPlus: Boolean,
-    preferencesState: PreferencesState,
+    serviceRunning: Boolean,
+    settingsState: SettingsState,
     backStack: SnapshotStateList<Screen.Settings>,
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
     sessionsSliderState: SliderState,
-    alarmEnabled: Boolean,
-    vibrateEnabled: Boolean,
-    dndEnabled: Boolean,
-    alarmSound: String,
-    onAlarmEnabledChange: (Boolean) -> Unit,
-    onVibrateEnabledChange: (Boolean) -> Unit,
-    onBlackThemeChange: (Boolean) -> Unit,
-    onAodEnabledChange: (Boolean) -> Unit,
-    onDndEnabledChange: (Boolean) -> Unit,
-    onAlarmSoundChanged: (Uri?) -> Unit,
-    onThemeChange: (String) -> Unit,
-    onColorSchemeChange: (Color) -> Unit,
+    onAction: (SettingsAction) -> Unit,
     setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -312,23 +278,16 @@ private fun SettingsScreen(
 
             entry<Screen.Settings.Alarm> {
                 AlarmSettings(
-                    preferencesState = preferencesState,
-                    alarmEnabled = alarmEnabled,
-                    vibrateEnabled = vibrateEnabled,
-                    alarmSound = alarmSound,
-                    onAlarmEnabledChange = onAlarmEnabledChange,
-                    onVibrateEnabledChange = onVibrateEnabledChange,
-                    onAlarmSoundChanged = onAlarmSoundChanged,
+                    settingsState = settingsState,
+                    onAction = onAction,
                     onBack = backStack::removeLastOrNull
                 )
             }
             entry<Screen.Settings.Appearance> {
                 AppearanceSettings(
-                    preferencesState = preferencesState,
+                    settingsState = settingsState,
                     isPlus = isPlus,
-                    onBlackThemeChange = onBlackThemeChange,
-                    onThemeChange = onThemeChange,
-                    onColorSchemeChange = onColorSchemeChange,
+                    onAction = onAction,
                     setShowPaywall = setShowPaywall,
                     onBack = backStack::removeLastOrNull
                 )
@@ -336,14 +295,13 @@ private fun SettingsScreen(
             entry<Screen.Settings.Timer> {
                 TimerSettings(
                     isPlus = isPlus,
-                    aodEnabled = preferencesState.aodEnabled,
-                    dndEnabled = dndEnabled,
+                    serviceRunning = serviceRunning,
+                    settingsState = settingsState,
                     focusTimeInputFieldState = focusTimeInputFieldState,
                     shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                     longBreakTimeInputFieldState = longBreakTimeInputFieldState,
                     sessionsSliderState = sessionsSliderState,
-                    onAodEnabledChange = onAodEnabledChange,
-                    onDndEnabledChange = onDndEnabledChange,
+                    onAction = onAction,
                     setShowPaywall = setShowPaywall,
                     onBack = backStack::removeLastOrNull,
                 )

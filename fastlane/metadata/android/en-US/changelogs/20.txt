@@ -1,0 +1,10 @@
+New features:
+- Timer durations now refresh automatically when changed in Settings
+- As a consequence of the above feature and to improve stability, it is no longer possible to change the timer durations while the timer is running
+
+Fixes:
+- Significantly improved timer screen performance (by ~90%)
+- Progress circle in timer screen is now much smoother
+- Notification is now visible on lockscreen by default
+
+- Updated translations

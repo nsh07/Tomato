@@ -1,0 +1,12 @@
+<i> Tomat</i> adalah timer Pomodoro minimalis untuk Android berdasarkan Material 3 Expressive.
+
+Tomat sepenuhnya gratis dan bersumber terbuka selamanya. Anda dapat menemukan kode sumber, melaporkan bug, atau menyarankan fitur di https://github.com/nsh07/Tomato
+
+<b>Fitur: </b>
+- UI minimalis sederhana berdasarka Material 3 Expressive terbaru
+- Statistik terperinci dari waktu kerja/belajar yang mudah dipahami
+- Statistik untuk harian terlihat sekilas
+- Statistik untuk minggu lalu dan bulan lalu ditampilkan dalam grafik yang bersih dan mudah dibaca
+- Statistik tambahan untuk minggu lalu dan bulan yang menampilkan hari apa yang paling produktif
+- Parameter timer yang dapat disesuaikan
+- Dukungan untuk Live Updates Android 16

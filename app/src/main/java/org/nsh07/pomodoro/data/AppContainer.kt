@@ -23,11 +23,13 @@ import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.billing.BillingManagerProvider
+import org.nsh07.pomodoro.service.ServiceHelper
 import org.nsh07.pomodoro.service.addTimerActions
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import org.nsh07.pomodoro.utils.millisecondsToStr
@@ -40,6 +42,7 @@ interface AppContainer {
     val notificationManager: NotificationManagerCompat
     val notificationManagerService: NotificationManager
     val notificationBuilder: NotificationCompat.Builder
+    val serviceHelper: ServiceHelper
     val timerState: MutableStateFlow<TimerState>
     val time: MutableStateFlow<Long>
     var activityTurnScreenOn: (Boolean) -> Unit
@@ -83,6 +86,11 @@ class DefaultAppContainer(context: Context) : AppContainer {
             .setSilent(true)
             .setOngoing(true)
             .setRequestPromotedOngoing(true)
+            .setVisibility(VISIBILITY_PUBLIC)
+    }
+
+    override val serviceHelper: ServiceHelper by lazy {
+        ServiceHelper(context)
     }
 
     override val timerState: MutableStateFlow<TimerState> by lazy {

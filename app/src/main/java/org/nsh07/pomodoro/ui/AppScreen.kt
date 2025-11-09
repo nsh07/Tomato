@@ -45,7 +45,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -64,7 +63,6 @@ import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
 import org.nsh07.pomodoro.ui.timerScreen.AlarmDialog
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
-import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -79,9 +77,7 @@ fun AppScreen(
     val context = LocalContext.current
 
     val uiState by timerViewModel.timerState.collectAsStateWithLifecycle()
-    val remainingTime by timerViewModel.time.collectAsStateWithLifecycle()
-
-    val progress by rememberUpdatedState((uiState.totalTime.toFloat() - remainingTime) / uiState.totalTime)
+    val progress by timerViewModel.progress.collectAsStateWithLifecycle()
 
     val layoutDirection = LocalLayoutDirection.current
     val motionScheme = motionScheme
@@ -166,34 +162,7 @@ fun AppScreen(
                             timerState = uiState,
                             isPlus = isPlus,
                             progress = { progress },
-                            onAction = { action ->
-                                when (action) {
-                                    TimerAction.ResetTimer ->
-                                        Intent(context, TimerService::class.java).also {
-                                            it.action = TimerService.Actions.RESET.toString()
-                                            context.startService(it)
-                                        }
-
-                                    is TimerAction.SkipTimer ->
-                                        Intent(context, TimerService::class.java).also {
-                                            it.action = TimerService.Actions.SKIP.toString()
-                                            context.startService(it)
-                                        }
-
-                                    TimerAction.StopAlarm ->
-                                        Intent(context, TimerService::class.java).also {
-                                            it.action =
-                                                TimerService.Actions.STOP_ALARM.toString()
-                                            context.startService(it)
-                                        }
-
-                                    TimerAction.ToggleTimer ->
-                                        Intent(context, TimerService::class.java).also {
-                                            it.action = TimerService.Actions.TOGGLE.toString()
-                                            context.startService(it)
-                                        }
-                                }
-                            },
+                            onAction = timerViewModel::onAction,
                             modifier = modifier
                                 .padding(
                                     start = contentPadding.calculateStartPadding(layoutDirection),

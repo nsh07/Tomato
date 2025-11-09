@@ -75,4 +75,6 @@
     <string name="choose_language">選擇語言</string>
     <string name="rate_on_google_play">在 Google Play 上評分</string>
     <string name="selected">已選擇</string>
+    <string name="help_with_translation">協助翻譯</string>
+    <string name="timer_settings_reset_info">重置計時器以變更設定</string>
 </resources>

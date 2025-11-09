@@ -43,8 +43,8 @@ android {
         applicationId = "org.nsh07.pomodoro"
         minSdk = 27
         targetSdk = 36
-        versionCode = 19
-        versionName = "1.6.4"
+        versionCode = 20
+        versionName = "1.6.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -57,9 +57,9 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            )
+        }
+        debug {
+            applicationIdSuffix = ".debug"
         }
     }
 
@@ -68,10 +68,16 @@ android {
         create("foss") {
             dimension = "version"
             isDefault = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules-foss.pro"
+            )
         }
         create("play") {
             dimension = "version"
             versionNameSuffix = "-play"
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules-play.pro"
+            )
         }
     }
 

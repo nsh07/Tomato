@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
 import android.net.Uri
+import android.provider.Settings
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
@@ -36,31 +37,35 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.data.AppPreferenceRepository
 import org.nsh07.pomodoro.data.TimerRepository
+import org.nsh07.pomodoro.service.ServiceHelper
 import org.nsh07.pomodoro.ui.Screen
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
+import org.nsh07.pomodoro.utils.millisecondsToStr
 
 @OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
 class SettingsViewModel(
     private val billingManager: BillingManager,
     private val preferenceRepository: AppPreferenceRepository,
+    private val serviceHelper: ServiceHelper,
+    private val time: MutableStateFlow<Long>,
     private val timerRepository: TimerRepository,
+    private val timerState: MutableStateFlow<TimerState>
 ) : ViewModel() {
     val backStack = mutableStateListOf<Screen.Settings>(Screen.Settings.Main)
 
     val isPlus = billingManager.isPlus
-    val isPurchaseStateLoaded = billingManager.isLoaded
+    val serviceRunning = timerRepository.serviceRunning.asStateFlow()
 
-    private val _isSettingsLoaded = MutableStateFlow(false)
-    val isSettingsLoaded = _isSettingsLoaded.asStateFlow()
-
-    private val _preferencesState = MutableStateFlow(PreferencesState())
-    val preferencesState = _preferencesState.asStateFlow()
+    private val _settingsState = MutableStateFlow(SettingsState())
+    val settingsState = _settingsState.asStateFlow()
 
     val focusTimeTextFieldState by lazy {
         TextFieldState((timerRepository.focusTime / 60000).toString())
@@ -81,25 +86,26 @@ class SettingsViewModel(
         )
     }
 
-    val currentAlarmSound = timerRepository.alarmSoundUri.toString()
-
     private var focusFlowCollectionJob: Job? = null
     private var shortBreakFlowCollectionJob: Job? = null
     private var longBreakFlowCollectionJob: Job? = null
 
-    val alarmSound =
-        preferenceRepository.getStringPreferenceFlow("alarm_sound").distinctUntilChanged()
-    val alarmEnabled =
-        preferenceRepository.getBooleanPreferenceFlow("alarm_enabled").distinctUntilChanged()
-    val vibrateEnabled =
-        preferenceRepository.getBooleanPreferenceFlow("vibrate_enabled").distinctUntilChanged()
-    val dndEnabled =
-        preferenceRepository.getBooleanPreferenceFlow("dnd_enabled").distinctUntilChanged()
-
     init {
         viewModelScope.launch {
             reloadSettings()
-            _isSettingsLoaded.value = true
+        }
+    }
+
+    fun onAction(action: SettingsAction) {
+        when (action) {
+            is SettingsAction.SaveAlarmSound -> saveAlarmSound(action.uri)
+            is SettingsAction.SaveAlarmEnabled -> saveAlarmEnabled(action.enabled)
+            is SettingsAction.SaveVibrateEnabled -> saveVibrateEnabled(action.enabled)
+            is SettingsAction.SaveDndEnabled -> saveDndEnabled(action.enabled)
+            is SettingsAction.SaveColorScheme -> saveColorScheme(action.color)
+            is SettingsAction.SaveTheme -> saveTheme(action.theme)
+            is SettingsAction.SaveBlackTheme -> saveBlackTheme(action.enabled)
+            is SettingsAction.SaveAodEnabled -> saveAodEnabled(action.enabled)
         }
     }
 
@@ -109,6 +115,7 @@ class SettingsViewModel(
                 "session_length",
                 sessionsSliderState.value.toInt()
             )
+            refreshTimer()
         }
     }
 
@@ -119,6 +126,7 @@ class SettingsViewModel(
                 .collect {
                     if (it.isNotEmpty()) {
                         timerRepository.focusTime = it.toString().toLong() * 60 * 1000
+                        refreshTimer()
                         preferenceRepository.saveIntPreference(
                             "focus_time",
                             timerRepository.focusTime.toInt()
@@ -132,6 +140,7 @@ class SettingsViewModel(
                 .collect {
                     if (it.isNotEmpty()) {
                         timerRepository.shortBreakTime = it.toString().toLong() * 60 * 1000
+                        refreshTimer()
                         preferenceRepository.saveIntPreference(
                             "short_break_time",
                             timerRepository.shortBreakTime.toInt()
@@ -145,6 +154,7 @@ class SettingsViewModel(
                 .collect {
                     if (it.isNotEmpty()) {
                         timerRepository.longBreakTime = it.toString().toLong() * 60 * 1000
+                        refreshTimer()
                         preferenceRepository.saveIntPreference(
                             "long_break_time",
                             timerRepository.longBreakTime.toInt()
@@ -155,82 +165,85 @@ class SettingsViewModel(
     }
 
     fun cancelTextFieldFlowCollection() {
+        if (!serviceRunning.value) serviceHelper.startService(TimerAction.ResetTimer)
         focusFlowCollectionJob?.cancel()
         shortBreakFlowCollectionJob?.cancel()
         longBreakFlowCollectionJob?.cancel()
     }
 
-    fun saveAlarmEnabled(enabled: Boolean) {
+    private fun saveAlarmEnabled(enabled: Boolean) {
         viewModelScope.launch {
             timerRepository.alarmEnabled = enabled
+            _settingsState.update { currentState ->
+                currentState.copy(alarmEnabled = enabled)
+            }
             preferenceRepository.saveBooleanPreference("alarm_enabled", enabled)
         }
     }
 
-    fun saveVibrateEnabled(enabled: Boolean) {
+    private fun saveVibrateEnabled(enabled: Boolean) {
         viewModelScope.launch {
             timerRepository.vibrateEnabled = enabled
+            _settingsState.update { currentState ->
+                currentState.copy(vibrateEnabled = enabled)
+            }
             preferenceRepository.saveBooleanPreference("vibrate_enabled", enabled)
         }
     }
 
-    fun saveDndEnabled(enabled: Boolean) {
+    private fun saveDndEnabled(enabled: Boolean) {
         viewModelScope.launch {
             timerRepository.dndEnabled = enabled
+            _settingsState.update { currentState ->
+                currentState.copy(dndEnabled = enabled)
+            }
             preferenceRepository.saveBooleanPreference("dnd_enabled", enabled)
         }
     }
 
-    fun saveAlarmSound(uri: Uri?) {
+    private fun saveAlarmSound(uri: Uri?) {
         viewModelScope.launch {
             timerRepository.alarmSoundUri = uri
+            _settingsState.update { currentState ->
+                currentState.copy(alarmSound = uri.toString())
+            }
             preferenceRepository.saveStringPreference("alarm_sound", uri.toString())
         }
     }
 
-    fun saveColorScheme(colorScheme: Color) {
+    private fun saveColorScheme(colorScheme: Color) {
         viewModelScope.launch {
-            _preferencesState.update { currentState ->
+            _settingsState.update { currentState ->
                 currentState.copy(colorScheme = colorScheme.toString())
             }
             preferenceRepository.saveStringPreference("color_scheme", colorScheme.toString())
         }
     }
 
-    fun saveTheme(theme: String) {
+    private fun saveTheme(theme: String) {
         viewModelScope.launch {
-            _preferencesState.update { currentState ->
+            _settingsState.update { currentState ->
                 currentState.copy(theme = theme)
             }
             preferenceRepository.saveStringPreference("theme", theme)
         }
     }
 
-    fun saveBlackTheme(blackTheme: Boolean) {
+    private fun saveBlackTheme(blackTheme: Boolean) {
         viewModelScope.launch {
-            _preferencesState.update { currentState ->
+            _settingsState.update { currentState ->
                 currentState.copy(blackTheme = blackTheme)
             }
             preferenceRepository.saveBooleanPreference("black_theme", blackTheme)
         }
     }
 
-    fun saveAodEnabled(aodEnabled: Boolean) {
+    private fun saveAodEnabled(aodEnabled: Boolean) {
         viewModelScope.launch {
-            _preferencesState.update { currentState ->
+            _settingsState.update { currentState ->
                 currentState.copy(aodEnabled = aodEnabled)
             }
             preferenceRepository.saveBooleanPreference("aod_enabled", aodEnabled)
-        }
-    }
-
-    fun resetPaywalledSettings() {
-        _preferencesState.update { currentState ->
-            currentState.copy(
-                aodEnabled = false,
-                blackTheme = false,
-                colorScheme = Color.White.toString()
-            )
         }
     }
 
@@ -243,14 +256,48 @@ class SettingsViewModel(
             ?: preferenceRepository.saveBooleanPreference("black_theme", false)
         val aodEnabled = preferenceRepository.getBooleanPreference("aod_enabled")
             ?: preferenceRepository.saveBooleanPreference("aod_enabled", false)
+        val alarmSound = preferenceRepository.getStringPreference("alarm_sound")
+            ?: preferenceRepository.saveStringPreference(
+                "alarm_sound",
+                (Settings.System.DEFAULT_ALARM_ALERT_URI
+                    ?: Settings.System.DEFAULT_RINGTONE_URI).toString()
+            )
+        val alarmEnabled = preferenceRepository.getBooleanPreference("alarm_enabled")
+            ?: preferenceRepository.saveBooleanPreference("alarm_enabled", true)
+        val vibrateEnabled = preferenceRepository.getBooleanPreference("vibrate_enabled")
+            ?: preferenceRepository.saveBooleanPreference("vibrate_enabled", true)
+        val dndEnabled = preferenceRepository.getBooleanPreference("dnd_enabled")
+            ?: preferenceRepository.saveBooleanPreference("dnd_enabled", false)
 
-        _preferencesState.update { currentState ->
+        _settingsState.update { currentState ->
             currentState.copy(
                 theme = theme,
                 colorScheme = colorScheme,
+                alarmSound = alarmSound,
                 blackTheme = blackTheme,
-                aodEnabled = aodEnabled
+                aodEnabled = aodEnabled,
+                alarmEnabled = alarmEnabled,
+                vibrateEnabled = vibrateEnabled,
+                dndEnabled = dndEnabled
             )
+        }
+    }
+
+    private fun refreshTimer() {
+        if (!serviceRunning.value) {
+            time.update { timerRepository.focusTime }
+
+            timerState.update { currentState ->
+                currentState.copy(
+                    timerMode = TimerMode.FOCUS,
+                    timeStr = millisecondsToStr(time.value),
+                    totalTime = time.value,
+                    nextTimerMode = if (timerRepository.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
+                    nextTimeStr = millisecondsToStr(if (timerRepository.sessionLength > 1) timerRepository.shortBreakTime else timerRepository.longBreakTime),
+                    currentFocusCount = 1,
+                    totalFocusCount = timerRepository.sessionLength
+                )
+            }
         }
     }
 
@@ -258,14 +305,20 @@ class SettingsViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as TomatoApplication)
+                val appBillingManager = application.container.billingManager
                 val appPreferenceRepository = application.container.appPreferenceRepository
                 val appTimerRepository = application.container.appTimerRepository
-                val appBillingManager = application.container.billingManager
+                val serviceHelper = application.container.serviceHelper
+                val time = application.container.time
+                val timerState = application.container.timerState
 
                 SettingsViewModel(
                     billingManager = appBillingManager,
                     preferenceRepository = appPreferenceRepository,
+                    serviceHelper = serviceHelper,
+                    time = time,
                     timerRepository = appTimerRepository,
+                    timerState = timerState
                 )
             }
         }

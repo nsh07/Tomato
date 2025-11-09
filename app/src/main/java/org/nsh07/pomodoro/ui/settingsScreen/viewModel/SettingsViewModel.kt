@@ -54,6 +54,7 @@ class SettingsViewModel(
     val backStack = mutableStateListOf<Screen.Settings>(Screen.Settings.Main)
 
     val isPlus = billingManager.isPlus
+    val serviceRunning = timerRepository.serviceRunning.asStateFlow()
 
     private val _settingsState = MutableStateFlow(SettingsState())
     val settingsState = _settingsState.asStateFlow()
@@ -273,14 +274,14 @@ class SettingsViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as TomatoApplication)
+                val appBillingManager = application.container.billingManager
                 val appPreferenceRepository = application.container.appPreferenceRepository
                 val appTimerRepository = application.container.appTimerRepository
-                val appBillingManager = application.container.billingManager
 
                 SettingsViewModel(
                     billingManager = appBillingManager,
                     preferenceRepository = appPreferenceRepository,
-                    timerRepository = appTimerRepository,
+                    timerRepository = appTimerRepository
                 )
             }
         }

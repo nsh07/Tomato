@@ -70,7 +70,7 @@ class TimerViewModel(
     private var pauseDuration = 0L
 
     init {
-        if (!timerRepository.serviceRunning)
+        if (!timerRepository.serviceRunning.value)
             viewModelScope.launch(Dispatchers.IO) {
                 timerRepository.focusTime =
                     preferenceRepository.getIntPreference("focus_time")?.toLong()

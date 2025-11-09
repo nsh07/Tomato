@@ -98,12 +98,12 @@ class TimerService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        timerRepository.serviceRunning = true
+        timerRepository.serviceRunning.update { true }
         alarm = initializeMediaPlayer()
     }
 
     override fun onDestroy() {
-        timerRepository.serviceRunning = false
+        timerRepository.serviceRunning.update { false }
         runBlocking {
             job.cancel()
             saveTimeToDb()

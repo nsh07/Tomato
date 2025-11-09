@@ -21,6 +21,7 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.lightColorScheme
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Interface that holds the timer durations for each timer type. This repository maintains a single
@@ -43,7 +44,7 @@ interface TimerRepository {
 
     var alarmSoundUri: Uri?
 
-    var serviceRunning: Boolean
+    var serviceRunning: MutableStateFlow<Boolean>
 }
 
 /**
@@ -61,5 +62,5 @@ class AppTimerRepository : TimerRepository {
     override var colorScheme = lightColorScheme()
     override var alarmSoundUri: Uri? =
         Settings.System.DEFAULT_ALARM_ALERT_URI ?: Settings.System.DEFAULT_RINGTONE_URI
-    override var serviceRunning = false
+    override var serviceRunning = MutableStateFlow(false)
 }

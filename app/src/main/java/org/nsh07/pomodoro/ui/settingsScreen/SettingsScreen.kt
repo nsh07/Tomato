@@ -101,6 +101,7 @@ fun SettingsScreenRoot(
     val longBreakTimeInputFieldState = viewModel.longBreakTimeTextFieldState
 
     val isPlus by viewModel.isPlus.collectAsStateWithLifecycle()
+    val serviceRunning by viewModel.serviceRunning.collectAsStateWithLifecycle()
 
     val settingsState by viewModel.settingsState.collectAsStateWithLifecycle()
 
@@ -115,6 +116,7 @@ fun SettingsScreenRoot(
 
     SettingsScreen(
         isPlus = isPlus,
+        serviceRunning = serviceRunning,
         settingsState = settingsState,
         backStack = backStack,
         focusTimeInputFieldState = focusTimeInputFieldState,
@@ -132,6 +134,7 @@ fun SettingsScreenRoot(
 @Composable
 private fun SettingsScreen(
     isPlus: Boolean,
+    serviceRunning: Boolean,
     settingsState: SettingsState,
     backStack: SnapshotStateList<Screen.Settings>,
     focusTimeInputFieldState: TextFieldState,
@@ -292,6 +295,7 @@ private fun SettingsScreen(
             entry<Screen.Settings.Timer> {
                 TimerSettings(
                     isPlus = isPlus,
+                    serviceRunning = serviceRunning,
                     settingsState = settingsState,
                     focusTimeInputFieldState = focusTimeInputFieldState,
                     shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,

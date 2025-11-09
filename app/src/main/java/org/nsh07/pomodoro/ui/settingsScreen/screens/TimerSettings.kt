@@ -50,6 +50,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Slider
@@ -60,7 +61,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -95,6 +96,7 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 @Composable
 fun TimerSettings(
     isPlus: Boolean,
+    serviceRunning: Boolean,
     settingsState: SettingsState,
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
@@ -111,14 +113,10 @@ fun TimerSettings(
     val notificationManagerService =
         remember { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
-    LaunchedEffect(Unit) {
-        if (!notificationManagerService.isNotificationPolicyAccessGranted())
-            onAction(SettingsAction.SaveDndEnabled(false))
-    }
-
     val switchItems = listOf(
         SettingsSwitchItem(
             checked = settingsState.dndEnabled,
+            enabled = !serviceRunning,
             icon = R.drawable.dnd,
             label = R.string.dnd,
             description = R.string.dnd_desc,
@@ -171,6 +169,20 @@ fun TimerSettings(
                 .padding(horizontal = 16.dp)
         ) {
             item {
+                CompositionLocalProvider(LocalContentColor provides colorScheme.error) {
+                    AnimatedVisibility(serviceRunning) {
+                        Column {
+                            Spacer(Modifier.height(8.dp))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(painterResource(R.drawable.info), null)
+                                Text(stringResource(R.string.timer_settings_reset_info))
+                            }
+                        }
+                    }
+                }
                 Spacer(Modifier.height(14.dp))
             }
             item {
@@ -190,6 +202,7 @@ fun TimerSettings(
                         )
                         MinuteInputField(
                             state = focusTimeInputFieldState,
+                            enabled = !serviceRunning,
                             shape = RoundedCornerShape(
                                 topStart = topListItemShape.topStart,
                                 bottomStart = topListItemShape.topStart,
@@ -210,6 +223,7 @@ fun TimerSettings(
                         )
                         MinuteInputField(
                             state = shortBreakTimeInputFieldState,
+                            enabled = !serviceRunning,
                             shape = RoundedCornerShape(middleListItemShape.topStart),
                             imeAction = ImeAction.Next
                         )
@@ -225,6 +239,7 @@ fun TimerSettings(
                         )
                         MinuteInputField(
                             state = longBreakTimeInputFieldState,
+                            enabled = !serviceRunning,
                             shape = RoundedCornerShape(
                                 topStart = bottomListItemShape.topStart,
                                 bottomStart = bottomListItemShape.topStart,
@@ -257,6 +272,7 @@ fun TimerSettings(
                             )
                             Slider(
                                 state = sessionsSliderState,
+                                enabled = !serviceRunning,
                                 modifier = Modifier.padding(vertical = 4.dp)
                             )
                         }
@@ -281,6 +297,7 @@ fun TimerSettings(
                     trailingContent = {
                         Switch(
                             checked = item.checked,
+                            enabled = item.enabled,
                             onCheckedChange = { item.onClick(it) },
                             thumbContent = {
                                 if (item.checked) {
@@ -405,6 +422,7 @@ private fun TimerSettingsPreview() {
     )
     TimerSettings(
         isPlus = false,
+        serviceRunning = true,
         settingsState = remember { SettingsState() },
         focusTimeInputFieldState = focusTimeInputFieldState,
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,

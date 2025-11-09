@@ -46,12 +46,14 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 @Composable
 fun MinuteInputField(
     state: TextFieldState,
+    enabled: Boolean,
     shape: Shape,
     modifier: Modifier = Modifier,
     imeAction: ImeAction = ImeAction.Next
 ) {
     BasicTextField(
         state = state,
+        enabled = enabled,
         lineLimits = TextFieldLineLimits.SingleLine,
         inputTransformation = MinutesInputTransformation,
 //        outputTransformation = MinutesOutputTransformation,
@@ -63,7 +65,7 @@ fun MinuteInputField(
             fontFamily = interClock,
             fontSize = 57.sp,
             letterSpacing = (-2).sp,
-            color = colorScheme.onSurfaceVariant,
+            color = if (enabled) colorScheme.onSurfaceVariant else colorScheme.outlineVariant,
             textAlign = TextAlign.Center
         ),
         cursorBrush = SolidColor(colorScheme.onSurface),

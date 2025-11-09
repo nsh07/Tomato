@@ -22,6 +22,7 @@ import androidx.annotation.StringRes
 
 data class SettingsSwitchItem(
     val checked: Boolean,
+    val enabled: Boolean = true,
     @param:DrawableRes val icon: Int,
     @param:StringRes val label: Int,
     @param:StringRes val description: Int,

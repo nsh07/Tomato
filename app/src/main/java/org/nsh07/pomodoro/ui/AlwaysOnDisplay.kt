@@ -113,7 +113,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
         }
 
         onDispose {
-            setTimerFrequency(10f)
+            setTimerFrequency(60f)
             window.clearFlags(
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
                         WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON

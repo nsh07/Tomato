@@ -93,6 +93,6 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         // Increase the timer loop frequency again when visible to make the progress smoother
-        appContainer.appTimerRepository.timerFrequency = 10f
+        appContainer.appTimerRepository.timerFrequency = 60f
     }
 }

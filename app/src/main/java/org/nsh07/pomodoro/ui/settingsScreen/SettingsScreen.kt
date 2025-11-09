@@ -101,10 +101,6 @@ fun SettingsScreenRoot(
     val longBreakTimeInputFieldState = viewModel.longBreakTimeTextFieldState
 
     val isPlus by viewModel.isPlus.collectAsStateWithLifecycle()
-    val alarmEnabled by viewModel.alarmEnabled.collectAsStateWithLifecycle(true)
-    val vibrateEnabled by viewModel.vibrateEnabled.collectAsStateWithLifecycle(true)
-    val dndEnabled by viewModel.dndEnabled.collectAsStateWithLifecycle(false)
-    val alarmSound by viewModel.alarmSound.collectAsStateWithLifecycle(viewModel.currentAlarmSound)
 
     val settingsState by viewModel.settingsState.collectAsStateWithLifecycle()
 
@@ -125,10 +121,6 @@ fun SettingsScreenRoot(
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
         sessionsSliderState = sessionsSliderState,
-        alarmEnabled = alarmEnabled,
-        vibrateEnabled = vibrateEnabled,
-        dndEnabled = dndEnabled,
-        alarmSound = alarmSound,
         onAction = viewModel::onAction,
         setShowPaywall = setShowPaywall,
         modifier = modifier
@@ -146,10 +138,6 @@ private fun SettingsScreen(
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
     sessionsSliderState: SliderState,
-    alarmEnabled: Boolean,
-    vibrateEnabled: Boolean,
-    dndEnabled: Boolean,
-    alarmSound: String,
     onAction: (SettingsAction) -> Unit,
     setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier
@@ -288,9 +276,6 @@ private fun SettingsScreen(
             entry<Screen.Settings.Alarm> {
                 AlarmSettings(
                     settingsState = settingsState,
-                    alarmEnabled = alarmEnabled,
-                    vibrateEnabled = vibrateEnabled,
-                    alarmSound = alarmSound,
                     onAction = onAction,
                     onBack = backStack::removeLastOrNull
                 )
@@ -307,8 +292,7 @@ private fun SettingsScreen(
             entry<Screen.Settings.Timer> {
                 TimerSettings(
                     isPlus = isPlus,
-                    aodEnabled = settingsState.aodEnabled,
-                    dndEnabled = dndEnabled,
+                    settingsState = settingsState,
                     focusTimeInputFieldState = focusTimeInputFieldState,
                     shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                     longBreakTimeInputFieldState = longBreakTimeInputFieldState,

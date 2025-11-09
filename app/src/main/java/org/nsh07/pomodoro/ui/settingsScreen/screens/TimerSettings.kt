@@ -41,6 +41,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconToggleButton
@@ -57,6 +58,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -78,6 +80,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputField
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
@@ -92,14 +95,13 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 @Composable
 fun TimerSettings(
     isPlus: Boolean,
-    aodEnabled: Boolean,
-    dndEnabled: Boolean,
+    settingsState: SettingsState,
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
     sessionsSliderState: SliderState,
-    setShowPaywall: (Boolean) -> Unit,
     onAction: (SettingsAction) -> Unit,
+    setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -116,7 +118,7 @@ fun TimerSettings(
 
     val switchItems = listOf(
         SettingsSwitchItem(
-            checked = dndEnabled,
+            checked = settingsState.dndEnabled,
             icon = R.drawable.dnd,
             label = R.string.dnd,
             description = R.string.dnd_desc,
@@ -133,7 +135,7 @@ fun TimerSettings(
             }
         ),
         SettingsSwitchItem(
-            checked = aodEnabled,
+            checked = settingsState.aodEnabled,
             icon = R.drawable.aod,
             label = R.string.always_on_display,
             description = R.string.always_on_display_desc,
@@ -393,18 +395,17 @@ fun TimerSettings(
 @Preview
 @Composable
 private fun TimerSettingsPreview() {
-    val focusTimeInputFieldState = TextFieldState("25")
-    val shortBreakTimeInputFieldState = TextFieldState("5")
-    val longBreakTimeInputFieldState = TextFieldState("15")
-    val sessionsSliderState = SliderState(
+    val focusTimeInputFieldState = rememberTextFieldState("25")
+    val shortBreakTimeInputFieldState = rememberTextFieldState("5")
+    val longBreakTimeInputFieldState = rememberTextFieldState("15")
+    val sessionsSliderState = rememberSliderState(
         value = 4f,
         valueRange = 1f..8f,
         steps = 6
     )
     TimerSettings(
         isPlus = false,
-        aodEnabled = true,
-        dndEnabled = false,
+        settingsState = remember { SettingsState() },
         focusTimeInputFieldState = focusTimeInputFieldState,
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,

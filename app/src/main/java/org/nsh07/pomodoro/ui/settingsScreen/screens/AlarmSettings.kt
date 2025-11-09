@@ -79,9 +79,6 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 @Composable
 fun AlarmSettings(
     settingsState: SettingsState,
-    alarmEnabled: Boolean,
-    vibrateEnabled: Boolean,
-    alarmSound: String,
     onAction: (SettingsAction) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
@@ -91,10 +88,11 @@ fun AlarmSettings(
 
     var alarmName by remember { mutableStateOf("...") }
 
-    LaunchedEffect(alarmSound) {
+    LaunchedEffect(settingsState.alarmSound) {
         withContext(Dispatchers.IO) {
             alarmName =
-                RingtoneManager.getRingtone(context, alarmSound.toUri())?.getTitle(context) ?: ""
+                RingtoneManager.getRingtone(context, settingsState.alarmSound.toUri())
+                    ?.getTitle(context) ?: ""
         }
     }
 
@@ -117,30 +115,30 @@ fun AlarmSettings(
     }
 
     @SuppressLint("LocalContextGetResourceValueCall")
-    val ringtonePickerIntent = remember(alarmSound) {
+    val ringtonePickerIntent = remember(settingsState.alarmSound) {
         Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
             putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
             putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, context.getString(R.string.alarm_sound))
-            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmSound.toUri())
+            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, settingsState.alarmSound.toUri())
         }
     }
 
     val switchItems = remember(
         settingsState.blackTheme,
         settingsState.aodEnabled,
-        alarmEnabled,
-        vibrateEnabled
+        settingsState.alarmEnabled,
+        settingsState.vibrateEnabled
     ) {
         listOf(
             SettingsSwitchItem(
-                checked = alarmEnabled,
+                checked = settingsState.alarmEnabled,
                 icon = R.drawable.alarm_on,
                 label = R.string.sound,
                 description = R.string.alarm_desc,
                 onClick = { onAction(SettingsAction.SaveAlarmEnabled(it)) }
             ),
             SettingsSwitchItem(
-                checked = vibrateEnabled,
+                checked = settingsState.vibrateEnabled,
                 icon = R.drawable.mobile_vibrate,
                 label = R.string.vibrate,
                 description = R.string.vibrate_desc,
@@ -245,9 +243,7 @@ fun AlarmSettingsPreview() {
     val settingsState = SettingsState()
     AlarmSettings(
         settingsState = settingsState,
-        alarmEnabled = true,
-        vibrateEnabled = false,
-        alarmSound = "",
         onAction = {},
-        onBack = {})
+        onBack = {}
+    )
 }

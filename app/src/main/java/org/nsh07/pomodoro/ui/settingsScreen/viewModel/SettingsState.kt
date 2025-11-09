@@ -23,7 +23,11 @@ import androidx.compose.ui.graphics.Color
 @Immutable
 data class SettingsState(
     val theme: String = "auto",
+    val alarmSound: String = "",
     val colorScheme: String = Color.White.toString(),
     val blackTheme: Boolean = false,
-    val aodEnabled: Boolean = false
+    val aodEnabled: Boolean = false,
+    val alarmEnabled: Boolean = true,
+    val vibrateEnabled: Boolean = true,
+    val dndEnabled: Boolean = false
 )

@@ -21,5 +21,4 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface BillingManager {
     val isPlus: StateFlow<Boolean>
-    val isLoaded: StateFlow<Boolean>
 }

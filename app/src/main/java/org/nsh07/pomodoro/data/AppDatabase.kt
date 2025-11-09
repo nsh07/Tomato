@@ -17,9 +17,7 @@ import androidx.room.TypeConverters
 @Database(
     entities = [IntPreference::class, BooleanPreference::class, StringPreference::class, Stat::class],
     version = 2,
-    autoMigrations = [
-        AutoMigration(from = 1, to = 2)
-    ]
+    autoMigrations = [AutoMigration(from = 1, to = 2)]
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -34,9 +32,8 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): AppDatabase {
             return Instance ?: synchronized(this) {
-                Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
-                    .build()
-                    .also { Instance = it }
+                Instance ?: Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
+                    .build().also { Instance = it }
             }
         }
     }

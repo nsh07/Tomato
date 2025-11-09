@@ -62,4 +62,16 @@
     <string name="weekly_productivity_analysis">साप्ताहिक उत्पादकता विश्लेषण</string>
     <string name="appearance">दिखावट</string>
     <string name="durations">अवधियां</string>
+    <string name="dnd">परेशान न करें</string>
+    <string name="dnd_desc">फ़ोकस टाइमर चलाते समय \'परेशान न करें\' मोड चालू करें</string>
+    <string name="get_plus">Tomato+ प्राप्त करें</string>
+    <string name="dynamic_color">डायनामिक रंग</string>
+    <string name="dynamic_color_desc">अपने वॉलपेपर से थीम रंग अनुकूलित करें</string>
+    <string name="tomato_foss_desc">इस संस्करण में सभी सुविधाएँ अनलॉक हैं। अगर मेरे ऐप ने आपके जीवन में कोई बदलाव लाया है, तो कृपया %1$s पर दान करके मेरी मदद करें।</string>
+    <string name="language">भाषा</string>
+    <string name="choose_language">भाषा चुनें</string>
+    <string name="rate_on_google_play">Google Play पर रेटिंग दें</string>
+    <string name="selected">चयनित</string>
+    <string name="help_with_translation">अनुवाद में सहायता करें</string>
+    <string name="timer_settings_reset_info">सेटिंग्स बदलने के लिए टाइमर रीसेट करें</string>
 </resources>

@@ -57,9 +57,6 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            )
         }
         debug {
             applicationIdSuffix = ".debug"
@@ -71,10 +68,16 @@ android {
         create("foss") {
             dimension = "version"
             isDefault = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules-foss.pro"
+            )
         }
         create("play") {
             dimension = "version"
             versionNameSuffix = "-play"
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules-play.pro"
+            )
         }
     }
 

@@ -17,10 +17,9 @@
 
 package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
-import android.app.Application
 import android.provider.Settings
 import androidx.core.net.toUri
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
@@ -42,19 +41,20 @@ import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.TimerRepository
+import org.nsh07.pomodoro.service.ServiceHelper
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 @OptIn(FlowPreview::class)
 class TimerViewModel(
-    application: Application,
     private val preferenceRepository: PreferenceRepository,
+    private val serviceHelper: ServiceHelper,
     private val statRepository: StatRepository,
     private val timerRepository: TimerRepository,
     private val _timerState: MutableStateFlow<TimerState>,
     private val _time: MutableStateFlow<Long>
-) : AndroidViewModel(application) {
+) : ViewModel() {
     val timerState: StateFlow<TimerState> = _timerState.asStateFlow()
 
     val time: StateFlow<Long> = _time.asStateFlow()
@@ -155,6 +155,10 @@ class TimerViewModel(
             }
     }
 
+    fun onAction(action: TimerAction) {
+        serviceHelper.startService(action)
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -162,12 +166,13 @@ class TimerViewModel(
                 val appPreferenceRepository = application.container.appPreferenceRepository
                 val appStatRepository = application.container.appStatRepository
                 val appTimerRepository = application.container.appTimerRepository
+                val serviceHelper = application.container.serviceHelper
                 val timerState = application.container.timerState
                 val time = application.container.time
 
                 TimerViewModel(
-                    application = application,
                     preferenceRepository = appPreferenceRepository,
+                    serviceHelper = serviceHelper,
                     statRepository = appStatRepository,
                     timerRepository = appTimerRepository,
                     _timerState = timerState,

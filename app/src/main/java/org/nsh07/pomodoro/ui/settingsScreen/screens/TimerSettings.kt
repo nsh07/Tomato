@@ -62,7 +62,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -78,7 +77,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputField
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
@@ -114,17 +112,6 @@ fun TimerSettings(
     val appName = stringResource(R.string.app_name)
     val notificationManagerService =
         remember { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            if (!serviceRunning) {
-                Intent(context, TimerService::class.java).also {
-                    it.action = TimerService.Actions.RESET.toString()
-                    context.startService(it)
-                }
-            }
-        }
-    }
 
     val switchItems = listOf(
         SettingsSwitchItem(
@@ -191,7 +178,7 @@ fun TimerSettings(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Icon(painterResource(R.drawable.info), null)
-                                Text("Reset the timer to change settings")
+                                Text(stringResource(R.string.timer_settings_reset_info))
                             }
                         }
                     }

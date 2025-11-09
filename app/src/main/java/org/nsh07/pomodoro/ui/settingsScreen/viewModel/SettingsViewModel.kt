@@ -43,13 +43,21 @@ import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.data.AppPreferenceRepository
 import org.nsh07.pomodoro.data.TimerRepository
+import org.nsh07.pomodoro.service.ServiceHelper
 import org.nsh07.pomodoro.ui.Screen
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
+import org.nsh07.pomodoro.utils.millisecondsToStr
 
 @OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
 class SettingsViewModel(
     private val billingManager: BillingManager,
     private val preferenceRepository: AppPreferenceRepository,
+    private val serviceHelper: ServiceHelper,
+    private val time: MutableStateFlow<Long>,
     private val timerRepository: TimerRepository,
+    private val timerState: MutableStateFlow<TimerState>
 ) : ViewModel() {
     val backStack = mutableStateListOf<Screen.Settings>(Screen.Settings.Main)
 
@@ -107,6 +115,7 @@ class SettingsViewModel(
                 "session_length",
                 sessionsSliderState.value.toInt()
             )
+            refreshTimer()
         }
     }
 
@@ -117,6 +126,7 @@ class SettingsViewModel(
                 .collect {
                     if (it.isNotEmpty()) {
                         timerRepository.focusTime = it.toString().toLong() * 60 * 1000
+                        refreshTimer()
                         preferenceRepository.saveIntPreference(
                             "focus_time",
                             timerRepository.focusTime.toInt()
@@ -130,6 +140,7 @@ class SettingsViewModel(
                 .collect {
                     if (it.isNotEmpty()) {
                         timerRepository.shortBreakTime = it.toString().toLong() * 60 * 1000
+                        refreshTimer()
                         preferenceRepository.saveIntPreference(
                             "short_break_time",
                             timerRepository.shortBreakTime.toInt()
@@ -143,6 +154,7 @@ class SettingsViewModel(
                 .collect {
                     if (it.isNotEmpty()) {
                         timerRepository.longBreakTime = it.toString().toLong() * 60 * 1000
+                        refreshTimer()
                         preferenceRepository.saveIntPreference(
                             "long_break_time",
                             timerRepository.longBreakTime.toInt()
@@ -153,6 +165,7 @@ class SettingsViewModel(
     }
 
     fun cancelTextFieldFlowCollection() {
+        if (!serviceRunning.value) serviceHelper.startService(TimerAction.ResetTimer)
         focusFlowCollectionJob?.cancel()
         shortBreakFlowCollectionJob?.cancel()
         longBreakFlowCollectionJob?.cancel()
@@ -270,6 +283,24 @@ class SettingsViewModel(
         }
     }
 
+    private fun refreshTimer() {
+        if (!serviceRunning.value) {
+            time.update { timerRepository.focusTime }
+
+            timerState.update { currentState ->
+                currentState.copy(
+                    timerMode = TimerMode.FOCUS,
+                    timeStr = millisecondsToStr(time.value),
+                    totalTime = time.value,
+                    nextTimerMode = if (timerRepository.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
+                    nextTimeStr = millisecondsToStr(if (timerRepository.sessionLength > 1) timerRepository.shortBreakTime else timerRepository.longBreakTime),
+                    currentFocusCount = 1,
+                    totalFocusCount = timerRepository.sessionLength
+                )
+            }
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -277,11 +308,17 @@ class SettingsViewModel(
                 val appBillingManager = application.container.billingManager
                 val appPreferenceRepository = application.container.appPreferenceRepository
                 val appTimerRepository = application.container.appTimerRepository
+                val serviceHelper = application.container.serviceHelper
+                val time = application.container.time
+                val timerState = application.container.timerState
 
                 SettingsViewModel(
                     billingManager = appBillingManager,
                     preferenceRepository = appPreferenceRepository,
-                    timerRepository = appTimerRepository
+                    serviceHelper = serviceHelper,
+                    time = time,
+                    timerRepository = appTimerRepository,
+                    timerState = timerState
                 )
             }
         }

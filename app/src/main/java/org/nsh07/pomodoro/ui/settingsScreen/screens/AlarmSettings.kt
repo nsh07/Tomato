@@ -65,8 +65,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
-import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
@@ -78,7 +78,7 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AlarmSettings(
-    preferencesState: PreferencesState,
+    settingsState: SettingsState,
     alarmEnabled: Boolean,
     vibrateEnabled: Boolean,
     alarmSound: String,
@@ -126,8 +126,8 @@ fun AlarmSettings(
     }
 
     val switchItems = remember(
-        preferencesState.blackTheme,
-        preferencesState.aodEnabled,
+        settingsState.blackTheme,
+        settingsState.aodEnabled,
         alarmEnabled,
         vibrateEnabled
     ) {
@@ -242,9 +242,9 @@ fun AlarmSettings(
 @Preview
 @Composable
 fun AlarmSettingsPreview() {
-    val preferencesState = PreferencesState()
+    val settingsState = SettingsState()
     AlarmSettings(
-        preferencesState = preferencesState,
+        settingsState = settingsState,
         alarmEnabled = true,
         vibrateEnabled = false,
         alarmSound = "",

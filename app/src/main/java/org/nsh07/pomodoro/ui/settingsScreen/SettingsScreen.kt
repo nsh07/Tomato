@@ -73,8 +73,8 @@ import org.nsh07.pomodoro.ui.settingsScreen.components.PlusPromo
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.TimerSettings
-import org.nsh07.pomodoro.ui.settingsScreen.viewModel.PreferencesState
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.settingsScreens
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
@@ -106,7 +106,7 @@ fun SettingsScreenRoot(
     val dndEnabled by viewModel.dndEnabled.collectAsStateWithLifecycle(false)
     val alarmSound by viewModel.alarmSound.collectAsStateWithLifecycle(viewModel.currentAlarmSound)
 
-    val preferencesState by viewModel.preferencesState.collectAsStateWithLifecycle()
+    val settingsState by viewModel.settingsState.collectAsStateWithLifecycle()
 
     val sessionsSliderState = rememberSaveable(
         saver = SliderState.Saver(
@@ -119,7 +119,7 @@ fun SettingsScreenRoot(
 
     SettingsScreen(
         isPlus = isPlus,
-        preferencesState = preferencesState,
+        settingsState = settingsState,
         backStack = backStack,
         focusTimeInputFieldState = focusTimeInputFieldState,
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
@@ -140,7 +140,7 @@ fun SettingsScreenRoot(
 @Composable
 private fun SettingsScreen(
     isPlus: Boolean,
-    preferencesState: PreferencesState,
+    settingsState: SettingsState,
     backStack: SnapshotStateList<Screen.Settings>,
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
@@ -287,7 +287,7 @@ private fun SettingsScreen(
 
             entry<Screen.Settings.Alarm> {
                 AlarmSettings(
-                    preferencesState = preferencesState,
+                    settingsState = settingsState,
                     alarmEnabled = alarmEnabled,
                     vibrateEnabled = vibrateEnabled,
                     alarmSound = alarmSound,
@@ -297,7 +297,7 @@ private fun SettingsScreen(
             }
             entry<Screen.Settings.Appearance> {
                 AppearanceSettings(
-                    preferencesState = preferencesState,
+                    settingsState = settingsState,
                     isPlus = isPlus,
                     onAction = onAction,
                     setShowPaywall = setShowPaywall,
@@ -307,7 +307,7 @@ private fun SettingsScreen(
             entry<Screen.Settings.Timer> {
                 TimerSettings(
                     isPlus = isPlus,
-                    aodEnabled = preferencesState.aodEnabled,
+                    aodEnabled = settingsState.aodEnabled,
                     dndEnabled = dndEnabled,
                     focusTimeInputFieldState = focusTimeInputFieldState,
                     shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,

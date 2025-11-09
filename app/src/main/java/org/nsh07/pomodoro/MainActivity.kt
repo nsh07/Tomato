@@ -50,15 +50,15 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val preferencesState by settingsViewModel.preferencesState.collectAsStateWithLifecycle()
+            val settingsState by settingsViewModel.settingsState.collectAsStateWithLifecycle()
 
-            val darkTheme = when (preferencesState.theme) {
+            val darkTheme = when (settingsState.theme) {
                 "dark" -> true
                 "light" -> false
                 else -> isSystemInDarkTheme()
             }
 
-            val seed = preferencesState.colorScheme.toColor()
+            val seed = settingsState.colorScheme.toColor()
 
             val isPlus by settingsViewModel.isPlus.collectAsStateWithLifecycle()
             val isPurchaseStateLoaded by settingsViewModel.isPurchaseStateLoaded.collectAsStateWithLifecycle()
@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
             TomatoTheme(
                 darkTheme = darkTheme,
                 seedColor = seed,
-                blackTheme = preferencesState.blackTheme
+                blackTheme = settingsState.blackTheme
             ) {
                 val colorScheme = colorScheme
                 LaunchedEffect(colorScheme) {
@@ -86,7 +86,7 @@ class MainActivity : ComponentActivity() {
 
                 AppScreen(
                     isPlus = isPlus,
-                    isAODEnabled = preferencesState.aodEnabled,
+                    isAODEnabled = settingsState.aodEnabled,
                     setTimerFrequency = {
                         appContainer.appTimerRepository.timerFrequency = it
                     }

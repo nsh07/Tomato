@@ -59,8 +59,8 @@ class SettingsViewModel(
     private val _isSettingsLoaded = MutableStateFlow(false)
     val isSettingsLoaded = _isSettingsLoaded.asStateFlow()
 
-    private val _preferencesState = MutableStateFlow(PreferencesState())
-    val preferencesState = _preferencesState.asStateFlow()
+    private val _settingsState = MutableStateFlow(SettingsState())
+    val settingsState = _settingsState.asStateFlow()
 
     val focusTimeTextFieldState by lazy {
         TextFieldState((timerRepository.focusTime / 60000).toString())
@@ -203,7 +203,7 @@ class SettingsViewModel(
 
     private fun saveColorScheme(colorScheme: Color) {
         viewModelScope.launch {
-            _preferencesState.update { currentState ->
+            _settingsState.update { currentState ->
                 currentState.copy(colorScheme = colorScheme.toString())
             }
             preferenceRepository.saveStringPreference("color_scheme", colorScheme.toString())
@@ -212,7 +212,7 @@ class SettingsViewModel(
 
     private fun saveTheme(theme: String) {
         viewModelScope.launch {
-            _preferencesState.update { currentState ->
+            _settingsState.update { currentState ->
                 currentState.copy(theme = theme)
             }
             preferenceRepository.saveStringPreference("theme", theme)
@@ -221,7 +221,7 @@ class SettingsViewModel(
 
     private fun saveBlackTheme(blackTheme: Boolean) {
         viewModelScope.launch {
-            _preferencesState.update { currentState ->
+            _settingsState.update { currentState ->
                 currentState.copy(blackTheme = blackTheme)
             }
             preferenceRepository.saveBooleanPreference("black_theme", blackTheme)
@@ -230,7 +230,7 @@ class SettingsViewModel(
 
     private fun saveAodEnabled(aodEnabled: Boolean) {
         viewModelScope.launch {
-            _preferencesState.update { currentState ->
+            _settingsState.update { currentState ->
                 currentState.copy(aodEnabled = aodEnabled)
             }
             preferenceRepository.saveBooleanPreference("aod_enabled", aodEnabled)
@@ -238,7 +238,7 @@ class SettingsViewModel(
     }
 
     fun resetPaywalledSettings() {
-        _preferencesState.update { currentState ->
+        _settingsState.update { currentState ->
             currentState.copy(
                 aodEnabled = false,
                 blackTheme = false,
@@ -257,7 +257,7 @@ class SettingsViewModel(
         val aodEnabled = preferenceRepository.getBooleanPreference("aod_enabled")
             ?: preferenceRepository.saveBooleanPreference("aod_enabled", false)
 
-        _preferencesState.update { currentState ->
+        _settingsState.update { currentState ->
             currentState.copy(
                 theme = theme,
                 colorScheme = colorScheme,

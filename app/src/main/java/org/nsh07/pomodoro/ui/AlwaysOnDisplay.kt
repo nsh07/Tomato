@@ -71,6 +71,9 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import kotlin.random.Random
 
+private const val CIRCLE_MAX_SIZE = 250
+private const val EDGE_PADDING = 16
+
 /**
  * Always On Display composable. Must be called within a [SharedTransitionScope] which allows
  * animating the clock and progress indicator
@@ -162,16 +165,16 @@ fun SharedTransitionScope.AlwaysOnDisplay(
     var randomX by remember {
         mutableIntStateOf(
             Random.nextInt(
-                16.dp.toIntPx(density),
-                windowInfo.containerSize.width - 266.dp.toIntPx(density)
+                EDGE_PADDING.dp.toIntPx(density),
+                windowInfo.containerSize.width - (CIRCLE_MAX_SIZE + EDGE_PADDING).dp.toIntPx(density)
             )
         )
     }
     var randomY by remember {
         mutableIntStateOf(
             Random.nextInt(
-                16.dp.toIntPx(density),
-                windowInfo.containerSize.height - 266.dp.toIntPx(density)
+                EDGE_PADDING.dp.toIntPx(density),
+                windowInfo.containerSize.height - (CIRCLE_MAX_SIZE + EDGE_PADDING).dp.toIntPx(density)
             )
         )
     }
@@ -179,12 +182,12 @@ fun SharedTransitionScope.AlwaysOnDisplay(
     LaunchedEffect(timerState.timeStr[1]) { // Randomize position every minute
         if (sharedElementTransitionComplete) {
             randomX = Random.nextInt(
-                16.dp.toIntPx(density),
-                windowInfo.containerSize.width - 266.dp.toIntPx(density)
+                EDGE_PADDING.dp.toIntPx(density),
+                windowInfo.containerSize.width - (CIRCLE_MAX_SIZE + EDGE_PADDING).dp.toIntPx(density)
             )
             randomY = Random.nextInt(
-                16.dp.toIntPx(density),
-                windowInfo.containerSize.height - 266.dp.toIntPx(density)
+                EDGE_PADDING.dp.toIntPx(density),
+                windowInfo.containerSize.height - (CIRCLE_MAX_SIZE + EDGE_PADDING).dp.toIntPx(density)
             )
         }
     }
@@ -211,7 +214,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
                             sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("focus progress"),
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current
                         )
-                        .size(250.dp),
+                        .size(CIRCLE_MAX_SIZE.dp),
                     color = primary,
                     trackColor = secondaryContainer,
                     strokeWidth = 12.dp,
@@ -225,7 +228,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
                             sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("break progress"),
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current
                         )
-                        .size(250.dp),
+                        .size(CIRCLE_MAX_SIZE.dp),
                     color = primary,
                     trackColor = secondaryContainer,
                     stroke = Stroke(

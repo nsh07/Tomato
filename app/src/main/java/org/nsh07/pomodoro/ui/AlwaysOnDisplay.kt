@@ -23,7 +23,9 @@ import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -189,8 +191,8 @@ fun SharedTransitionScope.AlwaysOnDisplay(
         }
     }
 
-    val x by animateIntAsState(randomX, motionScheme.slowSpatialSpec())
-    val y by animateIntAsState(randomY, motionScheme.slowSpatialSpec())
+    val x by animateIntAsState(randomX, tween(durationMillis = 60_000, easing = LinearEasing))
+    val y by animateIntAsState(randomY, tween(durationMillis = 60_000, easing = LinearEasing))
 
     Box(
         modifier = modifier

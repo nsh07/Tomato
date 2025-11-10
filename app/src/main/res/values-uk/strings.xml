@@ -74,4 +74,6 @@
     <string name="choose_language">Вибрати мову</string>
     <string name="rate_on_google_play">Оцінити на Google Play</string>
     <string name="selected">Обрано</string>
+    <string name="timer_settings_reset_info">Перезапустіть таймер, щоб змінити налаштування</string>
+    <string name="help_with_translation">Допомога з перекладом</string>
 </resources>

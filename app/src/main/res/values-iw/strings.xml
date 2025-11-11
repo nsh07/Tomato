@@ -1,3 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="alarm">התראה</string>
+    <string name="alarm_desc">צלצל כשהטיימר מסתיים</string>
+    <string name="alarm_sound">קול צלצול</string>
+    <string name="always_on_display">תמיד מוצג במסך</string>
+    <string name="always_on_display_desc">לחץ בכל מקום תוך צפיה בטיימר כדי להחליף למוד \'תמיד מוצג במסך\'</string>
+    <string name="black_theme">מצב כהה</string>
+    <string name="black_theme_desc">מצב שחור</string>
+    <string name="break_">הפסקה</string>
+    <string name="choose_color_scheme">בחר צבעים</string>
+    <string name="choose_theme">בחר תמה</string>
+    <string name="color">צבע</string>
+    <string name="color_scheme">צבע תמה</string>
+    <string name="completed">הושלם</string>
+    <string name="dark">כהה</string>
+    <string name="dynamic">דינאמי</string>
+    <string name="exit">יציאה</string>
+    <string name="focus">ריכוז</string>
+    <string name="focus_per_day_avg">ריכוז לפי יום (ממוצע)</string>
+    <string name="last_month">חודש קודם</string>
+    <string name="last_week">שבוע שעבר</string>
+    <string name="last_year">אשתקד</string>
+    <string name="light">בהיר</string>
+    <string name="long_break">הפסקה ארוכה</string>
+    <string name="min_remaining_notification">%1$s דקות נותרו</string>
 </resources>

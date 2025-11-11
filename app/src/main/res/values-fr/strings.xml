@@ -74,4 +74,6 @@
     <string name="choose_language">Choisissez la langue</string>
     <string name="rate_on_google_play">Noter sur Google Play</string>
     <string name="selected">Selectionné</string>
+    <string name="help_with_translation">Aider pour la traduction</string>
+    <string name="timer_settings_reset_info">Réinitialiser le timer pour pouvoir changer les paramètres</string>
 </resources>

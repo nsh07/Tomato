@@ -127,6 +127,10 @@ or [my BuyMeACoffee page](https://coff.ee/nsh07):
   <img src=".github/repo_photos/bmc_qr.png" width="128px">
 </a>
 
+### Members and Sponsors
+- Shun Min Chang (@jack24254029 on GitHub Sponsors)
+- Chinedu Oji (on BuyMeACoffee)
+
 ## Special Thanks
 
 This app was made possible by the following libraries:

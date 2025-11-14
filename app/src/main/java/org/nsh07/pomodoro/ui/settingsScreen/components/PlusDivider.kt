@@ -22,6 +22,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -32,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PlusDivider(
     setShowPaywall: (Boolean) -> Unit,
@@ -41,6 +44,7 @@ fun PlusDivider(
         HorizontalDivider(modifier = Modifier.clip(CircleShape), thickness = 4.dp)
         Button(
             onClick = { setShowPaywall(true) },
+            shapes = ButtonDefaults.shapes(),
             modifier = Modifier
                 .background(colorScheme.surfaceContainer)
                 .padding(horizontal = 8.dp)

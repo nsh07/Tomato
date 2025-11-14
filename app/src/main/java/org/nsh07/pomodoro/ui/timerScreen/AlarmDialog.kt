@@ -27,7 +27,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -47,7 +49,7 @@ import androidx.compose.ui.window.DialogProperties
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AlarmDialog(
     modifier: Modifier = Modifier,
@@ -90,6 +92,7 @@ fun AlarmDialog(
                     Spacer(modifier = Modifier.height(24.dp))
                     Button(
                         onClick = stopAlarm,
+                        shapes = ButtonDefaults.shapes(),
                         modifier = Modifier.align(Alignment.End),
                     ) {
                         Text(stringResource(R.string.stop_alarm))

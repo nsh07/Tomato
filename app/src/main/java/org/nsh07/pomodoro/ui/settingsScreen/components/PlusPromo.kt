@@ -53,9 +53,9 @@ fun PlusPromo(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .clip(CircleShape)
+            .clickable { setShowPaywall(true) }
             .background(container)
             .padding(16.dp)
-            .clickable { setShowPaywall(true) }
     ) {
         Icon(
             painterResource(R.drawable.tomato_logo_notification),

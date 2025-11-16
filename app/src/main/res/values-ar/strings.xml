@@ -18,7 +18,7 @@
     <string name="color_scheme">مجموعة الالوان</string>
     <string name="dynamic">ديناميكي</string>
     <string name="color">لون</string>
-    <string name="system_default">النظام (الافتراضي)</string>
+    <string name="system_default">النظام</string>
     <string name="alarm">المنبه</string>
     <string name="light">فاتح</string>
     <string name="dark">داكن</string>
@@ -68,9 +68,11 @@
     <string name="dynamic_color">اللون الديناميكي</string>
     <string name="dynamic_color_desc">تعديل ألوان السمة من الخليفة الخاصة بك</string>
     <string name="tomato_foss">Tomato FOSS</string>
-    <string name="tomato_foss_desc">كل الميزات مفتوحة لي هذه النسخة، اذا كنت تريد صنع اختلاف في حياتك، فكر في التبرع لي علي %1$s.</string>
+    <string name="tomato_foss_desc">كل الميزات مفتوحة في هذه النسخة، اذا كنت تريد صنع اختلاف في حياتك، فكر في التبرع لي علي %1$s.</string>
     <string name="language">اللغة</string>
     <string name="choose_language">اختيار لغة</string>
     <string name="rate_on_google_play">قيم التطبيق علي جوجل بلاي</string>
     <string name="selected">مُختار</string>
+    <string name="timer_settings_reset_info">أعد المؤقت لتغير الاعدادات</string>
+    <string name="help_with_translation">المساعدة في الترجمة</string>
 </resources>

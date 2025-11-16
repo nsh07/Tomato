@@ -57,4 +57,13 @@
     <string name="sound">Dzwięk</string>
     <string name="dnd">Nie przeszkadzać</string>
     <string name="dnd_desc">Włącz tryb nie przeszkadzać podczas sesji skupienia</string>
+    <string name="language">Język</string>
+    <string name="selected">Zaznaczone</string>
+    <string name="dynamic_color">Dynamiczny kolor</string>
+    <string name="choose_language">Wybierz język</string>
+    <string name="skip_to_next">Przejdź do następnego</string>
+    <string name="timer_session_count">%1$d z %2$d</string>
+    <string name="help_with_translation">Pomóż w tłumaczeniu aplikacji</string>
+    <string name="rate_on_google_play">Wystaw ocenę na Google Play</string>
+    <string name="dynamic_color_desc">Dostosuj kolory motywu do swojej tapety</string>
 </resources>

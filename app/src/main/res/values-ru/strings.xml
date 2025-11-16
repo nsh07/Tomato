@@ -73,4 +73,6 @@
     <string name="durations">Длительности</string>
     <string name="appearance">Отображение</string>
     <string name="tomato_foss">Tomato (свободное и открытое программное обеспечение)</string>
+    <string name="help_with_translation">Помочь с переводом</string>
+    <string name="timer_settings_reset_info">Сбросить таймер для изменения настроек</string>
 </resources>

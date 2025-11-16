@@ -122,13 +122,13 @@ fun TimeColumnChart(
                     ),
                     marker = DefaultCartesianMarker(
                         TextComponent(
-                            color = colorScheme.surface.toArgb(),
+                            color = colorScheme.inverseOnSurface.toArgb(),
                             background = ShapeComponent(
-                                fill = fill(colorScheme.onSurface),
-                                shape = CorneredShape.Pill
+                                fill = fill(colorScheme.inverseSurface),
+                                shape = CorneredShape.rounded(8f)
                             ),
-                            textSizeSp = typography.labelSmall.fontSize.value,
-                            lineHeightSp = typography.labelSmall.fontSize.value,
+                            textSizeSp = typography.bodySmall.fontSize.value,
+                            lineHeightSp = typography.bodySmall.lineHeight.value,
                             padding = Insets(verticalDp = 4f, horizontalDp = 8f),
                             margins = Insets(bottomDp = 2f)
                         ),
@@ -143,7 +143,7 @@ fun TimeColumnChart(
                 minZoom = Zoom.min(Zoom.Content, Zoom.fixed())
             ),
             animationSpec = animationSpec,
-            modifier = modifier.height(224.dp),
+            modifier = modifier.height(226.dp),
         )
     }
 }

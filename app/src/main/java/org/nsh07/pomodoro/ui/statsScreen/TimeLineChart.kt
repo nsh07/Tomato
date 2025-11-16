@@ -136,13 +136,13 @@ fun TimeLineChart(
                     ),
                     marker = DefaultCartesianMarker(
                         TextComponent(
-                            color = colorScheme.surface.toArgb(),
+                            color = colorScheme.inverseOnSurface.toArgb(),
                             background = ShapeComponent(
-                                fill = fill(colorScheme.onSurface),
-                                shape = CorneredShape.Pill
+                                fill = fill(colorScheme.inverseSurface),
+                                shape = CorneredShape.rounded(8f)
                             ),
-                            textSizeSp = typography.labelSmall.fontSize.value,
-                            lineHeightSp = typography.labelSmall.fontSize.value,
+                            textSizeSp = typography.bodySmall.fontSize.value,
+                            lineHeightSp = typography.bodySmall.lineHeight.value,
                             padding = Insets(verticalDp = 4f, horizontalDp = 8f),
                             margins = Insets(bottomDp = 2f)
                         ),

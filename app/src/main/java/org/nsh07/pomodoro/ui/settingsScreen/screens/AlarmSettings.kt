@@ -29,6 +29,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -82,6 +83,7 @@ fun AlarmSettings(
     settingsState: SettingsState,
     onAction: (SettingsAction) -> Unit,
     onBack: () -> Unit,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -174,6 +176,7 @@ fun AlarmSettings(
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(2.dp),
+            contentPadding = contentPadding,
             modifier = Modifier
                 .background(topBarColors.containerColor)
                 .fillMaxSize()
@@ -249,6 +252,7 @@ fun AlarmSettingsPreview() {
     AlarmSettings(
         settingsState = settingsState,
         onAction = {},
-        onBack = {}
+        onBack = {},
+        contentPadding = PaddingValues()
     )
 }

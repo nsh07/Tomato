@@ -196,6 +196,7 @@ fun AppScreen(
                     entry<Screen.Settings.Main> {
                         SettingsScreenRoot(
                             setShowPaywall = { showPaywall = it },
+                            contentPadding = contentPadding,
                             modifier = modifier.padding(
                                 start = contentPadding.calculateStartPadding(layoutDirection),
                                 end = contentPadding.calculateEndPadding(layoutDirection),

@@ -28,6 +28,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -86,6 +87,7 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 @Composable
 fun SettingsScreenRoot(
     setShowPaywall: (Boolean) -> Unit,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
 ) {
@@ -125,6 +127,7 @@ fun SettingsScreenRoot(
         sessionsSliderState = sessionsSliderState,
         onAction = viewModel::onAction,
         setShowPaywall = setShowPaywall,
+        contentPadding = contentPadding,
         modifier = modifier
     )
 }
@@ -143,6 +146,7 @@ private fun SettingsScreen(
     sessionsSliderState: SliderState,
     onAction: (SettingsAction) -> Unit,
     setShowPaywall: (Boolean) -> Unit,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -201,6 +205,7 @@ private fun SettingsScreen(
 
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(2.dp),
+                        contentPadding = contentPadding,
                         modifier = Modifier
                             .background(topBarColors.containerColor)
                             .fillMaxSize()
@@ -280,7 +285,8 @@ private fun SettingsScreen(
                 AlarmSettings(
                     settingsState = settingsState,
                     onAction = onAction,
-                    onBack = backStack::removeLastOrNull
+                    onBack = backStack::removeLastOrNull,
+                    contentPadding = contentPadding,
                 )
             }
             entry<Screen.Settings.Appearance> {
@@ -289,7 +295,8 @@ private fun SettingsScreen(
                     isPlus = isPlus,
                     onAction = onAction,
                     setShowPaywall = setShowPaywall,
-                    onBack = backStack::removeLastOrNull
+                    onBack = backStack::removeLastOrNull,
+                    contentPadding = contentPadding,
                 )
             }
             entry<Screen.Settings.Timer> {
@@ -304,6 +311,7 @@ private fun SettingsScreen(
                     onAction = onAction,
                     setShowPaywall = setShowPaywall,
                     onBack = backStack::removeLastOrNull,
+                    contentPadding = contentPadding,
                 )
             }
         }

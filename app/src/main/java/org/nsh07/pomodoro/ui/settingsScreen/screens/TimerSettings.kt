@@ -27,6 +27,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -105,6 +106,7 @@ fun TimerSettings(
     onAction: (SettingsAction) -> Unit,
     setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -167,6 +169,7 @@ fun TimerSettings(
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(2.dp),
+            contentPadding = contentPadding,
             modifier = Modifier
                 .background(topBarColors.containerColor)
                 .fillMaxSize()
@@ -434,6 +437,7 @@ private fun TimerSettingsPreview() {
         sessionsSliderState = sessionsSliderState,
         onAction = {},
         setShowPaywall = {},
-        onBack = {}
+        onBack = {},
+        contentPadding = PaddingValues()
     )
 }

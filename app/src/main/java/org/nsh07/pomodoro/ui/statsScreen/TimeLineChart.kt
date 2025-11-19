@@ -21,7 +21,6 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -94,7 +93,7 @@ fun TimeLineChart(
             millisecondsToMinutes(value)
         }
     },
-    animationSpec: AnimationSpec<Float>? = motionScheme.slowEffectsSpec()
+    animationSpec: AnimationSpec<Float>? = null
 ) {
     ProvideVicoTheme(rememberM3VicoTheme()) {
         CartesianChartHost(
@@ -129,7 +128,7 @@ fun TimeLineChart(
                         valueFormatter = yValueFormatter
                     ),
                     bottomAxis = HorizontalAxis.rememberBottom(
-                        rememberLineComponent(Fill.Transparent),
+                        line = rememberLineComponent(Fill.Transparent),
                         tick = rememberLineComponent(Fill.Transparent),
                         guideline = rememberLineComponent(Fill.Transparent),
                         valueFormatter = xValueFormatter

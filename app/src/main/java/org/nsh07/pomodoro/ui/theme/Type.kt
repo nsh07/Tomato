@@ -21,9 +21,6 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontVariation
-import androidx.compose.ui.text.font.FontWeight
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex400
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
@@ -50,48 +47,11 @@ val Typography = Typography(
 
 @OptIn(ExperimentalTextApi::class)
 object AppFonts {
-    val interClock = FontFamily(
-        Font(
-            R.font.inter_variable, variationSettings = FontVariation.Settings(
-                FontWeight.Bold,
-                FontStyle.Normal
-            )
-        )
-    )
+    val interClock = FontFamily(Font(R.font.inter_bold))
 
-    val googleFlex400 = FontFamily(
-        Font(
-            R.font.google_sans_flex_variable, variationSettings = FontVariation.Settings(
-                FontVariation.weight(400)
-            )
-        )
-    )
+    val googleFlex400 = FontFamily(Font(R.font.google_sans_flex_400))
 
-    val googleFlex600 = FontFamily(
-        Font(
-            R.font.google_sans_flex_variable, variationSettings = FontVariation.Settings(
-                FontVariation.weight(600),
-                FontVariation.Setting("ROND", 100f)
-            )
-        )
-    )
+    val googleFlex600 = FontFamily(Font(R.font.google_sans_flex_600))
 
-    val robotoFlexTopBar = FontFamily(
-        Font(
-            R.font.roboto_flex_variable,
-            variationSettings = FontVariation.Settings(
-                FontVariation.width(125f),
-                FontVariation.weight(1000),
-                FontVariation.grade(0),
-                FontVariation.Setting("XOPQ", 96F),
-                FontVariation.Setting("XTRA", 500F),
-                FontVariation.Setting("YOPQ", 79F),
-                FontVariation.Setting("YTAS", 750F),
-                FontVariation.Setting("YTDE", -203F),
-                FontVariation.Setting("YTFI", 738F),
-                FontVariation.Setting("YTLC", 514F),
-                FontVariation.Setting("YTUC", 712F)
-            )
-        )
-    )
+    val robotoFlexTopBar = FontFamily(Font(R.font.roboto_flex_logo))
 }

@@ -186,7 +186,7 @@ fun AppearanceSettingsPreview() {
             isPlus = false,
             onAction = {},
             setShowPaywall = {},
-            onBack = {},
+            onBack = {}
         )
     }
 }

@@ -435,6 +435,6 @@ private fun TimerSettingsPreview() {
         sessionsSliderState = sessionsSliderState,
         onAction = {},
         setShowPaywall = {},
-        onBack = {},
+        onBack = {}
     )
 }

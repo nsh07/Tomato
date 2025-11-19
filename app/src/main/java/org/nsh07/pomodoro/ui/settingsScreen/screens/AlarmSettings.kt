@@ -250,6 +250,6 @@ fun AlarmSettingsPreview() {
     AlarmSettings(
         settingsState = settingsState,
         onAction = {},
-        onBack = {},
+        onBack = {}
     )
 }

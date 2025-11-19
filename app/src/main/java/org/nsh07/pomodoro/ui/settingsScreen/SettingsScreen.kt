@@ -282,6 +282,7 @@ private fun SettingsScreen(
                     settingsState = settingsState,
                     onAction = onAction,
                     onBack = backStack::removeLastOrNull,
+                    modifier = modifier,
                 )
             }
             entry<Screen.Settings.Appearance> {
@@ -291,6 +292,7 @@ private fun SettingsScreen(
                     onAction = onAction,
                     setShowPaywall = setShowPaywall,
                     onBack = backStack::removeLastOrNull,
+                    modifier = modifier,
                 )
             }
             entry<Screen.Settings.Timer> {
@@ -305,6 +307,7 @@ private fun SettingsScreen(
                     onAction = onAction,
                     setShowPaywall = setShowPaywall,
                     onBack = backStack::removeLastOrNull,
+                    modifier = modifier,
                 )
             }
         }

@@ -69,7 +69,6 @@ fun AppearanceSettings(
     onAction: (SettingsAction) -> Unit,
     setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
-    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -100,7 +99,6 @@ fun AppearanceSettings(
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(2.dp),
-            contentPadding = contentPadding,
             modifier = Modifier
                 .background(topBarColors.containerColor)
                 .fillMaxSize()
@@ -189,7 +187,6 @@ fun AppearanceSettingsPreview() {
             onAction = {},
             setShowPaywall = {},
             onBack = {},
-            contentPadding = PaddingValues()
         )
     }
 }

@@ -87,7 +87,6 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 @Composable
 fun SettingsScreenRoot(
     setShowPaywall: (Boolean) -> Unit,
-    contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
 ) {
@@ -127,7 +126,6 @@ fun SettingsScreenRoot(
         sessionsSliderState = sessionsSliderState,
         onAction = viewModel::onAction,
         setShowPaywall = setShowPaywall,
-        contentPadding = contentPadding,
         modifier = modifier
     )
 }
@@ -146,7 +144,6 @@ private fun SettingsScreen(
     sessionsSliderState: SliderState,
     onAction: (SettingsAction) -> Unit,
     setShowPaywall: (Boolean) -> Unit,
-    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -205,7 +202,6 @@ private fun SettingsScreen(
 
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(2.dp),
-                        contentPadding = contentPadding,
                         modifier = Modifier
                             .background(topBarColors.containerColor)
                             .fillMaxSize()
@@ -286,7 +282,6 @@ private fun SettingsScreen(
                     settingsState = settingsState,
                     onAction = onAction,
                     onBack = backStack::removeLastOrNull,
-                    contentPadding = contentPadding,
                 )
             }
             entry<Screen.Settings.Appearance> {
@@ -296,7 +291,6 @@ private fun SettingsScreen(
                     onAction = onAction,
                     setShowPaywall = setShowPaywall,
                     onBack = backStack::removeLastOrNull,
-                    contentPadding = contentPadding,
                 )
             }
             entry<Screen.Settings.Timer> {
@@ -311,7 +305,6 @@ private fun SettingsScreen(
                     onAction = onAction,
                     setShowPaywall = setShowPaywall,
                     onBack = backStack::removeLastOrNull,
-                    contentPadding = contentPadding,
                 )
             }
         }

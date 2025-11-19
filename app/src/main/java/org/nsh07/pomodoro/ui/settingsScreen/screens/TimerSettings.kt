@@ -106,7 +106,6 @@ fun TimerSettings(
     onAction: (SettingsAction) -> Unit,
     setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
-    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -169,7 +168,6 @@ fun TimerSettings(
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(2.dp),
-            contentPadding = contentPadding,
             modifier = Modifier
                 .background(topBarColors.containerColor)
                 .fillMaxSize()
@@ -438,6 +436,5 @@ private fun TimerSettingsPreview() {
         onAction = {},
         setShowPaywall = {},
         onBack = {},
-        contentPadding = PaddingValues()
     )
 }

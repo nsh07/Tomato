@@ -83,7 +83,6 @@ fun AlarmSettings(
     settingsState: SettingsState,
     onAction: (SettingsAction) -> Unit,
     onBack: () -> Unit,
-    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -176,7 +175,6 @@ fun AlarmSettings(
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(2.dp),
-            contentPadding = contentPadding,
             modifier = Modifier
                 .background(topBarColors.containerColor)
                 .fillMaxSize()
@@ -253,6 +251,5 @@ fun AlarmSettingsPreview() {
         settingsState = settingsState,
         onAction = {},
         onBack = {},
-        contentPadding = PaddingValues()
     )
 }

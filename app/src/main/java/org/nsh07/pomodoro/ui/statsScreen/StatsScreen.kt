@@ -285,7 +285,7 @@ fun StatsScreen(
                     Text(
                         stringResource(R.string.focus_per_day_avg),
                         style = typography.titleSmall,
-                        modifier = Modifier.padding(bottom = 6.3.dp)
+                        modifier = Modifier.padding(bottom = 4.dp)
                     )
                 }
             }
@@ -361,7 +361,7 @@ fun StatsScreen(
                     Text(
                         text = stringResource(R.string.focus_per_day_avg),
                         style = typography.titleSmall,
-                        modifier = Modifier.padding(bottom = 6.3.dp)
+                        modifier = Modifier.padding(bottom = 4.dp)
                     )
                 }
             }
@@ -438,7 +438,7 @@ fun StatsScreen(
                     Text(
                         text = stringResource(R.string.focus_per_day_avg),
                         style = typography.titleSmall,
-                        modifier = Modifier.padding(bottom = 6.3.dp)
+                        modifier = Modifier.padding(bottom = 4.dp)
                     )
                 }
             }

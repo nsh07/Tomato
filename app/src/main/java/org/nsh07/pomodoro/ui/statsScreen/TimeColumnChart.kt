@@ -58,6 +58,7 @@ import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
+import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.millisecondsToHours
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
@@ -112,14 +113,14 @@ fun TimeColumnChart(
                     ),
                     startAxis = VerticalAxis.rememberStart(
                         line = rememberLineComponent(Fill.Transparent),
-                        label = rememberTextComponent(typeface = axisTypeface),
+                        label = rememberTextComponent(colorScheme.onSurface, axisTypeface),
                         tick = rememberLineComponent(Fill.Transparent),
                         guideline = rememberLineComponent(Fill.Transparent),
                         valueFormatter = yValueFormatter
                     ),
                     bottomAxis = HorizontalAxis.rememberBottom(
                         line = rememberLineComponent(Fill.Transparent),
-                        label = rememberTextComponent(typeface = axisTypeface),
+                        label = rememberTextComponent(colorScheme.onSurface, axisTypeface),
                         tick = rememberLineComponent(Fill.Transparent),
                         guideline = rememberLineComponent(Fill.Transparent),
                         valueFormatter = xValueFormatter
@@ -137,7 +138,15 @@ fun TimeColumnChart(
                             padding = Insets(verticalDp = 4f, horizontalDp = 8f),
                             margins = Insets(bottomDp = 2f)
                         ),
-                        valueFormatter = markerValueFormatter
+                        valueFormatter = markerValueFormatter,
+                        guideline = rememberLineComponent(
+                            fill = fill(colorScheme.primary),
+                            shape = DashedShape(
+                                shape = CorneredShape.Pill,
+                                dashLengthDp = 16f,
+                                gapLengthDp = 8f
+                            )
+                        )
                     ),
                     fadingEdges = rememberFadingEdges()
                 ),

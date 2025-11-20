@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.statsScreen
 
+import android.graphics.Typeface
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -37,14 +38,17 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
-import com.patrykandpatrick.vico.core.cartesian.FadingEdges
 import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
@@ -57,8 +61,6 @@ import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.Insets
-import com.patrykandpatrick.vico.core.common.component.ShapeComponent
-import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
@@ -71,6 +73,8 @@ import org.nsh07.pomodoro.utils.millisecondsToMinutes
 fun TimeLineChart(
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier = Modifier,
+    axisTypeface: Typeface = Typeface.DEFAULT,
+    markerTypeface: Typeface = Typeface.DEFAULT,
     thickness: Float = 2f,
     pointSpacing: Dp = 12.dp,
     xValueFormatter: CartesianValueFormatter = CartesianValueFormatter.Default,
@@ -123,31 +127,34 @@ fun TimeLineChart(
                     ),
                     startAxis = VerticalAxis.rememberStart(
                         line = rememberLineComponent(Fill.Transparent),
+                        label = rememberTextComponent(typeface = axisTypeface),
                         tick = rememberLineComponent(Fill.Transparent),
                         guideline = rememberLineComponent(Fill.Transparent),
                         valueFormatter = yValueFormatter
                     ),
                     bottomAxis = HorizontalAxis.rememberBottom(
                         line = rememberLineComponent(Fill.Transparent),
+                        label = rememberTextComponent(typeface = axisTypeface),
                         tick = rememberLineComponent(Fill.Transparent),
                         guideline = rememberLineComponent(Fill.Transparent),
                         valueFormatter = xValueFormatter
                     ),
-                    marker = DefaultCartesianMarker(
-                        TextComponent(
-                            color = colorScheme.inverseOnSurface.toArgb(),
-                            background = ShapeComponent(
+                    marker = rememberDefaultCartesianMarker(
+                        rememberTextComponent(
+                            color = colorScheme.inverseOnSurface,
+                            typeface = markerTypeface,
+                            background = rememberShapeComponent(
                                 fill = fill(colorScheme.inverseSurface),
                                 shape = CorneredShape.rounded(8f)
                             ),
-                            textSizeSp = typography.bodySmall.fontSize.value,
-                            lineHeightSp = typography.bodySmall.lineHeight.value,
+                            textSize = typography.bodySmall.fontSize,
+                            lineHeight = typography.bodySmall.lineHeight,
                             padding = Insets(verticalDp = 4f, horizontalDp = 8f),
                             margins = Insets(bottomDp = 2f)
                         ),
                         valueFormatter = markerValueFormatter
                     ),
-                    fadingEdges = FadingEdges()
+                    fadingEdges = rememberFadingEdges()
                 ),
             modelProducer = modelProducer,
             zoomState = rememberVicoZoomState(

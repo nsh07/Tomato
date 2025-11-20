@@ -28,21 +28,66 @@ import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 val TYPOGRAPHY = Typography()
 
 val Typography = Typography(
-    displayLarge = TYPOGRAPHY.displayLarge.copy(fontFamily = googleFlex600),
-    displayMedium = TYPOGRAPHY.displayMedium.copy(fontFamily = googleFlex600),
-    displaySmall = TYPOGRAPHY.displaySmall.copy(fontFamily = googleFlex600),
-    headlineLarge = TYPOGRAPHY.headlineLarge.copy(fontFamily = googleFlex600),
-    headlineMedium = TYPOGRAPHY.headlineMedium.copy(fontFamily = googleFlex600),
-    headlineSmall = TYPOGRAPHY.headlineSmall.copy(fontFamily = googleFlex600),
-    titleLarge = TYPOGRAPHY.titleLarge.copy(fontFamily = googleFlex400),
-    titleMedium = TYPOGRAPHY.titleMedium.copy(fontFamily = googleFlex600),
-    titleSmall = TYPOGRAPHY.titleSmall.copy(fontFamily = googleFlex600),
-    bodyLarge = TYPOGRAPHY.bodyLarge.copy(fontFamily = googleFlex600),
-    bodyMedium = TYPOGRAPHY.bodyMedium.copy(fontFamily = googleFlex400),
-    bodySmall = TYPOGRAPHY.bodySmall.copy(fontFamily = googleFlex400),
-    labelLarge = TYPOGRAPHY.labelLarge.copy(fontFamily = googleFlex600),
-    labelMedium = TYPOGRAPHY.labelMedium.copy(fontFamily = googleFlex600),
-    labelSmall = TYPOGRAPHY.labelSmall.copy(fontFamily = googleFlex600)
+    displayLarge = TYPOGRAPHY.displayLarge.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    displayMedium = TYPOGRAPHY.displayMedium.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    displaySmall = TYPOGRAPHY.displaySmall.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    headlineLarge = TYPOGRAPHY.headlineLarge.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    headlineMedium = TYPOGRAPHY.headlineMedium.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    headlineSmall = TYPOGRAPHY.headlineSmall.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    titleLarge = TYPOGRAPHY.titleLarge.copy(
+        fontFamily = googleFlex400,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    titleMedium = TYPOGRAPHY.titleMedium.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    titleSmall = TYPOGRAPHY.titleSmall.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    bodyLarge = TYPOGRAPHY.bodyLarge.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    bodyMedium = TYPOGRAPHY.bodyMedium.copy(
+        fontFamily = googleFlex400,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    bodySmall = TYPOGRAPHY.bodySmall.copy(
+        fontFamily = googleFlex400,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    labelLarge = TYPOGRAPHY.labelLarge.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    labelMedium = TYPOGRAPHY.labelMedium.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    labelSmall = TYPOGRAPHY.labelSmall.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    )
 )
 
 @OptIn(ExperimentalTextApi::class)

@@ -128,6 +128,7 @@ or [my BuyMeACoffee page](https://coff.ee/nsh07):
 </a>
 
 ### Members and Sponsors
+
 - Shun Min Chang ([@jack24254029](https://github.com/jack24254029) on GitHub)
 - Chinedu Oji (on BuyMeACoffee)
 
@@ -145,6 +146,9 @@ This app was made possible by the following libraries:
 
 - [Roboto Flex](https://fonts.google.com/specimen/Roboto+Flex) by
   Google<br/><img src=".github/repo_photos/roboto-flex-banner.jpg" width="400">
+
+- [Google Sans Flex](https://fonts.google.com/specimen/Google+Sans+Flex) by
+  Google<br/><img src=".github/repo_photos/google-sans-flex.jpg" width="400">
 
 - [Inter](https://rsms.me/inter/) by
   Rasmus Andersson<br/><img src=".github/repo_photos/inter-banner.png" width="400">

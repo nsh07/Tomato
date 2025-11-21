@@ -1,0 +1,11 @@
+New features:
+- All buttons and clickable items in the app now morph their shapes when tapping and holding
+- You can now tap and drag across charts and graphs to view the exact focus duration of each day
+- The entire app now uses a new rounded font that integrates with the Android system
+
+Fixes:
+- The "Focus" heading in the home screen is now centered
+- Items in settings are no longer cut off by the navigation bar
+- Graphs are no longer animated to avoid unnecessary motion
+
+Updated translations

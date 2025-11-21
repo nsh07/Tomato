@@ -73,4 +73,6 @@
     <string name="selected">Dipilih</string>
     <string name="always_on_display_desc">Ketuk di mana saja saat melihat pengatur waktu untuk beralih ke mode AOD</string>
     <string name="always_on_display">Always On Display (AOD)</string>
+    <string name="help_with_translation">Bantu dengan terjemahan</string>
+    <string name="timer_settings_reset_info">Atur timer untuk ubah pengaturan</string>
 </resources>

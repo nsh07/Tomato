@@ -26,6 +26,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -41,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TomatoPlusPaywallDialog(
     isPlus: Boolean,
@@ -77,7 +80,10 @@ fun TomatoPlusPaywallDialog(
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
             Spacer(Modifier.height(16.dp))
-            Button(onClick = { uriHandler.openUri("https://coff.ee/nsh07") }) {
+            Button(
+                onClick = { uriHandler.openUri("https://coff.ee/nsh07") },
+                shapes = ButtonDefaults.shapes()
+            ) {
                 Text(stringResource(R.string.bmc))
             }
         }

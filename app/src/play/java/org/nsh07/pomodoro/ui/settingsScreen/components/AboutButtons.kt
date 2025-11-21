@@ -22,6 +22,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TopButton(
     buttonColors: ButtonColors,
@@ -42,6 +45,7 @@ fun TopButton(
     Button(
         colors = buttonColors,
         onClick = { uriHandler.openUri("https://hosted.weblate.org/engage/tomato/") },
+        shapes = ButtonDefaults.shapes(),
         modifier = modifier
     ) {
         Row(
@@ -59,6 +63,7 @@ fun TopButton(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun BottomButton(
     buttonColors: ButtonColors,
@@ -68,6 +73,7 @@ fun BottomButton(
     Button(
         colors = buttonColors,
         onClick = { uriHandler.openUri("https://play.google.com/store/apps/details?id=org.nsh07.pomodoro") },
+        shapes = ButtonDefaults.shapes(),
         modifier = modifier
     ) {
         Row(

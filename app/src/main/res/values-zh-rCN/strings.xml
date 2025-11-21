@@ -73,4 +73,6 @@
     <string name="choose_language">选择语言</string>
     <string name="rate_on_google_play">在 Google Play 上评价</string>
     <string name="selected">已选中</string>
+    <string name="help_with_translation">帮忙翻译</string>
+    <string name="timer_settings_reset_info">重置定时器来更改设置</string>
 </resources>

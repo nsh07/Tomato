@@ -18,8 +18,10 @@
 package org.nsh07.pomodoro.billing
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -30,7 +32,9 @@ import com.revenuecat.purchases.ui.revenuecatui.Paywall
 import com.revenuecat.purchases.ui.revenuecatui.PaywallOptions
 import com.revenuecat.purchases.ui.revenuecatui.customercenter.CustomerCenter
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TomatoPlusPaywallDialog(
     isPlus: Boolean,
@@ -46,12 +50,14 @@ fun TomatoPlusPaywallDialog(
 
             FilledTonalIconButton(
                 onClick = onDismiss,
+                shapes = IconButtonDefaults.shapes(),
+                colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = listItemColors.containerColor),
                 modifier = Modifier
                     .padding(innerPadding)
                     .padding(16.dp)
             ) {
                 Icon(
-                    painterResource(R.drawable.arrow_back),
+                    painterResource(R.drawable.clear),
                     null
                 )
             }

@@ -21,103 +21,82 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontVariation
-import androidx.compose.ui.text.font.FontWeight
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.ui.theme.AppFonts.interBody
-import org.nsh07.pomodoro.ui.theme.AppFonts.interLabel
-import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexHeadline
-import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTitle
+import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex400
+import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 
 val TYPOGRAPHY = Typography()
 
-// Set of Material typography styles to start with
 val Typography = Typography(
-    displayLarge = TYPOGRAPHY.displayLarge.copy(fontFamily = robotoFlexHeadline),
-    displayMedium = TYPOGRAPHY.displayMedium.copy(fontFamily = robotoFlexHeadline),
-    displaySmall = TYPOGRAPHY.displaySmall.copy(fontFamily = robotoFlexHeadline),
-    headlineLarge = TYPOGRAPHY.headlineLarge.copy(fontFamily = robotoFlexHeadline),
-    headlineMedium = TYPOGRAPHY.headlineMedium.copy(fontFamily = robotoFlexHeadline),
-    headlineSmall = TYPOGRAPHY.headlineSmall.copy(fontFamily = robotoFlexHeadline),
-    titleLarge = TYPOGRAPHY.titleLarge.copy(fontFamily = robotoFlexTitle),
-    titleMedium = TYPOGRAPHY.titleMedium.copy(fontFamily = robotoFlexTitle),
-    titleSmall = TYPOGRAPHY.titleSmall.copy(fontFamily = robotoFlexTitle),
-    bodyLarge = TYPOGRAPHY.bodyLarge.copy(fontFamily = interBody),
-    bodyMedium = TYPOGRAPHY.bodyMedium.copy(fontFamily = interBody),
-    bodySmall = TYPOGRAPHY.bodySmall.copy(fontFamily = interBody),
-    labelLarge = TYPOGRAPHY.labelLarge.copy(fontFamily = interLabel),
-    labelMedium = TYPOGRAPHY.labelMedium.copy(fontFamily = interLabel),
-    labelSmall = TYPOGRAPHY.labelSmall.copy(fontFamily = interLabel)
+    displayLarge = TYPOGRAPHY.displayLarge.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    displayMedium = TYPOGRAPHY.displayMedium.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    displaySmall = TYPOGRAPHY.displaySmall.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    headlineLarge = TYPOGRAPHY.headlineLarge.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    headlineMedium = TYPOGRAPHY.headlineMedium.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    headlineSmall = TYPOGRAPHY.headlineSmall.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    titleLarge = TYPOGRAPHY.titleLarge.copy(
+        fontFamily = googleFlex400,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    titleMedium = TYPOGRAPHY.titleMedium.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    titleSmall = TYPOGRAPHY.titleSmall.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    bodyLarge = TYPOGRAPHY.bodyLarge.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    bodyMedium = TYPOGRAPHY.bodyMedium.copy(
+        fontFamily = googleFlex400,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    bodySmall = TYPOGRAPHY.bodySmall.copy(
+        fontFamily = googleFlex400,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    labelLarge = TYPOGRAPHY.labelLarge.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    labelMedium = TYPOGRAPHY.labelMedium.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    ),
+    labelSmall = TYPOGRAPHY.labelSmall.copy(
+        fontFamily = googleFlex600,
+        fontFeatureSettings = "ss02, dlig"
+    )
 )
 
 @OptIn(ExperimentalTextApi::class)
 object AppFonts {
-    val interClock = FontFamily(
-        Font(
-            R.font.inter_variable, variationSettings = FontVariation.Settings(
-                FontWeight.Bold,
-                FontStyle.Normal
-            )
-        )
-    )
+    val interClock = FontFamily(Font(R.font.inter_bold))
 
-    val interBody = FontFamily(
-        Font(
-            R.font.inter_variable, variationSettings = FontVariation.Settings(
-                FontWeight.Normal,
-                FontStyle.Normal
-            )
-        )
-    )
+    val googleFlex400 = FontFamily(Font(R.font.google_sans_flex_400))
 
-    val interLabel = FontFamily(
-        Font(
-            R.font.inter_variable, variationSettings = FontVariation.Settings(
-                FontWeight.Medium,
-                FontStyle.Normal
-            )
-        )
-    )
+    val googleFlex600 = FontFamily(Font(R.font.google_sans_flex_600))
 
-    val robotoFlexTopBar = FontFamily(
-        Font(
-            R.font.roboto_flex_variable,
-            variationSettings = FontVariation.Settings(
-                FontVariation.width(125f),
-                FontVariation.weight(1000),
-                FontVariation.grade(0),
-                FontVariation.Setting("XOPQ", 96F),
-                FontVariation.Setting("XTRA", 500F),
-                FontVariation.Setting("YOPQ", 79F),
-                FontVariation.Setting("YTAS", 750F),
-                FontVariation.Setting("YTDE", -203F),
-                FontVariation.Setting("YTFI", 738F),
-                FontVariation.Setting("YTLC", 514F),
-                FontVariation.Setting("YTUC", 712F)
-            )
-        )
-    )
-
-    val robotoFlexHeadline = FontFamily(
-        Font(
-            R.font.roboto_flex_variable,
-            variationSettings = FontVariation.Settings(
-                FontVariation.width(130f),
-                FontVariation.weight(600),
-                FontVariation.grade(0)
-            )
-        )
-    )
-
-    val robotoFlexTitle = FontFamily(
-        Font(
-            R.font.roboto_flex_variable,
-            variationSettings = FontVariation.Settings(
-                FontVariation.width(130f),
-                FontVariation.weight(700),
-                FontVariation.grade(0)
-            )
-        )
-    )
+    val robotoFlexTopBar = FontFamily(Font(R.font.roboto_flex_logo))
 }

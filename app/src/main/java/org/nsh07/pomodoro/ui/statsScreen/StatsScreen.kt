@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.statsScreen
 
+import android.graphics.Typeface
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -59,6 +60,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -75,7 +77,8 @@ import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
-import org.nsh07.pomodoro.ui.theme.AppFonts.interClock
+import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex400
+import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
@@ -149,6 +152,10 @@ fun StatsScreen(
         }
     }
 
+    val resolver = LocalFontFamilyResolver.current
+    val axisTypeface = remember { resolver.resolve(googleFlex400).value as Typeface }
+    val markerTypeface = remember { resolver.resolve(googleFlex600).value as Typeface }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -219,7 +226,6 @@ fun StatsScreen(
                                     millisecondsToHoursMinutes(todayStat?.totalFocusTime() ?: 0)
                                 },
                                 style = typography.displaySmall,
-                                fontFamily = interClock,
                                 color = colorScheme.onPrimaryContainer,
                                 maxLines = 1,
                                 autoSize = TextAutoSize.StepBased(maxFontSize = typography.displaySmall.fontSize)
@@ -246,7 +252,6 @@ fun StatsScreen(
                                     millisecondsToHoursMinutes(todayStat?.breakTime ?: 0)
                                 },
                                 style = typography.displaySmall,
-                                fontFamily = interClock,
                                 color = colorScheme.onTertiaryContainer,
                                 maxLines = 1,
                                 autoSize = TextAutoSize.StepBased(maxFontSize = typography.displaySmall.fontSize)
@@ -279,13 +284,12 @@ fun StatsScreen(
                                 lastWeekAverageFocusTimes.sum().toLong()
                             }
                         ),
-                        style = typography.displaySmall,
-                        fontFamily = interClock
+                        style = typography.displaySmall
                     )
                     Text(
                         stringResource(R.string.focus_per_day_avg),
                         style = typography.titleSmall,
-                        modifier = Modifier.padding(bottom = 6.3.dp)
+                        modifier = Modifier.padding(bottom = 5.2.dp)
                     )
                 }
             }
@@ -293,6 +297,8 @@ fun StatsScreen(
                 TimeColumnChart(
                     lastWeekSummaryChartData.first,
                     modifier = Modifier.padding(start = 16.dp),
+                    axisTypeface = axisTypeface,
+                    markerTypeface = markerTypeface,
                     xValueFormatter = CartesianValueFormatter { context, x, _ ->
                         context.model.extraStore[lastWeekSummaryChartData.second][x.toInt()]
                     }
@@ -326,6 +332,8 @@ fun StatsScreen(
                     ProductivityGraph(
                         lastWeekStatExpanded,
                         lastWeekSummaryAnalysisModelProducer,
+                        axisTypeface = axisTypeface,
+                        markerTypeface = markerTypeface,
                         label = stringResource(R.string.weekly_productivity_analysis),
                         modifier = Modifier.padding(horizontal = 32.dp)
                     )
@@ -355,13 +363,12 @@ fun StatsScreen(
                                 lastMonthAverageFocusTimes.sum().toLong()
                             }
                         ),
-                        style = typography.displaySmall,
-                        fontFamily = interClock
+                        style = typography.displaySmall
                     )
                     Text(
                         text = stringResource(R.string.focus_per_day_avg),
                         style = typography.titleSmall,
-                        modifier = Modifier.padding(bottom = 6.3.dp)
+                        modifier = Modifier.padding(bottom = 5.2.dp)
                     )
                 }
             }
@@ -369,6 +376,8 @@ fun StatsScreen(
                 TimeColumnChart(
                     lastMonthSummaryChartData.first,
                     modifier = Modifier.padding(start = 16.dp),
+                    axisTypeface = axisTypeface,
+                    markerTypeface = markerTypeface,
                     thickness = 8.dp,
                     xValueFormatter = CartesianValueFormatter { context, x, _ ->
                         context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
@@ -403,6 +412,8 @@ fun StatsScreen(
                     ProductivityGraph(
                         lastMonthStatExpanded,
                         lastMonthSummaryAnalysisModelProducer,
+                        axisTypeface = axisTypeface,
+                        markerTypeface = markerTypeface,
                         label = stringResource(R.string.monthly_productivity_analysis),
                         modifier = Modifier.padding(horizontal = 32.dp)
                     )
@@ -432,13 +443,12 @@ fun StatsScreen(
                                 lastYearAverageFocusTimes.sum().toLong()
                             }
                         ),
-                        style = typography.displaySmall,
-                        fontFamily = interClock
+                        style = typography.displaySmall
                     )
                     Text(
                         text = stringResource(R.string.focus_per_day_avg),
                         style = typography.titleSmall,
-                        modifier = Modifier.padding(bottom = 6.3.dp)
+                        modifier = Modifier.padding(bottom = 5.2.dp)
                     )
                 }
             }
@@ -446,6 +456,8 @@ fun StatsScreen(
                 TimeLineChart(
                     lastYearSummaryChartData.first,
                     modifier = Modifier.padding(start = 16.dp),
+                    axisTypeface = axisTypeface,
+                    markerTypeface = markerTypeface,
                     xValueFormatter = CartesianValueFormatter { context, x, _ ->
                         context.model.extraStore[lastYearSummaryChartData.second][x.toInt()]
                     }

@@ -29,8 +29,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
@@ -48,6 +50,7 @@ import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 
 // Taken from https://github.com/shub39/Grit/blob/master/app/src/main/java/com/shub39/grit/core/presentation/settings/ui/component/AboutApp.kt
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AboutCard(
     isPlus: Boolean,
@@ -92,7 +95,8 @@ fun AboutCard(
                 IconButton(
                     onClick = {
                         Toast.makeText(context, "Coming soon...", Toast.LENGTH_SHORT).show()
-                    }
+                    },
+                    shapes = IconButtonDefaults.shapes()
                 ) {
                     Icon(
                         painterResource(R.drawable.discord),
@@ -102,7 +106,8 @@ fun AboutCard(
                 }
 
                 IconButton(
-                    onClick = { uriHandler.openUri("https://github.com/nsh07/Tomato") }
+                    onClick = { uriHandler.openUri("https://github.com/nsh07/Tomato") },
+                    shapes = IconButtonDefaults.shapes()
                 ) {
                     Icon(
                         painterResource(R.drawable.github),

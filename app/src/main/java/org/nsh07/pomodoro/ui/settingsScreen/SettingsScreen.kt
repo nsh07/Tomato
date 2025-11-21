@@ -280,7 +280,8 @@ private fun SettingsScreen(
                 AlarmSettings(
                     settingsState = settingsState,
                     onAction = onAction,
-                    onBack = backStack::removeLastOrNull
+                    onBack = backStack::removeLastOrNull,
+                    modifier = modifier,
                 )
             }
             entry<Screen.Settings.Appearance> {
@@ -289,7 +290,8 @@ private fun SettingsScreen(
                     isPlus = isPlus,
                     onAction = onAction,
                     setShowPaywall = setShowPaywall,
-                    onBack = backStack::removeLastOrNull
+                    onBack = backStack::removeLastOrNull,
+                    modifier = modifier,
                 )
             }
             entry<Screen.Settings.Timer> {
@@ -304,6 +306,7 @@ private fun SettingsScreen(
                     onAction = onAction,
                     setShowPaywall = setShowPaywall,
                     onBack = backStack::removeLastOrNull,
+                    modifier = modifier,
                 )
             }
         }

@@ -73,4 +73,6 @@
     <string name="choose_language">Dil seç</string>
     <string name="rate_on_google_play">Google Play\'de değerlendir</string>
     <string name="selected">Seçilen</string>
+    <string name="help_with_translation">Çeviriye yardım edin</string>
+    <string name="timer_settings_reset_info">Ayarları değiştirmek için zamanlayıcıyı sıfırlayın</string>
 </resources>

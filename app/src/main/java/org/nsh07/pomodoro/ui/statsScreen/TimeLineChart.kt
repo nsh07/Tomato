@@ -1,15 +1,28 @@
 /*
  * Copyright (c) 2025 Nishant Mishra
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * This file is part of Tomato - a minimalist pomodoro timer for Android.
+ *
+ * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Tomato.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.nsh07.pomodoro.ui.statsScreen
 
+import android.graphics.Typeface
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MaterialTheme.motionScheme
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,14 +38,17 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
-import com.patrykandpatrick.vico.core.cartesian.FadingEdges
 import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
@@ -41,10 +57,17 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineFill.Companion.single
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.common.Fill
+import com.patrykandpatrick.vico.core.common.Insets
+import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
+import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.millisecondsToHours
+import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.utils.millisecondsToMinutes
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -52,6 +75,8 @@ import org.nsh07.pomodoro.utils.millisecondsToMinutes
 fun TimeLineChart(
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier = Modifier,
+    axisTypeface: Typeface = Typeface.DEFAULT,
+    markerTypeface: Typeface = Typeface.DEFAULT,
     thickness: Float = 2f,
     pointSpacing: Dp = 12.dp,
     xValueFormatter: CartesianValueFormatter = CartesianValueFormatter.Default,
@@ -62,7 +87,19 @@ fun TimeLineChart(
             millisecondsToMinutes(value.toLong())
         }
     },
-    animationSpec: AnimationSpec<Float>? = motionScheme.slowEffectsSpec()
+    markerValueFormatter: DefaultCartesianMarker.ValueFormatter = DefaultCartesianMarker.ValueFormatter { _, targets ->
+        val first = targets.firstOrNull()
+        val value = if (first is LineCartesianLayerMarkerTarget) {
+            first.points.sumOf { it.entry.y.toLong() }
+        } else 0L
+
+        if (value >= 60 * 60 * 1000) {
+            millisecondsToHoursMinutes(value)
+        } else {
+            millisecondsToMinutes(value)
+        }
+    },
+    animationSpec: AnimationSpec<Float>? = null
 ) {
     ProvideVicoTheme(rememberM3VicoTheme()) {
         CartesianChartHost(
@@ -92,17 +129,49 @@ fun TimeLineChart(
                     ),
                     startAxis = VerticalAxis.rememberStart(
                         line = rememberLineComponent(Fill.Transparent),
+                        label = rememberTextComponent(colorScheme.onSurface, axisTypeface),
                         tick = rememberLineComponent(Fill.Transparent),
                         guideline = rememberLineComponent(Fill.Transparent),
                         valueFormatter = yValueFormatter
                     ),
                     bottomAxis = HorizontalAxis.rememberBottom(
-                        rememberLineComponent(Fill.Transparent),
+                        line = rememberLineComponent(Fill.Transparent),
+                        label = rememberTextComponent(colorScheme.onSurface, axisTypeface),
                         tick = rememberLineComponent(Fill.Transparent),
                         guideline = rememberLineComponent(Fill.Transparent),
                         valueFormatter = xValueFormatter
                     ),
-                    fadingEdges = FadingEdges()
+                    marker = rememberDefaultCartesianMarker(
+                        rememberTextComponent(
+                            color = colorScheme.inverseOnSurface,
+                            typeface = markerTypeface,
+                            background = rememberShapeComponent(
+                                fill = fill(colorScheme.inverseSurface),
+                                shape = CorneredShape.rounded(8f)
+                            ),
+                            textSize = typography.bodySmall.fontSize,
+                            lineHeight = typography.bodySmall.lineHeight,
+                            padding = Insets(verticalDp = 4f, horizontalDp = 8f),
+                            margins = Insets(bottomDp = 2f)
+                        ),
+                        valueFormatter = markerValueFormatter,
+                        indicator = {
+                            ShapeComponent(
+                                fill = fill(it),
+                                shape = CorneredShape.Pill,
+                                margins = Insets(3f)
+                            )
+                        },
+                        guideline = rememberLineComponent(
+                            fill = fill(colorScheme.primary),
+                            shape = DashedShape(
+                                shape = CorneredShape.Pill,
+                                dashLengthDp = 16f,
+                                gapLengthDp = 8f
+                            )
+                        )
+                    ),
+                    fadingEdges = rememberFadingEdges()
                 ),
             modelProducer = modelProducer,
             zoomState = rememberVicoZoomState(
@@ -111,7 +180,7 @@ fun TimeLineChart(
                 minZoom = Zoom.min(Zoom.Content, Zoom.fixed())
             ),
             animationSpec = animationSpec,
-            modifier = modifier,
+            modifier = modifier.height(224.dp),
         )
     }
 }

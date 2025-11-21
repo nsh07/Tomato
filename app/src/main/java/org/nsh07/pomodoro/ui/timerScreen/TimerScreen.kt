@@ -154,7 +154,7 @@ fun SharedTransitionScope.TimerScreen(
                         )
                     },
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(.9f)
                 ) {
                     when (it) {
                         TimerMode.BRAND ->

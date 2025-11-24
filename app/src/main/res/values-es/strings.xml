@@ -3,8 +3,8 @@
     <string name="start">Iniciar</string>
     <string name="stop">Detener</string>
     <string name="focus">Concentración</string>
-    <string name="short_break">Pequeño descanso</string>
-    <string name="long_break">Descanso extenso</string>
+    <string name="short_break">Descanso corto</string>
+    <string name="long_break">Descanso largo</string>
     <string name="exit">Salir</string>
     <string name="skip">Omitir</string>
     <string name="stop_alarm">Parar alarma</string>
@@ -34,7 +34,7 @@
     <string name="weekly_productivity_analysis">Análisis de productividad semanal</string>
     <string name="last_month">Mes pasado</string>
     <string name="monthly_productivity_analysis">Análisis de productividad mensual</string>
-    <string name="stop_alarm_question">Parar alarma?</string>
+    <string name="stop_alarm_question">¿Parar Alarma?</string>
     <string name="stop_alarm_dialog_text">La sesión actual del temporizador ha finalizado. Toque en cualquier lugar para detener la alarma.</string>
     <string name="timer_session_count">%1$d de %2$d</string>
     <string name="more">Más</string>
@@ -54,7 +54,7 @@
     <string name="color_scheme">Esquema de colores</string>
     <string name="dynamic">Dinámica</string>
     <string name="color">Color</string>
-    <string name="light">Luz</string>
+    <string name="light">Claro</string>
     <string name="dark">Oscuro</string>
     <string name="last_year">Año pasado</string>
     <string name="appearance">Apariencia</string>
@@ -63,9 +63,15 @@
     <string name="dnd">No Molestar</string>
     <string name="get_plus">Obtener Tomato+</string>
     <string name="dynamic_color">Color dinámico</string>
-    <string name="dynamic_color_desc">Adapta los colores de tu fondo de pantalla</string>
+    <string name="dynamic_color_desc">Adapta los colores del tema a tu fondo de pantalla</string>
     <string name="language">Idioma</string>
     <string name="choose_language">Seleccionar idioma</string>
     <string name="selected">Seleccionado</string>
     <string name="help_with_translation">Ayudar con la traducción</string>
+    <string name="always_on_display">Always On Display</string>
+    <string name="always_on_display_desc">Toca en cualquier lugar mientras ves el temporizador para cambiar al modo AOD</string>
+    <string name="dnd_desc">Activar NM al ejecutar un temporizador de concentración</string>
+    <string name="tomato_foss_desc">Todas las funciones están desbloqueadas en esta versión. Si mi aplicación ha marcado una diferencia en tu vida, por favor, considera apoyarme donando en %1$s.</string>
+    <string name="rate_on_google_play">Valorar en Google Play</string>
+    <string name="timer_settings_reset_info">Reinicia el temporizador para cambiar la configuración</string>
 </resources>

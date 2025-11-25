@@ -1,0 +1,43 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+    
+    <!-- Background with gradient -->
+    <path
+        android:pathData="M0,0L320,0L320,180L0,180Z">
+        <aapt:attr name="android:fillColor">
+            <gradient 
+                android:startX="0"
+                android:startY="0"
+                android:endX="320"
+                android:endY="180"
+                android:type="linear">
+                <item android:offset="0" android:color="#FFEC2D01"/>
+                <item android:offset="1" android:color="#FFC82300"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    
+    <!-- Tomato icon - scaled up for TV banner -->
+    <group
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:translateX="80"
+        android:translateY="42">
+        <path
+            android:pathData="M54,37A27.01,24.67 0,0 1,27 61.67,27.01 24.67,0 0,1 0,37 27.01,24.67 0,0 1,27 12.33,27.01 24.67,0 0,1 54,37Z"
+            android:strokeLineJoin="round"
+            android:strokeWidth="2.5"
+            android:fillColor="#ffffff"
+            android:strokeColor="#ffffff"/>
+        <path
+            android:pathData="m34,3.5c-9.66,0.52 -9.89,6.71 -9.22,10.6l3.48,0.08c1.13,-2.8 -0.16,-6.5 7.42,-6.91 0,-1.55 0.07,-3.18 -1.68,-3.77zM39.92,11c-3.56,-0.17 -7.58,0.44 -9.39,3.55l7.41,3.5c3.18,-0.94 5.77,-1.16 8.65,-5.93 0,0 -3.11,-0.95 -6.67,-1.12zM12.89,11.16c-3.43,0.14 -6.25,0.96 -6.25,0.96 2.41,2.89 5.24,5.15 9.54,5.21 1.65,-1.88 4.05,-2.62 6.64,-3.08 -2.46,-2.7 -6.5,-3.23 -9.93,-3.09zM26.71,16.68c-9.07,-0.33 -11.94,7.41 -11.94,7.41 4.64,-0.38 8.72,-2.26 11.94,-6.43 2.58,4.94 6.8,6.14 11.59,6.04 0,0 -2.52,-6.7 -11.59,-7.02z"
+            android:strokeLineJoin="round"
+            android:strokeWidth="2.5"
+            android:fillColor="#087830"
+            android:strokeColor="#ffffff"/>
+    </group>
+</vector>

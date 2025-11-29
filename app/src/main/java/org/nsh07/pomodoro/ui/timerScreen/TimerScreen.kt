@@ -94,7 +94,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.ui.theme.AppFonts.interClock
+import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
@@ -282,9 +282,9 @@ fun SharedTransitionScope.TimerScreen(
                         Text(
                             text = timerState.timeStr,
                             style = TextStyle(
-                                fontFamily = interClock,
+                                fontFamily = googleFlex600,
                                 fontSize = 72.sp,
-                                letterSpacing = (-2).sp,
+                                letterSpacing = (-2.6).sp,
                                 fontFeatureSettings = "tnum"
                             ),
                             textAlign = TextAlign.Center,
@@ -307,7 +307,7 @@ fun SharedTransitionScope.TimerScreen(
                                     timerState.currentFocusCount,
                                     timerState.totalFocusCount
                                 ),
-                                fontFamily = interClock,
+                                fontFamily = googleFlex600,
                                 style = typography.titleLarge,
                                 color = colorScheme.outline
                             )
@@ -497,7 +497,7 @@ fun SharedTransitionScope.TimerScreen(
                     Text(
                         it,
                         style = TextStyle(
-                            fontFamily = interClock,
+                            fontFamily = googleFlex600,
                             fontSize = 22.sp,
                             lineHeight = 28.sp,
                             color = if (timerState.nextTimerMode == TimerMode.FOCUS) colorScheme.primary else colorScheme.tertiary,

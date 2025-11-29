@@ -64,7 +64,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import kotlinx.coroutines.delay
-import org.nsh07.pomodoro.ui.theme.AppFonts.interClock
+import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -248,7 +248,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
             Text(
                 text = timerState.timeStr,
                 style = TextStyle(
-                    fontFamily = interClock,
+                    fontFamily = googleFlex600,
                     fontSize = 56.sp,
                     letterSpacing = (-2).sp,
                     fontFeatureSettings = "tnum"

@@ -40,6 +40,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -59,10 +61,11 @@ class TimerService : Service() {
     private val _timerState by lazy { appContainer.timerState }
     private val _time by lazy { appContainer.time }
 
-    private val timeStateFlow by lazy { _time.asStateFlow() }
-
+    /**
+     * Remaining time
+     */
     private var time: Long
-        get() = timeStateFlow.value
+        get() = _time.value
         set(value) = _time.update { value }
 
     private val timerState by lazy { _timerState.asStateFlow() }
@@ -72,6 +75,9 @@ class TimerService : Service() {
     private var pauseTime = 0L
     private var pauseDuration = 0L
 
+    private var lastSavedDuration = 0L
+
+    private val saveLock = Mutex()
     private var job = SupervisorJob()
     private val timerScope = CoroutineScope(Dispatchers.IO + job)
     private val skipScope = CoroutineScope(Dispatchers.IO + job)
@@ -107,6 +113,7 @@ class TimerService : Service() {
         runBlocking {
             job.cancel()
             saveTimeToDb()
+            lastSavedDuration = 0
             setDoNotDisturb(false)
             notificationManager.cancel(1)
             alarm?.release()
@@ -192,6 +199,13 @@ class TimerService : Service() {
                                 timeStr = millisecondsToStr(time)
                             )
                         }
+                        val totalTime = timerState.value.totalTime
+
+                        if (totalTime - time < lastSavedDuration)
+                            lastSavedDuration =
+                                0 // Sanity check, prevents errors if service is force closed
+                        if (totalTime - time - lastSavedDuration > 60000)
+                            saveTimeToDb()
                     }
 
                     delay((1000f / timerRepository.timerFrequency).toLong())
@@ -310,6 +324,7 @@ class TimerService : Service() {
     private suspend fun resetTimer() {
         updateProgressSegments()
         saveTimeToDb()
+        lastSavedDuration = 0
         time = timerRepository.focusTime
         cycles = 0
         startTime = 0L
@@ -334,6 +349,7 @@ class TimerService : Service() {
         saveTimeToDb()
         updateProgressSegments()
         showTimerNotification(0, paused = true, complete = !fromButton)
+        lastSavedDuration = 0
         startTime = 0L
         pauseTime = 0L
         pauseDuration = 0L
@@ -460,14 +476,18 @@ class TimerService : Service() {
     }
 
     suspend fun saveTimeToDb() {
-        when (timerState.value.timerMode) {
-            TimerMode.FOCUS -> statRepository.addFocusTime(
-                (timerState.value.totalTime - time).coerceAtLeast(
-                    0L
+        saveLock.withLock {
+            val elapsedTime = timerState.value.totalTime - time
+            when (timerState.value.timerMode) {
+                TimerMode.FOCUS -> statRepository.addFocusTime(
+                    (elapsedTime - lastSavedDuration).coerceAtLeast(0L)
                 )
-            )
 
-            else -> statRepository.addBreakTime((timerState.value.totalTime - time).coerceAtLeast(0L))
+                else -> statRepository.addBreakTime(
+                    (elapsedTime - lastSavedDuration).coerceAtLeast(0L)
+                )
+            }
+            lastSavedDuration = elapsedTime
         }
     }
 

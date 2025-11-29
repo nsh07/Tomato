@@ -74,6 +74,9 @@ import org.nsh07.pomodoro.utils.millisecondsToMinutes
 @Composable
 fun TimeLineChart(
     modelProducer: CartesianChartModelProducer,
+    hoursFormat: String,
+    hoursMinutesFormat: String,
+    minutesFormat: String,
     modifier: Modifier = Modifier,
     axisTypeface: Typeface = Typeface.DEFAULT,
     markerTypeface: Typeface = Typeface.DEFAULT,
@@ -82,9 +85,9 @@ fun TimeLineChart(
     xValueFormatter: CartesianValueFormatter = CartesianValueFormatter.Default,
     yValueFormatter: CartesianValueFormatter = CartesianValueFormatter { _, value, _ ->
         if (value >= 60 * 60 * 1000) {
-            millisecondsToHours(value.toLong())
+            millisecondsToHours(value.toLong(), hoursFormat)
         } else {
-            millisecondsToMinutes(value.toLong())
+            millisecondsToMinutes(value.toLong(), minutesFormat)
         }
     },
     markerValueFormatter: DefaultCartesianMarker.ValueFormatter = DefaultCartesianMarker.ValueFormatter { _, targets ->
@@ -94,9 +97,9 @@ fun TimeLineChart(
         } else 0L
 
         if (value >= 60 * 60 * 1000) {
-            millisecondsToHoursMinutes(value)
+            millisecondsToHoursMinutes(value, hoursMinutesFormat)
         } else {
-            millisecondsToMinutes(value)
+            millisecondsToMinutes(value, minutesFormat)
         }
     },
     animationSpec: AnimationSpec<Float>? = null
@@ -203,7 +206,12 @@ private fun TimeLineChartPreview() {
     }
     TomatoTheme {
         Surface {
-            TimeLineChart(modelProducer = modelProducer)
+            TimeLineChart(
+                modelProducer = modelProducer,
+                hoursFormat = "%dh",
+                hoursMinutesFormat = "%dh %dm",
+                minutesFormat = "%dm"
+            )
         }
     }
 }

@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 
 @Composable
 fun ColumnScope.ProductivityGraph(
@@ -53,6 +52,9 @@ fun ColumnScope.ProductivityGraph(
             Spacer(Modifier.height(8.dp))
             TimeColumnChart(
                 modelProducer,
+                hoursFormat = stringResource(R.string.hours_format),
+                hoursMinutesFormat = stringResource(R.string.hours_and_minutes_format),
+                minutesFormat = stringResource(R.string.minutes_format),
                 axisTypeface = axisTypeface,
                 markerTypeface = markerTypeface,
                 xValueFormatter = CartesianValueFormatter { _, value, _ ->
@@ -63,9 +65,6 @@ fun ColumnScope.ProductivityGraph(
                         3.0 -> "18 - 24"
                         else -> ""
                     }
-                },
-                yValueFormatter = CartesianValueFormatter { _, value, _ ->
-                    millisecondsToHoursMinutes(value.toLong())
                 }
             )
         }

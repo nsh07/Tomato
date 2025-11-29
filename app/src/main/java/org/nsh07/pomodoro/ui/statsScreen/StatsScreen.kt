@@ -130,6 +130,10 @@ fun StatsScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+    val hoursFormat = stringResource(R.string.hours_format)
+    val hoursMinutesFormat = stringResource(R.string.hours_and_minutes_format)
+    val minutesFormat = stringResource(R.string.minutes_format)
+
     var lastWeekStatExpanded by rememberSaveable { mutableStateOf(false) }
     var lastMonthStatExpanded by rememberSaveable { mutableStateOf(false) }
 
@@ -223,7 +227,10 @@ fun StatsScreen(
                             )
                             Text(
                                 remember(todayStat) {
-                                    millisecondsToHoursMinutes(todayStat?.totalFocusTime() ?: 0)
+                                    millisecondsToHoursMinutes(
+                                        todayStat?.totalFocusTime() ?: 0,
+                                        hoursMinutesFormat
+                                    )
                                 },
                                 style = typography.displaySmall,
                                 color = colorScheme.onPrimaryContainer,
@@ -249,7 +256,10 @@ fun StatsScreen(
                             )
                             Text(
                                 remember(todayStat) {
-                                    millisecondsToHoursMinutes(todayStat?.breakTime ?: 0)
+                                    millisecondsToHoursMinutes(
+                                        todayStat?.breakTime ?: 0,
+                                        hoursMinutesFormat
+                                    )
                                 },
                                 style = typography.displaySmall,
                                 color = colorScheme.onTertiaryContainer,
@@ -282,7 +292,8 @@ fun StatsScreen(
                         millisecondsToHoursMinutes(
                             remember(lastWeekAverageFocusTimes) {
                                 lastWeekAverageFocusTimes.sum().toLong()
-                            }
+                            },
+                            hoursMinutesFormat
                         ),
                         style = typography.displaySmall
                     )
@@ -295,7 +306,10 @@ fun StatsScreen(
             }
             item {
                 TimeColumnChart(
-                    lastWeekSummaryChartData.first,
+                    modelProducer = lastWeekSummaryChartData.first,
+                    hoursFormat = hoursFormat,
+                    hoursMinutesFormat = hoursMinutesFormat,
+                    minutesFormat = minutesFormat,
                     modifier = Modifier.padding(start = 16.dp),
                     axisTypeface = axisTypeface,
                     markerTypeface = markerTypeface,
@@ -361,7 +375,8 @@ fun StatsScreen(
                         millisecondsToHoursMinutes(
                             remember(lastMonthAverageFocusTimes) {
                                 lastMonthAverageFocusTimes.sum().toLong()
-                            }
+                            },
+                            hoursMinutesFormat
                         ),
                         style = typography.displaySmall
                     )
@@ -374,7 +389,10 @@ fun StatsScreen(
             }
             item {
                 TimeColumnChart(
-                    lastMonthSummaryChartData.first,
+                    modelProducer = lastMonthSummaryChartData.first,
+                    hoursFormat = hoursFormat,
+                    hoursMinutesFormat = hoursMinutesFormat,
+                    minutesFormat = minutesFormat,
                     modifier = Modifier.padding(start = 16.dp),
                     axisTypeface = axisTypeface,
                     markerTypeface = markerTypeface,
@@ -441,7 +459,8 @@ fun StatsScreen(
                         millisecondsToHoursMinutes(
                             remember(lastYearAverageFocusTimes) {
                                 lastYearAverageFocusTimes.sum().toLong()
-                            }
+                            },
+                            hoursMinutesFormat
                         ),
                         style = typography.displaySmall
                     )
@@ -454,7 +473,10 @@ fun StatsScreen(
             }
             item {
                 TimeLineChart(
-                    lastYearSummaryChartData.first,
+                    modelProducer = lastYearSummaryChartData.first,
+                    hoursFormat = hoursFormat,
+                    hoursMinutesFormat = hoursMinutesFormat,
+                    minutesFormat = minutesFormat,
                     modifier = Modifier.padding(start = 16.dp),
                     axisTypeface = axisTypeface,
                     markerTypeface = markerTypeface,

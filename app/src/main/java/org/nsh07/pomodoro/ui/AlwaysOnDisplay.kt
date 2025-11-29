@@ -23,7 +23,6 @@ import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -159,7 +158,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
         animationSpec = motionScheme.slowEffectsSpec()
     )
 
-    var randomX by remember {
+    var x by remember {
         mutableIntStateOf(
             Random.nextInt(
                 16.dp.toIntPx(density),
@@ -167,7 +166,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
             )
         )
     }
-    var randomY by remember {
+    var y by remember {
         mutableIntStateOf(
             Random.nextInt(
                 16.dp.toIntPx(density),
@@ -176,21 +175,20 @@ fun SharedTransitionScope.AlwaysOnDisplay(
         )
     }
 
-    LaunchedEffect(timerState.timeStr[1]) { // Randomize position every minute
+    var xIncrement by remember { mutableIntStateOf(1) }
+    var yIncrement by remember { mutableIntStateOf(1) }
+
+    LaunchedEffect(timerState.timeStr) { // Randomize position every minute
         if (sharedElementTransitionComplete) {
-            randomX = Random.nextInt(
-                16.dp.toIntPx(density),
-                windowInfo.containerSize.width - 266.dp.toIntPx(density)
-            )
-            randomY = Random.nextInt(
-                16.dp.toIntPx(density),
-                windowInfo.containerSize.height - 266.dp.toIntPx(density)
-            )
+            val elementSize = 266.dp.toIntPx(density)
+            if (windowInfo.containerSize.width - elementSize < x + xIncrement || x + xIncrement < 16)
+                xIncrement = -xIncrement
+            if (windowInfo.containerSize.height - elementSize < y + yIncrement || y + yIncrement < 16)
+                yIncrement = -yIncrement
+            x += xIncrement
+            y += yIncrement
         }
     }
-
-    val x by animateIntAsState(randomX, motionScheme.slowSpatialSpec())
-    val y by animateIntAsState(randomY, motionScheme.slowSpatialSpec())
 
     Box(
         modifier = modifier

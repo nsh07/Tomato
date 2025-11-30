@@ -125,9 +125,10 @@ fun LocaleBottomSheet(
                             colors =
                                 if (currentLocales.isEmpty)
                                     ListItemDefaults.colors(
-                                        containerColor = colorScheme.primaryContainer.copy(
-                                            0.3f
-                                        )
+                                        containerColor = colorScheme.secondaryContainer,
+                                        headlineColor = colorScheme.onSecondaryContainer,
+                                        leadingIconColor = colorScheme.onSecondaryContainer,
+                                        trailingIconColor = colorScheme.onSecondaryContainer
                                     )
                                 else listItemColors,
                             modifier = Modifier
@@ -169,7 +170,12 @@ fun LocaleBottomSheet(
                             },
                             colors =
                                 if (!currentLocales.isEmpty && it.locale == currentLocales.get(0))
-                                    ListItemDefaults.colors(containerColor = colorScheme.primaryContainer)
+                                    ListItemDefaults.colors(
+                                        containerColor = colorScheme.secondaryContainer,
+                                        headlineColor = colorScheme.onSecondaryContainer,
+                                        leadingIconColor = colorScheme.onSecondaryContainer,
+                                        trailingIconColor = colorScheme.onSecondaryContainer
+                                    )
                                 else listItemColors,
                             modifier = Modifier
                                 .clip(

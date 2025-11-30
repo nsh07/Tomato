@@ -27,8 +27,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,6 +56,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.Switch
@@ -71,6 +75,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -98,6 +103,7 @@ fun TimerSettings(
     isPlus: Boolean,
     serviceRunning: Boolean,
     settingsState: SettingsState,
+    contentPadding: PaddingValues,
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
@@ -109,6 +115,7 @@ fun TimerSettings(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
+    val layoutDirection = LocalLayoutDirection.current
     val appName = stringResource(R.string.app_name)
     val notificationManagerService =
         remember { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
@@ -141,32 +148,42 @@ fun TimerSettings(
         )
     )
 
-    Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
-        LargeFlexibleTopAppBar(
-            title = {
-                Text(stringResource(R.string.timer), fontFamily = robotoFlexTopBar)
-            },
-            subtitle = {
-                Text(stringResource(R.string.settings))
-            },
-            navigationIcon = {
-                FilledTonalIconButton(
-                    onClick = onBack,
-                    shapes = IconButtonDefaults.shapes(),
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = listItemColors.containerColor)
-                ) {
-                    Icon(
-                        painterResource(R.drawable.arrow_back),
-                        null
-                    )
-                }
-            },
-            colors = topBarColors,
-            scrollBehavior = scrollBehavior
+    Scaffold(
+        topBar = {
+            LargeFlexibleTopAppBar(
+                title = {
+                    Text(stringResource(R.string.timer), fontFamily = robotoFlexTopBar)
+                },
+                subtitle = {
+                    Text(stringResource(R.string.settings))
+                },
+                navigationIcon = {
+                    FilledTonalIconButton(
+                        onClick = onBack,
+                        shapes = IconButtonDefaults.shapes(),
+                        colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = listItemColors.containerColor)
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.arrow_back),
+                            null
+                        )
+                    }
+                },
+                colors = topBarColors,
+                scrollBehavior = scrollBehavior
+            )
+        },
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { innerPadding ->
+        val insets = PaddingValues(
+            bottom = contentPadding.calculateBottomPadding(),
+            top = innerPadding.calculateTopPadding(),
+            start = innerPadding.calculateStartPadding(layoutDirection),
+            end = innerPadding.calculateEndPadding(layoutDirection)
         )
-
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(2.dp),
+            contentPadding = insets,
             modifier = Modifier
                 .background(topBarColors.containerColor)
                 .fillMaxSize()
@@ -428,6 +445,7 @@ private fun TimerSettingsPreview() {
         isPlus = false,
         serviceRunning = true,
         settingsState = remember { SettingsState() },
+        contentPadding = PaddingValues(),
         focusTimeInputFieldState = focusTimeInputFieldState,
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,

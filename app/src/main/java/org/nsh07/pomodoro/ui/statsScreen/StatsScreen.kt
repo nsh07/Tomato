@@ -27,6 +27,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -45,6 +47,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -61,6 +64,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFontFamilyResolver
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -129,6 +133,7 @@ fun StatsScreen(
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val layoutDirection = LocalLayoutDirection.current
 
     val hoursFormat = stringResource(R.string.hours_format)
     val hoursMinutesFormat = stringResource(R.string.hours_and_minutes_format)
@@ -160,43 +165,50 @@ fun StatsScreen(
     val axisTypeface = remember { resolver.resolve(googleFlex400).value as Typeface }
     val markerTypeface = remember { resolver.resolve(googleFlex600).value as Typeface }
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-    ) {
-        TopAppBar(
-            title = {
-                Text(
-                    stringResource(R.string.stats),
-                    style = LocalTextStyle.current.copy(
-                        fontFamily = robotoFlexTopBar,
-                        fontSize = 32.sp,
-                        lineHeight = 32.sp
-                    ),
-                    modifier = Modifier
-                        .padding(top = contentPadding.calculateTopPadding())
-                        .padding(vertical = 14.dp)
-                )
-            },
-            actions = if (BuildConfig.DEBUG) {
-                {
-                    IconButton(
-                        onClick = generateSampleData
-                    ) {
-                        Spacer(Modifier.size(24.dp))
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        stringResource(R.string.stats),
+                        style = LocalTextStyle.current.copy(
+                            fontFamily = robotoFlexTopBar,
+                            fontSize = 32.sp,
+                            lineHeight = 32.sp
+                        ),
+                        modifier = Modifier
+                            .padding(top = contentPadding.calculateTopPadding())
+                            .padding(vertical = 14.dp)
+                    )
+                },
+                actions = if (BuildConfig.DEBUG) {
+                    {
+                        IconButton(
+                            onClick = generateSampleData
+                        ) {
+                            Spacer(Modifier.size(24.dp))
+                        }
                     }
-                }
-            } else {
-                {}
-            },
-            subtitle = {},
-            titleHorizontalAlignment = Alignment.CenterHorizontally,
-            scrollBehavior = scrollBehavior,
-            windowInsets = WindowInsets()
+                } else {
+                    {}
+                },
+                subtitle = {},
+                titleHorizontalAlignment = Alignment.CenterHorizontally,
+                scrollBehavior = scrollBehavior,
+                windowInsets = WindowInsets()
+            )
+        },
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { innerPadding ->
+        val insets = PaddingValues(
+            bottom = contentPadding.calculateBottomPadding(),
+            top = innerPadding.calculateTopPadding(),
+            start = innerPadding.calculateStartPadding(layoutDirection),
+            end = innerPadding.calculateEndPadding(layoutDirection)
         )
-
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = insets,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item { Spacer(Modifier) }

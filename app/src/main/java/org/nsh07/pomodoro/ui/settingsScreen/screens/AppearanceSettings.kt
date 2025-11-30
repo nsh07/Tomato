@@ -19,8 +19,10 @@ package org.nsh07.pomodoro.ui.settingsScreen.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,6 +35,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -41,6 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,6 +68,7 @@ import org.nsh07.pomodoro.utils.toColor
 @Composable
 fun AppearanceSettings(
     settingsState: SettingsState,
+    contentPadding: PaddingValues,
     isPlus: Boolean,
     onAction: (SettingsAction) -> Unit,
     setShowPaywall: (Boolean) -> Unit,
@@ -71,33 +76,44 @@ fun AppearanceSettings(
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val layoutDirection = LocalLayoutDirection.current
 
-    Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
-        LargeFlexibleTopAppBar(
-            title = {
-                Text(stringResource(R.string.appearance), fontFamily = robotoFlexTopBar)
-            },
-            subtitle = {
-                Text(stringResource(R.string.settings))
-            },
-            navigationIcon = {
-                FilledTonalIconButton(
-                    onClick = onBack,
-                    shapes = IconButtonDefaults.shapes(),
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = listItemColors.containerColor)
-                ) {
-                    Icon(
-                        painterResource(R.drawable.arrow_back),
-                        null
-                    )
-                }
-            },
-            colors = topBarColors,
-            scrollBehavior = scrollBehavior
+    Scaffold(
+        topBar = {
+            LargeFlexibleTopAppBar(
+                title = {
+                    Text(stringResource(R.string.appearance), fontFamily = robotoFlexTopBar)
+                },
+                subtitle = {
+                    Text(stringResource(R.string.settings))
+                },
+                navigationIcon = {
+                    FilledTonalIconButton(
+                        onClick = onBack,
+                        shapes = IconButtonDefaults.shapes(),
+                        colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = listItemColors.containerColor)
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.arrow_back),
+                            null
+                        )
+                    }
+                },
+                colors = topBarColors,
+                scrollBehavior = scrollBehavior
+            )
+        },
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { innerPadding ->
+        val insets = PaddingValues(
+            bottom = contentPadding.calculateBottomPadding(),
+            top = innerPadding.calculateTopPadding(),
+            start = innerPadding.calculateStartPadding(layoutDirection),
+            end = innerPadding.calculateEndPadding(layoutDirection)
         )
-
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(2.dp),
+            contentPadding = insets,
             modifier = Modifier
                 .background(topBarColors.containerColor)
                 .fillMaxSize()
@@ -182,6 +198,7 @@ fun AppearanceSettingsPreview() {
     TomatoTheme(dynamicColor = false) {
         AppearanceSettings(
             settingsState = settingsState,
+            contentPadding = PaddingValues(),
             isPlus = false,
             onAction = {},
             setShowPaywall = {},

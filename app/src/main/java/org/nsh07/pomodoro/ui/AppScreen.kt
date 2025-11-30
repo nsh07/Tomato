@@ -53,11 +53,16 @@ import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,6 +75,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -158,48 +164,64 @@ fun AppScreen(
                     ) {
                         mainScreens.forEach { item ->
                             val selected = backStack.last() == item.route
-                            ToggleButton(
-                                checked = selected,
-                                onCheckedChange = if (item.route != Screen.Timer) { // Ensure the backstack does not accumulate screens
-                                    {
-                                        if (backStack.size < 2) backStack.add(item.route)
-                                        else backStack[1] = item.route
-                                    }
-                                } else {
-                                    { if (backStack.size > 1) backStack.removeAt(1) }
-                                },
-                                colors = ToggleButtonDefaults.toggleButtonColors(
-                                    containerColor = colorScheme.primary,
-                                    contentColor = colorScheme.onPrimary,
-                                    checkedContainerColor = colorScheme.primaryContainer,
-                                    checkedContentColor = colorScheme.onPrimaryContainer
-                                ),
-                                shapes = ToggleButtonDefaults.shapes(
-                                    CircleShape,
-                                    CircleShape,
-                                    CircleShape
-                                ),
-                                modifier = Modifier.height(56.dp)
+                            TooltipBox(
+                                positionProvider =
+                                    TooltipDefaults.rememberTooltipPositionProvider(
+                                        TooltipAnchorPosition.Above
+                                    ),
+                                tooltip = { PlainTooltip { Text(stringResource(item.label)) } },
+                                state = rememberTooltipState(),
                             ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
+                                ToggleButton(
+                                    checked = selected,
+                                    onCheckedChange = if (item.route != Screen.Timer) { // Ensure the backstack does not accumulate screens
+                                        {
+                                            if (backStack.size < 2) backStack.add(item.route)
+                                            else backStack[1] = item.route
+                                        }
+                                    } else {
+                                        { if (backStack.size > 1) backStack.removeAt(1) }
+                                    },
+                                    colors = ToggleButtonDefaults.toggleButtonColors(
+                                        containerColor = colorScheme.primary,
+                                        contentColor = colorScheme.onPrimary,
+                                        checkedContainerColor = colorScheme.primaryContainer,
+                                        checkedContentColor = colorScheme.onPrimaryContainer
+                                    ),
+                                    shapes = ToggleButtonDefaults.shapes(
+                                        CircleShape,
+                                        CircleShape,
+                                        CircleShape
+                                    ),
+                                    modifier = Modifier.height(56.dp)
                                 ) {
-                                    Crossfade(selected) { selected ->
-                                        if (selected) Icon(painterResource(item.selectedIcon), null)
-                                        else Icon(painterResource(item.unselectedIcon), null)
-                                    }
-                                    AnimatedVisibility(
-                                        selected || wide,
-                                        enter = fadeIn(motionScheme.defaultEffectsSpec()) + expandHorizontally(
-                                            motionScheme.defaultSpatialSpec()
-                                        ),
-                                        exit = fadeOut(motionScheme.defaultEffectsSpec()) + shrinkHorizontally(
-                                            motionScheme.defaultSpatialSpec()
-                                        ),
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Row {
-                                            Spacer(Modifier.width(ButtonDefaults.MediumIconSpacing))
-                                            Text(stringResource(item.label))
+                                        Crossfade(selected) { selected ->
+                                            if (selected) Icon(
+                                                painterResource(item.selectedIcon),
+                                                null
+                                            )
+                                            else Icon(painterResource(item.unselectedIcon), null)
+                                        }
+                                        AnimatedVisibility(
+                                            selected || wide,
+                                            enter = fadeIn(motionScheme.defaultEffectsSpec()) + expandHorizontally(
+                                                motionScheme.defaultSpatialSpec()
+                                            ),
+                                            exit = fadeOut(motionScheme.defaultEffectsSpec()) + shrinkHorizontally(
+                                                motionScheme.defaultSpatialSpec()
+                                            ),
+                                        ) {
+                                            Row {
+                                                Spacer(Modifier.width(ButtonDefaults.MediumIconSpacing))
+                                                Text(
+                                                    stringResource(item.label),
+                                                    fontSize = 16.sp,
+                                                    lineHeight = 24.sp
+                                                )
+                                            }
                                         }
                                     }
                                 }

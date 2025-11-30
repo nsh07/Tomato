@@ -27,8 +27,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -64,7 +62,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFontFamilyResolver
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -80,6 +77,7 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
+import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex400
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
@@ -133,7 +131,6 @@ fun StatsScreen(
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val layoutDirection = LocalLayoutDirection.current
 
     val hoursFormat = stringResource(R.string.hours_format)
     val hoursMinutesFormat = stringResource(R.string.hours_and_minutes_format)
@@ -200,12 +197,7 @@ fun StatsScreen(
         },
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
-        val insets = PaddingValues(
-            bottom = contentPadding.calculateBottomPadding(),
-            top = innerPadding.calculateTopPadding(),
-            start = innerPadding.calculateStartPadding(layoutDirection),
-            end = innerPadding.calculateEndPadding(layoutDirection)
-        )
+        val insets = mergePaddingValues(innerPadding, contentPadding)
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = insets,

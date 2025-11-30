@@ -17,18 +17,12 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -38,56 +32,44 @@ import org.nsh07.pomodoro.R
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun TopButton(
-    buttonColors: ButtonColors,
-    modifier: Modifier = Modifier
-) {
+fun TopButton(modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current
-    Button(
-        colors = buttonColors,
-        onClick = { uriHandler.openUri("https://coff.ee/nsh07") },
-        shapes = ButtonDefaults.shapes(),
-        modifier = modifier
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+    ClickableListItem(
+        leadingContent = {
             Icon(
                 painterResource(R.drawable.bmc),
+                tint = colorScheme.primary,
                 contentDescription = null,
-                modifier = Modifier.height(24.dp)
+                modifier = Modifier.size(24.dp)
             )
-
-            Text(text = stringResource(R.string.bmc))
-        }
-    }
+        },
+        headlineContent = { Text(stringResource(R.string.bmc)) },
+        supportingContent = { Text(stringResource(R.string.bmc_desc)) },
+        trailingContent = { Icon(painterResource(R.drawable.open_in_browser), null) },
+        items = 2,
+        index = 0,
+        modifier = modifier
+    ) { uriHandler.openUri("https://coff.ee/nsh07") }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun BottomButton(
-    buttonColors: ButtonColors,
-    modifier: Modifier = Modifier
-) {
+fun BottomButton(modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current
-    Button(
-        colors = buttonColors,
-        onClick = { uriHandler.openUri("https://hosted.weblate.org/engage/tomato/") },
-        shapes = ButtonDefaults.shapes(),
-        modifier = modifier
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+    ClickableListItem(
+        leadingContent = {
             Icon(
                 painterResource(R.drawable.weblate),
+                tint = colorScheme.secondary,
                 contentDescription = null,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(24.dp)
             )
-
-            Text(text = stringResource(R.string.help_with_translation))
-        }
-    }
+        },
+        headlineContent = { Text(stringResource(R.string.help_with_translation)) },
+        supportingContent = { Text(stringResource(R.string.help_with_translation_desc)) },
+        trailingContent = { Icon(painterResource(R.drawable.open_in_browser), null) },
+        items = 2,
+        index = 1,
+        modifier = modifier
+    ) { uriHandler.openUri("https://hosted.weblate.org/engage/tomato/") }
 }

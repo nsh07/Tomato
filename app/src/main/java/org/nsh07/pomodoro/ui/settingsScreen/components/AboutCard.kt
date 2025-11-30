@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -67,11 +66,6 @@ fun AboutCard(
         ),
         shape = shapes.extraLarge
     ) {
-        val buttonColors = ButtonDefaults.buttonColors(
-            containerColor = colorScheme.onPrimaryContainer,
-            contentColor = colorScheme.primaryContainer
-        )
-
         Row(
             modifier = Modifier
                 .padding(16.dp)
@@ -122,8 +116,8 @@ fun AboutCard(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            TopButton(buttonColors)
-            BottomButton(buttonColors)
+//            TopButton(buttonColors)
+//            BottomButton(buttonColors)
         }
     }
 }

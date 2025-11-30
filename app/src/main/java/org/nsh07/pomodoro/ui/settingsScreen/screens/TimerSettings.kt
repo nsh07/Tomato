@@ -30,8 +30,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -75,13 +73,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputField
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
@@ -115,7 +113,6 @@ fun TimerSettings(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
-    val layoutDirection = LocalLayoutDirection.current
     val appName = stringResource(R.string.app_name)
     val notificationManagerService =
         remember { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
@@ -175,12 +172,7 @@ fun TimerSettings(
         },
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
-        val insets = PaddingValues(
-            bottom = contentPadding.calculateBottomPadding(),
-            top = innerPadding.calculateTopPadding(),
-            start = innerPadding.calculateStartPadding(layoutDirection),
-            end = innerPadding.calculateEndPadding(layoutDirection)
-        )
+        val insets = mergePaddingValues(innerPadding, contentPadding)
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(2.dp),
             contentPadding = insets,

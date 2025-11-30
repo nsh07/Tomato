@@ -41,8 +41,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -87,7 +85,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -98,6 +95,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
@@ -118,7 +116,6 @@ fun SharedTransitionScope.TimerScreen(
 ) {
     val motionScheme = motionScheme
     val haptic = LocalHapticFeedback.current
-    val layoutDirection = LocalLayoutDirection.current
 
     val color by animateColorAsState(
         if (timerState.timerMode == TimerMode.FOCUS) colorScheme.primary
@@ -221,12 +218,7 @@ fun SharedTransitionScope.TimerScreen(
         modifier = modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
-        val insets = PaddingValues(
-            bottom = contentPadding.calculateBottomPadding(),
-            top = innerPadding.calculateTopPadding(),
-            start = innerPadding.calculateStartPadding(layoutDirection),
-            end = innerPadding.calculateEndPadding(layoutDirection)
-        )
+        val insets = mergePaddingValues(innerPadding, contentPadding)
         LazyColumn(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = CenterHorizontally,

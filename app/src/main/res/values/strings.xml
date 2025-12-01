@@ -101,4 +101,5 @@
     <string name="help_with_translation_desc">Translate Tomato into your language</string>
     <string name="rate_on_google_play_desc">Liked the app? Write a review!</string>
     <string name="bmc_desc">Support me with a small donation</string>
+    <string name="tomato_plus_desc">Customize further with Tomato+</string>
 </resources>

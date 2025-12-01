@@ -80,7 +80,7 @@ fun AboutScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
 

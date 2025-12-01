@@ -65,13 +65,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.mergePaddingValues
-import org.nsh07.pomodoro.ui.settingsScreen.components.AboutCard
 import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.LocaleBottomSheet
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusPromo
+import org.nsh07.pomodoro.ui.settingsScreen.screens.AboutScreen
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.TimerSettings
@@ -216,21 +217,32 @@ private fun SettingsScreen(
                             .fillMaxSize()
                             .padding(horizontal = 16.dp)
                     ) {
-                        item { Spacer(Modifier.height(12.dp)) }
+                        item { Spacer(Modifier.height(14.dp)) }
 
-                        if (!isPlus) item {
+                        item {
                             PlusPromo(isPlus, setShowPaywall)
-                            Spacer(Modifier.height(14.dp))
                         }
 
-                        item { AboutCard(isPlus) }
+                        item {
+                            ClickableListItem(
+                                leadingContent = {
+                                    Icon(painterResource(R.drawable.info), null)
+                                },
+                                headlineContent = {
+                                    Text(stringResource(R.string.about))
+                                },
+                                supportingContent = {
+                                    Text(stringResource(R.string.app_name) + " ${BuildConfig.VERSION_NAME}")
+                                },
+                                trailingContent = {
+                                    Icon(painterResource(R.drawable.arrow_forward_big), null)
+                                },
+                                items = 2,
+                                index = 1
+                            ) { backStack.add(Screen.Settings.About) }
+                        }
 
                         item { Spacer(Modifier.height(12.dp)) }
-
-                        if (isPlus) item {
-                            PlusPromo(isPlus, setShowPaywall)
-                            Spacer(Modifier.height(14.dp))
-                        }
 
                         itemsIndexed(settingsScreens) { index, item ->
                             ClickableListItem(
@@ -284,6 +296,14 @@ private fun SettingsScreen(
                         item { Spacer(Modifier.height(12.dp)) }
                     }
                 }
+            }
+
+            entry<Screen.Settings.About> {
+                AboutScreen(
+                    contentPadding = contentPadding,
+                    isPlus = isPlus,
+                    onBack = backStack::removeLastOrNull
+                )
             }
 
             entry<Screen.Settings.Alarm> {

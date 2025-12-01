@@ -17,27 +17,18 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 
 @Composable
 fun PlusPromo(
@@ -45,38 +36,38 @@ fun PlusPromo(
     setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val container = if (isPlus) colorScheme.surfaceBright else colorScheme.primary
-    val onContainer = if (isPlus) colorScheme.onSurface else colorScheme.onPrimary
-    val onContainerVariant = if (isPlus) colorScheme.onSurfaceVariant else colorScheme.onPrimary
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    ClickableListItem(
+        leadingContent = {
+            Icon(
+                painterResource(R.drawable.tomato_logo_notification),
+                null,
+                modifier = Modifier.size(24.dp)
+            )
+        },
+        headlineContent = {
+            Text(
+                if (!isPlus) stringResource(R.string.get_plus)
+                else stringResource(R.string.app_name_plus)
+            )
+        },
+        supportingContent = {
+            if (!isPlus) Text(stringResource(R.string.tomato_plus_desc))
+        },
+        trailingContent = {
+            Icon(
+                painterResource(R.drawable.arrow_forward_big),
+                null
+            )
+        },
+        colors = if (isPlus) listItemColors else ListItemDefaults.colors(
+            containerColor = colorScheme.primary,
+            leadingIconColor = colorScheme.onPrimary,
+            trailingIconColor = colorScheme.onPrimary,
+            supportingColor = colorScheme.onPrimary,
+            headlineColor = colorScheme.onPrimary
+        ),
+        items = 2,
+        index = 0,
         modifier = modifier
-            .clip(CircleShape)
-            .clickable { setShowPaywall(true) }
-            .background(container)
-            .padding(16.dp)
-    ) {
-        Icon(
-            painterResource(R.drawable.tomato_logo_notification),
-            null,
-            tint = onContainerVariant,
-            modifier = Modifier
-                .size(24.dp)
-        )
-        Spacer(Modifier.width(8.dp))
-        Text(
-            if (!isPlus) stringResource(R.string.get_plus)
-            else stringResource(R.string.app_name_plus),
-            style = typography.titleLarge,
-            fontFamily = robotoFlexTopBar,
-            color = onContainer
-        )
-        Spacer(Modifier.weight(1f))
-        Icon(
-            painterResource(R.drawable.arrow_forward_big),
-            null,
-            tint = onContainerVariant
-        )
-    }
+    ) { setShowPaywall(true) }
 }

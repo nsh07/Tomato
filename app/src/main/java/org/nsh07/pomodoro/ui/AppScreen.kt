@@ -21,6 +21,7 @@ import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -89,6 +90,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
 import org.nsh07.pomodoro.ui.timerScreen.AlarmDialog
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -138,6 +140,20 @@ fun AppScreen(
                         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
                     )
                 }
+
+                val primary by animateColorAsState(
+                    if (uiState.timerMode == TimerMode.FOCUS) colorScheme.primary else colorScheme.tertiary
+                )
+                val onPrimary by animateColorAsState(
+                    if (uiState.timerMode == TimerMode.FOCUS) colorScheme.onPrimary else colorScheme.onTertiary
+                )
+                val primaryContainer by animateColorAsState(
+                    if (uiState.timerMode == TimerMode.FOCUS) colorScheme.primaryContainer else colorScheme.tertiaryContainer
+                )
+                val onPrimaryContainer by animateColorAsState(
+                    if (uiState.timerMode == TimerMode.FOCUS) colorScheme.onPrimaryContainer else colorScheme.onTertiaryContainer
+                )
+
                 Box(
                     Modifier
                         .fillMaxWidth()
@@ -151,8 +167,8 @@ fun AppScreen(
                         expanded = true,
                         scrollBehavior = toolbarScrollBehavior,
                         colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(
-                            toolbarContainerColor = colorScheme.primary,
-                            toolbarContentColor = colorScheme.onPrimary
+                            toolbarContainerColor = primary,
+                            toolbarContentColor = onPrimary
                         ),
                         modifier = Modifier
                             .padding(
@@ -183,10 +199,10 @@ fun AppScreen(
                                         { if (backStack.size > 1) backStack.removeAt(1) }
                                     },
                                     colors = ToggleButtonDefaults.toggleButtonColors(
-                                        containerColor = colorScheme.primary,
-                                        contentColor = colorScheme.onPrimary,
-                                        checkedContainerColor = colorScheme.primaryContainer,
-                                        checkedContentColor = colorScheme.onPrimaryContainer
+                                        containerColor = primary,
+                                        contentColor = onPrimary,
+                                        checkedContainerColor = primaryContainer,
+                                        checkedContentColor = onPrimaryContainer
                                     ),
                                     shapes = ToggleButtonDefaults.shapes(
                                         CircleShape,

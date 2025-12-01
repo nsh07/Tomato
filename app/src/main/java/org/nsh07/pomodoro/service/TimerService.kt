@@ -203,7 +203,7 @@ class TimerService : Service() {
 
                         if (totalTime - time < lastSavedDuration)
                             lastSavedDuration =
-                                0 // Sanity check, prevents errors if service is force closed
+                                0 // Sanity check, prevents bugs if service is force closed
                         if (totalTime - time - lastSavedDuration > 60000)
                             saveTimeToDb()
                     }

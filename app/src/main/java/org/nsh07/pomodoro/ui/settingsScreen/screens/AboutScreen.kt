@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens
 
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -48,11 +47,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -63,6 +65,8 @@ import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.components.BottomButton
+import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
+import org.nsh07.pomodoro.ui.settingsScreen.components.LicenseBottomSheet
 import org.nsh07.pomodoro.ui.settingsScreen.components.TopButton
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
@@ -81,7 +85,6 @@ fun AboutScreen(
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
 
     val socialLinks = remember {
@@ -92,6 +95,8 @@ fun AboutScreen(
             SocialLink(R.drawable.email, "mailto:nishant.28@outlook.com")
         )
     }
+
+    var showLicense by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -165,8 +170,7 @@ fun AboutScreen(
                         Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                             FilledTonalIconButton(
                                 onClick = {
-                                    Toast.makeText(context, "Coming soon...", Toast.LENGTH_SHORT)
-                                        .show()
+                                    uriHandler.openUri("http://discord.com/users/658886962048008192")
                                 },
                                 shapes = IconButtonDefaults.shapes()
                             ) {
@@ -246,9 +250,26 @@ fun AboutScreen(
                 }
             }
             item { Spacer(Modifier.height(12.dp)) }
+
             item { TopButton() }
             item { BottomButton() }
+
+            item { Spacer(Modifier.height(12.dp)) }
+
+            item {
+                ClickableListItem(
+                    leadingContent = { Icon(painterResource(R.drawable.gavel), null) },
+                    headlineContent = { Text(stringResource(R.string.license)) },
+                    supportingContent = { Text("GNU General Public License Version 3") },
+                    items = 1,
+                    index = 0
+                ) { showLicense = true }
+            }
         }
+    }
+
+    if (showLicense) {
+        LicenseBottomSheet({ showLicense = false })
     }
 }
 

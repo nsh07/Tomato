@@ -40,6 +40,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEachIndexed
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
@@ -101,7 +102,7 @@ fun ThemePickerListItem(
                 .background(listItemColors.containerColor)
                 .padding(start = 52.dp, end = 16.dp, bottom = 8.dp)
         ) {
-            options.forEachIndexed { index, theme ->
+            options.fastForEachIndexed { index, theme ->
                 val isSelected = selectedIndex == index
                 ToggleButton(
                     checked = isSelected,

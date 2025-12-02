@@ -32,7 +32,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -42,7 +41,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -65,6 +63,7 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,8 +74,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -178,8 +179,8 @@ fun AppScreen(
                             )
                             .zIndex(1f)
                     ) {
-                        mainScreens.forEach { item ->
-                            val selected = backStack.last() == item.route
+                        mainScreens.fastForEach { item ->
+                            val selected by remember { derivedStateOf { backStack.lastOrNull() == item.route } }
                             TooltipBox(
                                 positionProvider =
                                     TooltipDefaults.rememberTooltipPositionProvider(
@@ -211,33 +212,28 @@ fun AppScreen(
                                     ),
                                     modifier = Modifier.height(56.dp)
                                 ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Crossfade(selected) { selected ->
-                                            if (selected) Icon(
+                                    Row {
+                                        Crossfade(selected) {
+                                            if (it) Icon(
                                                 painterResource(item.selectedIcon),
                                                 null
                                             )
                                             else Icon(painterResource(item.unselectedIcon), null)
                                         }
                                         AnimatedVisibility(
-                                            selected || wide,
-                                            enter = fadeIn(motionScheme.defaultEffectsSpec()) + expandHorizontally(
-                                                motionScheme.defaultSpatialSpec()
-                                            ),
-                                            exit = fadeOut(motionScheme.defaultEffectsSpec()) + shrinkHorizontally(
-                                                motionScheme.defaultSpatialSpec()
-                                            ),
+                                            visible = selected || wide,
+                                            enter = expandHorizontally(motionScheme.defaultSpatialSpec()),
+                                            exit = shrinkHorizontally(motionScheme.defaultSpatialSpec())
                                         ) {
-                                            Row {
-                                                Spacer(Modifier.width(ButtonDefaults.MediumIconSpacing))
-                                                Text(
-                                                    stringResource(item.label),
-                                                    fontSize = 16.sp,
-                                                    lineHeight = 24.sp
-                                                )
-                                            }
+                                            Text(
+                                                text = stringResource(item.label),
+                                                fontSize = 16.sp,
+                                                lineHeight = 24.sp,
+                                                maxLines = 1,
+                                                softWrap = false,
+                                                overflow = TextOverflow.Clip,
+                                                modifier = Modifier.padding(start = ButtonDefaults.IconSpacing)
+                                            )
                                         }
                                     }
                                 }

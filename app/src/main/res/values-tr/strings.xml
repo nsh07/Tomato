@@ -73,6 +73,14 @@
     <string name="choose_language">Dil seç</string>
     <string name="rate_on_google_play">Google Play\'de değerlendir</string>
     <string name="selected">Seçilen</string>
-    <string name="help_with_translation">Çeviriye yardım edin</string>
+    <string name="help_with_translation">Tomato\'nun çevirisine yardım edin</string>
     <string name="timer_settings_reset_info">Ayarları değiştirmek için zamanlayıcıyı sıfırlayın</string>
+    <string name="hours_and_minutes_format">%ds %ddk</string>
+    <string name="hours_format">%ds</string>
+    <string name="minutes_format">%ddk</string>
+    <string name="about">Hakkında</string>
+    <string name="help_with_translation_desc">Tomato\'yu kendi dilinize çevirin</string>
+    <string name="rate_on_google_play_desc">Uygulamayı beğendinizmi? Bir yorum bırakın!</string>
+    <string name="bmc_desc">Beni küçük bir bağışla destekleyin</string>
+    <string name="tomato_plus_desc">Tomato+ ile daha fazla özelleştirin</string>
 </resources>

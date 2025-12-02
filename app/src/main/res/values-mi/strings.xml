@@ -46,7 +46,7 @@
     <string name="stats">Ngā tatauranga</string>
     <string name="stop">Whakamutua</string>
     <string name="stop_alarm">Whakamutua te wawā</string>
-    <string name="help_with_translation">Āwhina ki te whakawhiti reo</string>
+    <string name="help_with_translation">Tautokona te whakawhiti reo ki Tomato</string>
     <string name="timer_settings_reset_info">Whakahoua te kaitaki ki te tīni tautuhinga</string>
     <string name="stop_alarm_dialog_text">Kua mutu te huringa. Pāngia te mata kia mutu te wawā.</string>
     <string name="stop_alarm_question">Whakamutua te wāwā?</string>
@@ -74,4 +74,12 @@
     <string name="choose_language">Whiriwhiri reo</string>
     <string name="rate_on_google_play">Tohu kounga ki Google Play</string>
     <string name="selected">Kua whiriwhiria</string>
+    <string name="hours_and_minutes_format">%dh %dm</string>
+    <string name="hours_format">%dh</string>
+    <string name="minutes_format">%dm</string>
+    <string name="about">Mō mātou</string>
+    <string name="help_with_translation_desc">Whakawhitia a Tomato ki tō reo</string>
+    <string name="rate_on_google_play_desc">Pai te taupāngā? Tuhia āu whakaaro!</string>
+    <string name="bmc_desc">Tautokona au ki te paku koha</string>
+    <string name="tomato_plus_desc">He whakahāngaitanga anō ki Tomato+</string>
 </resources>

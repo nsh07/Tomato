@@ -268,31 +268,32 @@ fun TimerSettings(
                 Spacer(Modifier.height(12.dp))
             }
             item {
-                ListItem(
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.clocks), null)
-                    },
-                    headlineContent = {
-                        Text(stringResource(R.string.session_length))
-                    },
-                    supportingContent = {
-                        Column {
+                Column(Modifier.background(listItemColors.containerColor, cardShape)) {
+                    ListItem(
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.clocks), null)
+                        },
+                        headlineContent = {
+                            Text(stringResource(R.string.session_length))
+                        },
+                        supportingContent = {
                             Text(
                                 stringResource(
                                     R.string.session_length_desc,
                                     sessionsSliderState.value.toInt()
                                 )
                             )
-                            Slider(
-                                state = sessionsSliderState,
-                                enabled = !serviceRunning,
-                                modifier = Modifier.padding(vertical = 4.dp)
-                            )
-                        }
-                    },
-                    colors = listItemColors,
-                    modifier = Modifier.clip(cardShape)
-                )
+                        },
+                        colors = listItemColors,
+                        modifier = Modifier.clip(cardShape)
+                    )
+                    Slider(
+                        state = sessionsSliderState,
+                        enabled = !serviceRunning,
+                        modifier = Modifier
+                            .padding(start = (16 * 2 + 24).dp, end = 16.dp, bottom = 12.dp)
+                    )
+                }
             }
             item { Spacer(Modifier.height(12.dp)) }
 

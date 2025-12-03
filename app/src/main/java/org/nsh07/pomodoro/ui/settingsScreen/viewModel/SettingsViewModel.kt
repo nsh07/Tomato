@@ -336,9 +336,8 @@ class SettingsViewModel(
 
         settingsState = _settingsState.value
 
-        time.update { settingsState.focusTime }
-
-        if (!stateRepository.timerState.value.serviceRunning)
+        if (!stateRepository.timerState.value.serviceRunning) {
+            time.update { settingsState.focusTime }
             stateRepository.timerState.update { currentState ->
                 currentState.copy(
                     timerMode = TimerMode.FOCUS,
@@ -350,6 +349,7 @@ class SettingsViewModel(
                     totalFocusCount = settingsState.sessionLength
                 )
             }
+        }
     }
 
     private fun refreshTimer() {

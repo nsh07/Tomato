@@ -25,6 +25,7 @@ import androidx.compose.material3.SliderState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.graphics.Color
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -35,51 +36,57 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.billing.BillingManager
-import org.nsh07.pomodoro.data.AppPreferenceRepository
-import org.nsh07.pomodoro.data.TimerRepository
+import org.nsh07.pomodoro.data.PreferenceRepository
+import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.service.ServiceHelper
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
-import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import org.nsh07.pomodoro.utils.millisecondsToStr
 
 @OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
 class SettingsViewModel(
     private val billingManager: BillingManager,
-    private val preferenceRepository: AppPreferenceRepository,
+    private val preferenceRepository: PreferenceRepository,
+    private val stateRepository: StateRepository,
     private val serviceHelper: ServiceHelper,
-    private val time: MutableStateFlow<Long>,
-    private val timerRepository: TimerRepository,
-    private val timerState: MutableStateFlow<TimerState>
+    private val time: MutableStateFlow<Long>
 ) : ViewModel() {
     val backStack = mutableStateListOf<Screen.Settings>(Screen.Settings.Main)
 
     val isPlus = billingManager.isPlus
-    val serviceRunning = timerRepository.serviceRunning.asStateFlow()
+    val serviceRunning = stateRepository.timerState.map { it.serviceRunning }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            false
+        )
 
-    private val _settingsState = MutableStateFlow(SettingsState())
+    private val _settingsState = stateRepository.settingsState
     val settingsState = _settingsState.asStateFlow()
 
     val focusTimeTextFieldState by lazy {
-        TextFieldState((timerRepository.focusTime / 60000).toString())
+        TextFieldState((_settingsState.value.focusTime / 60000).toString())
     }
     val shortBreakTimeTextFieldState by lazy {
-        TextFieldState((timerRepository.shortBreakTime / 60000).toString())
+        TextFieldState((_settingsState.value.shortBreakTime / 60000).toString())
     }
     val longBreakTimeTextFieldState by lazy {
-        TextFieldState((timerRepository.longBreakTime / 60000).toString())
+        TextFieldState((_settingsState.value.longBreakTime / 60000).toString())
     }
 
     val sessionsSliderState by lazy {
         SliderState(
-            value = timerRepository.sessionLength.toFloat(),
+            value = _settingsState.value.sessionLength.toFloat(),
             steps = 4,
             valueRange = 1f..6f,
             onValueChangeFinished = ::updateSessionLength
@@ -110,11 +117,15 @@ class SettingsViewModel(
     }
 
     private fun updateSessionLength() {
-        viewModelScope.launch {
-            timerRepository.sessionLength = preferenceRepository.saveIntPreference(
-                "session_length",
-                sessionsSliderState.value.toInt()
-            )
+        viewModelScope.launch(Dispatchers.IO) {
+            _settingsState.update { currentState ->
+                currentState.copy(
+                    sessionLength = preferenceRepository.saveIntPreference(
+                        "session_length",
+                        sessionsSliderState.value.toInt()
+                    )
+                )
+            }
             refreshTimer()
         }
     }
@@ -125,11 +136,13 @@ class SettingsViewModel(
                 .debounce(500)
                 .collect {
                     if (it.isNotEmpty()) {
-                        timerRepository.focusTime = it.toString().toLong() * 60 * 1000
+                        _settingsState.update { currentState ->
+                            currentState.copy(focusTime = it.toString().toLong() * 60 * 1000)
+                        }
                         refreshTimer()
                         preferenceRepository.saveIntPreference(
                             "focus_time",
-                            timerRepository.focusTime.toInt()
+                            _settingsState.value.focusTime.toInt()
                         )
                     }
                 }
@@ -139,11 +152,13 @@ class SettingsViewModel(
                 .debounce(500)
                 .collect {
                     if (it.isNotEmpty()) {
-                        timerRepository.shortBreakTime = it.toString().toLong() * 60 * 1000
+                        _settingsState.update { currentState ->
+                            currentState.copy(shortBreakTime = it.toString().toLong() * 60 * 1000)
+                        }
                         refreshTimer()
                         preferenceRepository.saveIntPreference(
                             "short_break_time",
-                            timerRepository.shortBreakTime.toInt()
+                            _settingsState.value.shortBreakTime.toInt()
                         )
                     }
                 }
@@ -153,11 +168,13 @@ class SettingsViewModel(
                 .debounce(500)
                 .collect {
                     if (it.isNotEmpty()) {
-                        timerRepository.longBreakTime = it.toString().toLong() * 60 * 1000
+                        _settingsState.update { currentState ->
+                            currentState.copy(longBreakTime = it.toString().toLong() * 60 * 1000)
+                        }
                         refreshTimer()
                         preferenceRepository.saveIntPreference(
                             "long_break_time",
-                            timerRepository.longBreakTime.toInt()
+                            _settingsState.value.longBreakTime.toInt()
                         )
                     }
                 }
@@ -173,7 +190,6 @@ class SettingsViewModel(
 
     private fun saveAlarmEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            timerRepository.alarmEnabled = enabled
             _settingsState.update { currentState ->
                 currentState.copy(alarmEnabled = enabled)
             }
@@ -183,7 +199,6 @@ class SettingsViewModel(
 
     private fun saveVibrateEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            timerRepository.vibrateEnabled = enabled
             _settingsState.update { currentState ->
                 currentState.copy(vibrateEnabled = enabled)
             }
@@ -193,7 +208,6 @@ class SettingsViewModel(
 
     private fun saveDndEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            timerRepository.dndEnabled = enabled
             _settingsState.update { currentState ->
                 currentState.copy(dndEnabled = enabled)
             }
@@ -203,9 +217,8 @@ class SettingsViewModel(
 
     private fun saveAlarmSound(uri: Uri?) {
         viewModelScope.launch {
-            timerRepository.alarmSoundUri = uri
             _settingsState.update { currentState ->
-                currentState.copy(alarmSound = uri.toString())
+                currentState.copy(alarmSoundUri = uri)
             }
             preferenceRepository.saveStringPreference("alarm_sound", uri.toString())
         }
@@ -248,32 +261,71 @@ class SettingsViewModel(
     }
 
     suspend fun reloadSettings() {
+        var settingsState = _settingsState.value
+        val focusTime =
+            preferenceRepository.getIntPreference("focus_time")?.toLong()
+                ?: preferenceRepository.saveIntPreference(
+                    "focus_time",
+                    settingsState.focusTime.toInt()
+                ).toLong()
+        val shortBreakTime =
+            preferenceRepository.getIntPreference("short_break_time")?.toLong()
+                ?: preferenceRepository.saveIntPreference(
+                    "short_break_time",
+                    settingsState.shortBreakTime.toInt()
+                ).toLong()
+        val longBreakTime =
+            preferenceRepository.getIntPreference("long_break_time")?.toLong()
+                ?: preferenceRepository.saveIntPreference(
+                    "long_break_time",
+                    settingsState.longBreakTime.toInt()
+                ).toLong()
+        val sessionLength =
+            preferenceRepository.getIntPreference("session_length")
+                ?: preferenceRepository.saveIntPreference(
+                    "session_length",
+                    settingsState.sessionLength
+                )
+
+        val alarmSoundUri = (
+                preferenceRepository.getStringPreference("alarm_sound")
+                    ?: preferenceRepository.saveStringPreference(
+                        "alarm_sound",
+                        (Settings.System.DEFAULT_ALARM_ALERT_URI
+                            ?: Settings.System.DEFAULT_RINGTONE_URI).toString()
+                    )
+                ).toUri()
+
         val theme = preferenceRepository.getStringPreference("theme")
-            ?: preferenceRepository.saveStringPreference("theme", "auto")
+            ?: preferenceRepository.saveStringPreference("theme", settingsState.theme)
         val colorScheme = preferenceRepository.getStringPreference("color_scheme")
-            ?: preferenceRepository.saveStringPreference("color_scheme", Color.White.toString())
+            ?: preferenceRepository.saveStringPreference("color_scheme", settingsState.colorScheme)
         val blackTheme = preferenceRepository.getBooleanPreference("black_theme")
-            ?: preferenceRepository.saveBooleanPreference("black_theme", false)
+            ?: preferenceRepository.saveBooleanPreference("black_theme", settingsState.blackTheme)
         val aodEnabled = preferenceRepository.getBooleanPreference("aod_enabled")
-            ?: preferenceRepository.saveBooleanPreference("aod_enabled", false)
-        val alarmSound = preferenceRepository.getStringPreference("alarm_sound")
-            ?: preferenceRepository.saveStringPreference(
-                "alarm_sound",
-                (Settings.System.DEFAULT_ALARM_ALERT_URI
-                    ?: Settings.System.DEFAULT_RINGTONE_URI).toString()
-            )
+            ?: preferenceRepository.saveBooleanPreference("aod_enabled", settingsState.aodEnabled)
         val alarmEnabled = preferenceRepository.getBooleanPreference("alarm_enabled")
-            ?: preferenceRepository.saveBooleanPreference("alarm_enabled", true)
+            ?: preferenceRepository.saveBooleanPreference(
+                "alarm_enabled",
+                settingsState.alarmEnabled
+            )
         val vibrateEnabled = preferenceRepository.getBooleanPreference("vibrate_enabled")
-            ?: preferenceRepository.saveBooleanPreference("vibrate_enabled", true)
+            ?: preferenceRepository.saveBooleanPreference(
+                "vibrate_enabled",
+                settingsState.vibrateEnabled
+            )
         val dndEnabled = preferenceRepository.getBooleanPreference("dnd_enabled")
-            ?: preferenceRepository.saveBooleanPreference("dnd_enabled", false)
+            ?: preferenceRepository.saveBooleanPreference("dnd_enabled", settingsState.dndEnabled)
 
         _settingsState.update { currentState ->
             currentState.copy(
+                focusTime = focusTime,
+                shortBreakTime = shortBreakTime,
+                longBreakTime = longBreakTime,
+                sessionLength = sessionLength,
                 theme = theme,
                 colorScheme = colorScheme,
-                alarmSound = alarmSound,
+                alarmSoundUri = alarmSoundUri,
                 blackTheme = blackTheme,
                 aodEnabled = aodEnabled,
                 alarmEnabled = alarmEnabled,
@@ -281,21 +333,40 @@ class SettingsViewModel(
                 dndEnabled = dndEnabled
             )
         }
-    }
 
-    private fun refreshTimer() {
-        if (!serviceRunning.value) {
-            time.update { timerRepository.focusTime }
+        settingsState = _settingsState.value
 
-            timerState.update { currentState ->
+        time.update { settingsState.focusTime }
+
+        if (!stateRepository.timerState.value.serviceRunning)
+            stateRepository.timerState.update { currentState ->
                 currentState.copy(
                     timerMode = TimerMode.FOCUS,
                     timeStr = millisecondsToStr(time.value),
                     totalTime = time.value,
-                    nextTimerMode = if (timerRepository.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
-                    nextTimeStr = millisecondsToStr(if (timerRepository.sessionLength > 1) timerRepository.shortBreakTime else timerRepository.longBreakTime),
+                    nextTimerMode = if (settingsState.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
+                    nextTimeStr = millisecondsToStr(if (settingsState.sessionLength > 1) settingsState.shortBreakTime else settingsState.longBreakTime),
                     currentFocusCount = 1,
-                    totalFocusCount = timerRepository.sessionLength
+                    totalFocusCount = settingsState.sessionLength
+                )
+            }
+    }
+
+    private fun refreshTimer() {
+        if (!serviceRunning.value) {
+            val settingsState = _settingsState.value
+
+            time.update { settingsState.focusTime }
+
+            stateRepository.timerState.update { currentState ->
+                currentState.copy(
+                    timerMode = TimerMode.FOCUS,
+                    timeStr = millisecondsToStr(time.value),
+                    totalTime = time.value,
+                    nextTimerMode = if (settingsState.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
+                    nextTimeStr = millisecondsToStr(if (settingsState.sessionLength > 1) settingsState.shortBreakTime else settingsState.longBreakTime),
+                    currentFocusCount = 1,
+                    totalFocusCount = settingsState.sessionLength
                 )
             }
         }
@@ -307,18 +378,16 @@ class SettingsViewModel(
                 val application = (this[APPLICATION_KEY] as TomatoApplication)
                 val appBillingManager = application.container.billingManager
                 val appPreferenceRepository = application.container.appPreferenceRepository
-                val appTimerRepository = application.container.appTimerRepository
                 val serviceHelper = application.container.serviceHelper
+                val stateRepository = application.container.stateRepository
                 val time = application.container.time
-                val timerState = application.container.timerState
 
                 SettingsViewModel(
                     billingManager = appBillingManager,
                     preferenceRepository = appPreferenceRepository,
                     serviceHelper = serviceHelper,
-                    time = time,
-                    timerRepository = appTimerRepository,
-                    timerState = timerState
+                    stateRepository = stateRepository,
+                    time = time
                 )
             }
         }

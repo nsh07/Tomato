@@ -17,17 +17,27 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 
 @Immutable
 data class SettingsState(
     val theme: String = "auto",
-    val alarmSound: String = "",
     val colorScheme: String = Color.White.toString(),
     val blackTheme: Boolean = false,
     val aodEnabled: Boolean = false,
     val alarmEnabled: Boolean = true,
     val vibrateEnabled: Boolean = true,
-    val dndEnabled: Boolean = false
+    val dndEnabled: Boolean = false,
+
+    val focusTime: Long = 25 * 60 * 1000L,
+    val shortBreakTime: Long = 5 * 60 * 1000L,
+    val longBreakTime: Long = 15 * 60 * 1000L,
+
+    val sessionLength: Int = 4,
+
+    val alarmSoundUri: Uri? =
+        Settings.System.DEFAULT_ALARM_ALERT_URI ?: Settings.System.DEFAULT_RINGTONE_URI
 )

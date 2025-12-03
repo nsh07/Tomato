@@ -15,22 +15,17 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.ui.timerScreen.viewModel
+package org.nsh07.pomodoro.data
 
-data class TimerState(
-    val timerMode: TimerMode = TimerMode.FOCUS,
-    val timeStr: String = "25:00",
-    val totalTime: Long = 25 * 60,
-    val timerRunning: Boolean = false,
-    val nextTimerMode: TimerMode = TimerMode.SHORT_BREAK,
-    val nextTimeStr: String = "5:00",
-    val showBrandTitle: Boolean = true,
-    val currentFocusCount: Int = 1,
-    val totalFocusCount: Int = 4,
-    val alarmRinging: Boolean = false,
-    val serviceRunning: Boolean = false
-)
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.lightColorScheme
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 
-enum class TimerMode {
-    FOCUS, SHORT_BREAK, LONG_BREAK, BRAND
+class StateRepository {
+    val timerState = MutableStateFlow(TimerState())
+    val settingsState = MutableStateFlow(SettingsState())
+    var timerFrequency: Float = 60f
+    var colorScheme: ColorScheme = lightColorScheme()
 }

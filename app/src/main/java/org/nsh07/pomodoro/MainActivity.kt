@@ -69,14 +69,14 @@ class MainActivity : ComponentActivity() {
             ) {
                 val colorScheme = colorScheme
                 LaunchedEffect(colorScheme) {
-                    appContainer.appTimerRepository.colorScheme = colorScheme
+                    appContainer.stateRepository.colorScheme = colorScheme
                 }
 
                 AppScreen(
                     isPlus = isPlus,
                     isAODEnabled = settingsState.aodEnabled,
                     setTimerFrequency = {
-                        appContainer.appTimerRepository.timerFrequency = it
+                        appContainer.stateRepository.timerFrequency = it
                     }
                 )
             }
@@ -86,13 +86,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onStop() {
         super.onStop()
-        // Reduce the timer loop frequency when not visible to save battery power
-        appContainer.appTimerRepository.timerFrequency = 1f
+        // Reduce the timer loop frequency when not visible to save battery
+        appContainer.stateRepository.timerFrequency = 1f
     }
 
     override fun onStart() {
         super.onStart()
         // Increase the timer loop frequency again when visible to make the progress smoother
-        appContainer.appTimerRepository.timerFrequency = 60f
+        appContainer.stateRepository.timerFrequency = 60f
     }
 }

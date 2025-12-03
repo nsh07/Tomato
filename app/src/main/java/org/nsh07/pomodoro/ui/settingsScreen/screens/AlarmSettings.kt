@@ -62,7 +62,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.nsh07.pomodoro.R
@@ -92,10 +91,10 @@ fun AlarmSettings(
 
     var alarmName by remember { mutableStateOf("...") }
 
-    LaunchedEffect(settingsState.alarmSound) {
+    LaunchedEffect(settingsState.alarmSoundUri) {
         withContext(Dispatchers.IO) {
             alarmName =
-                RingtoneManager.getRingtone(context, settingsState.alarmSound.toUri())
+                RingtoneManager.getRingtone(context, settingsState.alarmSoundUri)
                     ?.getTitle(context) ?: ""
         }
     }
@@ -119,11 +118,11 @@ fun AlarmSettings(
     }
 
     @SuppressLint("LocalContextGetResourceValueCall")
-    val ringtonePickerIntent = remember(settingsState.alarmSound) {
+    val ringtonePickerIntent = remember(settingsState.alarmSoundUri) {
         Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
             putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
             putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, context.getString(R.string.alarm_sound))
-            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, settingsState.alarmSound.toUri())
+            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, settingsState.alarmSoundUri)
         }
     }
 

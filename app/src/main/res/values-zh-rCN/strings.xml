@@ -75,9 +75,9 @@
     <string name="selected">已选中</string>
     <string name="help_with_translation">帮忙翻译</string>
     <string name="timer_settings_reset_info">重置定时器来更改设置</string>
-    <string name="hours_and_minutes_format">%d小时 %d分钟</string>
-    <string name="hours_format">%d小时</string>
-    <string name="minutes_format">%d分钟</string>
+    <string name="hours_and_minutes_format">%1$d 小时 %2$d 分钟</string>
+    <string name="hours_format">%1$d 小时</string>
+    <string name="minutes_format">%1$d 分钟</string>
     <string name="about">关于</string>
     <string name="help_with_translation_desc">将 Tomato 翻译成你的语言</string>
     <string name="rate_on_google_play_desc">喜欢本应用？写一条评价吧！</string>

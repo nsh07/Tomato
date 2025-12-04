@@ -20,6 +20,7 @@ package org.nsh07.pomodoro.ui.settingsScreen.screens
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -117,33 +118,45 @@ fun TimerSettings(
     val notificationManagerService =
         remember { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
-    val switchItems = listOf(
-        SettingsSwitchItem(
-            checked = settingsState.dndEnabled,
-            enabled = !serviceRunning,
-            icon = R.drawable.dnd,
-            label = R.string.dnd,
-            description = R.string.dnd_desc,
-            onClick = {
-                if (it && !notificationManagerService.isNotificationPolicyAccessGranted()) {
-                    val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-                    Toast.makeText(context, "Enable permission for \"$appName\"", Toast.LENGTH_LONG)
-                        .show()
-                    context.startActivity(intent)
-                } else if (!it && notificationManagerService.isNotificationPolicyAccessGranted()) {
-                    notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
+    val switchItems = remember(
+        settingsState.dndEnabled,
+        settingsState.aodEnabled,
+        isPlus,
+        serviceRunning
+    ) {
+        listOf(
+            SettingsSwitchItem(
+                checked = settingsState.dndEnabled,
+                enabled = !serviceRunning,
+                icon = R.drawable.dnd,
+                label = R.string.dnd,
+                description = R.string.dnd_desc,
+                onClick = {
+                    if (it && !notificationManagerService.isNotificationPolicyAccessGranted()) {
+                        val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                        Toast.makeText(
+                            context,
+                            "Enable permission for \"$appName\"",
+                            Toast.LENGTH_LONG
+                        )
+                            .show()
+                        context.startActivity(intent)
+                    } else if (!it && notificationManagerService.isNotificationPolicyAccessGranted()) {
+                        notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
+                    }
+                    onAction(SettingsAction.SaveDndEnabled(it))
                 }
-                onAction(SettingsAction.SaveDndEnabled(it))
-            }
-        ),
-        SettingsSwitchItem(
-            checked = settingsState.aodEnabled,
-            icon = R.drawable.aod,
-            label = R.string.always_on_display,
-            description = R.string.always_on_display_desc,
-            onClick = { onAction(SettingsAction.SaveAodEnabled(it)) }
+            ),
+            SettingsSwitchItem(
+                checked = settingsState.aodEnabled,
+                enabled = isPlus,
+                icon = R.drawable.aod,
+                label = R.string.always_on_display,
+                description = R.string.always_on_display_desc,
+                onClick = { onAction(SettingsAction.SaveAodEnabled(it)) }
+            )
         )
-    )
+    }
 
     Scaffold(
         topBar = {
@@ -343,6 +356,44 @@ fun TimerSettings(
                 )
             }
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                item { Spacer(Modifier.height(12.dp)) }
+                item {
+                    ListItem(
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.view_day), null)
+                        },
+                        headlineContent = { Text(stringResource(R.string.session_only_progress)) },
+                        supportingContent = { Text(stringResource(R.string.session_only_progress_desc)) },
+                        trailingContent = {
+                            Switch(
+                                checked = settingsState.singleProgressBar,
+                                enabled = !serviceRunning,
+                                onCheckedChange = { onAction(SettingsAction.SaveSingleProgressBar(it)) },
+                                thumbContent = {
+                                    if (settingsState.singleProgressBar) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.check),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    } else {
+                                        Icon(
+                                            painter = painterResource(R.drawable.clear),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    }
+                                },
+                                colors = switchColors
+                            )
+                        },
+                        colors = listItemColors,
+                        modifier = Modifier.clip(cardShape)
+                    )
+                }
+            }
+
             if (!isPlus) {
                 item {
                     PlusDivider(setShowPaywall)
@@ -362,7 +413,7 @@ fun TimerSettings(
                             Switch(
                                 checked = item.checked,
                                 onCheckedChange = { item.onClick(it) },
-                                enabled = isPlus,
+                                enabled = item.enabled,
                                 thumbContent = {
                                     if (item.checked) {
                                         Icon(

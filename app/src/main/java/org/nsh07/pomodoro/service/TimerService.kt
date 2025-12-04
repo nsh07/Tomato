@@ -265,7 +265,7 @@ class TimerService : Service() {
                 .setStyle(
                     notificationStyle
                         .setProgress( // Set the current progress by filling the previous intervals and part of the current interval
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && !settingsState.singleProgressBar) {
                                 (totalTime - remainingTime) + ((cycles + 1) / 2) * settingsState.focusTime.toInt() + (cycles / 2) * settingsState.shortBreakTime.toInt()
                             } else (totalTime - remainingTime)
                         )
@@ -288,7 +288,7 @@ class TimerService : Service() {
         notificationStyle = NotificationCompat.ProgressStyle()
             .also {
                 // Add all the Focus, Short break and long break intervals in order
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && !settingsState.singleProgressBar) {
                     // Android 16 and later supports live updates
                     // Set progress bar sections if on Baklava or later
                     for (i in 0..<settingsState.sessionLength * 2) {
@@ -326,7 +326,6 @@ class TimerService : Service() {
     private suspend fun resetTimer() {
         val settingsState = _settingsState.value
 
-        updateProgressSegments()
         saveTimeToDb()
         lastSavedDuration = 0
         time = settingsState.focusTime
@@ -346,13 +345,13 @@ class TimerService : Service() {
                 totalFocusCount = settingsState.sessionLength
             )
         }
+
+        updateProgressSegments()
     }
 
     private suspend fun skipTimer(fromButton: Boolean = false) {
         val settingsState = _settingsState.value
-        updateProgressSegments()
         saveTimeToDb()
-        updateProgressSegments()
         showTimerNotification(0, paused = true, complete = !fromButton)
         lastSavedDuration = 0
         startTime = 0L
@@ -394,6 +393,8 @@ class TimerService : Service() {
                 )
             }
         }
+
+        updateProgressSegments()
     }
 
     fun startAlarm() {

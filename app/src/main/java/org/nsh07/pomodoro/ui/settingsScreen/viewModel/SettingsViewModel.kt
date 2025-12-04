@@ -110,6 +110,7 @@ class SettingsViewModel(
             is SettingsAction.SaveVibrateEnabled -> saveVibrateEnabled(action.enabled)
             is SettingsAction.SaveDndEnabled -> saveDndEnabled(action.enabled)
             is SettingsAction.SaveMediaVolumeForAlarm -> saveMediaVolumeForAlarm(action.enabled)
+            is SettingsAction.SaveSingleProgressBar -> saveSingleProgressBar(action.enabled)
             is SettingsAction.SaveColorScheme -> saveColorScheme(action.color)
             is SettingsAction.SaveTheme -> saveTheme(action.theme)
             is SettingsAction.SaveBlackTheme -> saveBlackTheme(action.enabled)
@@ -273,6 +274,18 @@ class SettingsViewModel(
         }
     }
 
+    private fun saveSingleProgressBar(singleProgressBar: Boolean) {
+        viewModelScope.launch {
+            _settingsState.update { currentState ->
+                currentState.copy(singleProgressBar = singleProgressBar)
+            }
+            preferenceRepository.saveBooleanPreference(
+                "single_progress_bar",
+                singleProgressBar
+            )
+        }
+    }
+
     suspend fun reloadSettings() {
         var settingsState = _settingsState.value
         val focusTime =
@@ -335,6 +348,11 @@ class SettingsViewModel(
                     "media_volume_for_alarm",
                     settingsState.mediaVolumeForAlarm
                 )
+        val singleProgressBar = preferenceRepository.getBooleanPreference("single_progress_bar")
+            ?: preferenceRepository.saveBooleanPreference(
+                "single_progress_bar",
+                settingsState.singleProgressBar
+            )
 
         _settingsState.update { currentState ->
             currentState.copy(
@@ -350,7 +368,8 @@ class SettingsViewModel(
                 alarmEnabled = alarmEnabled,
                 vibrateEnabled = vibrateEnabled,
                 dndEnabled = dndEnabled,
-                mediaVolumeForAlarm = mediaVolumeForAlarm
+                mediaVolumeForAlarm = mediaVolumeForAlarm,
+                singleProgressBar = singleProgressBar
             )
         }
 

@@ -10,4 +10,14 @@
     <string name="choose_color_scheme">Өнгөний схемийг сонгоно уу</string>
     <string name="choose_language">Хэл сонгох</string>
     <string name="choose_theme">загвар сонгох</string>
+    <string name="color">өнгө</string>
+    <string name="color_scheme">Өнгөний схем</string>
+    <string name="completed">Дууссан</string>
+    <string name="dark">Харанхуй</string>
+    <string name="dnd">Бүү саад бол горим</string>
+    <string name="durations">хугацаа</string>
+    <string name="dynamic">Динамик</string>
+    <string name="dynamic_color">Динамик өнгө</string>
+    <string name="exit">Гарах</string>
+    <string name="focus">анхаарлаа төвлөрүүлэх</string>
 </resources>

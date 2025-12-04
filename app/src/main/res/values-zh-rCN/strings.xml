@@ -83,4 +83,5 @@
     <string name="rate_on_google_play_desc">喜欢本应用？写一条评价吧！</string>
     <string name="bmc_desc">小额捐赠支持</string>
     <string name="tomato_plus_desc">用 Tomato+ 进一步定制</string>
+    <string name="license">许可证</string>
 </resources>

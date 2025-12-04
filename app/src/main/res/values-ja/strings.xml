@@ -82,4 +82,5 @@
     <string name="rate_on_google_play_desc">アプリが気に入りましたか？レビューを書いてください！</string>
     <string name="bmc_desc">小さな寄付でご支援してもよろしいでしょうか</string>
     <string name="tomato_plus_desc">Tomato+ を使用してさらにカスタマイズする</string>
+    <string name="license">ライセンス</string>
 </resources>

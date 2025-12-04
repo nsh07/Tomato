@@ -22,6 +22,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -96,7 +97,7 @@ fun TimeColumnChart(
             millisecondsToMinutes(value, minutesFormat)
         }
     },
-    animationSpec: AnimationSpec<Float>? = null
+    animationSpec: AnimationSpec<Float>? = motionScheme.defaultEffectsSpec()
 ) {
     ProvideVicoTheme(rememberM3VicoTheme()) {
         CartesianChartHost(
@@ -160,6 +161,7 @@ fun TimeColumnChart(
                 minZoom = Zoom.min(Zoom.Content, Zoom.fixed())
             ),
             animationSpec = animationSpec,
+            animateIn = false,
             modifier = modifier.height(226.dp),
         )
     }

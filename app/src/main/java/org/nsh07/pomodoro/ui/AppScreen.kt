@@ -168,8 +168,8 @@ fun AppScreen(
                         expanded = true,
                         scrollBehavior = toolbarScrollBehavior,
                         colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(
-                            toolbarContainerColor = primary,
-                            toolbarContentColor = onPrimary
+                            toolbarContainerColor = primaryContainer,
+                            toolbarContentColor = onPrimaryContainer
                         ),
                         modifier = Modifier
                             .padding(
@@ -200,10 +200,10 @@ fun AppScreen(
                                         { if (backStack.size > 1) backStack.removeAt(1) }
                                     },
                                     colors = ToggleButtonDefaults.toggleButtonColors(
-                                        containerColor = primary,
-                                        contentColor = onPrimary,
-                                        checkedContainerColor = primaryContainer,
-                                        checkedContentColor = onPrimaryContainer
+                                        containerColor = primaryContainer,
+                                        contentColor = onPrimaryContainer,
+                                        checkedContainerColor = primary,
+                                        checkedContentColor = onPrimary
                                     ),
                                     shapes = ToggleButtonDefaults.shapes(
                                         CircleShape,

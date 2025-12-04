@@ -49,7 +49,7 @@ fun millisecondsToMinutes(t: Long, format: String = "%dm"): String {
     )
 }
 
-fun millisecondsToHoursMinutes(t: Long, format: String = "%dh %dm"): String {
+fun millisecondsToHoursMinutes(t: Long, format: String = $$"%1$dh %2$dm"): String {
     require(t >= 0L)
     return String.format(
         Locale.getDefault(),

@@ -46,8 +46,8 @@
     <string name="focus_per_day_avg">focus per day (avg)</string>
     <string name="get_plus">Get Tomato+</string>
     <string name="help_with_translation">Help translate Tomato</string>
-    <string name="hours_and_minutes_format">%dh %dm</string>
-    <string name="hours_format">%dh</string>
+    <string name="hours_and_minutes_format">%1$dh %2$dm</string>
+    <string name="hours_format">%1$dh</string>
     <string name="language">Language</string>
     <string name="last_month">Last month</string>
     <string name="last_week">Last week</string>
@@ -55,7 +55,7 @@
     <string name="light">Light</string>
     <string name="long_break">Long break</string>
     <string name="min_remaining_notification">%1$s min remaining</string>
-    <string name="minutes_format">%dm</string>
+    <string name="minutes_format">%1$dm</string>
     <string name="monthly_productivity_analysis">Monthly productivity analysis</string>
     <string name="more">More</string>
     <string name="more_info">More info</string>

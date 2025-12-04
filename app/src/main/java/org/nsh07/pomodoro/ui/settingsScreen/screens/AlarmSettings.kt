@@ -25,6 +25,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -60,8 +62,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.nsh07.pomodoro.R
@@ -74,6 +78,7 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 
@@ -127,25 +132,36 @@ fun AlarmSettings(
     }
 
     val switchItems = remember(
-        settingsState.blackTheme,
-        settingsState.aodEnabled,
         settingsState.alarmEnabled,
-        settingsState.vibrateEnabled
+        settingsState.vibrateEnabled,
+        settingsState.mediaVolumeForAlarm
     ) {
         listOf(
-            SettingsSwitchItem(
-                checked = settingsState.alarmEnabled,
-                icon = R.drawable.alarm_on,
-                label = R.string.sound,
-                description = R.string.alarm_desc,
-                onClick = { onAction(SettingsAction.SaveAlarmEnabled(it)) }
+            listOf(
+                SettingsSwitchItem(
+                    checked = settingsState.alarmEnabled,
+                    icon = R.drawable.alarm_on,
+                    label = R.string.sound,
+                    description = R.string.alarm_desc,
+                    onClick = { onAction(SettingsAction.SaveAlarmEnabled(it)) }
+                ),
+                SettingsSwitchItem(
+                    checked = settingsState.vibrateEnabled,
+                    icon = R.drawable.mobile_vibrate,
+                    label = R.string.vibrate,
+                    description = R.string.vibrate_desc,
+                    onClick = { onAction(SettingsAction.SaveVibrateEnabled(it)) }
+                )
             ),
-            SettingsSwitchItem(
-                checked = settingsState.vibrateEnabled,
-                icon = R.drawable.mobile_vibrate,
-                label = R.string.vibrate,
-                description = R.string.vibrate_desc,
-                onClick = { onAction(SettingsAction.SaveVibrateEnabled(it)) }
+            listOf(
+                SettingsSwitchItem(
+                    checked = settingsState.mediaVolumeForAlarm,
+                    collapsible = true,
+                    icon = R.drawable.music_note,
+                    label = R.string.media_volume_for_alarm,
+                    description = R.string.media_volume_for_alarm_desc,
+                    onClick = { onAction(SettingsAction.SaveMediaVolumeForAlarm(it)) }
+                )
             )
         )
     }
@@ -203,44 +219,65 @@ fun AlarmSettings(
                         .clickable(onClick = { ringtonePickerLauncher.launch(ringtonePickerIntent) })
                 )
             }
-            itemsIndexed(switchItems) { index, item ->
-                ListItem(
-                    leadingContent = {
-                        Icon(painterResource(item.icon), contentDescription = null)
-                    },
-                    headlineContent = { Text(stringResource(item.label)) },
-                    supportingContent = { Text(stringResource(item.description)) },
-                    trailingContent = {
-                        Switch(
-                            checked = item.checked,
-                            onCheckedChange = { item.onClick(it) },
-                            thumbContent = {
-                                if (item.checked) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.check),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                } else {
-                                    Icon(
-                                        painter = painterResource(R.drawable.clear),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                }
-                            },
-                            colors = switchColors
-                        )
-                    },
-                    colors = listItemColors,
-                    modifier = Modifier
-                        .clip(
-                            when (index) {
-                                switchItems.lastIndex -> bottomListItemShape
-                                else -> middleListItemShape
+            switchItems.fastForEach { items ->
+                itemsIndexed(items) { index, item ->
+                    ListItem(
+                        leadingContent = {
+                            Icon(painterResource(item.icon), contentDescription = null)
+                        },
+                        headlineContent = { Text(stringResource(item.label)) },
+                        supportingContent = {
+                            if (item.collapsible) {
+                                var expanded by remember { mutableStateOf(false) }
+                                Text(
+                                    stringResource(item.description),
+                                    maxLines = if (expanded) Int.MAX_VALUE else 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier
+                                        .clickable { expanded = !expanded }
+                                        .animateContentSize(motionScheme.defaultSpatialSpec())
+                                )
+                            } else {
+                                Text(stringResource(item.description))
                             }
-                        )
-                )
+                        },
+                        trailingContent = {
+                            Switch(
+                                checked = item.checked,
+                                onCheckedChange = { item.onClick(it) },
+                                thumbContent = {
+                                    if (item.checked) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.check),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    } else {
+                                        Icon(
+                                            painter = painterResource(R.drawable.clear),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    }
+                                },
+                                colors = switchColors
+                            )
+                        },
+                        colors = listItemColors,
+                        modifier = Modifier
+                            .clip(
+                                when {
+                                    items.size == 1 -> cardShape
+                                    index == items.lastIndex -> bottomListItemShape
+                                    else -> middleListItemShape
+                                }
+                            )
+                    )
+                }
+
+                item {
+                    Spacer(Modifier.height(12.dp))
+                }
             }
 
             item { Spacer(Modifier.height(12.dp)) }

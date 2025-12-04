@@ -103,4 +103,6 @@
     <string name="bmc_desc">Support me with a small donation</string>
     <string name="tomato_plus_desc">Customize further with Tomato+</string>
     <string name="license">License</string>
+    <string name="media_volume_for_alarm">Headphone mode</string>
+    <string name="media_volume_for_alarm_desc">Plays on headphones only. If headphones are disconnected, alarm plays through speaker at media volume.</string>
 </resources>

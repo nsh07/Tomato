@@ -26,6 +26,7 @@ sealed interface SettingsAction {
     data class SaveBlackTheme(val enabled: Boolean) : SettingsAction
     data class SaveAodEnabled(val enabled: Boolean) : SettingsAction
     data class SaveDndEnabled(val enabled: Boolean) : SettingsAction
+    data class SaveMediaVolumeForAlarm(val enabled: Boolean) : SettingsAction
     data class SaveAlarmSound(val uri: Uri?) : SettingsAction
     data class SaveTheme(val theme: String) : SettingsAction
     data class SaveColorScheme(val color: Color) : SettingsAction

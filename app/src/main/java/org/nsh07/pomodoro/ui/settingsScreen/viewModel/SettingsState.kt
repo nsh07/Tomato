@@ -31,6 +31,7 @@ data class SettingsState(
     val alarmEnabled: Boolean = true,
     val vibrateEnabled: Boolean = true,
     val dndEnabled: Boolean = false,
+    val mediaVolumeForAlarm: Boolean = false,
 
     val focusTime: Long = 25 * 60 * 1000L,
     val shortBreakTime: Long = 5 * 60 * 1000L,

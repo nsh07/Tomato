@@ -450,15 +450,19 @@ class TimerService : Service() {
     }
 
     private fun initializeMediaPlayer(): MediaPlayer? {
+        val settingsState = _settingsState.value
         return try {
             MediaPlayer().apply {
                 setAudioAttributes(
                     AudioAttributes.Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .setUsage(
+                            if (settingsState.mediaVolumeForAlarm) AudioAttributes.USAGE_MEDIA
+                            else AudioAttributes.USAGE_ALARM
+                        )
                         .build()
                 )
-                _settingsState.value.alarmSoundUri?.let {
+                settingsState.alarmSoundUri?.let {
                     setDataSource(applicationContext, it)
                     prepare()
                 }

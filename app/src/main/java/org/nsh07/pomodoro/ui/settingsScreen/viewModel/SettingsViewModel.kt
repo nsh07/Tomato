@@ -109,6 +109,7 @@ class SettingsViewModel(
             is SettingsAction.SaveAlarmEnabled -> saveAlarmEnabled(action.enabled)
             is SettingsAction.SaveVibrateEnabled -> saveVibrateEnabled(action.enabled)
             is SettingsAction.SaveDndEnabled -> saveDndEnabled(action.enabled)
+            is SettingsAction.SaveMediaVolumeForAlarm -> saveMediaVolumeForAlarm(action.enabled)
             is SettingsAction.SaveColorScheme -> saveColorScheme(action.color)
             is SettingsAction.SaveTheme -> saveTheme(action.theme)
             is SettingsAction.SaveBlackTheme -> saveBlackTheme(action.enabled)
@@ -260,6 +261,18 @@ class SettingsViewModel(
         }
     }
 
+    private fun saveMediaVolumeForAlarm(mediaVolumeForAlarm: Boolean) {
+        viewModelScope.launch {
+            _settingsState.update { currentState ->
+                currentState.copy(mediaVolumeForAlarm = mediaVolumeForAlarm)
+            }
+            preferenceRepository.saveBooleanPreference(
+                "media_volume_for_alarm",
+                mediaVolumeForAlarm
+            )
+        }
+    }
+
     suspend fun reloadSettings() {
         var settingsState = _settingsState.value
         val focusTime =
@@ -316,6 +329,12 @@ class SettingsViewModel(
             )
         val dndEnabled = preferenceRepository.getBooleanPreference("dnd_enabled")
             ?: preferenceRepository.saveBooleanPreference("dnd_enabled", settingsState.dndEnabled)
+        val mediaVolumeForAlarm =
+            preferenceRepository.getBooleanPreference("media_volume_for_alarm")
+                ?: preferenceRepository.saveBooleanPreference(
+                    "media_volume_for_alarm",
+                    settingsState.mediaVolumeForAlarm
+                )
 
         _settingsState.update { currentState ->
             currentState.copy(
@@ -330,7 +349,8 @@ class SettingsViewModel(
                 aodEnabled = aodEnabled,
                 alarmEnabled = alarmEnabled,
                 vibrateEnabled = vibrateEnabled,
-                dndEnabled = dndEnabled
+                dndEnabled = dndEnabled,
+                mediaVolumeForAlarm = mediaVolumeForAlarm
             )
         }
 

@@ -35,6 +35,9 @@ sealed class Screen : NavKey {
         object Main : Settings()
 
         @Serializable
+        object About : Settings()
+
+        @Serializable
         object Alarm : Settings()
 
         @Serializable

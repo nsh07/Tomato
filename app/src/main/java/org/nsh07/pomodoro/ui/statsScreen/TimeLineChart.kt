@@ -22,6 +22,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -74,6 +75,9 @@ import org.nsh07.pomodoro.utils.millisecondsToMinutes
 @Composable
 fun TimeLineChart(
     modelProducer: CartesianChartModelProducer,
+    hoursFormat: String,
+    hoursMinutesFormat: String,
+    minutesFormat: String,
     modifier: Modifier = Modifier,
     axisTypeface: Typeface = Typeface.DEFAULT,
     markerTypeface: Typeface = Typeface.DEFAULT,
@@ -82,9 +86,9 @@ fun TimeLineChart(
     xValueFormatter: CartesianValueFormatter = CartesianValueFormatter.Default,
     yValueFormatter: CartesianValueFormatter = CartesianValueFormatter { _, value, _ ->
         if (value >= 60 * 60 * 1000) {
-            millisecondsToHours(value.toLong())
+            millisecondsToHours(value.toLong(), hoursFormat)
         } else {
-            millisecondsToMinutes(value.toLong())
+            millisecondsToMinutes(value.toLong(), minutesFormat)
         }
     },
     markerValueFormatter: DefaultCartesianMarker.ValueFormatter = DefaultCartesianMarker.ValueFormatter { _, targets ->
@@ -94,12 +98,12 @@ fun TimeLineChart(
         } else 0L
 
         if (value >= 60 * 60 * 1000) {
-            millisecondsToHoursMinutes(value)
+            millisecondsToHoursMinutes(value, hoursMinutesFormat)
         } else {
-            millisecondsToMinutes(value)
+            millisecondsToMinutes(value, minutesFormat)
         }
     },
-    animationSpec: AnimationSpec<Float>? = null
+    animationSpec: AnimationSpec<Float>? = motionScheme.defaultEffectsSpec()
 ) {
     ProvideVicoTheme(rememberM3VicoTheme()) {
         CartesianChartHost(
@@ -180,6 +184,7 @@ fun TimeLineChart(
                 minZoom = Zoom.min(Zoom.Content, Zoom.fixed())
             ),
             animationSpec = animationSpec,
+            animateIn = false,
             modifier = modifier.height(224.dp),
         )
     }
@@ -203,7 +208,12 @@ private fun TimeLineChartPreview() {
     }
     TomatoTheme {
         Surface {
-            TimeLineChart(modelProducer = modelProducer)
+            TimeLineChart(
+                modelProducer = modelProducer,
+                hoursFormat = "%dh",
+                hoursMinutesFormat = "%dh %dm",
+                minutesFormat = "%dm"
+            )
         }
     }
 }

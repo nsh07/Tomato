@@ -131,6 +131,7 @@ or [my BuyMeACoffee page](https://coff.ee/nsh07):
 
 - Shun Min Chang ([@jack24254029](https://github.com/jack24254029) on GitHub)
 - Chinedu Oji (on BuyMeACoffee)
+- Zach Alden (on BuyMeACoffee)
 
 ## Special Thanks
 

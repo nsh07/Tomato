@@ -74,6 +74,11 @@
     <string name="choose_language">Choisissez la langue</string>
     <string name="rate_on_google_play">Noter sur Google Play</string>
     <string name="selected">Selectionné</string>
-    <string name="help_with_translation">Aider pour la traduction</string>
+    <string name="help_with_translation">Aider à traduire Tomato</string>
     <string name="timer_settings_reset_info">Réinitialiser le timer pour pouvoir changer les paramètres</string>
+    <string name="bmc_desc">Soutenez-moi avec un petit don</string>
+    <string name="tomato_plus_desc">Personnalisez plus avec Tomato+</string>
+    <string name="about">A propos</string>
+    <string name="help_with_translation_desc">Traduire Tomato dans votre langue</string>
+    <string name="rate_on_google_play_desc">Vous aimez l\'appli? Écrivez un avis!</string>
 </resources>

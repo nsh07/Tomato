@@ -1,8 +1,18 @@
 /*
  * Copyright (c) 2025 Nishant Mishra
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * This file is part of Tomato - a minimalist pomodoro timer for Android.
+ *
+ * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Tomato.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.nsh07.pomodoro.utils
@@ -21,29 +31,30 @@ fun millisecondsToStr(t: Long): String {
     )
 }
 
-fun millisecondsToHours(t: Long): String {
+fun millisecondsToHours(t: Long, format: String = "%dh"): String {
     require(t >= 0L)
     return String.format(
         Locale.getDefault(),
-        "%dh",
+        format,
         TimeUnit.MILLISECONDS.toHours(t)
     )
 }
 
-fun millisecondsToMinutes(t: Long): String {
+fun millisecondsToMinutes(t: Long, format: String = "%dm"): String {
     require(t >= 0L)
     return String.format(
         Locale.getDefault(),
-        "%dm",
+        format,
         TimeUnit.MILLISECONDS.toMinutes(t)
     )
 }
 
-fun millisecondsToHoursMinutes(t: Long): String {
+fun millisecondsToHoursMinutes(t: Long, format: String = $$"%1$dh %2$dm"): String {
     require(t >= 0L)
     return String.format(
         Locale.getDefault(),
-        "%dh %dm", TimeUnit.MILLISECONDS.toHours(t),
+        format,
+        TimeUnit.MILLISECONDS.toHours(t),
         TimeUnit.MILLISECONDS.toMinutes(t) % TimeUnit.HOURS.toMinutes(1)
     )
 }
@@ -51,10 +62,12 @@ fun millisecondsToHoursMinutes(t: Long): String {
 /**
  * Extension function for [String] to convert it to a [androidx.compose.ui.graphics.Color]
  *
- * The base string must be of the format produced by [androidx.compose.ui.graphics.Color.toString],
+ * The base string MUST be of the format produced by [androidx.compose.ui.graphics.Color.toString],
  * i.e, the color black with 100% opacity in sRGB would be represented by:
  *
  *      Color(0.0, 0.0, 0.0, 1.0, sRGB IEC61966-2.1)
+ *
+ * The behaviour of this function is undefined if the format is not followed
  */
 fun String.toColor(): Color {
     // Sample string: Color(0.0, 0.0, 0.0, 1.0, sRGB IEC61966-2.1)
@@ -64,8 +77,8 @@ fun String.toColor(): Color {
     val comma4 = this.indexOf(',', comma3 + 1)
 
     val r = this.substringAfter('(').substringBefore(',').toFloat()
-    val g = this.slice(comma1 + 1..comma2 - 1).toFloat()
-    val b = this.slice(comma2 + 1..comma3 - 1).toFloat()
-    val a = this.slice(comma3 + 1..comma4 - 1).toFloat()
+    val g = this.slice(comma1 + 1..<comma2).toFloat()
+    val b = this.slice(comma2 + 1..<comma3).toFloat()
+    val a = this.slice(comma3 + 1..<comma4).toFloat()
     return Color(r, g, b, a)
 }

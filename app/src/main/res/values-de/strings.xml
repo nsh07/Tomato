@@ -73,6 +73,6 @@
     <string name="choose_language">Sprache wählen</string>
     <string name="rate_on_google_play">Im Play Store bewerten</string>
     <string name="selected">Ausgewählt</string>
-    <string name="help_with_translation">Bei der Übersetzung helfen</string>
+    <string name="help_with_translation">Hilf beim Übersetzen</string>
     <string name="timer_settings_reset_info">Den Timer zurücksetzen um Einstellungen zu ändern</string>
 </resources>

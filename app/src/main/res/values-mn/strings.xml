@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alarm">хонх</string>
+    <string name="alarm_desc">Цаг хэмжигч дуусахад хонх дуугаргах</string>
+    <string name="alarm_sound">Хонхны дуу</string>
+    <string name="always_on_display">Үргэлж дэлгэц дээр</string>
+    <string name="appearance">гадаад төрх</string>
+    <string name="black_theme">Хар загвар</string>
+    <string name="break_">Завсарлага</string>
+    <string name="choose_color_scheme">Өнгөний схемийг сонгоно уу</string>
+    <string name="choose_language">Хэл сонгох</string>
+    <string name="choose_theme">загвар сонгох</string>
+    <string name="color">өнгө</string>
+    <string name="color_scheme">Өнгөний схем</string>
+    <string name="completed">Дууссан</string>
+    <string name="dark">Харанхуй</string>
+    <string name="dnd">Бүү саад бол горим</string>
+    <string name="durations">хугацаа</string>
+    <string name="dynamic">Динамик</string>
+    <string name="dynamic_color">Динамик өнгө</string>
+    <string name="exit">Гарах</string>
+    <string name="focus">анхаарлаа төвлөрүүлэх</string>
+</resources>

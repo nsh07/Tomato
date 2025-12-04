@@ -1,0 +1,12 @@
+New features:
+- New app icon
+- New redesigned navigation bar with new animations
+- The clock now uses a new font
+- New clutter-free settings screen
+- New option to only play alarm on headphones if connected
+- New option to only show current session's progress (Android 16+ only)
+
+Fixes:
+- Significantly improved stats saving system
+- AOD movement is now more subtle
+- Navigation bar colors now reflect the current mode

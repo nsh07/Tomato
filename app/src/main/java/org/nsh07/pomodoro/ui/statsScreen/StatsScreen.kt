@@ -45,6 +45,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -76,6 +77,7 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
+import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex400
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
@@ -130,6 +132,10 @@ fun StatsScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+    val hoursFormat = stringResource(R.string.hours_format)
+    val hoursMinutesFormat = stringResource(R.string.hours_and_minutes_format)
+    val minutesFormat = stringResource(R.string.minutes_format)
+
     var lastWeekStatExpanded by rememberSaveable { mutableStateOf(false) }
     var lastMonthStatExpanded by rememberSaveable { mutableStateOf(false) }
 
@@ -156,43 +162,45 @@ fun StatsScreen(
     val axisTypeface = remember { resolver.resolve(googleFlex400).value as Typeface }
     val markerTypeface = remember { resolver.resolve(googleFlex600).value as Typeface }
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-    ) {
-        TopAppBar(
-            title = {
-                Text(
-                    stringResource(R.string.stats),
-                    style = LocalTextStyle.current.copy(
-                        fontFamily = robotoFlexTopBar,
-                        fontSize = 32.sp,
-                        lineHeight = 32.sp
-                    ),
-                    modifier = Modifier
-                        .padding(top = contentPadding.calculateTopPadding())
-                        .padding(vertical = 14.dp)
-                )
-            },
-            actions = if (BuildConfig.DEBUG) {
-                {
-                    IconButton(
-                        onClick = generateSampleData
-                    ) {
-                        Spacer(Modifier.size(24.dp))
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        stringResource(R.string.stats),
+                        style = LocalTextStyle.current.copy(
+                            fontFamily = robotoFlexTopBar,
+                            fontSize = 32.sp,
+                            lineHeight = 32.sp
+                        ),
+                        modifier = Modifier
+                            .padding(top = contentPadding.calculateTopPadding())
+                            .padding(vertical = 14.dp)
+                    )
+                },
+                actions = if (BuildConfig.DEBUG) {
+                    {
+                        IconButton(
+                            onClick = generateSampleData
+                        ) {
+                            Spacer(Modifier.size(24.dp))
+                        }
                     }
-                }
-            } else {
-                {}
-            },
-            subtitle = {},
-            titleHorizontalAlignment = Alignment.CenterHorizontally,
-            scrollBehavior = scrollBehavior,
-            windowInsets = WindowInsets()
-        )
-
+                } else {
+                    {}
+                },
+                subtitle = {},
+                titleHorizontalAlignment = Alignment.CenterHorizontally,
+                scrollBehavior = scrollBehavior,
+                windowInsets = WindowInsets()
+            )
+        },
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { innerPadding ->
+        val insets = mergePaddingValues(innerPadding, contentPadding)
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = insets,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item { Spacer(Modifier) }
@@ -223,7 +231,10 @@ fun StatsScreen(
                             )
                             Text(
                                 remember(todayStat) {
-                                    millisecondsToHoursMinutes(todayStat?.totalFocusTime() ?: 0)
+                                    millisecondsToHoursMinutes(
+                                        todayStat?.totalFocusTime() ?: 0,
+                                        hoursMinutesFormat
+                                    )
                                 },
                                 style = typography.displaySmall,
                                 color = colorScheme.onPrimaryContainer,
@@ -249,7 +260,10 @@ fun StatsScreen(
                             )
                             Text(
                                 remember(todayStat) {
-                                    millisecondsToHoursMinutes(todayStat?.breakTime ?: 0)
+                                    millisecondsToHoursMinutes(
+                                        todayStat?.breakTime ?: 0,
+                                        hoursMinutesFormat
+                                    )
                                 },
                                 style = typography.displaySmall,
                                 color = colorScheme.onTertiaryContainer,
@@ -282,7 +296,8 @@ fun StatsScreen(
                         millisecondsToHoursMinutes(
                             remember(lastWeekAverageFocusTimes) {
                                 lastWeekAverageFocusTimes.sum().toLong()
-                            }
+                            },
+                            hoursMinutesFormat
                         ),
                         style = typography.displaySmall
                     )
@@ -295,7 +310,10 @@ fun StatsScreen(
             }
             item {
                 TimeColumnChart(
-                    lastWeekSummaryChartData.first,
+                    modelProducer = lastWeekSummaryChartData.first,
+                    hoursFormat = hoursFormat,
+                    hoursMinutesFormat = hoursMinutesFormat,
+                    minutesFormat = minutesFormat,
                     modifier = Modifier.padding(start = 16.dp),
                     axisTypeface = axisTypeface,
                     markerTypeface = markerTypeface,
@@ -361,7 +379,8 @@ fun StatsScreen(
                         millisecondsToHoursMinutes(
                             remember(lastMonthAverageFocusTimes) {
                                 lastMonthAverageFocusTimes.sum().toLong()
-                            }
+                            },
+                            hoursMinutesFormat
                         ),
                         style = typography.displaySmall
                     )
@@ -374,7 +393,10 @@ fun StatsScreen(
             }
             item {
                 TimeColumnChart(
-                    lastMonthSummaryChartData.first,
+                    modelProducer = lastMonthSummaryChartData.first,
+                    hoursFormat = hoursFormat,
+                    hoursMinutesFormat = hoursMinutesFormat,
+                    minutesFormat = minutesFormat,
                     modifier = Modifier.padding(start = 16.dp),
                     axisTypeface = axisTypeface,
                     markerTypeface = markerTypeface,
@@ -441,7 +463,8 @@ fun StatsScreen(
                         millisecondsToHoursMinutes(
                             remember(lastYearAverageFocusTimes) {
                                 lastYearAverageFocusTimes.sum().toLong()
-                            }
+                            },
+                            hoursMinutesFormat
                         ),
                         style = typography.displaySmall
                     )
@@ -454,7 +477,10 @@ fun StatsScreen(
             }
             item {
                 TimeLineChart(
-                    lastYearSummaryChartData.first,
+                    modelProducer = lastYearSummaryChartData.first,
+                    hoursFormat = hoursFormat,
+                    hoursMinutesFormat = hoursMinutesFormat,
+                    minutesFormat = minutesFormat,
                     modifier = Modifier.padding(start = 16.dp),
                     axisTypeface = axisTypeface,
                     markerTypeface = markerTypeface,

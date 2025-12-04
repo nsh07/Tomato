@@ -21,36 +21,64 @@ import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingToolbarDefaults
+import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
+import androidx.compose.material3.FloatingToolbarExitDirection
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
-import androidx.compose.material3.NavigationItemIconPosition
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ShortNavigationBar
-import androidx.compose.material3.ShortNavigationBarArrangement
-import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
@@ -63,6 +91,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
 import org.nsh07.pomodoro.ui.timerScreen.AlarmDialog
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -82,8 +111,13 @@ fun AppScreen(
     val layoutDirection = LocalLayoutDirection.current
     val motionScheme = motionScheme
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val systemBarsInsets = WindowInsets.systemBars.asPaddingValues()
+    val cutoutInsets = WindowInsets.displayCutout.asPaddingValues()
 
     val backStack = rememberNavBackStack(Screen.Timer)
+    val toolbarScrollBehavior = FloatingToolbarDefaults.exitAlwaysScrollBehavior(
+        FloatingToolbarExitDirection.Bottom
+    )
 
     if (uiState.alarmRinging)
         AlarmDialog {
@@ -99,46 +133,117 @@ fun AppScreen(
         bottomBar = {
             AnimatedVisibility(
                 backStack.last() !is Screen.AOD,
-                enter = fadeIn(),
-                exit = fadeOut()
+                enter = slideInVertically(motionScheme.slowSpatialSpec()) { it },
+                exit = slideOutVertically(motionScheme.slowSpatialSpec()) { it }
             ) {
                 val wide = remember {
                     windowSizeClass.isWidthAtLeastBreakpoint(
                         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
                     )
                 }
-                ShortNavigationBar(
-                    arrangement =
-                        if (wide) ShortNavigationBarArrangement.Centered
-                        else ShortNavigationBarArrangement.EqualWeight
+
+                val primary by animateColorAsState(
+                    if (uiState.timerMode == TimerMode.FOCUS) colorScheme.primary else colorScheme.tertiary
+                )
+                val onPrimary by animateColorAsState(
+                    if (uiState.timerMode == TimerMode.FOCUS) colorScheme.onPrimary else colorScheme.onTertiary
+                )
+                val primaryContainer by animateColorAsState(
+                    if (uiState.timerMode == TimerMode.FOCUS) colorScheme.primaryContainer else colorScheme.tertiaryContainer
+                )
+                val onPrimaryContainer by animateColorAsState(
+                    if (uiState.timerMode == TimerMode.FOCUS) colorScheme.onPrimaryContainer else colorScheme.onTertiaryContainer
+                )
+
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = cutoutInsets.calculateStartPadding(layoutDirection),
+                            end = cutoutInsets.calculateEndPadding(layoutDirection)
+                        ),
+                    Alignment.Center
                 ) {
-                    mainScreens.forEach {
-                        val selected = backStack.last() == it.route
-                        ShortNavigationBarItem(
-                            selected = selected,
-                            onClick = if (it.route != Screen.Timer) { // Ensure the backstack does not accumulate screens
-                                {
-                                    if (backStack.size < 2) backStack.add(it.route)
-                                    else backStack[1] = it.route
+                    HorizontalFloatingToolbar(
+                        expanded = true,
+                        scrollBehavior = toolbarScrollBehavior,
+                        colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(
+                            toolbarContainerColor = primaryContainer,
+                            toolbarContentColor = onPrimaryContainer
+                        ),
+                        modifier = Modifier
+                            .padding(
+                                top = ScreenOffset,
+                                bottom = systemBarsInsets.calculateBottomPadding()
+                                        + ScreenOffset
+                            )
+                            .zIndex(1f)
+                    ) {
+                        mainScreens.fastForEach { item ->
+                            val selected by remember { derivedStateOf { backStack.lastOrNull() == item.route } }
+                            TooltipBox(
+                                positionProvider =
+                                    TooltipDefaults.rememberTooltipPositionProvider(
+                                        TooltipAnchorPosition.Above
+                                    ),
+                                tooltip = { PlainTooltip { Text(stringResource(item.label)) } },
+                                state = rememberTooltipState(),
+                            ) {
+                                ToggleButton(
+                                    checked = selected,
+                                    onCheckedChange = if (item.route != Screen.Timer) { // Ensure the backstack does not accumulate screens
+                                        {
+                                            if (backStack.size < 2) backStack.add(item.route)
+                                            else backStack[1] = item.route
+                                        }
+                                    } else {
+                                        { if (backStack.size > 1) backStack.removeAt(1) }
+                                    },
+                                    colors = ToggleButtonDefaults.toggleButtonColors(
+                                        containerColor = primaryContainer,
+                                        contentColor = onPrimaryContainer,
+                                        checkedContainerColor = primary,
+                                        checkedContentColor = onPrimary
+                                    ),
+                                    shapes = ToggleButtonDefaults.shapes(
+                                        CircleShape,
+                                        CircleShape,
+                                        CircleShape
+                                    ),
+                                    modifier = Modifier.height(56.dp)
+                                ) {
+                                    Row {
+                                        Crossfade(selected) {
+                                            if (it) Icon(
+                                                painterResource(item.selectedIcon),
+                                                null
+                                            )
+                                            else Icon(painterResource(item.unselectedIcon), null)
+                                        }
+                                        AnimatedVisibility(
+                                            visible = selected || wide,
+                                            enter = expandHorizontally(motionScheme.defaultSpatialSpec()),
+                                            exit = shrinkHorizontally(motionScheme.defaultSpatialSpec())
+                                        ) {
+                                            Text(
+                                                text = stringResource(item.label),
+                                                fontSize = 16.sp,
+                                                lineHeight = 24.sp,
+                                                maxLines = 1,
+                                                softWrap = false,
+                                                overflow = TextOverflow.Clip,
+                                                modifier = Modifier.padding(start = ButtonDefaults.IconSpacing)
+                                            )
+                                        }
+                                    }
                                 }
-                            } else {
-                                { if (backStack.size > 1) backStack.removeAt(1) }
-                            },
-                            icon = {
-                                Crossfade(selected) { selected ->
-                                    if (selected) Icon(painterResource(it.selectedIcon), null)
-                                    else Icon(painterResource(it.unselectedIcon), null)
-                                }
-                            },
-                            iconPosition =
-                                if (wide) NavigationItemIconPosition.Start
-                                else NavigationItemIconPosition.Top,
-                            label = { Text(stringResource(it.label)) }
-                        )
+                            }
+                        }
                     }
                 }
             }
-        }
+        },
+        modifier = modifier
     ) { contentPadding ->
         SharedTransitionLayout {
             NavDisplay(
@@ -161,20 +266,12 @@ fun AppScreen(
                         TimerScreen(
                             timerState = uiState,
                             isPlus = isPlus,
+                            contentPadding = contentPadding,
                             progress = { progress },
                             onAction = timerViewModel::onAction,
-                            modifier = modifier
-                                .padding(
-                                    start = contentPadding.calculateStartPadding(layoutDirection),
-                                    end = contentPadding.calculateEndPadding(layoutDirection),
-                                    bottom = contentPadding.calculateBottomPadding()
-                                )
-                                .then(
-                                    if (isAODEnabled) Modifier.clickable {
-                                        if (backStack.size < 2) backStack.add(Screen.AOD)
-                                    }
-                                    else Modifier
-                                ),
+                            modifier = if (isAODEnabled) Modifier.clickable {
+                                if (backStack.size < 2) backStack.add(Screen.AOD)
+                            } else Modifier
                         )
                     }
 
@@ -183,36 +280,21 @@ fun AppScreen(
                             timerState = uiState,
                             progress = { progress },
                             setTimerFrequency = setTimerFrequency,
-                            modifier = Modifier
-                                .then(
-                                    if (isAODEnabled) Modifier.clickable {
-                                        if (backStack.size > 1) backStack.removeLastOrNull()
-                                    }
-                                    else Modifier
-                                )
+                            modifier = if (isAODEnabled) Modifier.clickable {
+                                if (backStack.size > 1) backStack.removeLastOrNull()
+                            } else Modifier
                         )
                     }
 
                     entry<Screen.Settings.Main> {
                         SettingsScreenRoot(
                             setShowPaywall = { showPaywall = it },
-                            modifier = modifier.padding(
-                                start = contentPadding.calculateStartPadding(layoutDirection),
-                                end = contentPadding.calculateEndPadding(layoutDirection),
-                                bottom = contentPadding.calculateBottomPadding()
-                            )
+                            contentPadding = contentPadding
                         )
                     }
 
                     entry<Screen.Stats> {
-                        StatsScreenRoot(
-                            contentPadding = contentPadding,
-                            modifier = modifier.padding(
-                                start = contentPadding.calculateStartPadding(layoutDirection),
-                                end = contentPadding.calculateEndPadding(layoutDirection),
-                                bottom = contentPadding.calculateBottomPadding()
-                            )
-                        )
+                        StatsScreenRoot(contentPadding = contentPadding)
                     }
                 }
             )

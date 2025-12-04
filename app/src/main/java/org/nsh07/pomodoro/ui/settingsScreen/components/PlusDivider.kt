@@ -32,7 +32,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.nsh07.pomodoro.R
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -49,7 +51,7 @@ fun PlusDivider(
                 .background(colorScheme.surfaceContainer)
                 .padding(horizontal = 8.dp)
         ) {
-            Text("Customize further with Tomato+", style = typography.titleSmall)
+            Text(stringResource(R.string.tomato_plus_desc), style = typography.titleSmall)
         }
     }
 }

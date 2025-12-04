@@ -43,8 +43,8 @@ android {
         applicationId = "org.nsh07.pomodoro"
         minSdk = 27
         targetSdk = 36
-        versionCode = 21
-        versionName = "1.6.6"
+        versionCode = 22
+        versionName = "1.7.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

@@ -45,18 +45,23 @@ val settingsScreens = listOf(
         Screen.Settings.Timer,
         R.drawable.timer_filled,
         R.string.timer,
-        listOf(R.string.durations, R.string.session_length, R.string.always_on_display)
+        listOf(R.string.durations, R.string.dnd, R.string.always_on_display)
     ),
     SettingsNavItem(
         Screen.Settings.Alarm,
         R.drawable.alarm,
         R.string.alarm,
-        listOf(R.string.alarm_sound, R.string.alarm, R.string.vibrate)
+        listOf(
+            R.string.alarm_sound,
+            R.string.sound,
+            R.string.vibrate,
+            R.string.media_volume_for_alarm
+        )
     ),
     SettingsNavItem(
         Screen.Settings.Appearance,
         R.drawable.palette,
         R.string.appearance,
-        listOf(R.string.color_scheme, R.string.theme, R.string.black_theme)
+        listOf(R.string.theme, R.string.color_scheme, R.string.black_theme)
     )
 )

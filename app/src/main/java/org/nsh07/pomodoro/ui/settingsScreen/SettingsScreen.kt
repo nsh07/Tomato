@@ -27,7 +27,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -39,6 +39,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -64,12 +65,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.Screen
-import org.nsh07.pomodoro.ui.settingsScreen.components.AboutCard
+import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.LocaleBottomSheet
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusPromo
+import org.nsh07.pomodoro.ui.settingsScreen.screens.AboutScreen
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.TimerSettings
@@ -86,6 +89,7 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 @Composable
 fun SettingsScreenRoot(
     setShowPaywall: (Boolean) -> Unit,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
 ) {
@@ -119,6 +123,7 @@ fun SettingsScreenRoot(
         serviceRunning = serviceRunning,
         settingsState = settingsState,
         backStack = backStack,
+        contentPadding = contentPadding,
         focusTimeInputFieldState = focusTimeInputFieldState,
         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
         longBreakTimeInputFieldState = longBreakTimeInputFieldState,
@@ -137,6 +142,7 @@ private fun SettingsScreen(
     serviceRunning: Boolean,
     settingsState: SettingsState,
     backStack: SnapshotStateList<Screen.Settings>,
+    contentPadding: PaddingValues,
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
@@ -181,46 +187,62 @@ private fun SettingsScreen(
         },
         entryProvider = entryProvider {
             entry<Screen.Settings.Main> {
-                Column(modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
-                    TopAppBar(
-                        title = {
-                            Text(
-                                stringResource(R.string.settings),
-                                style = LocalTextStyle.current.copy(
-                                    fontFamily = robotoFlexTopBar,
-                                    fontSize = 32.sp,
-                                    lineHeight = 32.sp
+                Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            title = {
+                                Text(
+                                    stringResource(R.string.settings),
+                                    style = LocalTextStyle.current.copy(
+                                        fontFamily = robotoFlexTopBar,
+                                        fontSize = 32.sp,
+                                        lineHeight = 32.sp
+                                    )
                                 )
-                            )
-                        },
-                        subtitle = {},
-                        colors = topBarColors,
-                        titleHorizontalAlignment = Alignment.CenterHorizontally,
-                        scrollBehavior = scrollBehavior
-                    )
-
+                            },
+                            subtitle = {},
+                            colors = topBarColors,
+                            titleHorizontalAlignment = Alignment.CenterHorizontally,
+                            scrollBehavior = scrollBehavior
+                        )
+                    },
+                    modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+                ) { innerPadding ->
+                    val insets = mergePaddingValues(innerPadding, contentPadding)
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(2.dp),
+                        contentPadding = insets,
                         modifier = Modifier
                             .background(topBarColors.containerColor)
                             .fillMaxSize()
                             .padding(horizontal = 16.dp)
                     ) {
-                        item { Spacer(Modifier.height(12.dp)) }
+                        item { Spacer(Modifier.height(14.dp)) }
 
-                        if (!isPlus) item {
+                        item {
                             PlusPromo(isPlus, setShowPaywall)
-                            Spacer(Modifier.height(14.dp))
                         }
 
-                        item { AboutCard(isPlus) }
+                        item {
+                            ClickableListItem(
+                                leadingContent = {
+                                    Icon(painterResource(R.drawable.info), null)
+                                },
+                                headlineContent = {
+                                    Text(stringResource(R.string.about))
+                                },
+                                supportingContent = {
+                                    Text(stringResource(R.string.app_name) + " ${BuildConfig.VERSION_NAME}")
+                                },
+                                trailingContent = {
+                                    Icon(painterResource(R.drawable.arrow_forward_big), null)
+                                },
+                                items = 2,
+                                index = 1
+                            ) { backStack.add(Screen.Settings.About) }
+                        }
 
                         item { Spacer(Modifier.height(12.dp)) }
-
-                        if (isPlus) item {
-                            PlusPromo(isPlus, setShowPaywall)
-                            Spacer(Modifier.height(14.dp))
-                        }
 
                         itemsIndexed(settingsScreens) { index, item ->
                             ClickableListItem(
@@ -276,9 +298,18 @@ private fun SettingsScreen(
                 }
             }
 
+            entry<Screen.Settings.About> {
+                AboutScreen(
+                    contentPadding = contentPadding,
+                    isPlus = isPlus,
+                    onBack = backStack::removeLastOrNull
+                )
+            }
+
             entry<Screen.Settings.Alarm> {
                 AlarmSettings(
                     settingsState = settingsState,
+                    contentPadding = contentPadding,
                     onAction = onAction,
                     onBack = backStack::removeLastOrNull,
                     modifier = modifier,
@@ -287,6 +318,7 @@ private fun SettingsScreen(
             entry<Screen.Settings.Appearance> {
                 AppearanceSettings(
                     settingsState = settingsState,
+                    contentPadding = contentPadding,
                     isPlus = isPlus,
                     onAction = onAction,
                     setShowPaywall = setShowPaywall,
@@ -299,6 +331,7 @@ private fun SettingsScreen(
                     isPlus = isPlus,
                     serviceRunning = serviceRunning,
                     settingsState = settingsState,
+                    contentPadding = contentPadding,
                     focusTimeInputFieldState = focusTimeInputFieldState,
                     shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                     longBreakTimeInputFieldState = longBreakTimeInputFieldState,

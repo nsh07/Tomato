@@ -39,7 +39,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.nsh07.pomodoro.ui.theme.AppFonts.interClock
+import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -62,7 +62,7 @@ fun MinuteInputField(
             imeAction = imeAction
         ),
         textStyle = TextStyle(
-            fontFamily = interClock,
+            fontFamily = googleFlex600,
             fontSize = 57.sp,
             letterSpacing = (-2).sp,
             color = if (enabled) colorScheme.onSurfaceVariant else colorScheme.outlineVariant,

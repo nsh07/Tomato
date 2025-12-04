@@ -38,6 +38,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,8 +48,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -64,6 +64,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -94,7 +95,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.ui.theme.AppFonts.interClock
+import org.nsh07.pomodoro.ui.mergePaddingValues
+import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
@@ -107,6 +109,7 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 fun SharedTransitionScope.TimerScreen(
     timerState: TimerState,
     isPlus: Boolean,
+    contentPadding: PaddingValues,
     progress: () -> Float,
     onAction: (TimerAction) -> Unit,
     modifier: Modifier = Modifier
@@ -137,407 +140,419 @@ fun SharedTransitionScope.TimerScreen(
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    Column(modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
-        TopAppBar(
-            title = {
-                AnimatedContent(
-                    if (!timerState.showBrandTitle) timerState.timerMode else TimerMode.BRAND,
-                    transitionSpec = {
-                        slideInVertically(
-                            animationSpec = motionScheme.defaultSpatialSpec(),
-                            initialOffsetY = { (-it * 1.25).toInt() }
-                        ).togetherWith(
-                            slideOutVertically(
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    AnimatedContent(
+                        if (!timerState.showBrandTitle) timerState.timerMode else TimerMode.BRAND,
+                        transitionSpec = {
+                            slideInVertically(
                                 animationSpec = motionScheme.defaultSpatialSpec(),
-                                targetOffsetY = { (it * 1.25).toInt() }
+                                initialOffsetY = { (-it * 1.25).toInt() }
+                            ).togetherWith(
+                                slideOutVertically(
+                                    animationSpec = motionScheme.defaultSpatialSpec(),
+                                    targetOffsetY = { (it * 1.25).toInt() }
+                                )
                             )
-                        )
-                    },
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxWidth(.9f)
-                ) {
-                    when (it) {
-                        TimerMode.BRAND ->
-                            Text(
-                                if (!isPlus) stringResource(R.string.app_name)
-                                else stringResource(R.string.app_name_plus),
+                        },
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxWidth(.9f)
+                    ) {
+                        when (it) {
+                            TimerMode.BRAND ->
+                                Text(
+                                    if (!isPlus) stringResource(R.string.app_name)
+                                    else stringResource(R.string.app_name_plus),
+                                    style = TextStyle(
+                                        fontFamily = robotoFlexTopBar,
+                                        fontSize = 32.sp,
+                                        lineHeight = 32.sp,
+                                        color = colorScheme.error
+                                    ),
+                                    textAlign = TextAlign.Center
+                                )
+
+                            TimerMode.FOCUS ->
+                                Text(
+                                    stringResource(R.string.focus),
+                                    style = TextStyle(
+                                        fontFamily = robotoFlexTopBar,
+                                        fontSize = 32.sp,
+                                        lineHeight = 32.sp,
+                                        color = colorScheme.primary
+                                    ),
+                                    textAlign = TextAlign.Center
+                                )
+
+                            TimerMode.SHORT_BREAK -> Text(
+                                stringResource(R.string.short_break),
                                 style = TextStyle(
                                     fontFamily = robotoFlexTopBar,
                                     fontSize = 32.sp,
                                     lineHeight = 32.sp,
-                                    color = colorScheme.error
+                                    color = colorScheme.tertiary
                                 ),
                                 textAlign = TextAlign.Center
                             )
 
-                        TimerMode.FOCUS ->
-                            Text(
-                                stringResource(R.string.focus),
+                            TimerMode.LONG_BREAK -> Text(
+                                stringResource(R.string.long_break),
                                 style = TextStyle(
                                     fontFamily = robotoFlexTopBar,
                                     fontSize = 32.sp,
                                     lineHeight = 32.sp,
-                                    color = colorScheme.primary
+                                    color = colorScheme.tertiary
                                 ),
                                 textAlign = TextAlign.Center
                             )
-
-                        TimerMode.SHORT_BREAK -> Text(
-                            stringResource(R.string.short_break),
-                            style = TextStyle(
-                                fontFamily = robotoFlexTopBar,
-                                fontSize = 32.sp,
-                                lineHeight = 32.sp,
-                                color = colorScheme.tertiary
-                            ),
-                            textAlign = TextAlign.Center
-                        )
-
-                        TimerMode.LONG_BREAK -> Text(
-                            stringResource(R.string.long_break),
-                            style = TextStyle(
-                                fontFamily = robotoFlexTopBar,
-                                fontSize = 32.sp,
-                                lineHeight = 32.sp,
-                                color = colorScheme.tertiary
-                            ),
-                            textAlign = TextAlign.Center
-                        )
+                        }
                     }
-                }
-            },
-            subtitle = {},
-            titleHorizontalAlignment = CenterHorizontally,
-            scrollBehavior = scrollBehavior
-        )
-
-        Column(
+                },
+                subtitle = {},
+                titleHorizontalAlignment = CenterHorizontally,
+                scrollBehavior = scrollBehavior
+            )
+        },
+        modifier = modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { innerPadding ->
+        val insets = mergePaddingValues(innerPadding, contentPadding)
+        LazyColumn(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = CenterHorizontally,
+            contentPadding = insets,
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
         ) {
-            Column(horizontalAlignment = CenterHorizontally) {
-                Box(contentAlignment = Alignment.Center) {
-                    if (timerState.timerMode == TimerMode.FOCUS) {
-                        CircularProgressIndicator(
-                            progress = progress,
-                            modifier = Modifier
-                                .sharedBounds(
-                                    sharedContentState = this@TimerScreen.rememberSharedContentState(
-                                        "focus progress"
-                                    ),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                )
-                                .widthIn(max = 350.dp)
-                                .fillMaxWidth(0.9f)
-                                .aspectRatio(1f),
-                            color = color,
-                            trackColor = colorContainer,
-                            strokeWidth = 16.dp,
-                            gapSize = 8.dp
-                        )
-                    } else {
-                        CircularWavyProgressIndicator(
-                            progress = progress,
-                            modifier = Modifier
-                                .sharedBounds(
-                                    sharedContentState = this@TimerScreen.rememberSharedContentState(
-                                        "break progress"
-                                    ),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                )
-                                .widthIn(max = 350.dp)
-                                .fillMaxWidth(0.9f)
-                                .aspectRatio(1f),
-                            color = color,
-                            trackColor = colorContainer,
-                            stroke = Stroke(
-                                width = with(LocalDensity.current) {
-                                    16.dp.toPx()
-                                },
-                                cap = StrokeCap.Round,
-                            ),
-                            trackStroke = Stroke(
-                                width = with(LocalDensity.current) {
-                                    16.dp.toPx()
-                                },
-                                cap = StrokeCap.Round,
-                            ),
-                            wavelength = 60.dp,
-                            gapSize = 8.dp
-                        )
-                    }
-                    var expanded by remember { mutableStateOf(timerState.showBrandTitle) }
-                    Column(
-                        horizontalAlignment = CenterHorizontally,
-                        modifier = Modifier
-                            .clip(shapes.largeIncreased)
-                            .clickable(onClick = { expanded = !expanded })
-                    ) {
-                        LaunchedEffect(timerState.showBrandTitle) {
-                            expanded = timerState.showBrandTitle
-                        }
-                        Text(
-                            text = timerState.timeStr,
-                            style = TextStyle(
-                                fontFamily = interClock,
-                                fontSize = 72.sp,
-                                letterSpacing = (-2).sp,
-                                fontFeatureSettings = "tnum"
-                            ),
-                            textAlign = TextAlign.Center,
-                            maxLines = 1,
-                            modifier = Modifier.sharedBounds(
-                                sharedContentState = this@TimerScreen.rememberSharedContentState("clock"),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                            )
-                        )
-                        AnimatedVisibility(
-                            expanded,
-                            enter = fadeIn(motionScheme.defaultEffectsSpec()) +
-                                    expandVertically(motionScheme.defaultSpatialSpec()),
-                            exit = fadeOut(motionScheme.defaultEffectsSpec()) +
-                                    shrinkVertically(motionScheme.defaultSpatialSpec())
-                        ) {
-                            Text(
-                                stringResource(
-                                    R.string.timer_session_count,
-                                    timerState.currentFocusCount,
-                                    timerState.totalFocusCount
-                                ),
-                                fontFamily = interClock,
-                                style = typography.titleLarge,
-                                color = colorScheme.outline
-                            )
-                        }
-                    }
-                }
-                val interactionSources = remember { List(3) { MutableInteractionSource() } }
-                ButtonGroup(
-                    overflowIndicator = { state ->
-                        ButtonGroupDefaults.OverflowIndicator(
-                            state,
-                            colors = IconButtonDefaults.filledTonalIconButtonColors(),
-                            modifier = Modifier.size(64.dp, 96.dp)
-                        )
-                    },
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    customItem(
-                        {
-                            FilledIconToggleButton(
-                                onCheckedChange = { checked ->
-                                    onAction(TimerAction.ToggleTimer)
-
-                                    if (checked) haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                    else haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
-
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checked) {
-                                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                    }
-                                },
-                                checked = timerState.timerRunning,
-                                colors = IconButtonDefaults.filledIconToggleButtonColors(
-                                    checkedContainerColor = color,
-                                    checkedContentColor = onColor
-                                ),
-                                shapes = IconButtonDefaults.toggleableShapes(),
-                                interactionSource = interactionSources[0],
+            item {
+                Column(horizontalAlignment = CenterHorizontally) {
+                    Box(contentAlignment = Alignment.Center) {
+                        if (timerState.timerMode == TimerMode.FOCUS) {
+                            CircularProgressIndicator(
+                                progress = progress,
                                 modifier = Modifier
-                                    .size(width = 128.dp, height = 96.dp)
-                                    .animateWidth(interactionSources[0])
-                            ) {
-                                if (timerState.timerRunning) {
-                                    Icon(
-                                        painterResource(R.drawable.pause_large),
-                                        contentDescription = stringResource(R.string.pause),
-                                        modifier = Modifier.size(32.dp)
+                                    .sharedBounds(
+                                        sharedContentState = this@TimerScreen.rememberSharedContentState(
+                                            "focus progress"
+                                        ),
+                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current
                                     )
-                                } else {
-                                    Icon(
-                                        painterResource(R.drawable.play_large),
-                                        contentDescription = stringResource(R.string.play),
-                                        modifier = Modifier.size(32.dp)
+                                    .widthIn(max = 350.dp)
+                                    .fillMaxWidth(0.9f)
+                                    .aspectRatio(1f),
+                                color = color,
+                                trackColor = colorContainer,
+                                strokeWidth = 16.dp,
+                                gapSize = 8.dp
+                            )
+                        } else {
+                            CircularWavyProgressIndicator(
+                                progress = progress,
+                                modifier = Modifier
+                                    .sharedBounds(
+                                        sharedContentState = this@TimerScreen.rememberSharedContentState(
+                                            "break progress"
+                                        ),
+                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current
                                     )
-                                }
+                                    .widthIn(max = 350.dp)
+                                    .fillMaxWidth(0.9f)
+                                    .aspectRatio(1f),
+                                color = color,
+                                trackColor = colorContainer,
+                                stroke = Stroke(
+                                    width = with(LocalDensity.current) {
+                                        16.dp.toPx()
+                                    },
+                                    cap = StrokeCap.Round,
+                                ),
+                                trackStroke = Stroke(
+                                    width = with(LocalDensity.current) {
+                                        16.dp.toPx()
+                                    },
+                                    cap = StrokeCap.Round,
+                                ),
+                                wavelength = 60.dp,
+                                gapSize = 8.dp
+                            )
+                        }
+                        var expanded by remember { mutableStateOf(timerState.showBrandTitle) }
+                        Column(
+                            horizontalAlignment = CenterHorizontally,
+                            modifier = Modifier
+                                .clip(shapes.largeIncreased)
+                                .clickable(onClick = { expanded = !expanded })
+                        ) {
+                            LaunchedEffect(timerState.showBrandTitle) {
+                                expanded = timerState.showBrandTitle
                             }
+                            Text(
+                                text = timerState.timeStr,
+                                style = TextStyle(
+                                    fontFamily = googleFlex600,
+                                    fontSize = 72.sp,
+                                    letterSpacing = (-2.6).sp,
+                                    fontFeatureSettings = "tnum"
+                                ),
+                                textAlign = TextAlign.Center,
+                                maxLines = 1,
+                                modifier = Modifier.sharedBounds(
+                                    sharedContentState = this@TimerScreen.rememberSharedContentState(
+                                        "clock"
+                                    ),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
+                            )
+                            AnimatedVisibility(
+                                expanded,
+                                enter = fadeIn(motionScheme.defaultEffectsSpec()) +
+                                        expandVertically(motionScheme.defaultSpatialSpec()),
+                                exit = fadeOut(motionScheme.defaultEffectsSpec()) +
+                                        shrinkVertically(motionScheme.defaultSpatialSpec())
+                            ) {
+                                Text(
+                                    stringResource(
+                                        R.string.timer_session_count,
+                                        timerState.currentFocusCount,
+                                        timerState.totalFocusCount
+                                    ),
+                                    fontFamily = googleFlex600,
+                                    style = typography.titleLarge,
+                                    color = colorScheme.outline
+                                )
+                            }
+                        }
+                    }
+                    val interactionSources = remember { List(3) { MutableInteractionSource() } }
+                    ButtonGroup(
+                        overflowIndicator = { state ->
+                            ButtonGroupDefaults.OverflowIndicator(
+                                state,
+                                colors = IconButtonDefaults.filledTonalIconButtonColors(),
+                                modifier = Modifier.size(64.dp, 96.dp)
+                            )
                         },
-                        { state ->
-                            DropdownMenuItem(
-                                leadingIcon = {
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        customItem(
+                            {
+                                FilledIconToggleButton(
+                                    onCheckedChange = { checked ->
+                                        onAction(TimerAction.ToggleTimer)
+
+                                        if (checked) haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                        else haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
+
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checked) {
+                                            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                        }
+                                    },
+                                    checked = timerState.timerRunning,
+                                    colors = IconButtonDefaults.filledIconToggleButtonColors(
+                                        checkedContainerColor = color,
+                                        checkedContentColor = onColor
+                                    ),
+                                    shapes = IconButtonDefaults.toggleableShapes(),
+                                    interactionSource = interactionSources[0],
+                                    modifier = Modifier
+                                        .size(width = 128.dp, height = 96.dp)
+                                        .animateWidth(interactionSources[0])
+                                ) {
                                     if (timerState.timerRunning) {
                                         Icon(
-                                            painterResource(R.drawable.pause),
-                                            contentDescription = stringResource(R.string.pause)
+                                            painterResource(R.drawable.pause_large),
+                                            contentDescription = stringResource(R.string.pause),
+                                            modifier = Modifier.size(32.dp)
                                         )
                                     } else {
                                         Icon(
-                                            painterResource(R.drawable.play),
-                                            contentDescription = stringResource(R.string.play)
+                                            painterResource(R.drawable.play_large),
+                                            contentDescription = stringResource(R.string.play),
+                                            modifier = Modifier.size(32.dp)
                                         )
                                     }
-                                },
-                                text = {
-                                    Text(
-                                        if (timerState.timerRunning) stringResource(R.string.pause) else stringResource(
-                                            R.string.play
+                                }
+                            },
+                            { state ->
+                                DropdownMenuItem(
+                                    leadingIcon = {
+                                        if (timerState.timerRunning) {
+                                            Icon(
+                                                painterResource(R.drawable.pause),
+                                                contentDescription = stringResource(R.string.pause)
+                                            )
+                                        } else {
+                                            Icon(
+                                                painterResource(R.drawable.play),
+                                                contentDescription = stringResource(R.string.play)
+                                            )
+                                        }
+                                    },
+                                    text = {
+                                        Text(
+                                            if (timerState.timerRunning) stringResource(R.string.pause) else stringResource(
+                                                R.string.play
+                                            )
                                         )
-                                    )
-                                },
-                                onClick = {
-                                    onAction(TimerAction.ToggleTimer)
-                                    state.dismiss()
-                                }
-                            )
-                        }
-                    )
-
-                    customItem(
-                        {
-                            FilledTonalIconButton(
-                                onClick = {
-                                    onAction(TimerAction.ResetTimer)
-                                    haptic.performHapticFeedback(HapticFeedbackType.VirtualKey)
-                                },
-                                colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                    containerColor = colorContainer
-                                ),
-                                shapes = IconButtonDefaults.shapes(),
-                                interactionSource = interactionSources[1],
-                                modifier = Modifier
-                                    .size(96.dp)
-                                    .animateWidth(interactionSources[1])
-                            ) {
-                                Icon(
-                                    painterResource(R.drawable.restart_large),
-                                    contentDescription = stringResource(R.string.restart),
-                                    modifier = Modifier.size(32.dp)
+                                    },
+                                    onClick = {
+                                        onAction(TimerAction.ToggleTimer)
+                                        state.dismiss()
+                                    }
                                 )
                             }
-                        },
-                        { state ->
-                            DropdownMenuItem(
-                                leadingIcon = {
-                                    Icon(
-                                        painterResource(R.drawable.restart),
-                                        stringResource(R.string.restart)
-                                    )
-                                },
-                                text = { Text(stringResource(R.string.restart)) },
-                                onClick = {
-                                    onAction(TimerAction.ResetTimer)
-                                    state.dismiss()
-                                }
-                            )
-                        }
-                    )
+                        )
 
-                    customItem(
-                        {
-                            FilledTonalIconButton(
-                                onClick = {
-                                    onAction(TimerAction.SkipTimer(fromButton = true))
-                                    haptic.performHapticFeedback(HapticFeedbackType.VirtualKey)
-                                },
-                                colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                    containerColor = colorContainer
-                                ),
-                                shapes = IconButtonDefaults.shapes(),
-                                interactionSource = interactionSources[2],
-                                modifier = Modifier
-                                    .size(64.dp, 96.dp)
-                                    .animateWidth(interactionSources[2])
-                            ) {
-                                Icon(
-                                    painterResource(R.drawable.skip_next_large),
-                                    contentDescription = stringResource(R.string.skip_to_next),
-                                    modifier = Modifier.size(32.dp)
+                        customItem(
+                            {
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        onAction(TimerAction.ResetTimer)
+                                        haptic.performHapticFeedback(HapticFeedbackType.VirtualKey)
+                                    },
+                                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                        containerColor = colorContainer
+                                    ),
+                                    shapes = IconButtonDefaults.shapes(),
+                                    interactionSource = interactionSources[1],
+                                    modifier = Modifier
+                                        .size(96.dp)
+                                        .animateWidth(interactionSources[1])
+                                ) {
+                                    Icon(
+                                        painterResource(R.drawable.restart_large),
+                                        contentDescription = stringResource(R.string.restart),
+                                        modifier = Modifier.size(32.dp)
+                                    )
+                                }
+                            },
+                            { state ->
+                                DropdownMenuItem(
+                                    leadingIcon = {
+                                        Icon(
+                                            painterResource(R.drawable.restart),
+                                            stringResource(R.string.restart)
+                                        )
+                                    },
+                                    text = { Text(stringResource(R.string.restart)) },
+                                    onClick = {
+                                        onAction(TimerAction.ResetTimer)
+                                        state.dismiss()
+                                    }
                                 )
                             }
-                        },
-                        { state ->
-                            DropdownMenuItem(
-                                leadingIcon = {
+                        )
+
+                        customItem(
+                            {
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        onAction(TimerAction.SkipTimer(fromButton = true))
+                                        haptic.performHapticFeedback(HapticFeedbackType.VirtualKey)
+                                    },
+                                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                        containerColor = colorContainer
+                                    ),
+                                    shapes = IconButtonDefaults.shapes(),
+                                    interactionSource = interactionSources[2],
+                                    modifier = Modifier
+                                        .size(64.dp, 96.dp)
+                                        .animateWidth(interactionSources[2])
+                                ) {
                                     Icon(
-                                        painterResource(R.drawable.skip_next),
-                                        stringResource(R.string.skip_to_next)
+                                        painterResource(R.drawable.skip_next_large),
+                                        contentDescription = stringResource(R.string.skip_to_next),
+                                        modifier = Modifier.size(32.dp)
                                     )
-                                },
-                                text = { Text(stringResource(R.string.skip_to_next)) },
-                                onClick = {
-                                    onAction(TimerAction.SkipTimer(fromButton = true))
-                                    state.dismiss()
                                 }
-                            )
-                        }
-                    )
+                            },
+                            { state ->
+                                DropdownMenuItem(
+                                    leadingIcon = {
+                                        Icon(
+                                            painterResource(R.drawable.skip_next),
+                                            stringResource(R.string.skip_to_next)
+                                        )
+                                    },
+                                    text = { Text(stringResource(R.string.skip_to_next)) },
+                                    onClick = {
+                                        onAction(TimerAction.SkipTimer(fromButton = true))
+                                        state.dismiss()
+                                    }
+                                )
+                            }
+                        )
+                    }
                 }
             }
 
-            Spacer(Modifier.height(32.dp))
+            item { Spacer(Modifier.height(32.dp)) }
 
-            Column(horizontalAlignment = CenterHorizontally) {
-                Text(stringResource(R.string.up_next), style = typography.titleSmall)
-                AnimatedContent(
-                    timerState.nextTimeStr,
-                    transitionSpec = {
-                        slideInVertically(
-                            animationSpec = motionScheme.defaultSpatialSpec(),
-                            initialOffsetY = { (-it * 1.25).toInt() }
-                        ).togetherWith(
-                            slideOutVertically(
+            item {
+                Column(horizontalAlignment = CenterHorizontally) {
+                    Text(stringResource(R.string.up_next), style = typography.titleSmall)
+                    AnimatedContent(
+                        timerState.nextTimeStr,
+                        transitionSpec = {
+                            slideInVertically(
                                 animationSpec = motionScheme.defaultSpatialSpec(),
-                                targetOffsetY = { (it * 1.25).toInt() }
+                                initialOffsetY = { (-it * 1.25).toInt() }
+                            ).togetherWith(
+                                slideOutVertically(
+                                    animationSpec = motionScheme.defaultSpatialSpec(),
+                                    targetOffsetY = { (it * 1.25).toInt() }
+                                )
                             )
+                        }
+                    ) {
+                        Text(
+                            it,
+                            style = TextStyle(
+                                fontFamily = googleFlex600,
+                                fontSize = 22.sp,
+                                lineHeight = 28.sp,
+                                color = if (timerState.nextTimerMode == TimerMode.FOCUS) colorScheme.primary else colorScheme.tertiary,
+                                textAlign = TextAlign.Center
+                            ),
+                            modifier = Modifier.width(200.dp)
                         )
                     }
-                ) {
-                    Text(
-                        it,
-                        style = TextStyle(
-                            fontFamily = interClock,
-                            fontSize = 22.sp,
-                            lineHeight = 28.sp,
-                            color = if (timerState.nextTimerMode == TimerMode.FOCUS) colorScheme.primary else colorScheme.tertiary,
-                            textAlign = TextAlign.Center
-                        ),
-                        modifier = Modifier.width(200.dp)
-                    )
-                }
-                AnimatedContent(
-                    timerState.nextTimerMode,
-                    transitionSpec = {
-                        slideInVertically(
-                            animationSpec = motionScheme.defaultSpatialSpec(),
-                            initialOffsetY = { (-it * 1.25).toInt() }
-                        ).togetherWith(
-                            slideOutVertically(
+                    AnimatedContent(
+                        timerState.nextTimerMode,
+                        transitionSpec = {
+                            slideInVertically(
                                 animationSpec = motionScheme.defaultSpatialSpec(),
-                                targetOffsetY = { (it * 1.25).toInt() }
+                                initialOffsetY = { (-it * 1.25).toInt() }
+                            ).togetherWith(
+                                slideOutVertically(
+                                    animationSpec = motionScheme.defaultSpatialSpec(),
+                                    targetOffsetY = { (it * 1.25).toInt() }
+                                )
                             )
+                        }
+                    ) {
+                        Text(
+                            when (it) {
+                                TimerMode.FOCUS -> stringResource(R.string.focus)
+                                TimerMode.SHORT_BREAK -> stringResource(R.string.short_break)
+                                else -> stringResource(R.string.long_break)
+                            },
+                            style = typography.titleMediumEmphasized,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.width(200.dp)
                         )
                     }
-                ) {
-                    Text(
-                        when (it) {
-                            TimerMode.FOCUS -> stringResource(R.string.focus)
-                            TimerMode.SHORT_BREAK -> stringResource(R.string.short_break)
-                            else -> stringResource(R.string.long_break)
-                        },
-                        style = typography.titleMediumEmphasized,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.width(200.dp)
-                    )
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
+            item { Spacer(Modifier.height(16.dp)) }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview(
     showSystemUi = true,
     device = Devices.PIXEL_9_PRO
@@ -553,6 +568,7 @@ fun TimerScreenPreview() {
                 TimerScreen(
                     timerState,
                     isPlus = true,
+                    contentPadding = PaddingValues(),
                     { 0.3f },
                     {}
                 )

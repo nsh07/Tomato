@@ -1,3 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="alarm">هشدار</string>
+    <string name="alarm_desc">زنگ هشدار هنگام پایان تایمر</string>
+    <string name="alarm_sound">صدای زنگ</string>
+    <string name="always_on_display">نمایشگر همیشه روشن</string>
+    <string name="always_on_display_desc">روی هر نقطه هنگام مشاهده تایمر ضربه بزنید تا به حالت نمایشگر همیشه روشن (AOD) بروید</string>
 </resources>

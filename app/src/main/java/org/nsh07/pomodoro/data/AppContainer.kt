@@ -31,19 +31,16 @@ import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.billing.BillingManagerProvider
 import org.nsh07.pomodoro.service.ServiceHelper
 import org.nsh07.pomodoro.service.addTimerActions
-import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
-import org.nsh07.pomodoro.utils.millisecondsToStr
 
 interface AppContainer {
     val appPreferenceRepository: AppPreferenceRepository
     val appStatRepository: AppStatRepository
-    val appTimerRepository: AppTimerRepository
+    val stateRepository: StateRepository
     val billingManager: BillingManager
     val notificationManager: NotificationManagerCompat
     val notificationManagerService: NotificationManager
     val notificationBuilder: NotificationCompat.Builder
     val serviceHelper: ServiceHelper
-    val timerState: MutableStateFlow<TimerState>
     val time: MutableStateFlow<Long>
     var activityTurnScreenOn: (Boolean) -> Unit
 }
@@ -58,7 +55,9 @@ class DefaultAppContainer(context: Context) : AppContainer {
         AppStatRepository(AppDatabase.getDatabase(context).statDao())
     }
 
-    override val appTimerRepository: AppTimerRepository by lazy { AppTimerRepository() }
+    override val stateRepository: StateRepository by lazy {
+        StateRepository()
+    }
 
     override val billingManager: BillingManager by lazy { BillingManagerProvider.manager }
 
@@ -93,20 +92,9 @@ class DefaultAppContainer(context: Context) : AppContainer {
         ServiceHelper(context)
     }
 
-    override val timerState: MutableStateFlow<TimerState> by lazy {
-        MutableStateFlow(
-            TimerState(
-                totalTime = appTimerRepository.focusTime,
-                timeStr = millisecondsToStr(appTimerRepository.focusTime),
-                nextTimeStr = millisecondsToStr(appTimerRepository.shortBreakTime)
-            )
-        )
-    }
-
     override val time: MutableStateFlow<Long> by lazy {
-        MutableStateFlow(appTimerRepository.focusTime)
+        MutableStateFlow(stateRepository.settingsState.value.focusTime)
     }
 
     override var activityTurnScreenOn: (Boolean) -> Unit = {}
-
 }

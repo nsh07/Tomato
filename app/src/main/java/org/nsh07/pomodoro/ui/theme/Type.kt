@@ -92,8 +92,6 @@ val Typography = Typography(
 
 @OptIn(ExperimentalTextApi::class)
 object AppFonts {
-    val interClock = FontFamily(Font(R.font.inter_bold))
-
     val googleFlex400 = FontFamily(Font(R.font.google_sans_flex_400))
 
     val googleFlex600 = FontFamily(Font(R.font.google_sans_flex_600))

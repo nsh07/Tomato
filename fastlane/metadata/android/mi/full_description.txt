@@ -1,0 +1,12 @@
+Ko <i>Tomato</i> tētehi kaitaki ā-Pomodoro māmā mā Android e whai ana i te tikanga hoahoa o Material 3 Expressive.
+
+He mea “utu-kore, waehere-wātea” (FOSS) a Tomato, mō ake tonu. E taea ana te kite tōna waehere, te whakapānui ngāngara, me te inoi āheinga atu anō ki https://github.com/nsh07/Tomato
+
+<b>Ōna āhuatanga:</b>
+- Hoahoanga māmā e whai ana i te tikanga Material 3 Expressive o te wā
+- He tatauranga o ngā wā mahi/ako e āta mārama ana
+    - He tatauranga mō te rā, e ngāwari ana te kite tere 
+    - He tatauranga mō te wiki me te marama o muri, e horahia ki te kauwhata 
+    - He whakamōhiotanga ā-tatauranga hoki nō te wiki me te marama o muri e pānui ana i ngā wā o te rā e tino pukumahi ai koe
+- He tautuhina ā-kaitaki e taea te whakahāngai ki āu hiahia
+- He tautoko i te Android 16 Live Updates

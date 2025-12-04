@@ -51,7 +51,12 @@ val settingsScreens = listOf(
         Screen.Settings.Alarm,
         R.drawable.alarm,
         R.string.alarm,
-        listOf(R.string.alarm_sound, R.string.sound, R.string.vibrate)
+        listOf(
+            R.string.alarm_sound,
+            R.string.sound,
+            R.string.vibrate,
+            R.string.media_volume_for_alarm
+        )
     ),
     SettingsNavItem(
         Screen.Settings.Appearance,

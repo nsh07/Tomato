@@ -352,6 +352,7 @@ class TimerService : Service() {
     private suspend fun skipTimer(fromButton: Boolean = false) {
         val settingsState = _settingsState.value
         saveTimeToDb()
+        updateProgressSegments()
         showTimerNotification(0, paused = true, complete = !fromButton)
         lastSavedDuration = 0
         startTime = 0L

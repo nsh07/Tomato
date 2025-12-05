@@ -80,5 +80,10 @@
     <string name="tomato_plus_desc">Personnalisez plus avec Tomato+</string>
     <string name="about">A propos</string>
     <string name="help_with_translation_desc">Traduire Tomato dans votre langue</string>
-    <string name="rate_on_google_play_desc">Vous aimez l\'appli? Écrivez un avis!</string>
+    <string name="rate_on_google_play_desc">Vous avez aimé l\'appli? Écrivez un avis!</string>
+    <string name="license">Licence</string>
+    <string name="media_volume_for_alarm">Mode casque</string>
+    <string name="session_only_progress">Progression de la session uniquement</string>
+    <string name="session_only_progress_desc">Montre uniquement la progression de la session actuelle, au lieu de la séquence entière.</string>
+    <string name="media_volume_for_alarm_desc">Fonctionne uniquement avec un casque. Si le casque est déconnecté, l\'alarme retentit via le haut-parleur au volume des médias.</string>
 </resources>

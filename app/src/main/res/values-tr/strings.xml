@@ -75,13 +75,17 @@
     <string name="selected">Seçilen</string>
     <string name="help_with_translation">Tomato\'nun çevirisine yardım edin</string>
     <string name="timer_settings_reset_info">Ayarları değiştirmek için zamanlayıcıyı sıfırlayın</string>
-    <string name="hours_and_minutes_format">%dsa %ddk</string>
-    <string name="hours_format">%dsa</string>
-    <string name="minutes_format">%ddk</string>
+    <string name="hours_and_minutes_format">%1$dsa %2$ddk</string>
+    <string name="hours_format">%1$dsa</string>
+    <string name="minutes_format">%1$ddk</string>
     <string name="about">Hakkında</string>
     <string name="help_with_translation_desc">Tomato\'yu kendi dilinize çevirin</string>
     <string name="rate_on_google_play_desc">Uygulamayı beğendinizmi? Bir yorum bırakın!</string>
     <string name="bmc_desc">Beni küçük bir bağışla destekleyin</string>
     <string name="tomato_plus_desc">Tomato+ ile daha fazla özelleştirin</string>
     <string name="license">Lisans</string>
+    <string name="media_volume_for_alarm">Kulaklık modu</string>
+    <string name="media_volume_for_alarm_desc">Sadece kulaklıktan oynatır. Eğer kulaklık devre dışı ise alarmı direkt medya sesi düzeyinde hoparlörden oynatır.</string>
+    <string name="session_only_progress">Yalnızca bu oturumun ilerlemesi</string>
+    <string name="session_only_progress_desc">Bildirimlerde tüm ilerlemeyi göstermektense yalnızca bu oturuma ait ilerlemeyi gösterir.</string>
 </resources>

@@ -76,12 +76,17 @@
     <string name="selected">Обрано</string>
     <string name="timer_settings_reset_info">Перезапустіть таймер, щоб змінити налаштування</string>
     <string name="help_with_translation">Допомогти з перекладом Tomato</string>
-    <string name="hours_and_minutes_format">%dгод %dхв</string>
-    <string name="hours_format">%dгод</string>
-    <string name="minutes_format">%dхв</string>
+    <string name="hours_and_minutes_format">%1$dгод %2$dхв</string>
+    <string name="hours_format">%1$dгод</string>
+    <string name="minutes_format">%1$dхв</string>
     <string name="about">Відомості</string>
     <string name="help_with_translation_desc">Перекладіть Tomato на Вашу мову</string>
     <string name="rate_on_google_play_desc">Сподобався додаток? Напишіть відгук!</string>
     <string name="bmc_desc">Підтримайте мене невеликим пожертвуванням</string>
     <string name="tomato_plus_desc">Налаштуйте ще більше з Tomato+</string>
+    <string name="license">Ліцензія</string>
+    <string name="media_volume_for_alarm">Режим навушників</string>
+    <string name="media_volume_for_alarm_desc">Сигнал грає лише в навушниках. Якщо навушники від\'єднані, сигнал грає через динамік на гучності звуку медіа.</string>
+    <string name="session_only_progress">Прогрес лише поточної сесії</string>
+    <string name="session_only_progress_desc">Показувати прогрес у сповіщенні лише для поточної сесії, а не для усього порядку.</string>
 </resources>

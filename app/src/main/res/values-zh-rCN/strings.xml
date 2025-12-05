@@ -84,4 +84,8 @@
     <string name="bmc_desc">小额捐赠支持</string>
     <string name="tomato_plus_desc">用 Tomato+ 进一步定制</string>
     <string name="license">许可证</string>
+    <string name="media_volume_for_alarm">耳机模式</string>
+    <string name="media_volume_for_alarm_desc">仅在插入耳机时播放。如果耳机连接断开，闹铃以媒体音量通过扬声器播放。</string>
+    <string name="session_only_progress">仅会话进度</string>
+    <string name="session_only_progress_desc">在通知中只显示当前会话的进度，而非完整序列的进度。</string>
 </resources>

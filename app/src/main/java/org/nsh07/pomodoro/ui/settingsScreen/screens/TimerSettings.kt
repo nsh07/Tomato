@@ -24,7 +24,9 @@ import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -54,6 +56,7 @@ import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -77,6 +80,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
@@ -364,7 +368,17 @@ fun TimerSettings(
                             Icon(painterResource(R.drawable.view_day), null)
                         },
                         headlineContent = { Text(stringResource(R.string.session_only_progress)) },
-                        supportingContent = { Text(stringResource(R.string.session_only_progress_desc)) },
+                        supportingContent = {
+                            var expanded by remember { mutableStateOf(false) }
+                            Text(
+                                stringResource(R.string.session_only_progress_desc),
+                                maxLines = if (expanded) Int.MAX_VALUE else 2,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier
+                                    .clickable { expanded = !expanded }
+                                    .animateContentSize(motionScheme.defaultSpatialSpec())
+                            )
+                        },
                         trailingContent = {
                             Switch(
                                 checked = settingsState.singleProgressBar,

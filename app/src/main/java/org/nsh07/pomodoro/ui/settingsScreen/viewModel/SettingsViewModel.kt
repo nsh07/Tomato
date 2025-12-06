@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -64,7 +65,9 @@ class SettingsViewModel(
     val backStack = mutableStateListOf<Screen.Settings>(Screen.Settings.Main)
 
     val isPlus = billingManager.isPlus
-    val serviceRunning = stateRepository.timerState.map { it.serviceRunning }
+    val serviceRunning = stateRepository.timerState
+        .map { it.serviceRunning }
+        .flowOn(Dispatchers.IO)
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),

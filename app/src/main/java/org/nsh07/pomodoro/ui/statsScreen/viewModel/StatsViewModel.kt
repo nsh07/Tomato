@@ -27,9 +27,10 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -46,7 +47,13 @@ class StatsViewModel(
     private val statRepository: StatRepository
 ) : ViewModel() {
 
-    val todayStat = statRepository.getTodayStat().distinctUntilChanged()
+    val todayStat = statRepository
+        .getTodayStat()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
 
     private val lastWeekSummary =
         Pair(CartesianChartModelProducer(), ExtraStore.Key<List<String>>())
@@ -75,6 +82,7 @@ class StatsViewModel(
                 }
                 lastWeekSummary
             }
+            .flowOn(Dispatchers.IO)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -91,6 +99,7 @@ class StatsViewModel(
                     it?.focusTimeQ4?.toInt() ?: 0
                 )
             }
+            .flowOn(Dispatchers.IO)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -109,6 +118,7 @@ class StatsViewModel(
                 }
                 lastMonthSummary
             }
+            .flowOn(Dispatchers.IO)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -125,6 +135,7 @@ class StatsViewModel(
                     it?.focusTimeQ4?.toInt() ?: 0
                 )
             }
+            .flowOn(Dispatchers.IO)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -143,6 +154,7 @@ class StatsViewModel(
                 }
                 lastYearSummary
             }
+            .flowOn(Dispatchers.IO)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -159,6 +171,7 @@ class StatsViewModel(
                     it?.focusTimeQ4?.toInt() ?: 0
                 )
             }
+            .flowOn(Dispatchers.IO)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),

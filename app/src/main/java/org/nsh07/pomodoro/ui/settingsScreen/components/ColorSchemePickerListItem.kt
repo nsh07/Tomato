@@ -35,7 +35,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -128,8 +127,7 @@ fun ColorSchemePickerListItem(
             leadingContent = {
                 Icon(
                     painter = painterResource(R.drawable.palette),
-                    contentDescription = null,
-                    tint = colorScheme.primary
+                    contentDescription = null
                 )
             },
             headlineContent = { Text(stringResource(R.string.color_scheme)) },

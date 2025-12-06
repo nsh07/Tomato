@@ -212,7 +212,7 @@ fun AppScreen(
                                     ),
                                     modifier = Modifier.height(56.dp)
                                 ) {
-                                    Row {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
                                         Crossfade(selected) {
                                             if (it) Icon(
                                                 painterResource(item.selectedIcon),

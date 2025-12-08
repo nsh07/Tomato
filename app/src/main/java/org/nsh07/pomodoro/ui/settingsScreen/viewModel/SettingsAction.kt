@@ -28,6 +28,7 @@ sealed interface SettingsAction {
     data class SaveDndEnabled(val enabled: Boolean) : SettingsAction
     data class SaveMediaVolumeForAlarm(val enabled: Boolean) : SettingsAction
     data class SaveSingleProgressBar(val enabled: Boolean) : SettingsAction
+    data class SaveAutostartNextSession(val enabled: Boolean) : SettingsAction
     data class SaveAlarmSound(val uri: Uri?) : SettingsAction
     data class SaveTheme(val theme: String) : SettingsAction
     data class SaveColorScheme(val color: Color) : SettingsAction

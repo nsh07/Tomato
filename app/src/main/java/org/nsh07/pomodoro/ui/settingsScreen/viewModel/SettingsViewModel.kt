@@ -114,6 +114,7 @@ class SettingsViewModel(
             is SettingsAction.SaveDndEnabled -> saveDndEnabled(action.enabled)
             is SettingsAction.SaveMediaVolumeForAlarm -> saveMediaVolumeForAlarm(action.enabled)
             is SettingsAction.SaveSingleProgressBar -> saveSingleProgressBar(action.enabled)
+            is SettingsAction.SaveAutostartNextSession -> saveAutostartNextSession(action.enabled)
             is SettingsAction.SaveColorScheme -> saveColorScheme(action.color)
             is SettingsAction.SaveTheme -> saveTheme(action.theme)
             is SettingsAction.SaveBlackTheme -> saveBlackTheme(action.enabled)
@@ -289,6 +290,18 @@ class SettingsViewModel(
         }
     }
 
+    private fun saveAutostartNextSession(autostartNextSession: Boolean) {
+        viewModelScope.launch {
+            _settingsState.update { currentState ->
+                currentState.copy(autostartNextSession = autostartNextSession)
+            }
+            preferenceRepository.saveBooleanPreference(
+                "autostart_next_session",
+                autostartNextSession
+            )
+        }
+    }
+
     suspend fun reloadSettings() {
         var settingsState = _settingsState.value
         val focusTime =
@@ -356,6 +369,12 @@ class SettingsViewModel(
                 "single_progress_bar",
                 settingsState.singleProgressBar
             )
+        val autostartNextSession =
+            preferenceRepository.getBooleanPreference("autostart_next_session")
+                ?: preferenceRepository.saveBooleanPreference(
+                    "autostart_next_session",
+                    settingsState.autostartNextSession
+                )
 
         _settingsState.update { currentState ->
             currentState.copy(
@@ -372,7 +391,8 @@ class SettingsViewModel(
                 vibrateEnabled = vibrateEnabled,
                 dndEnabled = dndEnabled,
                 mediaVolumeForAlarm = mediaVolumeForAlarm,
-                singleProgressBar = singleProgressBar
+                singleProgressBar = singleProgressBar,
+                autostartNextSession = autostartNextSession
             )
         }
 

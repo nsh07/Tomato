@@ -77,6 +77,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -118,17 +119,30 @@ fun TimerSettings(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
+    val inspectionMode = LocalInspectionMode.current
     val appName = stringResource(R.string.app_name)
-    val notificationManagerService =
-        remember { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+    val notificationManagerService = remember {
+        if (!inspectionMode)
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        else
+            null
+    }
 
     val switchItems = remember(
         settingsState.dndEnabled,
         settingsState.aodEnabled,
+        settingsState.autostartNextSession,
         isPlus,
         serviceRunning
     ) {
         listOf(
+            SettingsSwitchItem(
+                checked = settingsState.autostartNextSession,
+                icon = R.drawable.autoplay,
+                label = R.string.auto_start_next_session,
+                description = R.string.auto_start_next_session_desc,
+                onClick = { onAction(SettingsAction.SaveAutostartNextSession(it)) }
+            ),
             SettingsSwitchItem(
                 checked = settingsState.dndEnabled,
                 enabled = !serviceRunning,
@@ -136,7 +150,7 @@ fun TimerSettings(
                 label = R.string.dnd,
                 description = R.string.dnd_desc,
                 onClick = {
-                    if (it && !notificationManagerService.isNotificationPolicyAccessGranted()) {
+                    if (it && notificationManagerService?.isNotificationPolicyAccessGranted() == false) {
                         val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
                         Toast.makeText(
                             context,
@@ -145,7 +159,7 @@ fun TimerSettings(
                         )
                             .show()
                         context.startActivity(intent)
-                    } else if (!it && notificationManagerService.isNotificationPolicyAccessGranted()) {
+                    } else if (!it && notificationManagerService?.isNotificationPolicyAccessGranted() == true) {
                         notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
                     }
                     onAction(SettingsAction.SaveDndEnabled(it))
@@ -314,7 +328,7 @@ fun TimerSettings(
             }
             item { Spacer(Modifier.height(12.dp)) }
 
-            itemsIndexed(if (isPlus) switchItems else switchItems.take(1)) { index, item ->
+            itemsIndexed(if (isPlus) switchItems else switchItems.take(2)) { index, item ->
                 ListItem(
                     leadingContent = {
                         Icon(
@@ -355,7 +369,11 @@ fun TimerSettings(
                             switchItems.size - 1 -> bottomListItemShape
                             else -> middleListItemShape
                         }
-                        else cardShape
+                        else when (index) {
+                            0 -> topListItemShape
+                            switchItems.size - 2 -> bottomListItemShape
+                            else -> middleListItemShape
+                        }
                     )
                 )
             }
@@ -501,7 +519,7 @@ private fun TimerSettingsPreview() {
     )
     TimerSettings(
         isPlus = false,
-        serviceRunning = true,
+        serviceRunning = false,
         settingsState = remember { SettingsState() },
         contentPadding = PaddingValues(),
         focusTimeInputFieldState = focusTimeInputFieldState,

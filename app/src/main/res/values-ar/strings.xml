@@ -79,13 +79,13 @@
     <string name="hours_format">%1$dس</string>
     <string name="minutes_format">%1$dد</string>
     <string name="about">عن</string>
-    <string name="help_with_translation_desc">ترجم Tomato+ إلى لغتك</string>
+    <string name="help_with_translation_desc">ترجم Tomato إلى لغتك</string>
     <string name="rate_on_google_play_desc">هل أعجبك التطبيق؟ اكتب مراجعة!</string>
     <string name="bmc_desc">ادعمني بتبرع صغير</string>
-    <string name="tomato_plus_desc">يمكنك التخصيص أكثر باستخدام Tomato+</string>
+    <string name="tomato_plus_desc">التخصيص أكثر باستخدام Tomato+</string>
     <string name="license">الترخيص</string>
     <string name="media_volume_for_alarm">وضع سماعات الرأس</string>
     <string name="media_volume_for_alarm_desc">يعمل فقط على سماعات الرأس. إذا كانت سماعات الرأس مفصولة، يصدر المنبه عبر سماعة الهاتف عند مستوى صوت الوسائط.</string>
     <string name="session_only_progress">التقدم في الجلسة فقط</string>
-    <string name="session_only_progress_desc">عرض التقدم للجلسة الحالية فقط في الإشعارات، وليس التسلسل الكامل.</string>
+    <string name="session_only_progress_desc">عرض التقدم للجلسة الحالية بدلا من سلسلة الجلسات كلها</string>
 </resources>

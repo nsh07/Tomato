@@ -83,4 +83,6 @@
     <string name="bmc_desc">小さな寄付でご支援してもよろしいでしょうか</string>
     <string name="tomato_plus_desc">Tomato+ を使用してさらにカスタマイズする</string>
     <string name="license">ライセンス</string>
+    <string name="media_volume_for_alarm">ヘッドホンモード</string>
+    <string name="media_volume_for_alarm_desc">ヘッドホンで再生します。ヘッドホンが接続されていない場合はスピーカーからメディアボリュームで再生されます。</string>
 </resources>

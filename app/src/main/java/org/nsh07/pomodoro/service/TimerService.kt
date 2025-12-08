@@ -449,6 +449,8 @@ class TimerService : Service() {
                 else -> settingsState.longBreakTime.toInt()
             }, paused = true, complete = false
         )
+
+        if (settingsState.autostartNextSession) toggleTimer()
     }
 
     private fun initializeMediaPlayer(): MediaPlayer? {

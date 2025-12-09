@@ -74,13 +74,15 @@
     <string name="always_on_display_desc">タイマー表示中に常時表示ディスプレイに切り替えるには任意の場所をタップしてください</string>
     <string name="dnd_desc">タイマーの実行時にサイレントモードをオンにします</string>
     <string name="tomato_foss_desc">全機能がこのバージョンでは解放されています。私のアプリが生活に変化をもたらしたのであれば、%1$s で寄付することで私を支援することをご検討ください。</string>
-    <string name="hours_and_minutes_format">%d時%d分</string>
-    <string name="hours_format">%d時</string>
-    <string name="minutes_format">%d分</string>
-    <string name="about">について</string>
+    <string name="hours_and_minutes_format">%1$d時%2$d分</string>
+    <string name="hours_format">%1$d時</string>
+    <string name="minutes_format">%1$d分</string>
+    <string name="about">このアプリについて</string>
     <string name="help_with_translation_desc">Tomato をあなたの言語に翻訳してください</string>
     <string name="rate_on_google_play_desc">アプリが気に入りましたか？レビューを書いてください！</string>
     <string name="bmc_desc">小さな寄付でご支援してもよろしいでしょうか</string>
     <string name="tomato_plus_desc">Tomato+ を使用してさらにカスタマイズする</string>
     <string name="license">ライセンス</string>
+    <string name="media_volume_for_alarm">ヘッドホンモード</string>
+    <string name="media_volume_for_alarm_desc">ヘッドホンで再生します。ヘッドホンが接続されていない場合はスピーカーからメディアボリュームで再生されます。</string>
 </resources>

@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.ui.timerScreen
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -65,6 +66,10 @@ import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -74,6 +79,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -83,6 +89,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
@@ -94,15 +101,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
-
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -115,7 +121,9 @@ fun SharedTransitionScope.TimerScreen(
     modifier: Modifier = Modifier
 ) {
     val motionScheme = motionScheme
+    val scope = rememberCoroutineScope()
     val haptic = LocalHapticFeedback.current
+    val context = LocalContext.current
 
     val color by animateColorAsState(
         if (timerState.timerMode == TimerMode.FOCUS) colorScheme.primary
@@ -139,6 +147,7 @@ fun SharedTransitionScope.TimerScreen(
     )
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
         topBar = {
@@ -215,16 +224,16 @@ fun SharedTransitionScope.TimerScreen(
                 scrollBehavior = scrollBehavior
             )
         },
+        bottomBar = { Spacer(Modifier.height(contentPadding.calculateBottomPadding())) },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         modifier = modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
-        val insets = mergePaddingValues(innerPadding, contentPadding)
         LazyColumn(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = CenterHorizontally,
-            contentPadding = insets,
-            modifier = Modifier
-                .fillMaxSize()
+            contentPadding = innerPadding,
+            modifier = Modifier.fillMaxSize()
         ) {
             item {
                 Column(horizontalAlignment = CenterHorizontally) {
@@ -411,6 +420,19 @@ fun SharedTransitionScope.TimerScreen(
                                     onClick = {
                                         onAction(TimerAction.ResetTimer)
                                         haptic.performHapticFeedback(HapticFeedbackType.VirtualKey)
+
+                                        @SuppressLint("LocalContextGetResourceValueCall")
+                                        scope.launch {
+                                            val result = snackbarHostState.showSnackbar(
+                                                context.getString(R.string.timer_reset_message),
+                                                actionLabel = context.getString(R.string.undo),
+                                                withDismissAction = true,
+                                                duration = SnackbarDuration.Long
+                                            )
+                                            if (result == SnackbarResult.ActionPerformed) {
+                                                onAction(TimerAction.UndoReset)
+                                            }
+                                        }
                                     },
                                     colors = IconButtonDefaults.filledTonalIconButtonColors(
                                         containerColor = colorContainer

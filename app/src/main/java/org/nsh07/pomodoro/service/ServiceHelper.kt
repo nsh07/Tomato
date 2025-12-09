@@ -35,6 +35,12 @@ class ServiceHelper(private val context: Context) {
                     context.startService(it)
                 }
 
+            TimerAction.UndoReset ->
+                Intent(context, TimerService::class.java).also {
+                    it.action = TimerService.Actions.UNDO_RESET.toString()
+                    context.startService(it)
+                }
+
             is TimerAction.SkipTimer ->
                 Intent(context, TimerService::class.java).also {
                     it.action = TimerService.Actions.SKIP.toString()

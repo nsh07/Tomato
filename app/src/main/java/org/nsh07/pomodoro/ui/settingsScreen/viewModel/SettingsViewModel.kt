@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -64,7 +65,9 @@ class SettingsViewModel(
     val backStack = mutableStateListOf<Screen.Settings>(Screen.Settings.Main)
 
     val isPlus = billingManager.isPlus
-    val serviceRunning = stateRepository.timerState.map { it.serviceRunning }
+    val serviceRunning = stateRepository.timerState
+        .map { it.serviceRunning }
+        .flowOn(Dispatchers.IO)
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
@@ -111,6 +114,8 @@ class SettingsViewModel(
             is SettingsAction.SaveDndEnabled -> saveDndEnabled(action.enabled)
             is SettingsAction.SaveMediaVolumeForAlarm -> saveMediaVolumeForAlarm(action.enabled)
             is SettingsAction.SaveSingleProgressBar -> saveSingleProgressBar(action.enabled)
+            is SettingsAction.SaveAutostartNextSession -> saveAutostartNextSession(action.enabled)
+            is SettingsAction.SaveSecureAod -> saveSecureAod(action.enabled)
             is SettingsAction.SaveColorScheme -> saveColorScheme(action.color)
             is SettingsAction.SaveTheme -> saveTheme(action.theme)
             is SettingsAction.SaveBlackTheme -> saveBlackTheme(action.enabled)
@@ -286,6 +291,30 @@ class SettingsViewModel(
         }
     }
 
+    private fun saveAutostartNextSession(autostartNextSession: Boolean) {
+        viewModelScope.launch {
+            _settingsState.update { currentState ->
+                currentState.copy(autostartNextSession = autostartNextSession)
+            }
+            preferenceRepository.saveBooleanPreference(
+                "autostart_next_session",
+                autostartNextSession
+            )
+        }
+    }
+
+    private fun saveSecureAod(secureAod: Boolean) {
+        viewModelScope.launch {
+            _settingsState.update { currentState ->
+                currentState.copy(secureAod = secureAod)
+            }
+            preferenceRepository.saveBooleanPreference(
+                "secure_aod",
+                secureAod
+            )
+        }
+    }
+
     suspend fun reloadSettings() {
         var settingsState = _settingsState.value
         val focusTime =
@@ -353,6 +382,14 @@ class SettingsViewModel(
                 "single_progress_bar",
                 settingsState.singleProgressBar
             )
+        val autostartNextSession =
+            preferenceRepository.getBooleanPreference("autostart_next_session")
+                ?: preferenceRepository.saveBooleanPreference(
+                    "autostart_next_session",
+                    settingsState.autostartNextSession
+                )
+        val secureAod = preferenceRepository.getBooleanPreference("secure_aod")
+            ?: preferenceRepository.saveBooleanPreference("secure_aod", true)
 
         _settingsState.update { currentState ->
             currentState.copy(
@@ -369,7 +406,9 @@ class SettingsViewModel(
                 vibrateEnabled = vibrateEnabled,
                 dndEnabled = dndEnabled,
                 mediaVolumeForAlarm = mediaVolumeForAlarm,
-                singleProgressBar = singleProgressBar
+                singleProgressBar = singleProgressBar,
+                autostartNextSession = autostartNextSession,
+                secureAod = secureAod
             )
         }
 

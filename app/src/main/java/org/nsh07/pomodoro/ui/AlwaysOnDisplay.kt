@@ -63,7 +63,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import kotlinx.coroutines.delay
-import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
+import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex400
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -83,6 +83,7 @@ import kotlin.random.Random
 @Composable
 fun SharedTransitionScope.AlwaysOnDisplay(
     timerState: TimerState,
+    secureAod: Boolean,
     progress: () -> Float,
     setTimerFrequency: (Float) -> Unit,
     modifier: Modifier = Modifier
@@ -100,8 +101,10 @@ fun SharedTransitionScope.AlwaysOnDisplay(
     DisposableEffect(Unit) {
         setTimerFrequency(1f)
         window.addFlags(
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-                    WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+            if (secureAod) {
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+            } else WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         )
         activity?.setShowWhenLocked(true)
         insetsController.apply {
@@ -246,7 +249,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
             Text(
                 text = timerState.timeStr,
                 style = TextStyle(
-                    fontFamily = googleFlex600,
+                    fontFamily = googleFlex400,
                     fontSize = 56.sp,
                     letterSpacing = (-2).sp,
                     fontFeatureSettings = "tnum"
@@ -273,6 +276,7 @@ private fun AlwaysOnDisplayPreview() {
         SharedTransitionLayout {
             AlwaysOnDisplay(
                 timerState = timerState,
+                secureAod = true,
                 progress = progress,
                 setTimerFrequency = {}
             )

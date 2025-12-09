@@ -47,7 +47,7 @@
     <string name="start_next">अगला शुरू करें</string>
     <string name="stats">आँकड़े</string>
     <string name="stop_alarm">अलार्म बंद करें</string>
-    <string name="stop_alarm_dialog_text">वर्तमान टाइमर सत्र पूरा हो गया है। अलार्म बंद करने के लिए कहीं भी टैप करें।</string>
+    <string name="stop_alarm_dialog_text">वर्तमान टाइमर पूरा हो गया है। अलार्म बंद करने के लिए कहीं भी टैप करें।</string>
     <string name="stop_alarm_question">अलार्म बंद करें?</string>
     <string name="system_default">सिस्टम</string>
     <string name="theme">थीम</string>
@@ -72,6 +72,25 @@
     <string name="choose_language">भाषा चुनें</string>
     <string name="rate_on_google_play">Google Play पर रेटिंग दें</string>
     <string name="selected">चयनित</string>
-    <string name="help_with_translation">अनुवाद में सहायता करें</string>
+    <string name="help_with_translation">Tomato के अनुवाद में मदद करें</string>
     <string name="timer_settings_reset_info">सेटिंग्स बदलने के लिए टाइमर रीसेट करें</string>
+    <string name="hours_and_minutes_format">%1$dघं %2$dमि</string>
+    <string name="hours_format">%1$dघं</string>
+    <string name="minutes_format">%1$dमि</string>
+    <string name="about">ऐप के बारे में</string>
+    <string name="help_with_translation_desc">Tomato का अपनी भाषा में अनुवाद करें</string>
+    <string name="rate_on_google_play_desc">ऐप पसंद आया? रिव्यू लिखें!</string>
+    <string name="bmc_desc">एक छोटे से दान से मेरी मदद करें</string>
+    <string name="tomato_plus_desc">Tomato+ के साथ और कस्टमाइज़ करें</string>
+    <string name="license">लाइसेंस</string>
+    <string name="media_volume_for_alarm">हेडफ़ोन मोड</string>
+    <string name="media_volume_for_alarm_desc">अलार्म सिर्फ़ हेडफ़ोन पर बजता है. अगर हेडफ़ोन कनेक्ट नहीं हैं, तो अलार्म मीडिया वॉल्यूम पर स्पीकर से बजता है।</string>
+    <string name="session_only_progress">सरलीकृत प्रगति</string>
+    <string name="session_only_progress_desc">पूरे सत्र के बजाय, नोटिफ़िकेशन में केवल मौजूदा टाइमर की प्रगति दिखाएँ</string>
+    <string name="auto_start_next_timer_desc">अलार्म बंद करने के बाद अगला टाइमर शुरू करें</string>
+    <string name="auto_start_next_timer">टाइमर स्वयं आरंभ</string>
+    <string name="secure_aod">सुरक्षित AOD</string>
+    <string name="secure_aod_desc">तय समय के बाद डिवाइस को स्वयं लॉक कर दें, जबकि AOD दिखता रहे</string>
+    <string name="timer_reset_message">टाइमर रीसेट किया गया</string>
+    <string name="undo">पूर्ववत् करें</string>
 </resources>

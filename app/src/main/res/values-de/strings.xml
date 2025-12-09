@@ -73,6 +73,19 @@
     <string name="choose_language">Sprache wählen</string>
     <string name="rate_on_google_play">Im Play Store bewerten</string>
     <string name="selected">Ausgewählt</string>
-    <string name="help_with_translation">Hilf beim Übersetzen</string>
+    <string name="help_with_translation">Hilf beim Übersetzen von Tomato</string>
     <string name="timer_settings_reset_info">Den Timer zurücksetzen um Einstellungen zu ändern</string>
+    <string name="hours_and_minutes_format">%1$dh%2$ddm</string>
+    <string name="hours_format">%1$dh</string>
+    <string name="minutes_format">%1$dm</string>
+    <string name="about">Über</string>
+    <string name="help_with_translation_desc">Übersetze Tomato in deine Sprache</string>
+    <string name="rate_on_google_play_desc">Dir gefällt die App? Schreibe eine Bewertung!</string>
+    <string name="bmc_desc">Unterstütze mich mit einer kleinen Spende</string>
+    <string name="tomato_plus_desc">Weiter anpassen mit Tomato+</string>
+    <string name="license">Lizenz</string>
+    <string name="media_volume_for_alarm">Kopfhörer Modus</string>
+    <string name="media_volume_for_alarm_desc">Spielt nur auf Kopfhörern. Wenn die Kopfhörer getrennt sind, wieder Alarm in Medienlautstärke abgespielt.</string>
+    <string name="session_only_progress">Sitzungs-Fortschritt</string>
+    <string name="session_only_progress_desc">Zeige in den Benachrichtigungen nur den Fortschritt der aktuellen Sitzung an, nicht die gesamte Sequenz.</string>
 </resources>

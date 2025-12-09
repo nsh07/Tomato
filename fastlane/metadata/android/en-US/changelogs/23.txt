@@ -1,0 +1,9 @@
+New features:
+- AOD mode now uses a lighter font
+- New option to auto start next session after stopping an alarm
+- New option to disable locking screen while in AOD mode
+- Accidentally reset the timer? You can now undo and correct your mistake ;)
+
+Fixes:
+- Improved stats screen performance and fixed lag while opening stats screen
+- Fixed incorrect alignment of text in navigation toolbar

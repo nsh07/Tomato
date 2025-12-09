@@ -74,5 +74,24 @@
     <string name="rate_on_google_play">قيم التطبيق علي جوجل بلاي</string>
     <string name="selected">مُختار</string>
     <string name="timer_settings_reset_info">أعد المؤقت لتغير الاعدادات</string>
-    <string name="help_with_translation">المساعدة في الترجمة</string>
+    <string name="help_with_translation">المساعدة في ترجمة Tomato</string>
+    <string name="hours_and_minutes_format">%1$dس %2$dد</string>
+    <string name="hours_format">%1$dس</string>
+    <string name="minutes_format">%1$dد</string>
+    <string name="about">عن</string>
+    <string name="help_with_translation_desc">ترجم Tomato إلى لغتك</string>
+    <string name="rate_on_google_play_desc">هل أعجبك التطبيق؟ اكتب مراجعة!</string>
+    <string name="bmc_desc">ادعمني بتبرع صغير</string>
+    <string name="tomato_plus_desc">التخصيص أكثر باستخدام Tomato+</string>
+    <string name="license">الترخيص</string>
+    <string name="media_volume_for_alarm">وضع سماعات الرأس</string>
+    <string name="media_volume_for_alarm_desc">يعمل فقط على سماعات الرأس. إذا كانت سماعات الرأس مفصولة، يصدر المنبه عبر سماعة الهاتف عند مستوى صوت الوسائط.</string>
+    <string name="session_only_progress">التقدم في الجلسة فقط</string>
+    <string name="session_only_progress_desc">عرض التقدم للجلسة الحالية بدلا من سلسلة الجلسات كلها</string>
+    <string name="auto_start_next_timer_desc">ابدأ المؤقت التالي بعد إيقاف المنبه</string>
+    <string name="auto_start_next_timer">التشغيل التلقائي في المؤقت القادم</string>
+    <string name="secure_aod">AOD الآمن</string>
+    <string name="secure_aod_desc">قم بقفل جهازك تلقائيا بعد انتهاء الوقت، مع إبقاء AOD مرئياً</string>
+    <string name="timer_reset_message">إعادة ضبط المؤقت</string>
+    <string name="undo">تراجع</string>
 </resources>

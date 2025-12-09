@@ -75,6 +75,8 @@ class TimerService : Service() {
 
     private var lastSavedDuration = 0L
 
+    private val timerStateSnapshot by lazy { stateRepository.timerStateSnapshot }
+
     private val saveLock = Mutex()
     private var job = SupervisorJob()
     private val timerScope = CoroutineScope(Dispatchers.IO + job)
@@ -133,6 +135,8 @@ class TimerService : Service() {
                     stopForegroundService()
                 }
             }
+
+            Actions.UNDO_RESET.toString() -> undoReset()
 
             Actions.SKIP.toString() -> skipScope.launch { skipTimer(true) }
 
@@ -326,6 +330,16 @@ class TimerService : Service() {
     private suspend fun resetTimer() {
         val settingsState = _settingsState.value
 
+        timerStateSnapshot.save(
+            lastSavedDuration,
+            time,
+            cycles,
+            startTime,
+            pauseTime,
+            pauseDuration,
+            _timerState.value
+        )
+
         saveTimeToDb()
         lastSavedDuration = 0
         time = settingsState.focusTime
@@ -347,6 +361,16 @@ class TimerService : Service() {
         }
 
         updateProgressSegments()
+    }
+
+    private fun undoReset() {
+        lastSavedDuration = timerStateSnapshot.lastSavedDuration
+        time = timerStateSnapshot.time
+        cycles = timerStateSnapshot.cycles
+        startTime = timerStateSnapshot.startTime
+        pauseTime = timerStateSnapshot.pauseTime
+        pauseDuration = timerStateSnapshot.pauseDuration
+        _timerState.update { timerStateSnapshot.timerState }
     }
 
     private suspend fun skipTimer(fromButton: Boolean = false) {
@@ -406,7 +430,7 @@ class TimerService : Service() {
 
         autoAlarmStopScope = CoroutineScope(Dispatchers.IO).launch {
             delay(1 * 60 * 1000)
-            stopAlarm()
+            stopAlarm(fromAutoStop = true)
         }
 
         if (settingsState.vibrateEnabled) {
@@ -420,7 +444,13 @@ class TimerService : Service() {
         }
     }
 
-    fun stopAlarm() {
+    /**
+     * Stops ringing the alarm and vibration, and performs related necessary actions
+     *
+     * @param fromAutoStop Whether the function was triggered automatically by the program instead of
+     * intentionally by the user
+     */
+    fun stopAlarm(fromAutoStop: Boolean = false) {
         val settingsState = _settingsState.value
         autoAlarmStopScope?.cancel()
 
@@ -449,6 +479,9 @@ class TimerService : Service() {
                 else -> settingsState.longBreakTime.toInt()
             }, paused = true, complete = false
         )
+
+        if (settingsState.autostartNextSession && !fromAutoStop)  // auto start next session
+            toggleTimer()
     }
 
     private fun initializeMediaPlayer(): MediaPlayer? {
@@ -515,6 +548,6 @@ class TimerService : Service() {
     }
 
     enum class Actions {
-        TOGGLE, SKIP, RESET, STOP_ALARM, UPDATE_ALARM_TONE
+        TOGGLE, SKIP, RESET, UNDO_RESET, STOP_ALARM, UPDATE_ALARM_TONE
     }
 }

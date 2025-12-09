@@ -24,7 +24,9 @@ import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,7 +40,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -54,6 +55,7 @@ import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -74,9 +76,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
@@ -114,46 +118,72 @@ fun TimerSettings(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
+    val inspectionMode = LocalInspectionMode.current
     val appName = stringResource(R.string.app_name)
-    val notificationManagerService =
-        remember { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+    val notificationManagerService = remember {
+        if (!inspectionMode)
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        else
+            null
+    }
 
     val switchItems = remember(
         settingsState.dndEnabled,
         settingsState.aodEnabled,
+        settingsState.autostartNextSession,
+        settingsState.secureAod,
         isPlus,
         serviceRunning
     ) {
         listOf(
-            SettingsSwitchItem(
-                checked = settingsState.dndEnabled,
-                enabled = !serviceRunning,
-                icon = R.drawable.dnd,
-                label = R.string.dnd,
-                description = R.string.dnd_desc,
-                onClick = {
-                    if (it && !notificationManagerService.isNotificationPolicyAccessGranted()) {
-                        val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-                        Toast.makeText(
-                            context,
-                            "Enable permission for \"$appName\"",
-                            Toast.LENGTH_LONG
-                        )
-                            .show()
-                        context.startActivity(intent)
-                    } else if (!it && notificationManagerService.isNotificationPolicyAccessGranted()) {
-                        notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
+            listOf(
+                SettingsSwitchItem(
+                    checked = settingsState.autostartNextSession,
+                    icon = R.drawable.autoplay,
+                    label = R.string.auto_start_next_timer,
+                    description = R.string.auto_start_next_timer_desc,
+                    onClick = { onAction(SettingsAction.SaveAutostartNextSession(it)) }
+                ),
+                SettingsSwitchItem(
+                    checked = settingsState.dndEnabled,
+                    enabled = !serviceRunning,
+                    icon = R.drawable.dnd,
+                    label = R.string.dnd,
+                    description = R.string.dnd_desc,
+                    onClick = {
+                        if (it && notificationManagerService?.isNotificationPolicyAccessGranted() == false) {
+                            val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                            Toast.makeText(
+                                context,
+                                "Enable permission for \"$appName\"",
+                                Toast.LENGTH_LONG
+                            )
+                                .show()
+                            context.startActivity(intent)
+                        } else if (!it && notificationManagerService?.isNotificationPolicyAccessGranted() == true) {
+                            notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
+                        }
+                        onAction(SettingsAction.SaveDndEnabled(it))
                     }
-                    onAction(SettingsAction.SaveDndEnabled(it))
-                }
+                )
             ),
-            SettingsSwitchItem(
-                checked = settingsState.aodEnabled,
-                enabled = isPlus,
-                icon = R.drawable.aod,
-                label = R.string.always_on_display,
-                description = R.string.always_on_display_desc,
-                onClick = { onAction(SettingsAction.SaveAodEnabled(it)) }
+            listOf(
+                SettingsSwitchItem(
+                    checked = settingsState.aodEnabled,
+                    enabled = isPlus,
+                    icon = R.drawable.aod,
+                    label = R.string.always_on_display,
+                    description = R.string.always_on_display_desc,
+                    onClick = { onAction(SettingsAction.SaveAodEnabled(it)) }
+                ),
+                SettingsSwitchItem(
+                    checked = settingsState.secureAod && isPlus,
+                    enabled = isPlus,
+                    icon = R.drawable.mobile_lock_portrait,
+                    label = R.string.secure_aod,
+                    description = R.string.secure_aod_desc,
+                    onClick = { onAction(SettingsAction.SaveSecureAod(it)) }
+                )
             )
         )
     }
@@ -310,7 +340,7 @@ fun TimerSettings(
             }
             item { Spacer(Modifier.height(12.dp)) }
 
-            itemsIndexed(if (isPlus) switchItems else switchItems.take(1)) { index, item ->
+            itemsIndexed(switchItems[0]) { index, item ->
                 ListItem(
                     leadingContent = {
                         Icon(
@@ -346,59 +376,18 @@ fun TimerSettings(
                     },
                     colors = listItemColors,
                     modifier = Modifier.clip(
-                        if (isPlus) when (index) {
+                        when (index) {
                             0 -> topListItemShape
-                            switchItems.size - 1 -> bottomListItemShape
+                            switchItems[0].size - 1 -> bottomListItemShape
                             else -> middleListItemShape
                         }
-                        else cardShape
                     )
                 )
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+            if (isPlus) {
                 item { Spacer(Modifier.height(12.dp)) }
-                item {
-                    ListItem(
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.view_day), null)
-                        },
-                        headlineContent = { Text(stringResource(R.string.session_only_progress)) },
-                        supportingContent = { Text(stringResource(R.string.session_only_progress_desc)) },
-                        trailingContent = {
-                            Switch(
-                                checked = settingsState.singleProgressBar,
-                                enabled = !serviceRunning,
-                                onCheckedChange = { onAction(SettingsAction.SaveSingleProgressBar(it)) },
-                                thumbContent = {
-                                    if (settingsState.singleProgressBar) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.check),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                        )
-                                    } else {
-                                        Icon(
-                                            painter = painterResource(R.drawable.clear),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                        )
-                                    }
-                                },
-                                colors = switchColors
-                            )
-                        },
-                        colors = listItemColors,
-                        modifier = Modifier.clip(cardShape)
-                    )
-                }
-            }
-
-            if (!isPlus) {
-                item {
-                    PlusDivider(setShowPaywall)
-                }
-                items(switchItems.drop(1)) { item ->
+                itemsIndexed(switchItems[1]) { index, item ->
                     ListItem(
                         leadingContent = {
                             Icon(
@@ -433,7 +422,111 @@ fun TimerSettings(
                             )
                         },
                         colors = listItemColors,
+                        modifier = Modifier.clip(
+                            when (index) {
+                                0 -> topListItemShape
+                                switchItems[1].size - 1 -> bottomListItemShape
+                                else -> middleListItemShape
+                            }
+                        )
+                    )
+                }
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                item { Spacer(Modifier.height(12.dp)) }
+                item {
+                    ListItem(
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.view_day), null)
+                        },
+                        headlineContent = { Text(stringResource(R.string.session_only_progress)) },
+                        supportingContent = {
+                            var expanded by remember { mutableStateOf(false) }
+                            Text(
+                                stringResource(R.string.session_only_progress_desc),
+                                maxLines = if (expanded) Int.MAX_VALUE else 2,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier
+                                    .clickable { expanded = !expanded }
+                                    .animateContentSize(motionScheme.defaultSpatialSpec())
+                            )
+                        },
+                        trailingContent = {
+                            Switch(
+                                checked = settingsState.singleProgressBar,
+                                enabled = !serviceRunning,
+                                onCheckedChange = { onAction(SettingsAction.SaveSingleProgressBar(it)) },
+                                thumbContent = {
+                                    if (settingsState.singleProgressBar) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.check),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    } else {
+                                        Icon(
+                                            painter = painterResource(R.drawable.clear),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    }
+                                },
+                                colors = switchColors
+                            )
+                        },
+                        colors = listItemColors,
                         modifier = Modifier.clip(cardShape)
+                    )
+                }
+            }
+
+            if (!isPlus) {
+                item {
+                    PlusDivider(setShowPaywall)
+                }
+                itemsIndexed(switchItems[1]) { index, item ->
+                    ListItem(
+                        leadingContent = {
+                            Icon(
+                                painterResource(item.icon),
+                                contentDescription = null,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        },
+                        headlineContent = { Text(stringResource(item.label)) },
+                        supportingContent = { Text(stringResource(item.description)) },
+                        trailingContent = {
+                            Switch(
+                                checked = item.checked,
+                                onCheckedChange = { item.onClick(it) },
+                                enabled = item.enabled,
+                                thumbContent = {
+                                    if (item.checked) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.check),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    } else {
+                                        Icon(
+                                            painter = painterResource(R.drawable.clear),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    }
+                                },
+                                colors = switchColors
+                            )
+                        },
+                        colors = listItemColors,
+                        modifier = Modifier.clip(
+                            when (index) {
+                                0 -> topListItemShape
+                                switchItems[1].size - 1 -> bottomListItemShape
+                                else -> middleListItemShape
+                            }
+                        )
                     )
                 }
             }
@@ -487,7 +580,7 @@ private fun TimerSettingsPreview() {
     )
     TimerSettings(
         isPlus = false,
-        serviceRunning = true,
+        serviceRunning = false,
         settingsState = remember { SettingsState() },
         contentPadding = PaddingValues(),
         focusTimeInputFieldState = focusTimeInputFieldState,

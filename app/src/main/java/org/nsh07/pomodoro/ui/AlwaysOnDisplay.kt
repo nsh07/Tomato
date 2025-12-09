@@ -83,6 +83,7 @@ import kotlin.random.Random
 @Composable
 fun SharedTransitionScope.AlwaysOnDisplay(
     timerState: TimerState,
+    secureAod: Boolean,
     progress: () -> Float,
     setTimerFrequency: (Float) -> Unit,
     modifier: Modifier = Modifier
@@ -100,8 +101,10 @@ fun SharedTransitionScope.AlwaysOnDisplay(
     DisposableEffect(Unit) {
         setTimerFrequency(1f)
         window.addFlags(
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-                    WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+            if (secureAod) {
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+            } else WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         )
         activity?.setShowWhenLocked(true)
         insetsController.apply {
@@ -273,6 +276,7 @@ private fun AlwaysOnDisplayPreview() {
         SharedTransitionLayout {
             AlwaysOnDisplay(
                 timerState = timerState,
+                secureAod = true,
                 progress = progress,
                 setTimerFrequency = {}
             )

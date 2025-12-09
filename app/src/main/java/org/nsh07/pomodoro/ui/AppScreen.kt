@@ -88,6 +88,7 @@ import androidx.window.core.layout.WindowSizeClass
 import org.nsh07.pomodoro.billing.TomatoPlusPaywallDialog
 import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
 import org.nsh07.pomodoro.ui.timerScreen.AlarmDialog
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
@@ -101,11 +102,13 @@ fun AppScreen(
     isPlus: Boolean,
     setTimerFrequency: (Float) -> Unit,
     modifier: Modifier = Modifier,
-    timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory)
+    timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory),
+    settingsViewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
 ) {
     val context = LocalContext.current
 
     val uiState by timerViewModel.timerState.collectAsStateWithLifecycle()
+    val settingsState by settingsViewModel.settingsState.collectAsStateWithLifecycle()
     val progress by timerViewModel.progress.collectAsStateWithLifecycle()
 
     val layoutDirection = LocalLayoutDirection.current
@@ -278,6 +281,7 @@ fun AppScreen(
                     entry<Screen.AOD> {
                         AlwaysOnDisplay(
                             timerState = uiState,
+                            secureAod = settingsState.secureAod,
                             progress = { progress },
                             setTimerFrequency = setTimerFrequency,
                             modifier = if (isAODEnabled) Modifier.clickable {

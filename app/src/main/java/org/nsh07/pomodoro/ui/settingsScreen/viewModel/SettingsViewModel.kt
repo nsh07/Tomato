@@ -115,7 +115,7 @@ class SettingsViewModel(
             is SettingsAction.SaveMediaVolumeForAlarm -> saveMediaVolumeForAlarm(action.enabled)
             is SettingsAction.SaveSingleProgressBar -> saveSingleProgressBar(action.enabled)
             is SettingsAction.SaveAutostartNextSession -> saveAutostartNextSession(action.enabled)
-            is SettingsAction.SaveLockScreenInAod -> saveLockScreenInAod(action.enabled)
+            is SettingsAction.SaveSecureAod -> saveSecureAod(action.enabled)
             is SettingsAction.SaveColorScheme -> saveColorScheme(action.color)
             is SettingsAction.SaveTheme -> saveTheme(action.theme)
             is SettingsAction.SaveBlackTheme -> saveBlackTheme(action.enabled)
@@ -303,14 +303,14 @@ class SettingsViewModel(
         }
     }
 
-    private fun saveLockScreenInAod(lockScreenInAod: Boolean) {
+    private fun saveSecureAod(secureAod: Boolean) {
         viewModelScope.launch {
             _settingsState.update { currentState ->
-                currentState.copy(lockScreenInAod = lockScreenInAod)
+                currentState.copy(secureAod = secureAod)
             }
             preferenceRepository.saveBooleanPreference(
-                "lock_screen_in_aod",
-                lockScreenInAod
+                "secure_aod",
+                secureAod
             )
         }
     }
@@ -388,8 +388,8 @@ class SettingsViewModel(
                     "autostart_next_session",
                     settingsState.autostartNextSession
                 )
-        val lockScreenInAod = preferenceRepository.getBooleanPreference("lock_screen_in_aod")
-            ?: preferenceRepository.saveBooleanPreference("lock_screen_in_aod", true)
+        val secureAod = preferenceRepository.getBooleanPreference("secure_aod")
+            ?: preferenceRepository.saveBooleanPreference("secure_aod", true)
 
         _settingsState.update { currentState ->
             currentState.copy(
@@ -408,7 +408,7 @@ class SettingsViewModel(
                 mediaVolumeForAlarm = mediaVolumeForAlarm,
                 singleProgressBar = singleProgressBar,
                 autostartNextSession = autostartNextSession,
-                lockScreenInAod = lockScreenInAod
+                secureAod = secureAod
             )
         }
 

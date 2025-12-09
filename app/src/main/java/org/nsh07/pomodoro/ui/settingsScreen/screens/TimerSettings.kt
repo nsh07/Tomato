@@ -131,7 +131,7 @@ fun TimerSettings(
         settingsState.dndEnabled,
         settingsState.aodEnabled,
         settingsState.autostartNextSession,
-        settingsState.lockScreenInAod,
+        settingsState.secureAod,
         isPlus,
         serviceRunning
     ) {
@@ -177,12 +177,12 @@ fun TimerSettings(
                     onClick = { onAction(SettingsAction.SaveAodEnabled(it)) }
                 ),
                 SettingsSwitchItem(
-                    checked = settingsState.lockScreenInAod && isPlus,
+                    checked = settingsState.secureAod && isPlus,
                     enabled = isPlus,
                     icon = R.drawable.mobile_lock_portrait,
                     label = R.string.secure_aod,
                     description = R.string.secure_aod_desc,
-                    onClick = { onAction(SettingsAction.SaveLockScreenInAod(it)) }
+                    onClick = { onAction(SettingsAction.SaveSecureAod(it)) }
                 )
             )
         )

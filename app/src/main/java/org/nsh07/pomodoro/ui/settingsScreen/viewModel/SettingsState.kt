@@ -34,7 +34,7 @@ data class SettingsState(
     val mediaVolumeForAlarm: Boolean = false,
     val singleProgressBar: Boolean = false,
     val autostartNextSession: Boolean = false,
-    val lockScreenInAod: Boolean = true,
+    val secureAod: Boolean = true,
 
     val focusTime: Long = 25 * 60 * 1000L,
     val shortBreakTime: Long = 5 * 60 * 1000L,

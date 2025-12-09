@@ -79,6 +79,7 @@ Authority*](https://www.androidauthority.com/best-new-android-apps-october-2025-
       productive
 - Customizable timer parameters
 - Support for Now Bar/Live Updates on Android 16 and later
+- Android TV support with Leanback Launcher integration
 
 ## Translation
 

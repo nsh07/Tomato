@@ -9,6 +9,7 @@ junit = "4.13.2"
 junitVersion = "1.3.0"
 kotlin = "2.2.21"
 ksp = "2.3.3"
+leanback = "1.2.0-alpha04"
 lifecycleRuntimeKtx = "2.10.0"
 materialKolor = "4.0.5"
 navigation3 = "1.0.0"
@@ -23,6 +24,7 @@ androidx-compose-bom = { group = "androidx.compose", name = "compose-bom-alpha",
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-leanback = { group = "androidx.leanback", name = "leanback", version.ref = "leanback" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }

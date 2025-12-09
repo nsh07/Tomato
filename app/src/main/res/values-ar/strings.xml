@@ -88,4 +88,10 @@
     <string name="media_volume_for_alarm_desc">يعمل فقط على سماعات الرأس. إذا كانت سماعات الرأس مفصولة، يصدر المنبه عبر سماعة الهاتف عند مستوى صوت الوسائط.</string>
     <string name="session_only_progress">التقدم في الجلسة فقط</string>
     <string name="session_only_progress_desc">عرض التقدم للجلسة الحالية بدلا من سلسلة الجلسات كلها</string>
+    <string name="auto_start_next_timer_desc">ابدأ المؤقت التالي بعد إيقاف المنبه</string>
+    <string name="auto_start_next_timer">التشغيل التلقائي في المؤقت القادم</string>
+    <string name="secure_aod">AOD الآمن</string>
+    <string name="secure_aod_desc">قم بقفل جهازك تلقائيا بعد انتهاء الوقت، مع إبقاء AOD مرئياً</string>
+    <string name="timer_reset_message">إعادة ضبط المؤقت</string>
+    <string name="undo">تراجع</string>
 </resources>

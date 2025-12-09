@@ -47,6 +47,7 @@ import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.data.PreferenceRepository
+import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.service.ServiceHelper
 import org.nsh07.pomodoro.ui.Screen
@@ -59,6 +60,7 @@ class SettingsViewModel(
     private val billingManager: BillingManager,
     private val preferenceRepository: PreferenceRepository,
     private val stateRepository: StateRepository,
+    private val statRepository: StatRepository,
     private val serviceHelper: ServiceHelper,
     private val time: MutableStateFlow<Long>
 ) : ViewModel() {
@@ -120,6 +122,25 @@ class SettingsViewModel(
             is SettingsAction.SaveTheme -> saveTheme(action.theme)
             is SettingsAction.SaveBlackTheme -> saveBlackTheme(action.enabled)
             is SettingsAction.SaveAodEnabled -> saveAodEnabled(action.enabled)
+            is SettingsAction.AskEraseData -> askEraseData()
+            is SettingsAction.CancelEraseData -> cancelEraseData()
+            is SettingsAction.EraseData -> deleteStats()
+        }
+    }
+
+    private fun cancelEraseData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _settingsState.update { currentState ->
+                currentState.copy(isShowingEraseDataDialog = false)
+            }
+        }
+    }
+
+    private fun askEraseData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _settingsState.update { currentState ->
+                currentState.copy(isShowingEraseDataDialog = true)
+            }
         }
     }
 
@@ -134,6 +155,20 @@ class SettingsViewModel(
                 )
             }
             refreshTimer()
+        }
+    }
+
+    private fun deleteStats() {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            serviceHelper.startService(TimerAction.ResetTimer)
+            focusFlowCollectionJob?.cancel()
+            shortBreakFlowCollectionJob?.cancel()
+            longBreakFlowCollectionJob?.cancel()
+            statRepository.deleteAllStats()
+            _settingsState.update {
+                it.copy(isShowingEraseDataDialog = false)
+            }
         }
     }
 
@@ -343,13 +378,13 @@ class SettingsViewModel(
                 )
 
         val alarmSoundUri = (
-                preferenceRepository.getStringPreference("alarm_sound")
-                    ?: preferenceRepository.saveStringPreference(
-                        "alarm_sound",
-                        (Settings.System.DEFAULT_ALARM_ALERT_URI
-                            ?: Settings.System.DEFAULT_RINGTONE_URI).toString()
-                    )
-                ).toUri()
+            preferenceRepository.getStringPreference("alarm_sound")
+                ?: preferenceRepository.saveStringPreference(
+                    "alarm_sound",
+                    (Settings.System.DEFAULT_ALARM_ALERT_URI
+                        ?: Settings.System.DEFAULT_RINGTONE_URI).toString()
+                )
+            ).toUri()
 
         val theme = preferenceRepository.getStringPreference("theme")
             ?: preferenceRepository.saveStringPreference("theme", settingsState.theme)
@@ -458,6 +493,7 @@ class SettingsViewModel(
                 val appPreferenceRepository = application.container.appPreferenceRepository
                 val serviceHelper = application.container.serviceHelper
                 val stateRepository = application.container.stateRepository
+                val statRepository = application.container.appStatRepository
                 val time = application.container.time
 
                 SettingsViewModel(
@@ -465,7 +501,8 @@ class SettingsViewModel(
                     preferenceRepository = appPreferenceRepository,
                     serviceHelper = serviceHelper,
                     stateRepository = stateRepository,
-                    time = time
+                    statRepository = statRepository,
+                    time = time,
                 )
             }
         }

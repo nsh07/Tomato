@@ -35,6 +35,7 @@ data class SettingsState(
     val singleProgressBar: Boolean = false,
     val autostartNextSession: Boolean = false,
     val secureAod: Boolean = true,
+    val isShowingEraseDataDialog: Boolean = false,
 
     val focusTime: Long = 25 * 60 * 1000L,
     val shortBreakTime: Long = 5 * 60 * 1000L,

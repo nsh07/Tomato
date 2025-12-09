@@ -60,4 +60,7 @@ interface StatDao {
 
     @Query("SELECT date FROM stat ORDER BY date DESC LIMIT 1")
     suspend fun getLastDate(): LocalDate?
+
+    @Query("DELETE FROM stat")
+    suspend fun clearAll()
 }

@@ -27,9 +27,11 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -42,6 +44,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -170,6 +173,14 @@ private fun SettingsScreen(
             setShowSheet = { showLocaleSheet = it }
         )
 
+    if(settingsState.isShowingEraseDataDialog){
+        ResetDataDialog(resetData = {
+            onAction(SettingsAction.EraseData)
+        }, onDismiss = {
+            onAction(SettingsAction.CancelEraseData)
+        })
+    }
+
     NavDisplay(
         backStack = backStack,
         onBack = backStack::removeLastOrNull,
@@ -294,6 +305,20 @@ private fun SettingsScreen(
                             }
 
                         item { Spacer(Modifier.height(12.dp)) }
+
+                        item {
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ){
+
+                                TextButton(
+                                    onClick = { onAction(SettingsAction.AskEraseData) },
+                               ) {
+                                    Text(stringResource(R.string.reset_data))
+                                }
+                            }
+                        }
                     }
                 }
             }

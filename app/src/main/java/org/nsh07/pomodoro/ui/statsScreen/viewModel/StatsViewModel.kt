@@ -30,6 +30,7 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -42,6 +43,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlin.collections.isNotEmpty
 
 class StatsViewModel(
     private val statRepository: StatRepository
@@ -66,6 +68,9 @@ class StatsViewModel(
 
     val lastWeekSummaryChartData: StateFlow<Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>> =
         statRepository.getLastNDaysStatsSummary(7)
+            .filter {list ->
+                list.isNotEmpty()
+            }
             .map { list ->
                 // reversing is required because we need ascending order while the DB returns descending order
                 val reversed = list.reversed()
@@ -108,6 +113,9 @@ class StatsViewModel(
 
     val lastMonthSummaryChartData: StateFlow<Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>> =
         statRepository.getLastNDaysStatsSummary(30)
+            .filter {list ->
+                list.isNotEmpty()
+            }
             .map { list ->
                 val reversed = list.reversed()
                 val keys = reversed.map { it.date.dayOfMonth.toString() }
@@ -144,6 +152,9 @@ class StatsViewModel(
 
     val lastYearSummaryChartData: StateFlow<Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>> =
         statRepository.getLastNDaysStatsSummary(365)
+            .filter {list ->
+                list.isNotEmpty()
+            }
             .map { list ->
                 val reversed = list.reversed()
                 val keys = reversed.map { it.date.format(yearDayFormatter) }

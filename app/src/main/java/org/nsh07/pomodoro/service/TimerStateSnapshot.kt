@@ -15,20 +15,34 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.data
+package org.nsh07.pomodoro.service
 
-import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.lightColorScheme
-import kotlinx.coroutines.flow.MutableStateFlow
-import org.nsh07.pomodoro.service.TimerStateSnapshot
-import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 
-class StateRepository {
-    val timerState = MutableStateFlow(TimerState())
-    val settingsState = MutableStateFlow(SettingsState())
-    var timerFrequency: Float = 60f
-    var colorScheme: ColorScheme = lightColorScheme()
-    var timerStateSnapshot: TimerStateSnapshot =
-        TimerStateSnapshot(time = 0, timerState = TimerState())
+data class TimerStateSnapshot(
+    var lastSavedDuration: Long = 0L,
+    var time: Long,
+    var cycles: Int = 0,
+    var startTime: Long = 0L,
+    var pauseTime: Long = 0L,
+    var pauseDuration: Long = 0L,
+    var timerState: TimerState
+) {
+    fun save(
+        lastSavedDuration: Long,
+        time: Long,
+        cycles: Int,
+        startTime: Long,
+        pauseTime: Long,
+        pauseDuration: Long,
+        timerState: TimerState
+    ) {
+        this.lastSavedDuration = lastSavedDuration
+        this.time = time
+        this.cycles = cycles
+        this.startTime = startTime
+        this.pauseTime = pauseTime
+        this.pauseDuration = pauseDuration
+        this.timerState = timerState
+    }
 }

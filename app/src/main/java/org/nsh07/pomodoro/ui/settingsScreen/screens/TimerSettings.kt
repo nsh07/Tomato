@@ -40,7 +40,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -132,46 +131,59 @@ fun TimerSettings(
         settingsState.dndEnabled,
         settingsState.aodEnabled,
         settingsState.autostartNextSession,
+        settingsState.lockScreenInAod,
         isPlus,
         serviceRunning
     ) {
         listOf(
-            SettingsSwitchItem(
-                checked = settingsState.autostartNextSession,
-                icon = R.drawable.autoplay,
-                label = R.string.auto_start_next_session,
-                description = R.string.auto_start_next_session_desc,
-                onClick = { onAction(SettingsAction.SaveAutostartNextSession(it)) }
-            ),
-            SettingsSwitchItem(
-                checked = settingsState.dndEnabled,
-                enabled = !serviceRunning,
-                icon = R.drawable.dnd,
-                label = R.string.dnd,
-                description = R.string.dnd_desc,
-                onClick = {
-                    if (it && notificationManagerService?.isNotificationPolicyAccessGranted() == false) {
-                        val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-                        Toast.makeText(
-                            context,
-                            "Enable permission for \"$appName\"",
-                            Toast.LENGTH_LONG
-                        )
-                            .show()
-                        context.startActivity(intent)
-                    } else if (!it && notificationManagerService?.isNotificationPolicyAccessGranted() == true) {
-                        notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
+            listOf(
+                SettingsSwitchItem(
+                    checked = settingsState.autostartNextSession,
+                    icon = R.drawable.autoplay,
+                    label = R.string.auto_start_next_timer,
+                    description = R.string.auto_start_next_timer_desc,
+                    onClick = { onAction(SettingsAction.SaveAutostartNextSession(it)) }
+                ),
+                SettingsSwitchItem(
+                    checked = settingsState.dndEnabled,
+                    enabled = !serviceRunning,
+                    icon = R.drawable.dnd,
+                    label = R.string.dnd,
+                    description = R.string.dnd_desc,
+                    onClick = {
+                        if (it && notificationManagerService?.isNotificationPolicyAccessGranted() == false) {
+                            val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                            Toast.makeText(
+                                context,
+                                "Enable permission for \"$appName\"",
+                                Toast.LENGTH_LONG
+                            )
+                                .show()
+                            context.startActivity(intent)
+                        } else if (!it && notificationManagerService?.isNotificationPolicyAccessGranted() == true) {
+                            notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
+                        }
+                        onAction(SettingsAction.SaveDndEnabled(it))
                     }
-                    onAction(SettingsAction.SaveDndEnabled(it))
-                }
+                )
             ),
-            SettingsSwitchItem(
-                checked = settingsState.aodEnabled,
-                enabled = isPlus,
-                icon = R.drawable.aod,
-                label = R.string.always_on_display,
-                description = R.string.always_on_display_desc,
-                onClick = { onAction(SettingsAction.SaveAodEnabled(it)) }
+            listOf(
+                SettingsSwitchItem(
+                    checked = settingsState.aodEnabled,
+                    enabled = isPlus,
+                    icon = R.drawable.aod,
+                    label = R.string.always_on_display,
+                    description = R.string.always_on_display_desc,
+                    onClick = { onAction(SettingsAction.SaveAodEnabled(it)) }
+                ),
+                SettingsSwitchItem(
+                    checked = settingsState.lockScreenInAod && isPlus,
+                    enabled = isPlus,
+                    icon = R.drawable.mobile_lock_portrait,
+                    label = R.string.secure_aod,
+                    description = R.string.secure_aod_desc,
+                    onClick = { onAction(SettingsAction.SaveLockScreenInAod(it)) }
+                )
             )
         )
     }
@@ -328,7 +340,7 @@ fun TimerSettings(
             }
             item { Spacer(Modifier.height(12.dp)) }
 
-            itemsIndexed(if (isPlus) switchItems else switchItems.take(2)) { index, item ->
+            itemsIndexed(switchItems[0]) { index, item ->
                 ListItem(
                     leadingContent = {
                         Icon(
@@ -364,18 +376,61 @@ fun TimerSettings(
                     },
                     colors = listItemColors,
                     modifier = Modifier.clip(
-                        if (isPlus) when (index) {
+                        when (index) {
                             0 -> topListItemShape
-                            switchItems.size - 1 -> bottomListItemShape
-                            else -> middleListItemShape
-                        }
-                        else when (index) {
-                            0 -> topListItemShape
-                            switchItems.size - 2 -> bottomListItemShape
+                            switchItems[0].size - 1 -> bottomListItemShape
                             else -> middleListItemShape
                         }
                     )
                 )
+            }
+
+            if (isPlus) {
+                item { Spacer(Modifier.height(12.dp)) }
+                itemsIndexed(switchItems[1]) { index, item ->
+                    ListItem(
+                        leadingContent = {
+                            Icon(
+                                painterResource(item.icon),
+                                contentDescription = null,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        },
+                        headlineContent = { Text(stringResource(item.label)) },
+                        supportingContent = { Text(stringResource(item.description)) },
+                        trailingContent = {
+                            Switch(
+                                checked = item.checked,
+                                onCheckedChange = { item.onClick(it) },
+                                enabled = item.enabled,
+                                thumbContent = {
+                                    if (item.checked) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.check),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    } else {
+                                        Icon(
+                                            painter = painterResource(R.drawable.clear),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    }
+                                },
+                                colors = switchColors
+                            )
+                        },
+                        colors = listItemColors,
+                        modifier = Modifier.clip(
+                            when (index) {
+                                0 -> topListItemShape
+                                switchItems[1].size - 1 -> bottomListItemShape
+                                else -> middleListItemShape
+                            }
+                        )
+                    )
+                }
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
@@ -430,7 +485,7 @@ fun TimerSettings(
                 item {
                     PlusDivider(setShowPaywall)
                 }
-                items(switchItems.drop(1)) { item ->
+                itemsIndexed(switchItems[1]) { index, item ->
                     ListItem(
                         leadingContent = {
                             Icon(
@@ -465,7 +520,13 @@ fun TimerSettings(
                             )
                         },
                         colors = listItemColors,
-                        modifier = Modifier.clip(cardShape)
+                        modifier = Modifier.clip(
+                            when (index) {
+                                0 -> topListItemShape
+                                switchItems[1].size - 1 -> bottomListItemShape
+                                else -> middleListItemShape
+                            }
+                        )
                     )
                 }
             }

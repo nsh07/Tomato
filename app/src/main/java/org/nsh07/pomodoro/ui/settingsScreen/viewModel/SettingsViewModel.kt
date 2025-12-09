@@ -115,6 +115,7 @@ class SettingsViewModel(
             is SettingsAction.SaveMediaVolumeForAlarm -> saveMediaVolumeForAlarm(action.enabled)
             is SettingsAction.SaveSingleProgressBar -> saveSingleProgressBar(action.enabled)
             is SettingsAction.SaveAutostartNextSession -> saveAutostartNextSession(action.enabled)
+            is SettingsAction.SaveLockScreenInAod -> saveLockScreenInAod(action.enabled)
             is SettingsAction.SaveColorScheme -> saveColorScheme(action.color)
             is SettingsAction.SaveTheme -> saveTheme(action.theme)
             is SettingsAction.SaveBlackTheme -> saveBlackTheme(action.enabled)
@@ -302,6 +303,18 @@ class SettingsViewModel(
         }
     }
 
+    private fun saveLockScreenInAod(lockScreenInAod: Boolean) {
+        viewModelScope.launch {
+            _settingsState.update { currentState ->
+                currentState.copy(lockScreenInAod = lockScreenInAod)
+            }
+            preferenceRepository.saveBooleanPreference(
+                "lock_screen_in_aod",
+                lockScreenInAod
+            )
+        }
+    }
+
     suspend fun reloadSettings() {
         var settingsState = _settingsState.value
         val focusTime =
@@ -375,6 +388,8 @@ class SettingsViewModel(
                     "autostart_next_session",
                     settingsState.autostartNextSession
                 )
+        val lockScreenInAod = preferenceRepository.getBooleanPreference("lock_screen_in_aod")
+            ?: preferenceRepository.saveBooleanPreference("lock_screen_in_aod", true)
 
         _settingsState.update { currentState ->
             currentState.copy(
@@ -392,7 +407,8 @@ class SettingsViewModel(
                 dndEnabled = dndEnabled,
                 mediaVolumeForAlarm = mediaVolumeForAlarm,
                 singleProgressBar = singleProgressBar,
-                autostartNextSession = autostartNextSession
+                autostartNextSession = autostartNextSession,
+                lockScreenInAod = lockScreenInAod
             )
         }
 

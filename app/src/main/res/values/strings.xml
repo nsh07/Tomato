@@ -15,7 +15,7 @@
   ~ If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="alarm">Alarm</string>
     <string name="alarm_desc">Ring alarm when a timer completes</string>
     <string name="alarm_sound">Alarm sound</string>
@@ -68,7 +68,7 @@
     <string name="productivity_analysis_desc">Focus durations at different times of the day</string>
     <string name="rate_on_google_play">Rate on Google Play</string>
     <string name="restart">Restart</string>
-    <string name="selected">Selected</string>
+    <string name="selected" tools:override="true">Selected</string>
     <string name="session_length">Session length</string>
     <string name="session_length_desc">Focus intervals in one session: %1$d</string>
     <string name="settings">Settings</string>
@@ -107,6 +107,8 @@
     <string name="media_volume_for_alarm_desc">Plays on headphones only. If headphones are disconnected, alarm plays through speaker at media volume.</string>
     <string name="session_only_progress">Session-only progress</string>
     <string name="session_only_progress_desc">Show progress for the current session only in notifications, rather than the full sequence.</string>
-    <string name="auto_start_next_session_desc">Start next session after stopping an alarm</string>
-    <string name="auto_start_next_session">Auto start next session</string>
+    <string name="auto_start_next_timer_desc">Start next timer after stopping an alarm</string>
+    <string name="auto_start_next_timer">Auto start next timer</string>
+    <string name="secure_aod">Secure AOD</string>
+    <string name="secure_aod_desc">Automatically lock your device after a timeout, while keeping the AOD visible</string>
 </resources>

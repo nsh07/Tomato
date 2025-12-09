@@ -430,7 +430,7 @@ class TimerService : Service() {
 
         autoAlarmStopScope = CoroutineScope(Dispatchers.IO).launch {
             delay(1 * 60 * 1000)
-            stopAlarm()
+            stopAlarm(fromAutoStop = true)
         }
 
         if (settingsState.vibrateEnabled) {
@@ -444,7 +444,13 @@ class TimerService : Service() {
         }
     }
 
-    fun stopAlarm() {
+    /**
+     * Stops ringing the alarm and vibration, and performs related necessary actions
+     *
+     * @param fromAutoStop Whether the function was triggered automatically by the program instead of
+     * intentionally by the user
+     */
+    fun stopAlarm(fromAutoStop: Boolean = false) {
         val settingsState = _settingsState.value
         autoAlarmStopScope?.cancel()
 
@@ -474,7 +480,8 @@ class TimerService : Service() {
             }, paused = true, complete = false
         )
 
-        if (settingsState.autostartNextSession) toggleTimer()
+        if (settingsState.autostartNextSession && !fromAutoStop)  // auto start next session
+            toggleTimer()
     }
 
     private fun initializeMediaPlayer(): MediaPlayer? {

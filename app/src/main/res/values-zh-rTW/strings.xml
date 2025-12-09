@@ -75,6 +75,19 @@
     <string name="choose_language">選擇語言</string>
     <string name="rate_on_google_play">在 Google Play 上評分</string>
     <string name="selected">已選擇</string>
-    <string name="help_with_translation">協助翻譯</string>
+    <string name="help_with_translation">協助翻譯 Tomato</string>
     <string name="timer_settings_reset_info">重置計時器以變更設定</string>
+    <string name="hours_and_minutes_format">%1$d小時 %2$d分鐘</string>
+    <string name="hours_format">%1$d小時</string>
+    <string name="minutes_format">%1$d分鐘</string>
+    <string name="about">關於</string>
+    <string name="help_with_translation_desc">將 Tomato 翻譯成你的語言</string>
+    <string name="rate_on_google_play_desc">喜歡這個 App 嗎？寫個評論吧！</string>
+    <string name="bmc_desc">以小額捐款支持我</string>
+    <string name="tomato_plus_desc">使用 Tomato+ 進一步自訂</string>
+    <string name="license">授權條款</string>
+    <string name="media_volume_for_alarm">耳機模式</string>
+    <string name="media_volume_for_alarm_desc">僅透過耳機播放。若耳機斷線，鬧鐘將以媒體音量從喇叭播放。</string>
+    <string name="session_only_progress">僅顯示工作階段進度</string>
+    <string name="session_only_progress_desc">在通知中僅顯示目前工作階段的進度，而非完整流程。</string>
 </resources>

@@ -12,7 +12,7 @@ ksp = "2.3.3"
 lifecycleRuntimeKtx = "2.10.0"
 materialKolor = "4.0.5"
 navigation3 = "1.0.0"
-revenuecat = "9.15.1"
+revenuecat = "9.15.2"
 room = "2.8.4"
 vico = "2.3.6"
 

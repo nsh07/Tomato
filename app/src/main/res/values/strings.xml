@@ -81,7 +81,7 @@
     <string name="stats">Stats</string>
     <string name="stop">Stop</string>
     <string name="stop_alarm">Stop alarm</string>
-    <string name="stop_alarm_dialog_text">Current timer session is complete. Tap anywhere to stop the alarm.</string>
+    <string name="stop_alarm_dialog_text">Current timer is complete. Tap anywhere to stop the alarm.</string>
     <string name="stop_alarm_question">Stop Alarm?</string>
     <string name="system_default">System</string>
     <string name="theme">Theme</string>
@@ -105,8 +105,8 @@
     <string name="license">License</string>
     <string name="media_volume_for_alarm">Headphone mode</string>
     <string name="media_volume_for_alarm_desc">Plays on headphones only. If headphones are disconnected, alarm plays through speaker at media volume.</string>
-    <string name="session_only_progress">Session-only progress</string>
-    <string name="session_only_progress_desc">Show progress for the current session only in notifications, rather than the full sequence.</string>
+    <string name="session_only_progress">Current timer-only progress</string>
+    <string name="session_only_progress_desc">Show progress for the current timer only in notifications, rather than the entire session</string>
     <string name="auto_start_next_timer_desc">Start next timer after stopping an alarm</string>
     <string name="auto_start_next_timer">Auto start next timer</string>
     <string name="secure_aod">Secure AOD</string>

@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.statsScreen.viewModel
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -38,6 +39,7 @@ import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
+import org.nsh07.pomodoro.ui.Screen
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -46,6 +48,7 @@ import java.util.Locale
 class StatsViewModel(
     private val statRepository: StatRepository
 ) : ViewModel() {
+    val backStack = mutableStateListOf<Screen.Stats>(Screen.Stats.Main)
 
     val todayStat = statRepository
         .getTodayStat()

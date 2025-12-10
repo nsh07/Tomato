@@ -18,16 +18,14 @@
 package org.nsh07.pomodoro.ui.statsScreen
 
 import android.graphics.Typeface
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,14 +34,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalIconToggleButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MaterialTheme.motionScheme
+import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -53,16 +47,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFontFamilyResolver
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -82,6 +72,11 @@ import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex400
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
+import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 
@@ -130,14 +125,11 @@ fun StatsScreen(
     generateSampleData: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val hoursFormat = stringResource(R.string.hours_format)
     val hoursMinutesFormat = stringResource(R.string.hours_and_minutes_format)
     val minutesFormat = stringResource(R.string.minutes_format)
-
-    var lastWeekStatExpanded by rememberSaveable { mutableStateOf(false) }
-    var lastMonthStatExpanded by rememberSaveable { mutableStateOf(false) }
 
     val lastWeekSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
     val lastMonthSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
@@ -172,10 +164,7 @@ fun StatsScreen(
                             fontFamily = robotoFlexTopBar,
                             fontSize = 32.sp,
                             lineHeight = 32.sp
-                        ),
-                        modifier = Modifier
-                            .padding(top = contentPadding.calculateTopPadding())
-                            .padding(vertical = 14.dp)
+                        )
                     )
                 },
                 actions = if (BuildConfig.DEBUG) {
@@ -192,34 +181,38 @@ fun StatsScreen(
                 subtitle = {},
                 titleHorizontalAlignment = Alignment.CenterHorizontally,
                 scrollBehavior = scrollBehavior,
-                windowInsets = WindowInsets()
+                colors = topBarColors
             )
         },
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
         val insets = mergePaddingValues(innerPadding, contentPadding)
         LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = insets,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            modifier = Modifier
+                .background(topBarColors.containerColor)
+                .padding(horizontal = 16.dp)
         ) {
-            item { Spacer(Modifier) }
+            item { Spacer(Modifier.height(14.dp)) }
+
             item {
                 Text(
                     stringResource(R.string.today),
                     style = typography.headlineSmall,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
+
+            item { Spacer(Modifier.height(12.dp)) }
+
             item {
-                Row(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Row {
                     Box(
                         modifier = Modifier
                             .background(
                                 colorScheme.primaryContainer,
-                                MaterialTheme.shapes.largeIncreased
+                                shapes.largeIncreased
                             )
                             .weight(1f)
                     ) {
@@ -248,7 +241,7 @@ fun StatsScreen(
                         modifier = Modifier
                             .background(
                                 colorScheme.tertiaryContainer,
-                                MaterialTheme.shapes.largeIncreased
+                                shapes.largeIncreased
                             )
                             .weight(1f)
                     ) {
@@ -274,222 +267,165 @@ fun StatsScreen(
                     }
                 }
             }
-            item { Spacer(Modifier) }
+
+            item { Spacer(Modifier.height(12.dp)) }
+
             item {
-                Text(
-                    stringResource(R.string.last_week),
-                    style = typography.headlineSmall,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                )
-            }
-            item {
-                Row(
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Text(
-                        millisecondsToHoursMinutes(
-                            remember(lastWeekAverageFocusTimes) {
-                                lastWeekAverageFocusTimes.sum().toLong()
-                            },
-                            hoursMinutesFormat
-                        ),
-                        style = typography.displaySmall
-                    )
-                    Text(
-                        stringResource(R.string.focus_per_day_avg),
-                        style = typography.titleSmall,
-                        modifier = Modifier.padding(bottom = 5.2.dp)
-                    )
-                }
-            }
-            item {
-                TimeColumnChart(
-                    modelProducer = lastWeekSummaryChartData.first,
-                    hoursFormat = hoursFormat,
-                    hoursMinutesFormat = hoursMinutesFormat,
-                    minutesFormat = minutesFormat,
-                    modifier = Modifier.padding(start = 16.dp),
-                    axisTypeface = axisTypeface,
-                    markerTypeface = markerTypeface,
-                    xValueFormatter = CartesianValueFormatter { context, x, _ ->
-                        context.model.extraStore[lastWeekSummaryChartData.second][x.toInt()]
-                    }
-                )
-            }
-            item {
-                val iconRotation by animateFloatAsState(
-                    if (lastWeekStatExpanded) 180f else 0f,
-                    animationSpec = motionScheme.defaultSpatialSpec()
-                )
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .clip(topListItemShape)
+                        .background(listItemColors.containerColor)
+                        .clickable {}
+                        .padding(
+                            start = 20.dp,
+                            top = 20.dp,
+                            bottom = 20.dp
+                        ) // end = 0 to let the chart touch the end
                 ) {
-                    Spacer(Modifier.height(2.dp))
-                    FilledTonalIconToggleButton(
-                        checked = lastWeekStatExpanded,
-                        onCheckedChange = { lastWeekStatExpanded = it },
-                        shapes = IconButtonDefaults.toggleableShapes(),
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .width(52.dp)
-                            .align(Alignment.End)
+                    Text(
+                        stringResource(R.string.last_week),
+                        style = typography.headlineSmall
+                    )
+
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(
-                            painterResource(R.drawable.arrow_down),
-                            stringResource(R.string.more_info),
-                            modifier = Modifier.rotate(iconRotation)
+                        Text(
+                            millisecondsToHoursMinutes(
+                                remember(lastWeekAverageFocusTimes) {
+                                    lastWeekAverageFocusTimes.sum().toLong()
+                                },
+                                hoursMinutesFormat
+                            ),
+                            style = typography.displaySmall
+                        )
+                        Text(
+                            stringResource(R.string.focus_per_day_avg),
+                            style = typography.titleSmall,
+                            modifier = Modifier.padding(bottom = 5.2.dp)
                         )
                     }
-                    ProductivityGraph(
-                        lastWeekStatExpanded,
-                        lastWeekSummaryAnalysisModelProducer,
+
+                    TimeColumnChart(
+                        modelProducer = lastWeekSummaryChartData.first,
+                        hoursFormat = hoursFormat,
+                        hoursMinutesFormat = hoursMinutesFormat,
+                        minutesFormat = minutesFormat,
                         axisTypeface = axisTypeface,
                         markerTypeface = markerTypeface,
-                        label = stringResource(R.string.weekly_productivity_analysis),
-                        modifier = Modifier.padding(horizontal = 32.dp)
+                        xValueFormatter = CartesianValueFormatter { context, x, _ ->
+                            context.model.extraStore[lastWeekSummaryChartData.second][x.toInt()]
+                        }
                     )
                 }
             }
-            item { Spacer(Modifier) }
+
             item {
-                Text(
-                    stringResource(R.string.last_month),
-                    style = typography.headlineSmall,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                )
-            }
-            item {
-                Row(
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Text(
-                        millisecondsToHoursMinutes(
-                            remember(lastMonthAverageFocusTimes) {
-                                lastMonthAverageFocusTimes.sum().toLong()
-                            },
-                            hoursMinutesFormat
-                        ),
-                        style = typography.displaySmall
-                    )
-                    Text(
-                        text = stringResource(R.string.focus_per_day_avg),
-                        style = typography.titleSmall,
-                        modifier = Modifier.padding(bottom = 5.2.dp)
-                    )
-                }
-            }
-            item {
-                TimeColumnChart(
-                    modelProducer = lastMonthSummaryChartData.first,
-                    hoursFormat = hoursFormat,
-                    hoursMinutesFormat = hoursMinutesFormat,
-                    minutesFormat = minutesFormat,
-                    modifier = Modifier.padding(start = 16.dp),
-                    axisTypeface = axisTypeface,
-                    markerTypeface = markerTypeface,
-                    thickness = 8.dp,
-                    xValueFormatter = CartesianValueFormatter { context, x, _ ->
-                        context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
-                    }
-                )
-            }
-            item {
-                val iconRotation by animateFloatAsState(
-                    if (lastMonthStatExpanded) 180f else 0f,
-                    animationSpec = motionScheme.defaultSpatialSpec()
-                )
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .clip(middleListItemShape)
+                        .background(listItemColors.containerColor)
+                        .clickable {}
+                        .padding(
+                            start = 20.dp,
+                            top = 20.dp,
+                            bottom = 20.dp
+                        ) // end = 0 to let the chart touch the end
                 ) {
-                    Spacer(Modifier.height(2.dp))
-                    FilledTonalIconToggleButton(
-                        checked = lastMonthStatExpanded,
-                        onCheckedChange = { lastMonthStatExpanded = it },
-                        shapes = IconButtonDefaults.toggleableShapes(),
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .width(52.dp)
-                            .align(Alignment.End)
+                    Text(
+                        stringResource(R.string.last_month),
+                        style = typography.headlineSmall
+                    )
+
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        Icon(
-                            painterResource(R.drawable.arrow_down),
-                            stringResource(R.string.more_info),
-                            modifier = Modifier.rotate(iconRotation)
+                        Text(
+                            millisecondsToHoursMinutes(
+                                remember(lastMonthAverageFocusTimes) {
+                                    lastMonthAverageFocusTimes.sum().toLong()
+                                },
+                                hoursMinutesFormat
+                            ),
+                            style = typography.displaySmall
+                        )
+                        Text(
+                            text = stringResource(R.string.focus_per_day_avg),
+                            style = typography.titleSmall,
+                            modifier = Modifier.padding(bottom = 5.2.dp)
                         )
                     }
-                    ProductivityGraph(
-                        lastMonthStatExpanded,
-                        lastMonthSummaryAnalysisModelProducer,
+
+                    TimeColumnChart(
+                        modelProducer = lastMonthSummaryChartData.first,
+                        hoursFormat = hoursFormat,
+                        hoursMinutesFormat = hoursMinutesFormat,
+                        minutesFormat = minutesFormat,
                         axisTypeface = axisTypeface,
                         markerTypeface = markerTypeface,
-                        label = stringResource(R.string.monthly_productivity_analysis),
-                        modifier = Modifier.padding(horizontal = 32.dp)
+                        thickness = 8.dp,
+                        xValueFormatter = CartesianValueFormatter { context, x, _ ->
+                            context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
+                        }
                     )
                 }
             }
-            item { Spacer(Modifier) }
+
             item {
-                Text(
-                    stringResource(R.string.last_year),
-                    style = typography.headlineSmall,
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                )
-            }
-            item {
-                Row(
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .clip(bottomListItemShape)
+                        .background(listItemColors.containerColor)
+                        .clickable {}
+                        .padding(
+                            start = 20.dp,
+                            top = 20.dp,
+                            bottom = 20.dp
+                        ) // end = 0 to let the chart touch the end
                 ) {
                     Text(
-                        millisecondsToHoursMinutes(
-                            remember(lastYearAverageFocusTimes) {
-                                lastYearAverageFocusTimes.sum().toLong()
-                            },
-                            hoursMinutesFormat
-                        ),
-                        style = typography.displaySmall
+                        stringResource(R.string.last_year),
+                        style = typography.headlineSmall
                     )
-                    Text(
-                        text = stringResource(R.string.focus_per_day_avg),
-                        style = typography.titleSmall,
-                        modifier = Modifier.padding(bottom = 5.2.dp)
+
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            millisecondsToHoursMinutes(
+                                remember(lastYearAverageFocusTimes) {
+                                    lastYearAverageFocusTimes.sum().toLong()
+                                },
+                                hoursMinutesFormat
+                            ),
+                            style = typography.displaySmall
+                        )
+                        Text(
+                            text = stringResource(R.string.focus_per_day_avg),
+                            style = typography.titleSmall,
+                            modifier = Modifier.padding(bottom = 5.2.dp)
+                        )
+                    }
+
+                    TimeLineChart(
+                        modelProducer = lastYearSummaryChartData.first,
+                        hoursFormat = hoursFormat,
+                        hoursMinutesFormat = hoursMinutesFormat,
+                        minutesFormat = minutesFormat,
+                        axisTypeface = axisTypeface,
+                        markerTypeface = markerTypeface,
+                        xValueFormatter = CartesianValueFormatter { context, x, _ ->
+                            context.model.extraStore[lastYearSummaryChartData.second][x.toInt()]
+                        }
                     )
                 }
             }
-            item {
-                TimeLineChart(
-                    modelProducer = lastYearSummaryChartData.first,
-                    hoursFormat = hoursFormat,
-                    hoursMinutesFormat = hoursMinutesFormat,
-                    minutesFormat = minutesFormat,
-                    modifier = Modifier.padding(start = 16.dp),
-                    axisTypeface = axisTypeface,
-                    markerTypeface = markerTypeface,
-                    xValueFormatter = CartesianValueFormatter { context, x, _ ->
-                        context.model.extraStore[lastYearSummaryChartData.second][x.toInt()]
-                    }
-                )
-            }
-            item { Spacer(Modifier.height(16.dp)) }
         }
     }
 }

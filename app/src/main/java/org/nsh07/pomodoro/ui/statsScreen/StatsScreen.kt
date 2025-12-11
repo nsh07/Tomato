@@ -18,11 +18,10 @@
 package org.nsh07.pomodoro.ui.statsScreen
 
 import android.graphics.Typeface
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.togetherWith
+import androidx.compose.animation.unveilIn
+import androidx.compose.animation.veilOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -42,6 +41,7 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.Screen
+import org.nsh07.pomodoro.ui.statsScreen.screens.LastWeekScreen
 import org.nsh07.pomodoro.ui.statsScreen.screens.StatsMainScreen
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex400
@@ -81,7 +81,10 @@ fun StatsScreenRoot(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalAnimationApi::class
+)
 @Composable
 fun StatsScreen(
     contentPadding: PaddingValues,
@@ -108,16 +111,13 @@ fun StatsScreen(
         backStack = backStack,
         onBack = backStack::removeLastOrNull,
         transitionSpec = {
-            (slideInHorizontally(initialOffsetX = { it }))
-                .togetherWith(slideOutHorizontally(targetOffsetX = { -it / 4 }) + fadeOut())
+            unveilIn().togetherWith(veilOut())
         },
         popTransitionSpec = {
-            (slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn())
-                .togetherWith(slideOutHorizontally(targetOffsetX = { it }))
+            unveilIn().togetherWith(veilOut())
         },
         predictivePopTransitionSpec = {
-            (slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn())
-                .togetherWith(slideOutHorizontally(targetOffsetX = { it }))
+            unveilIn().togetherWith(veilOut())
         },
         entryProvider = entryProvider {
             entry<Screen.Stats.Main> {
@@ -136,7 +136,25 @@ fun StatsScreen(
                     minutesFormat = minutesFormat,
                     axisTypeface = axisTypeface,
                     markerTypeface = markerTypeface,
+                    onNavigate = {
+                        if (backStack.size < 2) backStack.add(it)
+                        else backStack[backStack.lastIndex] = it
+                    },
                     modifier = modifier
+                )
+            }
+
+            entry<Screen.Stats.LastWeek> {
+                LastWeekScreen(
+                    contentPadding = contentPadding,
+                    lastWeekAverageFocusTimes = lastWeekAverageFocusTimes,
+                    onBack = backStack::removeLastOrNull,
+                    hoursMinutesFormat = hoursMinutesFormat,
+                    lastWeekSummaryChartData = lastWeekSummaryChartData,
+                    hoursFormat = hoursFormat,
+                    minutesFormat = minutesFormat,
+                    axisTypeface = axisTypeface,
+                    markerTypeface = markerTypeface
                 )
             }
         }

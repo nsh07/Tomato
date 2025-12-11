@@ -58,6 +58,7 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
+import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeColumnChart
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeLineChart
@@ -81,12 +82,13 @@ fun StatsMainScreen(
     lastMonthAverageFocusTimes: List<Int>,
     lastYearAverageFocusTimes: List<Int>,
     generateSampleData: () -> Unit,
-    modifier: Modifier = Modifier,
     hoursMinutesFormat: String,
     hoursFormat: String,
     minutesFormat: String,
     axisTypeface: Typeface,
-    markerTypeface: Typeface
+    markerTypeface: Typeface,
+    onNavigate: (Screen.Stats) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -212,7 +214,7 @@ fun StatsMainScreen(
                     modifier = Modifier
                         .clip(topListItemShape)
                         .background(listItemColors.containerColor)
-                        .clickable {}
+                        .clickable { onNavigate(Screen.Stats.LastWeek) }
                         .padding(
                             start = 20.dp,
                             top = 20.dp,

@@ -90,7 +90,7 @@
     <string name="auto_start_next_timer_desc">アラームを停止した後に次のアラームを開始します</string>
     <string name="auto_start_next_timer">次のタイマーを自動的に開始</string>
     <string name="secure_aod">安全な常時表示ディスプレイ</string>
-    <string name="secure_aod_desc">常時表示ディスプレイは見られるように維持する一方、タイムアウト後に自動的に端末をロックします</string>
+    <string name="secure_aod_desc">常時表示ディスプレイは見られるように維持したまま、タイムアウト後に自動的に端末をロックします</string>
     <string name="undo">戻す</string>
     <string name="timer_reset_message">タイマーはリセットされました</string>
 </resources>

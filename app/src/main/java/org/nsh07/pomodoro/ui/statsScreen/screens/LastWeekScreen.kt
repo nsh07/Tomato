@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -57,8 +58,8 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakRatioVisualization
+import org.nsh07.pomodoro.ui.statsScreen.components.HorizontalStackedBar
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeColumnChart
-import org.nsh07.pomodoro.ui.statsScreen.components.VariableWidth1DHeatmap
 import org.nsh07.pomodoro.ui.statsScreen.components.sharedBoundsReveal
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
@@ -213,7 +214,7 @@ fun SharedTransitionScope.LastWeekScreen(
                     color = colorScheme.onSurfaceVariant
                 )
             }
-            item { VariableWidth1DHeatmap(lastWeekAnalysisValues.first, rankList = rankList) }
+            item { HorizontalStackedBar(lastWeekAnalysisValues.first, rankList = rankList) }
             item {
                 Row {
                     lastWeekAnalysisValues.first.fastForEach {
@@ -260,6 +261,16 @@ fun SharedTransitionScope.LastWeekScreen(
             }
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Row {
+                        Spacer(Modifier.width(18.dp))
+                        (0..8 step 2).forEach {
+                            Text(
+                                (it * 10).toString() + '%',
+                                style = typography.labelSmall,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
                     lastWeekSummaryValues.fastForEach {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
@@ -267,7 +278,7 @@ fun SharedTransitionScope.LastWeekScreen(
                                 style = typography.labelSmall,
                                 modifier = Modifier.size(18.dp)
                             )
-                            VariableWidth1DHeatmap(it.second, rankList = rankList)
+                            HorizontalStackedBar(it.second, rankList = rankList)
                         }
                     }
                 }

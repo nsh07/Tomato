@@ -19,14 +19,15 @@ package org.nsh07.pomodoro.ui.statsScreen.screens
 
 import android.graphics.Typeface
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -46,28 +47,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
+import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakRatioVisualization
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeColumnChart
+import org.nsh07.pomodoro.ui.statsScreen.components.VariableWidth1DHeatmap
 import org.nsh07.pomodoro.ui.statsScreen.components.sharedBoundsReveal
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
+import org.nsh07.pomodoro.utils.millisecondsToMinutes
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SharedTransitionScope.LastWeekScreen(
     contentPadding: PaddingValues,
-    lastWeekAverageFocusTimes: List<Int>,
+    lastWeekAnalysisValues: Pair<List<Long>, Long>,
+    lastWeekSummaryValues: List<Pair<String, List<Long>>>,
+    lastWeekSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     hoursMinutesFormat: String,
-    lastWeekSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     hoursFormat: String,
     minutesFormat: String,
     axisTypeface: Typeface,
@@ -75,16 +82,20 @@ fun SharedTransitionScope.LastWeekScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    val rankList = remember(lastWeekAverageFocusTimes) {
+    val rankList = remember(lastWeekAnalysisValues) {
         val sortedIndices =
-            lastWeekAverageFocusTimes.indices.sortedByDescending { lastWeekAverageFocusTimes[it] }
-        val ranks = MutableList(lastWeekAverageFocusTimes.size) { 0 }
+            lastWeekAnalysisValues.first.indices.sortedByDescending { lastWeekAnalysisValues.first[it] }
+        val ranks = MutableList(lastWeekAnalysisValues.first.size) { 0 }
 
         sortedIndices.forEachIndexed { rank, originalIndex ->
             ranks[originalIndex] = rank
         }
 
         ranks
+    }
+
+    val focusDuration = remember(lastWeekAnalysisValues) {
+        lastWeekAnalysisValues.first.sum()
     }
 
     Scaffold(
@@ -115,11 +126,7 @@ fun SharedTransitionScope.LastWeekScreen(
                         )
                     }
                 },
-                scrollBehavior = scrollBehavior,
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = colorScheme.surfaceBright,
-                    scrolledContainerColor = colorScheme.surfaceBright
-                )
+                scrollBehavior = scrollBehavior
             )
         },
         modifier = modifier
@@ -135,11 +142,10 @@ fun SharedTransitionScope.LastWeekScreen(
     ) { innerPadding ->
         val insets = mergePaddingValues(innerPadding, contentPadding)
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = insets,
             modifier = Modifier
                 .fillMaxSize()
-                .background(colorScheme.surfaceBright)
                 .padding(horizontal = 16.dp)
         ) {
             item {
@@ -150,9 +156,7 @@ fun SharedTransitionScope.LastWeekScreen(
                 ) {
                     Text(
                         millisecondsToHoursMinutes(
-                            remember(lastWeekAverageFocusTimes) {
-                                lastWeekAverageFocusTimes.sum().toLong()
-                            },
+                            focusDuration,
                             hoursMinutesFormat
                         ),
                         style = typography.displaySmall,
@@ -175,7 +179,8 @@ fun SharedTransitionScope.LastWeekScreen(
                             )
                     )
                 }
-                Spacer(Modifier.height(16.dp))
+            }
+            item {
                 TimeColumnChart(
                     modelProducer = lastWeekSummaryChartData.first,
                     hoursFormat = hoursFormat,
@@ -193,6 +198,79 @@ fun SharedTransitionScope.LastWeekScreen(
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current
                         )
                 )
+            }
+
+            item { Spacer(Modifier.height(8.dp)) }
+
+            item {
+                Text(
+                    "Focus overview",
+                    style = typography.headlineSmall
+                )
+                Text(
+                    "Average focus durations at different times of the day",
+                    style = typography.bodySmall,
+                    color = colorScheme.onSurfaceVariant
+                )
+            }
+            item { VariableWidth1DHeatmap(lastWeekAnalysisValues.first, rankList = rankList) }
+            item {
+                Row {
+                    lastWeekAnalysisValues.first.fastForEach {
+                        Text(
+                            if (it <= 60 * 60 * 1000)
+                                millisecondsToMinutes(it, minutesFormat)
+                            else millisecondsToHoursMinutes(it, hoursMinutesFormat),
+                            style = typography.bodyLarge,
+                            textAlign = TextAlign.Center,
+                            color = colorScheme.onSurfaceVariant,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+            }
+
+            item { Spacer(Modifier.height(8.dp)) }
+
+            item {
+                Text(
+                    stringResource(R.string.focus_break_ratio),
+                    style = typography.headlineSmall
+                )
+            }
+            item {
+                FocusBreakRatioVisualization(
+                    focusDuration = focusDuration,
+                    breakDuration = lastWeekAnalysisValues.second
+                )
+            }
+
+            item { Spacer(Modifier.height(8.dp)) }
+
+            item {
+                Text(
+                    "Focus insights",
+                    style = typography.headlineSmall
+                )
+                Text(
+                    "Focus overview of each day of the past week",
+                    style = typography.bodySmall,
+                    color = colorScheme.onSurfaceVariant
+                )
+            }
+            item {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    lastWeekSummaryValues.fastForEach {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                it.first,
+                                style = typography.labelSmall,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            VariableWidth1DHeatmap(it.second, rankList = rankList)
+                        }
+                    }
+                }
             }
         }
     }

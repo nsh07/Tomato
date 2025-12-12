@@ -62,6 +62,7 @@ fun StatsScreenRoot(
     val todayStat by viewModel.todayStat.collectAsStateWithLifecycle(null)
 
     val lastWeekSummaryChartData by viewModel.lastWeekSummaryChartData.collectAsStateWithLifecycle()
+    val lastWeekSummaryValues by viewModel.lastWeekStats.collectAsStateWithLifecycle()
     val lastWeekAnalysisValues by viewModel.lastWeekAverageFocusTimes.collectAsStateWithLifecycle()
 
     val lastMonthSummaryChartData by viewModel.lastMonthSummaryChartData.collectAsStateWithLifecycle()
@@ -74,10 +75,11 @@ fun StatsScreenRoot(
         contentPadding = contentPadding,
         backStack = backStack,
         lastWeekSummaryChartData = lastWeekSummaryChartData,
+        lastWeekSummaryValues = lastWeekSummaryValues,
         lastMonthSummaryChartData = lastMonthSummaryChartData,
         lastYearSummaryChartData = lastYearSummaryChartData,
         todayStat = todayStat,
-        lastWeekAverageFocusTimes = lastWeekAnalysisValues,
+        lastWeekAnalysisValues = lastWeekAnalysisValues,
         lastMonthAverageFocusTimes = lastMonthAnalysisValues,
         lastYearAverageFocusTimes = lastYearAnalysisValues,
         generateSampleData = viewModel::generateSampleData,
@@ -94,10 +96,11 @@ fun StatsScreen(
     contentPadding: PaddingValues,
     backStack: SnapshotStateList<Screen.Stats>,
     lastWeekSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
+    lastWeekSummaryValues: List<Pair<String, List<Long>>>,
     lastMonthSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     lastYearSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     todayStat: Stat?,
-    lastWeekAverageFocusTimes: List<Int>,
+    lastWeekAnalysisValues: Pair<List<Long>, Long>,
     lastMonthAverageFocusTimes: List<Int>,
     lastYearAverageFocusTimes: List<Int>,
     generateSampleData: () -> Unit,
@@ -134,7 +137,7 @@ fun StatsScreen(
                         lastMonthSummaryChartData = lastMonthSummaryChartData,
                         lastYearSummaryChartData = lastYearSummaryChartData,
                         todayStat = todayStat,
-                        lastWeekAverageFocusTimes = lastWeekAverageFocusTimes,
+                        lastWeekAverageFocusTimes = lastWeekAnalysisValues.first,
                         lastMonthAverageFocusTimes = lastMonthAverageFocusTimes,
                         lastYearAverageFocusTimes = lastYearAverageFocusTimes,
                         generateSampleData = generateSampleData,
@@ -154,10 +157,11 @@ fun StatsScreen(
                 entry<Screen.Stats.LastWeek> {
                     LastWeekScreen(
                         contentPadding = contentPadding,
-                        lastWeekAverageFocusTimes = lastWeekAverageFocusTimes,
+                        lastWeekAnalysisValues = lastWeekAnalysisValues,
+                        lastWeekSummaryValues = lastWeekSummaryValues,
+                        lastWeekSummaryChartData = lastWeekSummaryChartData,
                         onBack = backStack::removeLastOrNull,
                         hoursMinutesFormat = hoursMinutesFormat,
-                        lastWeekSummaryChartData = lastWeekSummaryChartData,
                         hoursFormat = hoursFormat,
                         minutesFormat = minutesFormat,
                         axisTypeface = axisTypeface,

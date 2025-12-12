@@ -25,9 +25,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import kotlin.math.roundToInt
 
 /**
  * A custom implementation of the 1-Dimensional heatmap plot that varies the width of the cells
@@ -95,6 +99,60 @@ fun VariableWidth1DHeatmap(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun FocusBreakRatioVisualization(
+    focusDuration: Long,
+    breakDuration: Long,
+    modifier: Modifier = Modifier,
+    height: Dp = 40.dp,
+    gap: Dp = 2.dp
+) {
+    val focusPercentage = ((focusDuration / (focusDuration.toFloat() + breakDuration)) * 100)
+    val breakPercentage = ((breakDuration / (focusDuration.toFloat() + breakDuration)) * 100)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(gap),
+        modifier = modifier
+    ) {
+        Text(
+            text = focusPercentage.roundToInt().toString() + '%',
+            style = typography.bodyLarge,
+            color = colorScheme.primary,
+            modifier = Modifier.padding(end = 6.dp)
+        )
+        Spacer(
+            Modifier
+                .weight(focusPercentage)
+                .height(height)
+                .background(
+                    colorScheme.primary,
+                    shapes.large.copy(
+                        topEnd = shapes.extraSmall.topEnd,
+                        bottomEnd = shapes.extraSmall.bottomEnd
+                    )
+                )
+        )
+        Spacer(
+            Modifier
+                .weight(breakPercentage)
+                .height(height)
+                .background(
+                    colorScheme.tertiary,
+                    shapes.large.copy(
+                        topStart = shapes.extraSmall.topStart,
+                        bottomStart = shapes.extraSmall.bottomStart
+                    )
+                )
+        )
+        Text(
+            text = breakPercentage.roundToInt().toString() + '%',
+            style = typography.bodyLarge,
+            color = colorScheme.tertiary,
+            modifier = Modifier.padding(start = 6.dp)
+        )
     }
 }
 

@@ -82,7 +82,7 @@ fun SharedTransitionScope.StatsMainScreen(
     lastMonthSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     lastYearSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     todayStat: Stat?,
-    lastWeekAverageFocusTimes: List<Int>,
+    lastWeekAverageFocusTimes: List<Long>,
     lastMonthAverageFocusTimes: List<Int>,
     lastYearAverageFocusTimes: List<Int>,
     generateSampleData: () -> Unit,
@@ -254,7 +254,7 @@ fun SharedTransitionScope.StatsMainScreen(
                         Text(
                             millisecondsToHoursMinutes(
                                 remember(lastWeekAverageFocusTimes) {
-                                    lastWeekAverageFocusTimes.sum().toLong()
+                                    lastWeekAverageFocusTimes.sum()
                                 },
                                 hoursMinutesFormat
                             ),

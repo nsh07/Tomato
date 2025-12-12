@@ -113,4 +113,5 @@
     <string name="secure_aod_desc">Automatically lock your device after a timeout, while keeping the AOD visible</string>
     <string name="timer_reset_message">Timer reset</string>
     <string name="undo">Undo</string>
+    <string name="focus_break_ratio">Focus-break ratio</string>
 </resources>

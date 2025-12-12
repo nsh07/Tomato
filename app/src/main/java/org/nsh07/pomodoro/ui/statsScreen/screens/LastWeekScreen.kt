@@ -204,11 +204,11 @@ fun SharedTransitionScope.LastWeekScreen(
 
             item {
                 Text(
-                    stringResource(R.string.focus_overview),
+                    stringResource(R.string.focus_breakdown),
                     style = typography.headlineSmall
                 )
                 Text(
-                    stringResource(R.string.focus_overview_desc),
+                    stringResource(R.string.focus_breakdown_desc),
                     style = typography.bodySmall,
                     color = colorScheme.onSurfaceVariant
                 )
@@ -249,11 +249,11 @@ fun SharedTransitionScope.LastWeekScreen(
 
             item {
                 Text(
-                    stringResource(R.string.focus_insights),
+                    stringResource(R.string.focus_history),
                     style = typography.headlineSmall
                 )
                 Text(
-                    stringResource(R.string.focus_insights_desc),
+                    stringResource(R.string.focus_history_desc),
                     style = typography.bodySmall,
                     color = colorScheme.onSurfaceVariant
                 )

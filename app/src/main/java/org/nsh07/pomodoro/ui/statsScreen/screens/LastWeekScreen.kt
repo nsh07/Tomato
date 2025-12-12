@@ -18,10 +18,13 @@
 package org.nsh07.pomodoro.ui.statsScreen.screens
 
 import android.graphics.Typeface
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,10 +33,11 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -43,18 +47,21 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeColumnChart
+import org.nsh07.pomodoro.ui.statsScreen.components.sharedBoundsReveal
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun LastWeekScreen(
+fun SharedTransitionScope.LastWeekScreen(
     contentPadding: PaddingValues,
     lastWeekAverageFocusTimes: List<Int>,
     onBack: () -> Unit,
@@ -66,7 +73,7 @@ fun LastWeekScreen(
     axisTypeface: Typeface,
     markerTypeface: Typeface
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val rankList = remember(lastWeekAverageFocusTimes) {
         val sortedIndices =
@@ -82,9 +89,17 @@ fun LastWeekScreen(
 
     Scaffold(
         topBar = {
-            LargeFlexibleTopAppBar(
+            TopAppBar(
                 title = {
-                    Text(stringResource(R.string.last_week), fontFamily = robotoFlexTopBar)
+                    Text(
+                        text = stringResource(R.string.last_week),
+                        fontFamily = robotoFlexTopBar,
+                        modifier = Modifier.sharedBounds(
+                            sharedContentState = this@LastWeekScreen
+                                .rememberSharedContentState("last week heading"),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                        )
+                    )
                 },
                 subtitle = {
                     Text(stringResource(R.string.stats))
@@ -100,18 +115,35 @@ fun LastWeekScreen(
                         )
                     }
                 },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = colorScheme.surfaceBright,
+                    scrolledContainerColor = colorScheme.surfaceBright
+                )
             )
         },
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+        modifier = modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .sharedBoundsReveal(
+                sharedTransitionScope = this@LastWeekScreen,
+                sharedContentState = this@LastWeekScreen.rememberSharedContentState(
+                    "last week card"
+                ),
+                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                clipShape = topListItemShape
+            )
     ) { innerPadding ->
         val insets = mergePaddingValues(innerPadding, contentPadding)
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = insets,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .background(colorScheme.surfaceBright)
+                .padding(horizontal = 16.dp)
         ) {
             item {
+                Spacer(Modifier.height(16.dp))
                 Row(
                     verticalAlignment = Alignment.Bottom,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -123,12 +155,24 @@ fun LastWeekScreen(
                             },
                             hoursMinutesFormat
                         ),
-                        style = typography.displaySmall
+                        style = typography.displaySmall,
+                        modifier = Modifier
+                            .sharedElement(
+                                sharedContentState = this@LastWeekScreen
+                                    .rememberSharedContentState("last week average focus timer"),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
                     )
                     Text(
                         stringResource(R.string.focus_per_day_avg),
                         style = typography.titleSmall,
-                        modifier = Modifier.padding(bottom = 5.2.dp)
+                        modifier = Modifier
+                            .padding(bottom = 5.2.dp)
+                            .sharedElement(
+                                sharedContentState = this@LastWeekScreen
+                                    .rememberSharedContentState("focus per day average (week)"),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
                     )
                 }
                 Spacer(Modifier.height(16.dp))
@@ -141,7 +185,13 @@ fun LastWeekScreen(
                     markerTypeface = markerTypeface,
                     xValueFormatter = CartesianValueFormatter { context, x, _ ->
                         context.model.extraStore[lastWeekSummaryChartData.second][x.toInt()]
-                    }
+                    },
+                    modifier = Modifier
+                        .sharedElement(
+                            sharedContentState = this@LastWeekScreen
+                                .rememberSharedContentState("last week chart"),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                        )
                 )
             }
         }

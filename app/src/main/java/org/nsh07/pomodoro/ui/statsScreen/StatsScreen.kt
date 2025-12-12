@@ -19,12 +19,16 @@ package org.nsh07.pomodoro.ui.statsScreen
 
 import android.graphics.Typeface
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.animation.unveilIn
 import androidx.compose.animation.veilOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -99,6 +103,8 @@ fun StatsScreen(
     generateSampleData: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colorScheme = colorScheme
+
     val hoursFormat = stringResource(R.string.hours_format)
     val hoursMinutesFormat = stringResource(R.string.hours_and_minutes_format)
     val minutesFormat = stringResource(R.string.minutes_format)
@@ -107,56 +113,58 @@ fun StatsScreen(
     val axisTypeface = remember { resolver.resolve(googleFlex400).value as Typeface }
     val markerTypeface = remember { resolver.resolve(googleFlex600).value as Typeface }
 
-    NavDisplay(
-        backStack = backStack,
-        onBack = backStack::removeLastOrNull,
-        transitionSpec = {
-            unveilIn().togetherWith(veilOut())
-        },
-        popTransitionSpec = {
-            unveilIn().togetherWith(veilOut())
-        },
-        predictivePopTransitionSpec = {
-            unveilIn().togetherWith(veilOut())
-        },
-        entryProvider = entryProvider {
-            entry<Screen.Stats.Main> {
-                StatsMainScreen(
-                    contentPadding = contentPadding,
-                    lastWeekSummaryChartData = lastWeekSummaryChartData,
-                    lastMonthSummaryChartData = lastMonthSummaryChartData,
-                    lastYearSummaryChartData = lastYearSummaryChartData,
-                    todayStat = todayStat,
-                    lastWeekAverageFocusTimes = lastWeekAverageFocusTimes,
-                    lastMonthAverageFocusTimes = lastMonthAverageFocusTimes,
-                    lastYearAverageFocusTimes = lastYearAverageFocusTimes,
-                    generateSampleData = generateSampleData,
-                    hoursFormat = hoursFormat,
-                    hoursMinutesFormat = hoursMinutesFormat,
-                    minutesFormat = minutesFormat,
-                    axisTypeface = axisTypeface,
-                    markerTypeface = markerTypeface,
-                    onNavigate = {
-                        if (backStack.size < 2) backStack.add(it)
-                        else backStack[backStack.lastIndex] = it
-                    },
-                    modifier = modifier
-                )
-            }
+    SharedTransitionLayout {
+        NavDisplay(
+            backStack = backStack,
+            onBack = backStack::removeLastOrNull,
+            transitionSpec = {
+                fadeIn().togetherWith(veilOut(targetColor = colorScheme.surfaceDim))
+            },
+            popTransitionSpec = {
+                unveilIn(initialColor = colorScheme.surfaceDim).togetherWith(fadeOut())
+            },
+            predictivePopTransitionSpec = {
+                unveilIn(initialColor = colorScheme.surfaceDim).togetherWith(fadeOut())
+            },
+            entryProvider = entryProvider {
+                entry<Screen.Stats.Main> {
+                    StatsMainScreen(
+                        contentPadding = contentPadding,
+                        lastWeekSummaryChartData = lastWeekSummaryChartData,
+                        lastMonthSummaryChartData = lastMonthSummaryChartData,
+                        lastYearSummaryChartData = lastYearSummaryChartData,
+                        todayStat = todayStat,
+                        lastWeekAverageFocusTimes = lastWeekAverageFocusTimes,
+                        lastMonthAverageFocusTimes = lastMonthAverageFocusTimes,
+                        lastYearAverageFocusTimes = lastYearAverageFocusTimes,
+                        generateSampleData = generateSampleData,
+                        hoursFormat = hoursFormat,
+                        hoursMinutesFormat = hoursMinutesFormat,
+                        minutesFormat = minutesFormat,
+                        axisTypeface = axisTypeface,
+                        markerTypeface = markerTypeface,
+                        onNavigate = {
+                            if (backStack.size < 2) backStack.add(it)
+                            else backStack[backStack.lastIndex] = it
+                        },
+                        modifier = modifier
+                    )
+                }
 
-            entry<Screen.Stats.LastWeek> {
-                LastWeekScreen(
-                    contentPadding = contentPadding,
-                    lastWeekAverageFocusTimes = lastWeekAverageFocusTimes,
-                    onBack = backStack::removeLastOrNull,
-                    hoursMinutesFormat = hoursMinutesFormat,
-                    lastWeekSummaryChartData = lastWeekSummaryChartData,
-                    hoursFormat = hoursFormat,
-                    minutesFormat = minutesFormat,
-                    axisTypeface = axisTypeface,
-                    markerTypeface = markerTypeface
-                )
+                entry<Screen.Stats.LastWeek> {
+                    LastWeekScreen(
+                        contentPadding = contentPadding,
+                        lastWeekAverageFocusTimes = lastWeekAverageFocusTimes,
+                        onBack = backStack::removeLastOrNull,
+                        hoursMinutesFormat = hoursMinutesFormat,
+                        lastWeekSummaryChartData = lastWeekSummaryChartData,
+                        hoursFormat = hoursFormat,
+                        minutesFormat = minutesFormat,
+                        axisTypeface = axisTypeface,
+                        markerTypeface = markerTypeface
+                    )
+                }
             }
-        }
-    )
+        )
+    }
 }

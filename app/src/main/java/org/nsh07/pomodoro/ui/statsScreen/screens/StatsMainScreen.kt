@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.ui.statsScreen.screens
 
 import android.graphics.Typeface
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -52,6 +54,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -62,6 +65,7 @@ import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeColumnChart
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeLineChart
+import org.nsh07.pomodoro.ui.statsScreen.components.sharedBoundsReveal
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
@@ -72,7 +76,7 @@ import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun StatsMainScreen(
+fun SharedTransitionScope.StatsMainScreen(
     contentPadding: PaddingValues,
     lastWeekSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     lastMonthSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
@@ -90,7 +94,7 @@ fun StatsMainScreen(
     onNavigate: (Screen.Stats) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
         topBar = {
@@ -102,7 +106,10 @@ fun StatsMainScreen(
                             fontFamily = robotoFlexTopBar,
                             fontSize = 32.sp,
                             lineHeight = 32.sp
-                        )
+                        ),
+                        modifier = Modifier
+                            .padding(top = contentPadding.calculateTopPadding())
+                            .padding(vertical = 14.dp)
                     )
                 },
                 actions = if (BuildConfig.DEBUG) {
@@ -119,7 +126,8 @@ fun StatsMainScreen(
                 subtitle = {},
                 titleHorizontalAlignment = Alignment.CenterHorizontally,
                 scrollBehavior = scrollBehavior,
-                colors = topBarColors
+                colors = topBarColors,
+                windowInsets = WindowInsets()
             )
         },
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -212,6 +220,14 @@ fun StatsMainScreen(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
+                        .sharedBoundsReveal(
+                            sharedTransitionScope = this@StatsMainScreen,
+                            sharedContentState = this@StatsMainScreen.rememberSharedContentState(
+                                "last week card"
+                            ),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                            clipShape = topListItemShape
+                        )
                         .clip(topListItemShape)
                         .background(listItemColors.containerColor)
                         .clickable { onNavigate(Screen.Stats.LastWeek) }
@@ -223,7 +239,12 @@ fun StatsMainScreen(
                 ) {
                     Text(
                         stringResource(R.string.last_week),
-                        style = typography.headlineSmall
+                        style = typography.headlineSmall,
+                        modifier = Modifier.sharedBounds(
+                            sharedContentState = this@StatsMainScreen
+                                .rememberSharedContentState("last week heading"),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                        )
                     )
 
                     Row(
@@ -237,12 +258,24 @@ fun StatsMainScreen(
                                 },
                                 hoursMinutesFormat
                             ),
-                            style = typography.displaySmall
+                            style = typography.displaySmall,
+                            modifier = Modifier
+                                .sharedElement(
+                                    sharedContentState = this@StatsMainScreen
+                                        .rememberSharedContentState("last week average focus timer"),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
                         )
                         Text(
                             stringResource(R.string.focus_per_day_avg),
                             style = typography.titleSmall,
-                            modifier = Modifier.padding(bottom = 5.2.dp)
+                            modifier = Modifier
+                                .padding(bottom = 5.2.dp)
+                                .sharedElement(
+                                    sharedContentState = this@StatsMainScreen
+                                        .rememberSharedContentState("focus per day average (week)"),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
                         )
                     }
 
@@ -255,7 +288,13 @@ fun StatsMainScreen(
                         markerTypeface = markerTypeface,
                         xValueFormatter = CartesianValueFormatter { context, x, _ ->
                             context.model.extraStore[lastWeekSummaryChartData.second][x.toInt()]
-                        }
+                        },
+                        modifier = Modifier
+                            .sharedElement(
+                                sharedContentState = this@StatsMainScreen
+                                    .rememberSharedContentState("last week chart"),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
                     )
                 }
             }

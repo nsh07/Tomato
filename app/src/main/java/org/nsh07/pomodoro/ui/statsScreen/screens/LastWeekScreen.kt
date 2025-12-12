@@ -204,11 +204,11 @@ fun SharedTransitionScope.LastWeekScreen(
 
             item {
                 Text(
-                    "Focus overview",
+                    stringResource(R.string.focus_overview),
                     style = typography.headlineSmall
                 )
                 Text(
-                    "Average focus durations at different times of the day",
+                    stringResource(R.string.focus_overview_desc),
                     style = typography.bodySmall,
                     color = colorScheme.onSurfaceVariant
                 )
@@ -249,11 +249,11 @@ fun SharedTransitionScope.LastWeekScreen(
 
             item {
                 Text(
-                    "Focus insights",
+                    stringResource(R.string.focus_insights),
                     style = typography.headlineSmall
                 )
                 Text(
-                    "Focus overview of each day of the past week",
+                    stringResource(R.string.focus_insights_desc),
                     style = typography.bodySmall,
                     color = colorScheme.onSurfaceVariant
                 )

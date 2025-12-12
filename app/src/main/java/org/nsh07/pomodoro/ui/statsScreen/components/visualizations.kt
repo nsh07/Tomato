@@ -72,19 +72,21 @@ fun VariableWidth1DHeatmap(
     ) {
         values.fastForEachIndexed { index, item ->
             if (item > 0L) {
-                val shape = when (index) {
-                    firstNonZeroIndex -> shapes.large.copy(
-                        topEnd = shapes.extraSmall.topEnd,
-                        bottomEnd = shapes.extraSmall.bottomEnd
-                    )
+                val shape =
+                    if (firstNonZeroIndex == lastNonZeroIndex) shapes.large
+                    else when (index) {
+                        firstNonZeroIndex -> shapes.large.copy(
+                            topEnd = shapes.extraSmall.topEnd,
+                            bottomEnd = shapes.extraSmall.bottomEnd
+                        )
 
-                    lastNonZeroIndex -> shapes.large.copy(
-                        topStart = shapes.extraSmall.topStart,
-                        bottomStart = shapes.extraSmall.bottomStart
-                    )
+                        lastNonZeroIndex -> shapes.large.copy(
+                            topStart = shapes.extraSmall.topStart,
+                            bottomStart = shapes.extraSmall.bottomStart
+                        )
 
-                    else -> shapes.extraSmall
-                }
+                        else -> shapes.extraSmall
+                    }
                 Spacer(
                     Modifier
                         .weight(item.toFloat())

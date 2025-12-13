@@ -21,7 +21,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -34,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -74,42 +73,53 @@ fun HorizontalStackedBar(
     val firstNonZeroIndex = remember(values) { values.indexOfFirst { it > 0L } }
     val lastNonZeroIndex = remember(values) { values.indexOfLast { it > 0L } }
 
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(gap),
-        modifier = modifier.height(height)
-    ) {
-        values.fastForEachIndexed { index, item ->
-            if (item > 0L) {
-                val shape =
-                    if (firstNonZeroIndex == lastNonZeroIndex) shapes.large
-                    else when (index) {
-                        firstNonZeroIndex -> shapes.large.copy(
-                            topEnd = shapes.extraSmall.topEnd,
-                            bottomEnd = shapes.extraSmall.bottomEnd
-                        )
-
-                        lastNonZeroIndex -> shapes.large.copy(
-                            topStart = shapes.extraSmall.topStart,
-                            bottomStart = shapes.extraSmall.bottomStart
-                        )
-
-                        else -> shapes.extraSmall
-                    }
-                Spacer(
-                    Modifier
-                        .weight(item.toFloat())
-                        .height(height)
-                        .clip(shape)
-                        .background(colorScheme.primaryContainer)
-                        .background(
-                            colorScheme.primary.copy(
-                                (1f - (rankList.getOrNull(index) ?: 0) * 0.1f).coerceAtLeast(0.1f)
+    if (firstNonZeroIndex != -1)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(gap),
+            modifier = modifier.height(height)
+        ) {
+            values.fastForEachIndexed { index, item ->
+                if (item > 0L) {
+                    val shape =
+                        if (firstNonZeroIndex == lastNonZeroIndex) shapes.large
+                        else when (index) {
+                            firstNonZeroIndex -> shapes.large.copy(
+                                topEnd = shapes.extraSmall.topEnd,
+                                bottomEnd = shapes.extraSmall.bottomEnd
                             )
-                        )
-                )
+
+                            lastNonZeroIndex -> shapes.large.copy(
+                                topStart = shapes.extraSmall.topStart,
+                                bottomStart = shapes.extraSmall.bottomStart
+                            )
+
+                            else -> shapes.extraSmall
+                        }
+                    Spacer(
+                        Modifier
+                            .weight(item.toFloat())
+                            .height(height)
+                            .clip(shape)
+                            .background(colorScheme.primaryContainer)
+                            .background(
+                                colorScheme.primary.copy(
+                                    (1f - (rankList.getOrNull(index) ?: 0) * 0.1f).coerceAtLeast(
+                                        0.1f
+                                    )
+                                )
+                            )
+                    )
+                }
             }
         }
-    }
+    else
+        Spacer(
+            Modifier
+                .fillMaxWidth()
+                .height(height)
+                .clip(shapes.large)
+                .background(colorScheme.outlineVariant)
+        )
 }
 
 @Composable
@@ -166,12 +176,12 @@ fun FocusBreakRatioVisualization(
             )
         }
     } else {
-        Text(
-            text = "Not enough data",
-            style = typography.bodyLarge,
-            color = colorScheme.outline,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxSize()
+        Spacer(
+            Modifier
+                .fillMaxWidth()
+                .height(height)
+                .clip(shapes.large)
+                .background(colorScheme.outlineVariant)
         )
     }
 }

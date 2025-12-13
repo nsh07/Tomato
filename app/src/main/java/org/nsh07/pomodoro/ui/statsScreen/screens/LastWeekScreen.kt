@@ -19,17 +19,20 @@ package org.nsh07.pomodoro.ui.statsScreen.screens
 
 import android.graphics.Typeface
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
@@ -39,12 +42,18 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TonalToggleButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,10 +63,12 @@ import androidx.compose.ui.util.fastForEach
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakRatioVisualization
+import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakdownChart
 import org.nsh07.pomodoro.ui.statsScreen.components.HorizontalStackedBar
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeColumnChart
 import org.nsh07.pomodoro.ui.statsScreen.components.sharedBoundsReveal
@@ -82,6 +93,17 @@ fun SharedTransitionScope.LastWeekScreen(
     markerTypeface: Typeface
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
+    val lastWeekSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
+    var breakdownChartExpanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(lastWeekAnalysisValues.first) {
+        lastWeekSummaryAnalysisModelProducer.runTransaction {
+            columnSeries {
+                series(lastWeekAnalysisValues.first)
+            }
+        }
+    }
 
     val rankList = remember(lastWeekAnalysisValues) {
         val sortedIndices =
@@ -232,7 +254,32 @@ fun SharedTransitionScope.LastWeekScreen(
                 }
             }
 
-            item { Spacer(Modifier.height(8.dp)) }
+            item {
+                val iconRotation by animateFloatAsState(
+                    if (breakdownChartExpanded) 180f else 0f
+                )
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    TonalToggleButton(
+                        checked = breakdownChartExpanded,
+                        onCheckedChange = { breakdownChartExpanded = it },
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.arrow_down),
+                            stringResource(R.string.more_info),
+                            modifier = Modifier.rotate(iconRotation)
+                        )
+                        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                        Text("Show chart")
+                    }
+
+                    FocusBreakdownChart(
+                        expanded = breakdownChartExpanded,
+                        modelProducer = lastWeekSummaryAnalysisModelProducer,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
+                    )
+                }
+            }
 
             item {
                 Text(

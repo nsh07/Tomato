@@ -56,7 +56,6 @@
     <string name="long_break">Long break</string>
     <string name="min_remaining_notification">%1$s min remaining</string>
     <string name="minutes_format">%1$dm</string>
-    <string name="monthly_productivity_analysis">Monthly productivity analysis</string>
     <string name="more">More</string>
     <string name="more_info">More info</string>
     <string name="ok">OK</string>
@@ -64,8 +63,6 @@
     <string name="paused">Paused</string>
     <string name="play">Play</string>
     <string name="pomodoro_info">A \"session\" is a sequence of pomodoro intervals that contain focus intervals, short break intervals, and a long break interval. The last break of a session is always a long break.</string>
-    <string name="productivity_analysis">Productivity analysis</string>
-    <string name="productivity_analysis_desc">Focus durations at different times of the day</string>
     <string name="rate_on_google_play">Rate on Google Play</string>
     <string name="restart">Restart</string>
     <string name="selected" tools:override="true">Selected</string>
@@ -96,7 +93,6 @@
     <string name="up_next_notification">Up next: %1$s (%2$s)</string>
     <string name="vibrate">Vibration</string>
     <string name="vibrate_desc">Vibrate when a timer completes</string>
-    <string name="weekly_productivity_analysis">Weekly productivity analysis</string>
     <string name="about">About</string>
     <string name="help_with_translation_desc">Translate Tomato into your language</string>
     <string name="rate_on_google_play_desc">Liked the app? Write a review!</string>

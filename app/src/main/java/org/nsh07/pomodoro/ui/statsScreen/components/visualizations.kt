@@ -76,7 +76,7 @@ fun HorizontalStackedBar(
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(gap),
-        modifier = modifier
+        modifier = modifier.height(height)
     ) {
         values.fastForEachIndexed { index, item ->
             if (item > 0L) {

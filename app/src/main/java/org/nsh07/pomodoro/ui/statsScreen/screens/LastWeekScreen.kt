@@ -214,6 +214,7 @@ fun SharedTransitionScope.LastWeekScreen(
                     color = colorScheme.onSurfaceVariant
                 )
             }
+
             item { HorizontalStackedBar(lastWeekAnalysisValues.first, rankList = rankList) }
             item {
                 Row {
@@ -263,10 +264,11 @@ fun SharedTransitionScope.LastWeekScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Row {
                         Spacer(Modifier.width(18.dp))
-                        (0..8 step 2).forEach {
+                        (1..9 step 2).forEach {
                             Text(
-                                (it * 10).toString() + '%',
+                                (it * 10).toString() + "%\n|",
                                 style = typography.labelSmall,
+                                textAlign = TextAlign.Center,
                                 modifier = Modifier.weight(1f)
                             )
                         }

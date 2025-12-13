@@ -78,7 +78,7 @@
     <string name="hours_and_minutes_format">%1$dس %2$dد</string>
     <string name="hours_format">%1$dس</string>
     <string name="minutes_format">%1$dد</string>
-    <string name="about">عن</string>
+    <string name="about">عن البرنامج</string>
     <string name="help_with_translation_desc">ترجم Tomato إلى لغتك</string>
     <string name="rate_on_google_play_desc">هل أعجبك التطبيق؟ اكتب مراجعة!</string>
     <string name="bmc_desc">ادعمني بتبرع صغير</string>
@@ -92,6 +92,6 @@
     <string name="auto_start_next_timer">التشغيل التلقائي في المؤقت القادم</string>
     <string name="secure_aod">AOD الآمن</string>
     <string name="secure_aod_desc">قم بقفل جهازك تلقائيا بعد انتهاء الوقت، مع إبقاء AOD مرئياً</string>
-    <string name="timer_reset_message">إعادة ضبط المؤقت</string>
+    <string name="timer_reset_message">أُعيد ضبط المؤقت</string>
     <string name="undo">تراجع</string>
 </resources>

@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ButtonDefaults
@@ -73,17 +72,16 @@ import org.nsh07.pomodoro.ui.statsScreen.components.HorizontalStackedBar
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeColumnChart
 import org.nsh07.pomodoro.ui.statsScreen.components.sharedBoundsReveal
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.utils.millisecondsToMinutes
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun SharedTransitionScope.LastWeekScreen(
+fun SharedTransitionScope.LastMonthScreen(
     contentPadding: PaddingValues,
-    focusBreakdownValues: Pair<List<Long>, Long>,
-    focusHistoryValues: List<Pair<String, List<Long>>>,
-    mainChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
+    lastMonthAnalysisValues: Pair<List<Long>, Long>,
+    lastMonthSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     hoursMinutesFormat: String,
@@ -94,21 +92,21 @@ fun SharedTransitionScope.LastWeekScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    val lastWeekSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
+    val lastMonthSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
     var breakdownChartExpanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(focusBreakdownValues.first) {
-        lastWeekSummaryAnalysisModelProducer.runTransaction {
+    LaunchedEffect(lastMonthAnalysisValues.first) {
+        lastMonthSummaryAnalysisModelProducer.runTransaction {
             columnSeries {
-                series(focusBreakdownValues.first)
+                series(lastMonthAnalysisValues.first)
             }
         }
     }
 
-    val rankList = remember(focusBreakdownValues) {
+    val rankList = remember(lastMonthAnalysisValues) {
         val sortedIndices =
-            focusBreakdownValues.first.indices.sortedByDescending { focusBreakdownValues.first[it] }
-        val ranks = MutableList(focusBreakdownValues.first.size) { 0 }
+            lastMonthAnalysisValues.first.indices.sortedByDescending { lastMonthAnalysisValues.first[it] }
+        val ranks = MutableList(lastMonthAnalysisValues.first.size) { 0 }
 
         sortedIndices.forEachIndexed { rank, originalIndex ->
             ranks[originalIndex] = rank
@@ -117,8 +115,8 @@ fun SharedTransitionScope.LastWeekScreen(
         ranks
     }
 
-    val focusDuration = remember(focusBreakdownValues) {
-        focusBreakdownValues.first.sum()
+    val focusDuration = remember(lastMonthAnalysisValues) {
+        lastMonthAnalysisValues.first.sum()
     }
 
     Scaffold(
@@ -126,11 +124,11 @@ fun SharedTransitionScope.LastWeekScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = stringResource(R.string.last_week),
+                        text = stringResource(R.string.last_month),
                         fontFamily = robotoFlexTopBar,
                         modifier = Modifier.sharedBounds(
-                            sharedContentState = this@LastWeekScreen
-                                .rememberSharedContentState("last week heading"),
+                            sharedContentState = this@LastMonthScreen
+                                .rememberSharedContentState("last month heading"),
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current
                         )
                     )
@@ -155,12 +153,12 @@ fun SharedTransitionScope.LastWeekScreen(
         modifier = modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
             .sharedBoundsReveal(
-                sharedTransitionScope = this@LastWeekScreen,
-                sharedContentState = this@LastWeekScreen.rememberSharedContentState(
-                    "last week card"
+                sharedTransitionScope = this@LastMonthScreen,
+                sharedContentState = this@LastMonthScreen.rememberSharedContentState(
+                    "last month card"
                 ),
                 animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                clipShape = topListItemShape
+                clipShape = middleListItemShape
             )
     ) { innerPadding ->
         val insets = mergePaddingValues(innerPadding, contentPadding)
@@ -185,8 +183,8 @@ fun SharedTransitionScope.LastWeekScreen(
                         style = typography.displaySmall,
                         modifier = Modifier
                             .sharedElement(
-                                sharedContentState = this@LastWeekScreen
-                                    .rememberSharedContentState("last week average focus timer"),
+                                sharedContentState = this@LastMonthScreen
+                                    .rememberSharedContentState("last month average focus timer"),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current
                             )
                     )
@@ -196,8 +194,8 @@ fun SharedTransitionScope.LastWeekScreen(
                         modifier = Modifier
                             .padding(bottom = 5.2.dp)
                             .sharedElement(
-                                sharedContentState = this@LastWeekScreen
-                                    .rememberSharedContentState("focus per day average (week)"),
+                                sharedContentState = this@LastMonthScreen
+                                    .rememberSharedContentState("focus per day average (month)"),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current
                             )
                     )
@@ -205,19 +203,20 @@ fun SharedTransitionScope.LastWeekScreen(
             }
             item {
                 TimeColumnChart(
-                    modelProducer = mainChartData.first,
+                    modelProducer = lastMonthSummaryChartData.first,
                     hoursFormat = hoursFormat,
                     hoursMinutesFormat = hoursMinutesFormat,
                     minutesFormat = minutesFormat,
                     axisTypeface = axisTypeface,
                     markerTypeface = markerTypeface,
+                    thickness = 8.dp,
                     xValueFormatter = CartesianValueFormatter { context, x, _ ->
-                        context.model.extraStore[mainChartData.second][x.toInt()]
+                        context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
                     },
                     modifier = Modifier
                         .sharedElement(
-                            sharedContentState = this@LastWeekScreen
-                                .rememberSharedContentState("last week chart"),
+                            sharedContentState = this@LastMonthScreen
+                                .rememberSharedContentState("last month chart"),
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current
                         )
                 )
@@ -237,10 +236,10 @@ fun SharedTransitionScope.LastWeekScreen(
                 )
             }
 
-            item { HorizontalStackedBar(focusBreakdownValues.first, rankList = rankList) }
+            item { HorizontalStackedBar(lastMonthAnalysisValues.first, rankList = rankList) }
             item {
                 Row {
-                    focusBreakdownValues.first.fastForEach {
+                    lastMonthAnalysisValues.first.fastForEach {
                         Text(
                             if (it <= 60 * 60 * 1000)
                                 millisecondsToMinutes(it, minutesFormat)
@@ -275,7 +274,7 @@ fun SharedTransitionScope.LastWeekScreen(
 
                     FocusBreakdownChart(
                         expanded = breakdownChartExpanded,
-                        modelProducer = lastWeekSummaryAnalysisModelProducer,
+                        modelProducer = lastMonthSummaryAnalysisModelProducer,
                         modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
                     )
                 }
@@ -290,7 +289,7 @@ fun SharedTransitionScope.LastWeekScreen(
             item {
                 FocusBreakRatioVisualization(
                     focusDuration = focusDuration,
-                    breakDuration = focusBreakdownValues.second
+                    breakDuration = lastMonthAnalysisValues.second
                 )
             }
 
@@ -298,39 +297,14 @@ fun SharedTransitionScope.LastWeekScreen(
 
             item {
                 Text(
-                    stringResource(R.string.focus_history),
+                    "Focus history heatmap",
                     style = typography.headlineSmall
                 )
                 Text(
-                    stringResource(R.string.focus_history_desc),
+                    "Focus history of the past year. Brighter colors represent a longer focus duration.",
                     style = typography.bodySmall,
                     color = colorScheme.onSurfaceVariant
                 )
-            }
-            item {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Row {
-                        Spacer(Modifier.width(18.dp))
-                        (1..9 step 2).forEach {
-                            Text(
-                                (it * 10).toString() + "%\n|",
-                                style = typography.labelSmall,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                    }
-                    focusHistoryValues.fastForEach {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                it.first,
-                                style = typography.labelSmall,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            HorizontalStackedBar(it.second, rankList = rankList)
-                        }
-                    }
-                }
             }
         }
     }

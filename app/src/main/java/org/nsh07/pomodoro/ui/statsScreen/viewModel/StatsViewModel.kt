@@ -158,21 +158,24 @@ class StatsViewModel(
                 initialValue = lastMonthSummary
             )
 
-    val lastMonthAverageFocusTimes: StateFlow<List<Int>> =
+    val lastMonthAverageFocusTimes: StateFlow<Pair<List<Long>, Long>> =
         statRepository.getLastNDaysAverageFocusTimes(30)
             .map {
-                listOf(
-                    it?.focusTimeQ1?.toInt() ?: 0,
-                    it?.focusTimeQ2?.toInt() ?: 0,
-                    it?.focusTimeQ3?.toInt() ?: 0,
-                    it?.focusTimeQ4?.toInt() ?: 0
+                Pair(
+                    listOf(
+                        it?.focusTimeQ1 ?: 0L,
+                        it?.focusTimeQ2 ?: 0L,
+                        it?.focusTimeQ3 ?: 0L,
+                        it?.focusTimeQ4 ?: 0L
+                    ),
+                    it?.breakTime ?: 0L
                 )
             }
             .flowOn(Dispatchers.IO)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
-                initialValue = listOf(0, 0, 0, 0)
+                initialValue = Pair(listOf(0L, 0L, 0L, 0L), 0L)
             )
 
     val lastYearSummaryChartData: StateFlow<Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>> =

@@ -83,7 +83,7 @@ fun SharedTransitionScope.StatsMainScreen(
     lastYearSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     todayStat: Stat?,
     lastWeekAverageFocusTimes: List<Long>,
-    lastMonthAverageFocusTimes: List<Int>,
+    lastMonthAverageFocusTimes: List<Long>,
     lastYearAverageFocusTimes: List<Int>,
     generateSampleData: () -> Unit,
     hoursMinutesFormat: String,
@@ -303,9 +303,17 @@ fun SharedTransitionScope.StatsMainScreen(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
+                        .sharedBoundsReveal(
+                            sharedTransitionScope = this@StatsMainScreen,
+                            sharedContentState = this@StatsMainScreen.rememberSharedContentState(
+                                "last month card"
+                            ),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                            clipShape = middleListItemShape
+                        )
                         .clip(middleListItemShape)
                         .background(listItemColors.containerColor)
-                        .clickable {}
+                        .clickable { onNavigate(Screen.Stats.LastMonth) }
                         .padding(
                             start = 20.dp,
                             top = 20.dp,
@@ -314,7 +322,12 @@ fun SharedTransitionScope.StatsMainScreen(
                 ) {
                     Text(
                         stringResource(R.string.last_month),
-                        style = typography.headlineSmall
+                        style = typography.headlineSmall,
+                        modifier = Modifier.sharedBounds(
+                            sharedContentState = this@StatsMainScreen
+                                .rememberSharedContentState("last month heading"),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                        )
                     )
 
                     Row(
@@ -324,16 +337,28 @@ fun SharedTransitionScope.StatsMainScreen(
                         Text(
                             millisecondsToHoursMinutes(
                                 remember(lastMonthAverageFocusTimes) {
-                                    lastMonthAverageFocusTimes.sum().toLong()
+                                    lastMonthAverageFocusTimes.sum()
                                 },
                                 hoursMinutesFormat
                             ),
-                            style = typography.displaySmall
+                            style = typography.displaySmall,
+                            modifier = Modifier
+                                .sharedElement(
+                                    sharedContentState = this@StatsMainScreen
+                                        .rememberSharedContentState("last month average focus timer"),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
                         )
                         Text(
                             text = stringResource(R.string.focus_per_day_avg),
                             style = typography.titleSmall,
-                            modifier = Modifier.padding(bottom = 5.2.dp)
+                            modifier = Modifier
+                                .padding(bottom = 5.2.dp)
+                                .sharedElement(
+                                    sharedContentState = this@StatsMainScreen
+                                        .rememberSharedContentState("focus per day average (month)"),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
                         )
                     }
 
@@ -347,7 +372,13 @@ fun SharedTransitionScope.StatsMainScreen(
                         thickness = 8.dp,
                         xValueFormatter = CartesianValueFormatter { context, x, _ ->
                             context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
-                        }
+                        },
+                        modifier = Modifier
+                            .sharedElement(
+                                sharedContentState = this@StatsMainScreen
+                                    .rememberSharedContentState("last month chart"),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
                     )
                 }
             }

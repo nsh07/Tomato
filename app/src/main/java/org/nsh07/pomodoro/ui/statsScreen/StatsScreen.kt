@@ -45,6 +45,7 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.Screen
+import org.nsh07.pomodoro.ui.statsScreen.screens.LastMonthScreen
 import org.nsh07.pomodoro.ui.statsScreen.screens.LastWeekScreen
 import org.nsh07.pomodoro.ui.statsScreen.screens.StatsMainScreen
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
@@ -80,7 +81,7 @@ fun StatsScreenRoot(
         lastYearSummaryChartData = lastYearSummaryChartData,
         todayStat = todayStat,
         lastWeekAnalysisValues = lastWeekAnalysisValues,
-        lastMonthAverageFocusTimes = lastMonthAnalysisValues,
+        lastMonthAnalysisValues = lastMonthAnalysisValues,
         lastYearAverageFocusTimes = lastYearAnalysisValues,
         generateSampleData = viewModel::generateSampleData,
         modifier = modifier
@@ -101,7 +102,7 @@ fun StatsScreen(
     lastYearSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     todayStat: Stat?,
     lastWeekAnalysisValues: Pair<List<Long>, Long>,
-    lastMonthAverageFocusTimes: List<Int>,
+    lastMonthAnalysisValues: Pair<List<Long>, Long>,
     lastYearAverageFocusTimes: List<Int>,
     generateSampleData: () -> Unit,
     modifier: Modifier = Modifier
@@ -138,7 +139,7 @@ fun StatsScreen(
                         lastYearSummaryChartData = lastYearSummaryChartData,
                         todayStat = todayStat,
                         lastWeekAverageFocusTimes = lastWeekAnalysisValues.first,
-                        lastMonthAverageFocusTimes = lastMonthAverageFocusTimes,
+                        lastMonthAverageFocusTimes = lastMonthAnalysisValues.first,
                         lastYearAverageFocusTimes = lastYearAverageFocusTimes,
                         generateSampleData = generateSampleData,
                         hoursFormat = hoursFormat,
@@ -157,9 +158,23 @@ fun StatsScreen(
                 entry<Screen.Stats.LastWeek> {
                     LastWeekScreen(
                         contentPadding = contentPadding,
-                        lastWeekAnalysisValues = lastWeekAnalysisValues,
-                        lastWeekSummaryValues = lastWeekSummaryValues,
-                        lastWeekSummaryChartData = lastWeekSummaryChartData,
+                        focusBreakdownValues = lastWeekAnalysisValues,
+                        focusHistoryValues = lastWeekSummaryValues,
+                        mainChartData = lastWeekSummaryChartData,
+                        onBack = backStack::removeLastOrNull,
+                        hoursMinutesFormat = hoursMinutesFormat,
+                        hoursFormat = hoursFormat,
+                        minutesFormat = minutesFormat,
+                        axisTypeface = axisTypeface,
+                        markerTypeface = markerTypeface
+                    )
+                }
+
+                entry<Screen.Stats.LastMonth> {
+                    LastMonthScreen(
+                        contentPadding = contentPadding,
+                        lastMonthAnalysisValues = lastMonthAnalysisValues,
+                        lastMonthSummaryChartData = lastMonthSummaryChartData,
                         onBack = backStack::removeLastOrNull,
                         hoursMinutesFormat = hoursMinutesFormat,
                         hoursFormat = hoursFormat,

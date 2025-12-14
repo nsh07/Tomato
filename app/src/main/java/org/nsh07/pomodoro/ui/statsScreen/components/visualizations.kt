@@ -19,11 +19,18 @@ package org.nsh07.pomodoro.ui.statsScreen.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
@@ -37,8 +44,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 import kotlin.math.roundToInt
 
 /**
@@ -100,7 +111,7 @@ fun HorizontalStackedBar(
                             .weight(item.toFloat())
                             .height(height)
                             .clip(shape)
-                            .background(colorScheme.primaryContainer)
+                            .background(colorScheme.surfaceVariant)
                             .background(
                                 colorScheme.primary.copy(
                                     (1f - (rankList.getOrNull(index) ?: 0) * 0.1f).coerceAtLeast(
@@ -114,11 +125,11 @@ fun HorizontalStackedBar(
         }
     else
         Spacer(
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .height(height)
                 .clip(shapes.large)
-                .background(colorScheme.outlineVariant)
+                .background(colorScheme.surfaceVariant)
         )
 }
 
@@ -177,28 +188,150 @@ fun FocusBreakRatioVisualization(
         }
     } else {
         Spacer(
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .height(height)
                 .clip(shapes.large)
-                .background(colorScheme.outlineVariant)
+                .background(colorScheme.surfaceVariant)
         )
+    }
+}
+
+val HEATMAP_CELL_SIZE = 28.dp
+val HEATMAP_CELL_GAP = 4.dp
+
+/**
+ * A horizontally scrollable heatmap with week labels in the first column
+ *
+ * @param data Data to be represented in the heatmap in the form of [Pair]s of [LocalDate]s and
+ * their corresponding focus durations as a list. A null value passed in the list can be used to
+ * insert gaps in the heatmap, and can be used to, for example, delimit months by inserting an
+ * empty week
+ * @param modifier Modifier to be applied to the heatmap
+ *
+ * Note that it is assumed that the dates are continuous (without gaps) and start with a Monday
+ */
+@Composable
+fun HeatmapWithWeekLabels(
+    data: List<List<Long>?>,
+    modifier: Modifier = Modifier,
+    size: Dp = HEATMAP_CELL_SIZE,
+    gap: Dp = HEATMAP_CELL_GAP,
+    contentPadding: PaddingValues = PaddingValues(),
+    maxValue: Long = remember { data.maxBy { it?.sum() ?: 0 }?.sum() ?: 0 },
+) {
+    val locale = Locale.getDefault()
+
+    val first7 = remember(locale) {
+        val monday = LocalDate.of(2024, 1, 1) // Monday
+
+        buildList {
+            repeat(7) {
+                add(
+                    monday
+                        .plusDays(it.toLong())
+                        .dayOfWeek
+                        .getDisplayName(
+                            TextStyle.NARROW,
+                            locale
+                        )
+                )
+            }
+        }
+    } // Names of the 7 days of the week in the current locale
+
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(7),
+        modifier = modifier,
+        contentPadding = contentPadding,
+        verticalArrangement = Arrangement.spacedBy(gap),
+        horizontalArrangement = Arrangement.spacedBy(gap)
+    ) {
+        items(first7) {
+            Box(
+                contentAlignment = Alignment.CenterStart,
+                modifier = Modifier.size(size)
+            ) {
+                Text(
+                    text = it,
+                    style = typography.labelSmall
+                )
+            }
+        }
+        items(data) {
+            if (it == null) {
+                Spacer(Modifier.size(size))
+            } else {
+                Spacer(
+                    Modifier
+                        .size(size)
+                        .background(colorScheme.surfaceVariant, shapes.small)
+                        .background(
+                            colorScheme.primary.copy(
+                                remember(it) {
+                                    val sum = it.sum().toFloat()
+                                    if (sum > 0) 0.3f + (0.7f * sum / maxValue)
+                                    else 0f
+                                }
+                            ),
+                            shapes.small
+                        )
+                )
+            }
+        }
     }
 }
 
 @Preview
 @Composable
 fun HorizontalStackedBarPreview() {
-    val values = listOf(38L, 190L, 114L, 14L)
+    val values = listOf(
+        listOf(38L, 190L, 114L, 14L),
+        listOf(0L, 0L, 0L, 0L)
+    )
     val rankList = listOf(2, 0, 1, 3)
     TomatoTheme(dynamicColor = false) {
         Surface {
-            HorizontalStackedBar(
-                values = values,
-                rankList = rankList,
-                modifier = Modifier.padding(16.dp),
-                height = 40.dp,
-                gap = 2.dp,
+            Column {
+                values.fastForEach {
+                    HorizontalStackedBar(
+                        values = it,
+                        rankList = rankList,
+                        modifier = Modifier.padding(16.dp),
+                        height = 40.dp,
+                        gap = 2.dp,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun HeatmapWithWeekLabelsPreview() {
+    val startDate = LocalDate.of(2024, 1, 1) // Monday
+    val sampleData = remember {
+        buildList {
+            (0..93).forEach { index ->
+                val date = startDate.plusDays(index.toLong())
+                val focusDurations = listOf(index % 10L / 2) // Varying focus durations
+
+                if (date.month != date.minusDays(1).month && index > 0)
+                    repeat(7) { add(null) }
+
+                add(focusDurations)
+            }
+        }
+    }
+    TomatoTheme(dynamicColor = false) {
+        Surface {
+            HeatmapWithWeekLabels(
+                data = sampleData,
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                modifier = Modifier
+                    .padding(vertical = 16.dp)
+                    .height(HEATMAP_CELL_SIZE * 7 + HEATMAP_CELL_GAP * 6)
             )
         }
     }

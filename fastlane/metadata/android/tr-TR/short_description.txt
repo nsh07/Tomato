@@ -1,1 +1,1 @@
-Minimalist Pomodoro sayacı
+Minimal Pomodoro zamanlayıcısı

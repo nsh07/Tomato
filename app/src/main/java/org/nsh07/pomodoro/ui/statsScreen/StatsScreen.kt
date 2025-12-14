@@ -47,6 +47,7 @@ import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.statsScreen.screens.LastMonthScreen
 import org.nsh07.pomodoro.ui.statsScreen.screens.LastWeekScreen
+import org.nsh07.pomodoro.ui.statsScreen.screens.LastYearScreen
 import org.nsh07.pomodoro.ui.statsScreen.screens.StatsMainScreen
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex400
@@ -82,7 +83,7 @@ fun StatsScreenRoot(
         todayStat = todayStat,
         lastWeekAnalysisValues = lastWeekAnalysisValues,
         lastMonthAnalysisValues = lastMonthAnalysisValues,
-        lastYearAverageFocusTimes = lastYearAnalysisValues,
+        lastYearAnalysisValues = lastYearAnalysisValues,
         generateSampleData = viewModel::generateSampleData,
         modifier = modifier
     )
@@ -103,7 +104,7 @@ fun StatsScreen(
     todayStat: Stat?,
     lastWeekAnalysisValues: Pair<List<Long>, Long>,
     lastMonthAnalysisValues: Pair<List<Long>, Long>,
-    lastYearAverageFocusTimes: List<Int>,
+    lastYearAnalysisValues: Pair<List<Long>, Long>,
     generateSampleData: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -140,7 +141,7 @@ fun StatsScreen(
                         todayStat = todayStat,
                         lastWeekAverageFocusTimes = lastWeekAnalysisValues.first,
                         lastMonthAverageFocusTimes = lastMonthAnalysisValues.first,
-                        lastYearAverageFocusTimes = lastYearAverageFocusTimes,
+                        lastYearAverageFocusTimes = lastYearAnalysisValues.first,
                         generateSampleData = generateSampleData,
                         hoursFormat = hoursFormat,
                         hoursMinutesFormat = hoursMinutesFormat,
@@ -175,6 +176,20 @@ fun StatsScreen(
                         contentPadding = contentPadding,
                         lastMonthAnalysisValues = lastMonthAnalysisValues,
                         lastMonthSummaryChartData = lastMonthSummaryChartData,
+                        onBack = backStack::removeLastOrNull,
+                        hoursMinutesFormat = hoursMinutesFormat,
+                        hoursFormat = hoursFormat,
+                        minutesFormat = minutesFormat,
+                        axisTypeface = axisTypeface,
+                        markerTypeface = markerTypeface
+                    )
+                }
+
+                entry<Screen.Stats.LastYear> {
+                    LastYearScreen(
+                        contentPadding = contentPadding,
+                        lastYearAnalysisValues = lastYearAnalysisValues,
+                        lastYearSummaryChartData = lastYearSummaryChartData,
                         onBack = backStack::removeLastOrNull,
                         hoursMinutesFormat = hoursMinutesFormat,
                         hoursFormat = hoursFormat,

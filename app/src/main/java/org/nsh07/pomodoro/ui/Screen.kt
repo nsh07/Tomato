@@ -57,6 +57,9 @@ sealed class Screen : NavKey {
 
         @Serializable
         object LastMonth : Stats()
+
+        @Serializable
+        object LastYear : Stats()
     }
 }
 

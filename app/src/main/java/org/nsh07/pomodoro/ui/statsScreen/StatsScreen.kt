@@ -26,13 +26,10 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.animation.unveilIn
 import androidx.compose.animation.veilOut
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.res.stringResource
@@ -40,10 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.statsScreen.screens.LastMonthScreen
 import org.nsh07.pomodoro.ui.statsScreen.screens.LastWeekScreen
@@ -53,6 +47,7 @@ import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex400
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun StatsScreenRoot(
     contentPadding: PaddingValues,
@@ -73,41 +68,6 @@ fun StatsScreenRoot(
     val lastYearSummaryChartData by viewModel.lastYearSummaryChartData.collectAsStateWithLifecycle()
     val lastYearAnalysisValues by viewModel.lastYearAverageFocusTimes.collectAsStateWithLifecycle()
 
-    StatsScreen(
-        contentPadding = contentPadding,
-        backStack = backStack,
-        lastWeekSummaryChartData = lastWeekSummaryChartData,
-        lastWeekSummaryValues = lastWeekSummaryValues,
-        lastMonthSummaryChartData = lastMonthSummaryChartData,
-        lastYearSummaryChartData = lastYearSummaryChartData,
-        todayStat = todayStat,
-        lastWeekAnalysisValues = lastWeekAnalysisValues,
-        lastMonthAnalysisValues = lastMonthAnalysisValues,
-        lastYearAnalysisValues = lastYearAnalysisValues,
-        generateSampleData = viewModel::generateSampleData,
-        modifier = modifier
-    )
-}
-
-@OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalAnimationApi::class
-)
-@Composable
-fun StatsScreen(
-    contentPadding: PaddingValues,
-    backStack: SnapshotStateList<Screen.Stats>,
-    lastWeekSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
-    lastWeekSummaryValues: List<Pair<String, List<Long>>>,
-    lastMonthSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
-    lastYearSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
-    todayStat: Stat?,
-    lastWeekAnalysisValues: Pair<List<Long>, Long>,
-    lastMonthAnalysisValues: Pair<List<Long>, Long>,
-    lastYearAnalysisValues: Pair<List<Long>, Long>,
-    generateSampleData: () -> Unit,
-    modifier: Modifier = Modifier
-) {
     val colorScheme = colorScheme
 
     val hoursFormat = stringResource(R.string.hours_format)
@@ -142,7 +102,7 @@ fun StatsScreen(
                         lastWeekAverageFocusTimes = lastWeekAnalysisValues.first,
                         lastMonthAverageFocusTimes = lastMonthAnalysisValues.first,
                         lastYearAverageFocusTimes = lastYearAnalysisValues.first,
-                        generateSampleData = generateSampleData,
+                        generateSampleData = viewModel::generateSampleData,
                         hoursFormat = hoursFormat,
                         hoursMinutesFormat = hoursMinutesFormat,
                         minutesFormat = minutesFormat,

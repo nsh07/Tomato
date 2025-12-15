@@ -363,7 +363,7 @@ fun HeatmapWithWeekLabels(
                             Modifier
                                 .size(size)
                                 .background(
-                                    colorScheme.primary.copy(0.33f + (0.67f * sum / maxValue)),
+                                    colorScheme.primary.copy(0.4f + (0.6f * sum / maxValue)),
                                     shape
                                 )
                         )

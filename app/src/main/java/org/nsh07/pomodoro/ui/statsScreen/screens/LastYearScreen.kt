@@ -20,6 +20,7 @@ package org.nsh07.pomodoro.ui.statsScreen.screens
 import android.graphics.Typeface
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,6 +30,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ButtonDefaults
@@ -38,6 +40,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -52,6 +55,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
@@ -68,6 +72,8 @@ import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakRatioVisualization
 import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakdownChart
+import org.nsh07.pomodoro.ui.statsScreen.components.HEATMAP_CELL_GAP
+import org.nsh07.pomodoro.ui.statsScreen.components.HEATMAP_CELL_SIZE
 import org.nsh07.pomodoro.ui.statsScreen.components.HeatmapWithWeekLabels
 import org.nsh07.pomodoro.ui.statsScreen.components.HorizontalStackedBar
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeLineChart
@@ -168,15 +174,14 @@ fun SharedTransitionScope.LastYearScreen(
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = insets,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
+            modifier = Modifier.fillMaxSize() // we don't add padding here to allow charts to extend to the edge
         ) {
             item {
                 Spacer(Modifier.height(16.dp))
                 Row(
                     verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 ) {
                     Text(
                         millisecondsToHoursMinutes(
@@ -216,6 +221,7 @@ fun SharedTransitionScope.LastYearScreen(
                         context.model.extraStore[mainChartData.second][x.toInt()]
                     },
                     modifier = Modifier
+                        .padding(horizontal = 16.dp)
                         .sharedElement(
                             sharedContentState = this@LastYearScreen
                                 .rememberSharedContentState("last year chart"),
@@ -229,18 +235,26 @@ fun SharedTransitionScope.LastYearScreen(
             item {
                 Text(
                     stringResource(R.string.focus_breakdown),
-                    style = typography.headlineSmall
+                    style = typography.headlineSmall,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
                 Text(
                     stringResource(R.string.focus_breakdown_desc),
                     style = typography.bodySmall,
-                    color = colorScheme.onSurfaceVariant
+                    color = colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
 
-            item { HorizontalStackedBar(focusBreakdownValues.first, rankList = rankList) }
             item {
-                Row {
+                HorizontalStackedBar(
+                    focusBreakdownValues.first,
+                    rankList = rankList,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+            item {
+                Row(Modifier.padding(horizontal = 16.dp)) {
                     focusBreakdownValues.first.fastForEach {
                         Text(
                             if (it <= 60 * 60 * 1000)
@@ -259,7 +273,11 @@ fun SharedTransitionScope.LastYearScreen(
                 val iconRotation by animateFloatAsState(
                     if (breakdownChartExpanded) 180f else 0f
                 )
-                Column(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                ) {
                     TonalToggleButton(
                         checked = breakdownChartExpanded,
                         onCheckedChange = { breakdownChartExpanded = it },
@@ -285,13 +303,15 @@ fun SharedTransitionScope.LastYearScreen(
             item {
                 Text(
                     stringResource(R.string.focus_break_ratio),
-                    style = typography.headlineSmall
+                    style = typography.headlineSmall,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
             item {
                 FocusBreakRatioVisualization(
                     focusDuration = focusDuration,
-                    breakDuration = focusBreakdownValues.second
+                    breakDuration = focusBreakdownValues.second,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
 
@@ -300,12 +320,14 @@ fun SharedTransitionScope.LastYearScreen(
             item {
                 Text(
                     "Focus history heatmap",
-                    style = typography.headlineSmall
+                    style = typography.headlineSmall,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
                 Text(
-                    "Focus history of the past year. Brighter colors represent a longer focus duration.",
+                    "Focus history of the past year. Deeper colors represent a longer focus duration. Cells are grouped by month.",
                     style = typography.bodySmall,
-                    color = colorScheme.onSurfaceVariant
+                    color = colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
             item {
@@ -313,7 +335,48 @@ fun SharedTransitionScope.LastYearScreen(
                     data = focusHeatmapData,
                     maxValue = heatmapMaxValue,
                     contentPadding = PaddingValues(horizontal = 16.dp),
+                    modifier = Modifier.padding(start = 16.dp)
                 )
+            }
+            item { // Heatmap guide
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        "Less",
+                        color = colorScheme.onSurfaceVariant,
+                        style = typography.labelMedium
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(HEATMAP_CELL_GAP),
+                        modifier = Modifier.clip(shapes.small)
+                    ) {
+                        Spacer(
+                            Modifier
+                                .size(HEATMAP_CELL_SIZE)
+                                .background(colorScheme.surfaceVariant, shapes.extraSmall)
+                        )
+                        (4..10 step 3).forEach {
+                            Spacer(
+                                Modifier
+                                    .size(HEATMAP_CELL_SIZE)
+                                    .background(
+                                        colorScheme.primary.copy(it.toFloat() / 10f),
+                                        shapes.extraSmall
+                                    )
+                            )
+                        }
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        "More",
+                        color = colorScheme.onSurfaceVariant,
+                        style = typography.labelMedium
+                    )
+                }
             }
         }
     }

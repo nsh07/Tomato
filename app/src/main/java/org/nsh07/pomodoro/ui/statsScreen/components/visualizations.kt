@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
+import androidx.compose.ui.util.fastMaxBy
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -208,6 +209,8 @@ val HEATMAP_CELL_GAP = 4.dp
  * insert gaps in the heatmap, and can be used to, for example, delimit months by inserting an
  * empty week
  * @param modifier Modifier to be applied to the heatmap
+ * @param maxValue Maximum total value of the items present in [data]. This value must correspond to
+ * the sum of the list present in one of the elements on [data] for accurate representation.
  *
  * Note that it is assumed that the dates are continuous (without gaps) and start with a Monday
  */
@@ -218,7 +221,7 @@ fun HeatmapWithWeekLabels(
     size: Dp = HEATMAP_CELL_SIZE,
     gap: Dp = HEATMAP_CELL_GAP,
     contentPadding: PaddingValues = PaddingValues(),
-    maxValue: Long = remember { data.maxBy { it?.sum() ?: 0 }?.sum() ?: 0 },
+    maxValue: Long = remember { data.fastMaxBy { it?.sum() ?: 0 }?.sum() ?: 0 },
 ) {
     val locale = Locale.getDefault()
 
@@ -242,7 +245,7 @@ fun HeatmapWithWeekLabels(
 
     LazyHorizontalGrid(
         rows = GridCells.Fixed(7),
-        modifier = modifier,
+        modifier = modifier.height(size * 7 + gap * 6),
         contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(gap),
         horizontalArrangement = Arrangement.spacedBy(gap)
@@ -265,7 +268,6 @@ fun HeatmapWithWeekLabels(
                 Spacer(
                     Modifier
                         .size(size)
-                        .background(colorScheme.surfaceVariant, shapes.small)
                         .background(
                             colorScheme.primary.copy(
                                 remember(it) {

@@ -68,11 +68,12 @@ import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakRatioVisualization
 import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakdownChart
+import org.nsh07.pomodoro.ui.statsScreen.components.HeatmapWithWeekLabels
 import org.nsh07.pomodoro.ui.statsScreen.components.HorizontalStackedBar
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeLineChart
 import org.nsh07.pomodoro.ui.statsScreen.components.sharedBoundsReveal
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.utils.millisecondsToMinutes
 
@@ -80,8 +81,10 @@ import org.nsh07.pomodoro.utils.millisecondsToMinutes
 @Composable
 fun SharedTransitionScope.LastYearScreen(
     contentPadding: PaddingValues,
-    lastYearAnalysisValues: Pair<List<Long>, Long>,
-    lastYearSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
+    focusBreakdownValues: Pair<List<Long>, Long>,
+    focusHeatmapData: List<List<Long>?>,
+    heatmapMaxValue: Long,
+    mainChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     hoursMinutesFormat: String,
@@ -95,18 +98,18 @@ fun SharedTransitionScope.LastYearScreen(
     val lastYearSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
     var breakdownChartExpanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(lastYearAnalysisValues.first) {
+    LaunchedEffect(focusBreakdownValues.first) {
         lastYearSummaryAnalysisModelProducer.runTransaction {
             columnSeries {
-                series(lastYearAnalysisValues.first)
+                series(focusBreakdownValues.first)
             }
         }
     }
 
-    val rankList = remember(lastYearAnalysisValues) {
+    val rankList = remember(focusBreakdownValues) {
         val sortedIndices =
-            lastYearAnalysisValues.first.indices.sortedByDescending { lastYearAnalysisValues.first[it] }
-        val ranks = MutableList(lastYearAnalysisValues.first.size) { 0 }
+            focusBreakdownValues.first.indices.sortedByDescending { focusBreakdownValues.first[it] }
+        val ranks = MutableList(focusBreakdownValues.first.size) { 0 }
 
         sortedIndices.forEachIndexed { rank, originalIndex ->
             ranks[originalIndex] = rank
@@ -115,8 +118,8 @@ fun SharedTransitionScope.LastYearScreen(
         ranks
     }
 
-    val focusDuration = remember(lastYearAnalysisValues) {
-        lastYearAnalysisValues.first.sum()
+    val focusDuration = remember(focusBreakdownValues) {
+        focusBreakdownValues.first.sum()
     }
 
     Scaffold(
@@ -158,7 +161,7 @@ fun SharedTransitionScope.LastYearScreen(
                     "last year card"
                 ),
                 animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                clipShape = middleListItemShape
+                clipShape = bottomListItemShape
             )
     ) { innerPadding ->
         val insets = mergePaddingValues(innerPadding, contentPadding)
@@ -203,14 +206,14 @@ fun SharedTransitionScope.LastYearScreen(
             }
             item {
                 TimeLineChart(
-                    modelProducer = lastYearSummaryChartData.first,
+                    modelProducer = mainChartData.first,
                     hoursFormat = hoursFormat,
                     hoursMinutesFormat = hoursMinutesFormat,
                     minutesFormat = minutesFormat,
                     axisTypeface = axisTypeface,
                     markerTypeface = markerTypeface,
                     xValueFormatter = CartesianValueFormatter { context, x, _ ->
-                        context.model.extraStore[lastYearSummaryChartData.second][x.toInt()]
+                        context.model.extraStore[mainChartData.second][x.toInt()]
                     },
                     modifier = Modifier
                         .sharedElement(
@@ -235,10 +238,10 @@ fun SharedTransitionScope.LastYearScreen(
                 )
             }
 
-            item { HorizontalStackedBar(lastYearAnalysisValues.first, rankList = rankList) }
+            item { HorizontalStackedBar(focusBreakdownValues.first, rankList = rankList) }
             item {
                 Row {
-                    lastYearAnalysisValues.first.fastForEach {
+                    focusBreakdownValues.first.fastForEach {
                         Text(
                             if (it <= 60 * 60 * 1000)
                                 millisecondsToMinutes(it, minutesFormat)
@@ -288,7 +291,7 @@ fun SharedTransitionScope.LastYearScreen(
             item {
                 FocusBreakRatioVisualization(
                     focusDuration = focusDuration,
-                    breakDuration = lastYearAnalysisValues.second
+                    breakDuration = focusBreakdownValues.second
                 )
             }
 
@@ -303,6 +306,13 @@ fun SharedTransitionScope.LastYearScreen(
                     "Focus history of the past year. Brighter colors represent a longer focus duration.",
                     style = typography.bodySmall,
                     color = colorScheme.onSurfaceVariant
+                )
+            }
+            item {
+                HeatmapWithWeekLabels(
+                    data = focusHeatmapData,
+                    maxValue = heatmapMaxValue,
+                    contentPadding = PaddingValues(horizontal = 16.dp),
                 )
             }
         }

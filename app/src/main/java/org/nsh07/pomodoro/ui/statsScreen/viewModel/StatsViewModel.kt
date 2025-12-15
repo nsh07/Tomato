@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.ui.statsScreen.viewModel
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.util.fastMaxBy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -29,17 +30,21 @@ import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.ui.Screen
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -68,8 +73,12 @@ class StatsViewModel(
     private val yearDayFormatter = DateTimeFormatter.ofPattern("d MMM")
 
     private val lastWeekStatsFlow = statRepository.getLastNDaysStats(7)
+    private val lastYearStatsFlow = statRepository.getLastNDaysStats(365)
 
-    val lastWeekSummaryChartData: StateFlow<Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>> =
+    private val _lastYearMaxFocus = MutableStateFlow(Long.MAX_VALUE)
+    val lastYearMaxFocus = _lastYearMaxFocus.asStateFlow()
+
+    val lastWeekMainChartData: StateFlow<Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>> =
         lastWeekStatsFlow
             .map { list ->
                 // reversing is required because we need ascending order while the DB returns descending order
@@ -94,7 +103,7 @@ class StatsViewModel(
                 initialValue = lastWeekSummary
             )
 
-    val lastWeekStats: StateFlow<List<Pair<String, List<Long>>>> =
+    val lastWeekFocusHistoryValues: StateFlow<List<Pair<String, List<Long>>>> =
         lastWeekStatsFlow
             .map { value ->
                 value.reversed().map {
@@ -119,7 +128,7 @@ class StatsViewModel(
                 initialValue = emptyList()
             )
 
-    val lastWeekAverageFocusTimes: StateFlow<Pair<List<Long>, Long>> =
+    val lastWeekFocusBreakdownValues: StateFlow<Pair<List<Long>, Long>> =
         statRepository.getLastNDaysAverageFocusTimes(7)
             .map {
                 Pair(
@@ -178,8 +187,8 @@ class StatsViewModel(
                 initialValue = Pair(listOf(0L, 0L, 0L, 0L), 0L)
             )
 
-    val lastYearSummaryChartData: StateFlow<Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>> =
-        statRepository.getLastNDaysStats(365)
+    val lastYearMainChartData: StateFlow<Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>> =
+        lastYearStatsFlow
             .map { list ->
                 val reversed = list.reversed()
                 val keys = reversed.map { it.date.format(yearDayFormatter) }
@@ -197,7 +206,37 @@ class StatsViewModel(
                 initialValue = lastYearSummary
             )
 
-    val lastYearAverageFocusTimes: StateFlow<Pair<List<Long>, Long>> =
+    val lastYearFocusHeatmapData: StateFlow<List<List<Long>?>> =
+        lastYearStatsFlow
+            .map { list ->
+                val list = list.reversed()
+                _lastYearMaxFocus.update {
+                    list.fastMaxBy {
+                        it.totalFocusTime()
+                    }?.totalFocusTime() ?: Long.MAX_VALUE
+                }
+                buildList {
+                    repeat(list.first().date.dayOfWeek.value - DayOfWeek.MONDAY.value) {
+                        add(null) // Make sure that the data starts with a Monday
+                    }
+                    list.indices.forEach {
+                        if (it > 0 && list[it].date.month != list[it - 1].date.month) {
+                            repeat(7) { add(null) } // Add a week gap if a new month starts
+                        }
+                        with(list[it]) {
+                            add(listOf(focusTimeQ1, focusTimeQ2, focusTimeQ3, focusTimeQ4))
+                        }
+                    }
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
+            )
+
+    val lastYearFocusBreakdownValues: StateFlow<Pair<List<Long>, Long>> =
         statRepository.getLastNDaysAverageFocusTimes(365)
             .map {
                 Pair(
@@ -221,7 +260,7 @@ class StatsViewModel(
         if (BuildConfig.DEBUG) {
             viewModelScope.launch {
                 val today = LocalDate.now().plusDays(1)
-                var it = today.minusDays(40)
+                var it = today.minusDays(365)
 
                 while (it.isBefore(today)) {
                     statRepository.insertStat(

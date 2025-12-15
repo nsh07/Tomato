@@ -58,15 +58,17 @@ fun StatsScreenRoot(
 
     val todayStat by viewModel.todayStat.collectAsStateWithLifecycle(null)
 
-    val lastWeekSummaryChartData by viewModel.lastWeekSummaryChartData.collectAsStateWithLifecycle()
-    val lastWeekSummaryValues by viewModel.lastWeekStats.collectAsStateWithLifecycle()
-    val lastWeekAnalysisValues by viewModel.lastWeekAverageFocusTimes.collectAsStateWithLifecycle()
+    val lastWeekMainChartData by viewModel.lastWeekMainChartData.collectAsStateWithLifecycle()
+    val lastWeekFocusHistoryValues by viewModel.lastWeekFocusHistoryValues.collectAsStateWithLifecycle()
+    val lastWeekFocusBreakdownValues by viewModel.lastWeekFocusBreakdownValues.collectAsStateWithLifecycle()
 
     val lastMonthSummaryChartData by viewModel.lastMonthSummaryChartData.collectAsStateWithLifecycle()
     val lastMonthAnalysisValues by viewModel.lastMonthAverageFocusTimes.collectAsStateWithLifecycle()
 
-    val lastYearSummaryChartData by viewModel.lastYearSummaryChartData.collectAsStateWithLifecycle()
-    val lastYearAnalysisValues by viewModel.lastYearAverageFocusTimes.collectAsStateWithLifecycle()
+    val lastYearMainChartData by viewModel.lastYearMainChartData.collectAsStateWithLifecycle()
+    val lastYearFocusHeatmapData by viewModel.lastYearFocusHeatmapData.collectAsStateWithLifecycle()
+    val lastYearFocusBreakdownValues by viewModel.lastYearFocusBreakdownValues.collectAsStateWithLifecycle()
+    val lastYearMaxFocus by viewModel.lastYearMaxFocus.collectAsStateWithLifecycle()
 
     val colorScheme = colorScheme
 
@@ -95,13 +97,13 @@ fun StatsScreenRoot(
                 entry<Screen.Stats.Main> {
                     StatsMainScreen(
                         contentPadding = contentPadding,
-                        lastWeekSummaryChartData = lastWeekSummaryChartData,
+                        lastWeekSummaryChartData = lastWeekMainChartData,
                         lastMonthSummaryChartData = lastMonthSummaryChartData,
-                        lastYearSummaryChartData = lastYearSummaryChartData,
+                        lastYearSummaryChartData = lastYearMainChartData,
                         todayStat = todayStat,
-                        lastWeekAverageFocusTimes = lastWeekAnalysisValues.first,
+                        lastWeekAverageFocusTimes = lastWeekFocusBreakdownValues.first,
                         lastMonthAverageFocusTimes = lastMonthAnalysisValues.first,
-                        lastYearAverageFocusTimes = lastYearAnalysisValues.first,
+                        lastYearAverageFocusTimes = lastYearFocusBreakdownValues.first,
                         generateSampleData = viewModel::generateSampleData,
                         hoursFormat = hoursFormat,
                         hoursMinutesFormat = hoursMinutesFormat,
@@ -119,9 +121,9 @@ fun StatsScreenRoot(
                 entry<Screen.Stats.LastWeek> {
                     LastWeekScreen(
                         contentPadding = contentPadding,
-                        focusBreakdownValues = lastWeekAnalysisValues,
-                        focusHistoryValues = lastWeekSummaryValues,
-                        mainChartData = lastWeekSummaryChartData,
+                        focusBreakdownValues = lastWeekFocusBreakdownValues,
+                        focusHistoryValues = lastWeekFocusHistoryValues,
+                        mainChartData = lastWeekMainChartData,
                         onBack = backStack::removeLastOrNull,
                         hoursMinutesFormat = hoursMinutesFormat,
                         hoursFormat = hoursFormat,
@@ -148,8 +150,10 @@ fun StatsScreenRoot(
                 entry<Screen.Stats.LastYear> {
                     LastYearScreen(
                         contentPadding = contentPadding,
-                        lastYearAnalysisValues = lastYearAnalysisValues,
-                        lastYearSummaryChartData = lastYearSummaryChartData,
+                        focusBreakdownValues = lastYearFocusBreakdownValues,
+                        focusHeatmapData = lastYearFocusHeatmapData,
+                        heatmapMaxValue = lastYearMaxFocus,
+                        mainChartData = lastYearMainChartData,
                         onBack = backStack::removeLastOrNull,
                         hoursMinutesFormat = hoursMinutesFormat,
                         hoursFormat = hoursFormat,

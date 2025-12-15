@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.ui.statsScreen.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,23 +34,34 @@ import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.fastMaxBy
+import androidx.compose.ui.window.Popup
+import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
+import org.nsh07.pomodoro.utils.millisecondsToMinutes
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -67,6 +79,7 @@ import kotlin.math.roundToInt
  * @param height Height of the bar
  * @param gap Gap between each part of the bar
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HorizontalStackedBar(
     values: List<Long>,
@@ -81,11 +94,40 @@ fun HorizontalStackedBar(
 
         ranks
     },
+    labelFormatter: @Composable (Int, Long, Long) -> String = { index, value, total ->
+        buildString {
+            append(
+                when (index) {
+                    0 -> "[00:00 - 06:00] "
+                    1 -> "[06:00 - 12:00] "
+                    2 -> "[12:00 - 18:00] "
+                    else -> "[18:00 - 24:00] "
+                }
+            )
+            if (value < 60 * 60 * 1000)
+                append(
+                    millisecondsToMinutes(
+                        value,
+                        stringResource(R.string.minutes_format)
+                    )
+                )
+            else
+                append(
+                    millisecondsToHoursMinutes(
+                        value,
+                        stringResource(R.string.hours_and_minutes_format)
+                    )
+                )
+            append(" (%.2f".format((value.toFloat() / total) * 100) + "%)")
+        }
+    },
     height: Dp = 40.dp,
     gap: Dp = 2.dp
 ) {
     val firstNonZeroIndex = remember(values) { values.indexOfFirst { it > 0L } }
     val lastNonZeroIndex = remember(values) { values.indexOfLast { it > 0L } }
+
+    val tooltipOffset = with(LocalDensity.current) { (24 + 4).dp.toPx().roundToInt() }
 
     if (firstNonZeroIndex != -1)
         Row(
@@ -94,6 +136,7 @@ fun HorizontalStackedBar(
         ) {
             values.fastForEachIndexed { index, item ->
                 if (item > 0L) {
+                    var showTooltip by remember { mutableStateOf(false) }
                     val shape =
                         if (firstNonZeroIndex == lastNonZeroIndex) shapes.large
                         else when (index) {
@@ -109,7 +152,7 @@ fun HorizontalStackedBar(
 
                             else -> shapes.extraSmall
                         }
-                    Spacer(
+                    Box(
                         Modifier
                             .weight(item.toFloat())
                             .height(height)
@@ -122,7 +165,31 @@ fun HorizontalStackedBar(
                                     )
                                 )
                             )
-                    )
+                            .clickable { showTooltip = true }
+                    ) {
+                        if (showTooltip) {
+                            Popup(
+                                alignment = Alignment.TopCenter,
+                                offset = IntOffset(0, -tooltipOffset),
+                                onDismissRequest = {
+                                    showTooltip = false
+                                }
+                            ) {
+                                Text(
+                                    text = labelFormatter(index, item, values.sum()),
+                                    style = typography.bodySmall,
+                                    color = colorScheme.inverseOnSurface,
+                                    modifier = Modifier
+                                        .padding(horizontal = 8.dp)
+                                        .background(
+                                            color = colorScheme.inverseSurface,
+                                            shape = shapes.extraSmall
+                                        )
+                                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

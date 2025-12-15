@@ -30,7 +30,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
@@ -199,7 +201,7 @@ fun FocusBreakRatioVisualization(
 }
 
 val HEATMAP_CELL_SIZE = 28.dp
-val HEATMAP_CELL_GAP = 4.dp
+val HEATMAP_CELL_GAP = 2.dp
 
 /**
  * A horizontally scrollable heatmap with week labels in the first column
@@ -224,6 +226,7 @@ fun HeatmapWithWeekLabels(
     maxValue: Long = remember { data.fastMaxBy { it?.sum() ?: 0 }?.sum() ?: 0 },
 ) {
     val locale = Locale.getDefault()
+    val shapes = shapes
 
     val first7 = remember(locale) {
         val monday = LocalDate.of(2024, 1, 1) // Monday
@@ -243,42 +246,66 @@ fun HeatmapWithWeekLabels(
         }
     } // Names of the 7 days of the week in the current locale
 
-    LazyHorizontalGrid(
-        rows = GridCells.Fixed(7),
-        modifier = modifier.height(size * 7 + gap * 6),
-        contentPadding = contentPadding,
-        verticalArrangement = Arrangement.spacedBy(gap),
-        horizontalArrangement = Arrangement.spacedBy(gap)
-    ) {
-        items(first7) {
-            Box(
-                contentAlignment = Alignment.CenterStart,
-                modifier = Modifier.size(size)
-            ) {
-                Text(
-                    text = it,
-                    style = typography.labelSmall
-                )
+    Row(modifier) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(gap),
+        ) {
+            first7.fastForEach {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.size(size)
+                ) {
+                    Text(
+                        text = it,
+                        style = typography.labelSmall
+                    )
+                }
             }
         }
-        items(data) {
-            if (it == null) {
-                Spacer(Modifier.size(size))
-            } else {
-                Spacer(
-                    Modifier
-                        .size(size)
-                        .background(
-                            colorScheme.primary.copy(
-                                remember(it) {
-                                    val sum = it.sum().toFloat()
-                                    if (sum > 0) 0.3f + (0.7f * sum / maxValue)
-                                    else 0f
-                                }
-                            ),
-                            shapes.small
+        LazyHorizontalGrid(
+            rows = GridCells.Fixed(7),
+            modifier = Modifier
+                .height(size * 7 + gap * 6)
+                .clip(shapes.small.copy(topEnd = CornerSize(0), bottomEnd = CornerSize(0))),
+            contentPadding = contentPadding,
+            verticalArrangement = Arrangement.spacedBy(gap),
+            horizontalArrangement = Arrangement.spacedBy(gap)
+        ) {
+            itemsIndexed(data) { index, it ->
+                if (it == null) {
+                    Spacer(Modifier.size(size))
+                } else {
+                    val sum = remember { it.sum().toFloat() }
+
+                    val shape = remember {
+                        val top = data.getOrNull(index - 1) != null && index % 7 != 0
+                        val end = data.getOrNull(index + 7) != null
+                        val bottom = data.getOrNull(index + 1) != null && index % 7 != 6
+                        val start = data.getOrNull(index - 7) != null
+
+                        RoundedCornerShape(
+                            topStart = if (top || start) shapes.extraSmall.topStart else shapes.small.topStart,
+                            topEnd = if (top || end) shapes.extraSmall.topEnd else shapes.small.topEnd,
+                            bottomStart = if (bottom || start) shapes.extraSmall.bottomStart else shapes.small.bottomStart,
+                            bottomEnd = if (bottom || end) shapes.extraSmall.bottomEnd else shapes.small.bottomEnd
                         )
-                )
+                    }
+
+                    if (sum > 0)
+                        Spacer(
+                            Modifier
+                                .size(size)
+                                .background(
+                                    colorScheme.primary.copy(0.33f + (0.67f * sum / maxValue)),
+                                    shape
+                                )
+                        )
+                    else Spacer(
+                        Modifier
+                            .size(size)
+                            .background(colorScheme.surfaceVariant, shape)
+                    )
+                }
             }
         }
     }

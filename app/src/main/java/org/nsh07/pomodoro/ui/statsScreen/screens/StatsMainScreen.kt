@@ -290,7 +290,7 @@ fun SharedTransitionScope.StatsMainScreen(
                             context.model.extraStore[lastWeekSummaryChartData.second][x.toInt()]
                         },
                         modifier = Modifier
-                            .sharedElement(
+                            .sharedBounds(
                                 sharedContentState = this@StatsMainScreen
                                     .rememberSharedContentState("last week chart"),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current
@@ -374,7 +374,7 @@ fun SharedTransitionScope.StatsMainScreen(
                             context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
                         },
                         modifier = Modifier
-                            .sharedElement(
+                            .sharedBounds(
                                 sharedContentState = this@StatsMainScreen
                                     .rememberSharedContentState("last month chart"),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current
@@ -457,7 +457,7 @@ fun SharedTransitionScope.StatsMainScreen(
                             context.model.extraStore[lastYearSummaryChartData.second][x.toInt()]
                         },
                         modifier = Modifier
-                            .sharedElement(
+                            .sharedBounds(
                                 sharedContentState = this@StatsMainScreen
                                     .rememberSharedContentState("last year chart"),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current

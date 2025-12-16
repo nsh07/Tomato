@@ -223,7 +223,7 @@ fun SharedTransitionScope.LastYearScreen(
                     },
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .sharedElement(
+                        .sharedBounds(
                             sharedContentState = this@LastYearScreen
                                 .rememberSharedContentState("last year chart"),
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current

@@ -23,6 +23,7 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.SharedTransitionDefaults
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.scaleToBounds
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -30,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.ContentScale
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -41,12 +43,14 @@ fun Modifier.sharedBoundsReveal(
     boundsTransform: BoundsTransform = SharedTransitionDefaults.BoundsTransform,
     enter: EnterTransition = fadeIn(),
     exit: ExitTransition = fadeOut(),
-    resizeMode: SharedTransitionScope.ResizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+    resizeMode: SharedTransitionScope.ResizeMode = scaleToBounds(
+        contentScale = ContentScale.Crop
+    ),
     clipShape: Shape = MaterialTheme.shapes.largeIncreased,
     renderInOverlayDuringTransition: Boolean = true,
-): Modifier {
+): Modifier =
     with(sharedTransitionScope) {
-        return this@sharedBoundsReveal
+        this@sharedBoundsReveal
             .sharedBounds(
                 sharedContentState = sharedContentState,
                 animatedVisibilityScope = animatedVisibilityScope,
@@ -57,7 +61,4 @@ fun Modifier.sharedBoundsReveal(
                 clipInOverlayDuringTransition = OverlayClip(clipShape),
                 renderInOverlayDuringTransition = renderInOverlayDuringTransition,
             )
-//            .skipToLookaheadSize()
-//            .skipToLookaheadPosition()
     }
-}

@@ -214,7 +214,7 @@ fun SharedTransitionScope.LastMonthScreen(
                         context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
                     },
                     modifier = Modifier
-                        .sharedElement(
+                        .sharedBounds(
                             sharedContentState = this@LastMonthScreen
                                 .rememberSharedContentState("last month chart"),
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current

@@ -215,7 +215,7 @@ fun SharedTransitionScope.LastWeekScreen(
                         context.model.extraStore[mainChartData.second][x.toInt()]
                     },
                     modifier = Modifier
-                        .sharedElement(
+                        .sharedBounds(
                             sharedContentState = this@LastWeekScreen
                                 .rememberSharedContentState("last week chart"),
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current

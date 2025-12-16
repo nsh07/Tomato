@@ -59,9 +59,11 @@ import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.fastMaxBy
 import androidx.compose.ui.window.Popup
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.utils.millisecondsToMinutes
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -271,45 +273,36 @@ val HEATMAP_CELL_SIZE = 28.dp
 val HEATMAP_CELL_GAP = 2.dp
 
 /**
- * A horizontally scrollable heatmap with week labels in the first column
+ * A horizontally scrollable heatmap with persistent week labels in the first column
  *
- * @param data Data to be represented in the heatmap in the form of [Pair]s of [LocalDate]s and
- * their corresponding focus durations as a list. A null value passed in the list can be used to
- * insert gaps in the heatmap, and can be used to, for example, delimit months by inserting an
- * empty week
+ * @param data Data to be represented in the heatmap as a [List] of [Stat] objects. A null value
+ * passed in the list can be used to insert gaps in the heatmap, and can be used to, for example,
+ * delimit months by inserting a null week. Note that it is assumed that the dates are continuous
+ * (without gaps) and start with a Monday.
  * @param modifier Modifier to be applied to the heatmap
- * @param maxValue Maximum total value of the items present in [data]. This value must correspond to
- * the sum of the list present in one of the elements on [data] for accurate representation.
- *
- * Note that it is assumed that the dates are continuous (without gaps) and start with a Monday
+ * @param maxValue Maximum total focus duration of the items present in [data]. This value must
+ * correspond to the total focus duration one of the elements in [data] for accurate representation.
  */
 @Composable
 fun HeatmapWithWeekLabels(
-    data: List<List<Long>?>,
+    data: List<Stat?>,
     modifier: Modifier = Modifier,
     size: Dp = HEATMAP_CELL_SIZE,
     gap: Dp = HEATMAP_CELL_GAP,
     contentPadding: PaddingValues = PaddingValues(),
-    maxValue: Long = remember { data.fastMaxBy { it?.sum() ?: 0 }?.sum() ?: 0 },
+    maxValue: Long = remember {
+        data.fastMaxBy { it?.totalFocusTime() ?: 0 }?.totalFocusTime() ?: 0
+    },
 ) {
     val locale = Locale.getDefault()
     val shapes = shapes
 
-    val first7 = remember(locale) {
-        val monday = LocalDate.of(2024, 1, 1) // Monday
-
-        buildList {
-            repeat(7) {
-                add(
-                    monday
-                        .plusDays(it.toLong())
-                        .dayOfWeek
-                        .getDisplayName(
-                            TextStyle.NARROW,
-                            locale
-                        )
-                )
-            }
+    val daysOfWeek = remember(locale) {
+        DayOfWeek.entries.map {
+            it.getDisplayName(
+                TextStyle.NARROW,
+                locale
+            )
         }
     } // Names of the 7 days of the week in the current locale
 
@@ -317,7 +310,7 @@ fun HeatmapWithWeekLabels(
         Column(
             verticalArrangement = Arrangement.spacedBy(gap),
         ) {
-            first7.fastForEach {
+            daysOfWeek.fastForEach {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.size(size)
@@ -338,11 +331,13 @@ fun HeatmapWithWeekLabels(
             verticalArrangement = Arrangement.spacedBy(gap),
             horizontalArrangement = Arrangement.spacedBy(gap)
         ) {
-            itemsIndexed(data) { index, it ->
+            itemsIndexed(
+                data,
+                key = { index, it -> it?.date?.toEpochDay() ?: index.toString() }) { index, it ->
                 if (it == null) {
                     Spacer(Modifier.size(size))
                 } else {
-                    val sum = remember { it.sum().toFloat() }
+                    val sum = remember { it.totalFocusTime().toFloat() }
 
                     val shape = remember {
                         val top = data.getOrNull(index - 1) != null && index % 7 != 0
@@ -411,12 +406,12 @@ fun HeatmapWithWeekLabelsPreview() {
         buildList {
             (0..93).forEach { index ->
                 val date = startDate.plusDays(index.toLong())
-                val focusDurations = listOf(index % 10L / 2) // Varying focus durations
+                val focusStat = Stat(date, index % 10L / 2, 0, 0, 0, 0) // Varying focus durations
 
                 if (date.month != date.minusDays(1).month && index > 0)
                     repeat(7) { add(null) }
 
-                add(focusDurations)
+                add(focusStat)
             }
         }
     }

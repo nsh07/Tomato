@@ -206,7 +206,7 @@ class StatsViewModel(
                 initialValue = lastYearSummary
             )
 
-    val lastYearFocusHeatmapData: StateFlow<List<List<Long>?>> =
+    val lastYearFocusHeatmapData: StateFlow<List<Stat?>> =
         lastYearStatsFlow
             .map { list ->
                 val list = list.reversed()
@@ -224,7 +224,7 @@ class StatsViewModel(
                             repeat(7) { add(null) } // Add a week gap if a new month starts
                         }
                         with(list[it]) {
-                            add(listOf(focusTimeQ1, focusTimeQ2, focusTimeQ3, focusTimeQ4))
+                            add(list[it])
                         }
                     }
                 }

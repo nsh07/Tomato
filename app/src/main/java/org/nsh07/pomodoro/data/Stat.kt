@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.data
 
+import androidx.compose.runtime.Immutable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.time.LocalDate
@@ -26,6 +27,7 @@ import java.time.LocalDate
  * durations for the 4 quarters of a day (00:00 - 12:00, 12:00 - 16:00, 16:00 - 20:00, 20:00 - 00:00)
  * separately for later analysis (e.g. for showing which parts of the day are most productive).
  */
+@Immutable
 @Entity(tableName = "stat")
 data class Stat(
     @PrimaryKey

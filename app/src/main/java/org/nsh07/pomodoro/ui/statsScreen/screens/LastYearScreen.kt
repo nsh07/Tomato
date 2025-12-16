@@ -69,6 +69,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakRatioVisualization
 import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakdownChart
@@ -88,7 +89,7 @@ import org.nsh07.pomodoro.utils.millisecondsToMinutes
 fun SharedTransitionScope.LastYearScreen(
     contentPadding: PaddingValues,
     focusBreakdownValues: Pair<List<Long>, Long>,
-    focusHeatmapData: List<List<Long>?>,
+    focusHeatmapData: List<Stat?>,
     heatmapMaxValue: Long,
     mainChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     onBack: () -> Unit,

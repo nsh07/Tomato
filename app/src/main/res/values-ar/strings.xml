@@ -52,7 +52,7 @@
     <string name="pause">إيقاف</string>
     <string name="play">أبدا</string>
     <string name="restart">إعادة التعيين</string>
-    <string name="skip_to_next">تخطي الي التالي</string>
+    <string name="skip_to_next">تخطي إلى التالي</string>
     <string name="up_next">القادم</string>
     <string name="timer">المؤقت</string>
     <string name="timer_progress">تقدم المؤقت</string>

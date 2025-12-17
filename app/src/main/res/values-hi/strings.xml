@@ -4,7 +4,7 @@
     <string name="stop">रोकें</string>
     <string name="focus">फोकस</string>
     <string name="alarm">अलार्म</string>
-    <string name="alarm_desc">टाइमर पूरा होने पर अलार्म बजाएँ</string>
+    <string name="alarm_desc">टाइमर पूरा होने पर अलार्म बजाएं</string>
     <string name="alarm_sound">अलार्म की आवाज</string>
     <string name="always_on_display">ऑलवेज ऑन डिस्प्ले</string>
     <string name="always_on_display_desc">एओडी मोड ऑन करने के लिए टाइमर देखते समय कहीं भी टैप करें</string>
@@ -45,7 +45,7 @@
     <string name="skip">स्किप करें</string>
     <string name="skip_to_next">अगले पर स्किप करें</string>
     <string name="start_next">अगला शुरू करें</string>
-    <string name="stats">आँकड़े</string>
+    <string name="stats">आंकड़े</string>
     <string name="stop_alarm">अलार्म बंद करें</string>
     <string name="stop_alarm_dialog_text">मौजूदा टाइमर पूरा हो गया है। अलार्म बंद करने के लिए कहीं भी टैप करें।</string>
     <string name="stop_alarm_question">अलार्म बंद करें?</string>

@@ -162,9 +162,6 @@ class SettingsViewModel(
         viewModelScope.launch(Dispatchers.IO) {
 
             serviceHelper.startService(TimerAction.ResetTimer)
-            focusFlowCollectionJob?.cancel()
-            shortBreakFlowCollectionJob?.cancel()
-            longBreakFlowCollectionJob?.cancel()
             statRepository.deleteAllStats()
             _settingsState.update {
                 it.copy(isShowingEraseDataDialog = false)
@@ -378,13 +375,13 @@ class SettingsViewModel(
                 )
 
         val alarmSoundUri = (
-            preferenceRepository.getStringPreference("alarm_sound")
-                ?: preferenceRepository.saveStringPreference(
-                    "alarm_sound",
-                    (Settings.System.DEFAULT_ALARM_ALERT_URI
-                        ?: Settings.System.DEFAULT_RINGTONE_URI).toString()
-                )
-            ).toUri()
+                preferenceRepository.getStringPreference("alarm_sound")
+                    ?: preferenceRepository.saveStringPreference(
+                        "alarm_sound",
+                        (Settings.System.DEFAULT_ALARM_ALERT_URI
+                            ?: Settings.System.DEFAULT_RINGTONE_URI).toString()
+                    )
+                ).toUri()
 
         val theme = preferenceRepository.getStringPreference("theme")
             ?: preferenceRepository.saveStringPreference("theme", settingsState.theme)

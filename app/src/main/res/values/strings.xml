@@ -113,6 +113,6 @@
     <string name="secure_aod_desc">Automatically lock your device after a timeout, while keeping the AOD visible</string>
     <string name="timer_reset_message">Timer reset</string>
     <string name="undo">Undo</string>
-    <string name="reset_data">Reset data</string>
-    <string name="reset_data_dialog_text">Are you sure you want to Reset all your data ?</string>
+    <string name="reset_data">Reset stats</string>
+    <string name="reset_data_dialog_text">Are you sure you want to reset all your stats?</string>
 </resources>

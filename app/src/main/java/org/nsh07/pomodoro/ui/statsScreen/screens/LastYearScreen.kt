@@ -290,7 +290,7 @@ fun SharedTransitionScope.LastYearScreen(
                             modifier = Modifier.rotate(iconRotation)
                         )
                         Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                        Text("Show chart")
+                        Text(stringResource(R.string.show_chart))
                     }
 
                     FocusBreakdownChart(
@@ -320,12 +320,12 @@ fun SharedTransitionScope.LastYearScreen(
 
             item {
                 Text(
-                    "Focus history heatmap",
+                    stringResource(R.string.focus_history_heatmap),
                     style = typography.headlineSmall,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
                 Text(
-                    "Focus history of the past year. Deeper colors represent a longer focus duration. Cells are grouped by month.",
+                    stringResource(R.string.focus_history_heatmap_desc),
                     style = typography.bodySmall,
                     color = colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 16.dp)
@@ -347,7 +347,7 @@ fun SharedTransitionScope.LastYearScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        "Less",
+                        stringResource(R.string.less),
                         color = colorScheme.onSurfaceVariant,
                         style = typography.labelMedium
                     )
@@ -374,7 +374,7 @@ fun SharedTransitionScope.LastYearScreen(
                     }
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        "More",
+                        stringResource(R.string.more),
                         color = colorScheme.onSurfaceVariant,
                         style = typography.labelMedium
                     )

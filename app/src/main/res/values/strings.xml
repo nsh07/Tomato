@@ -114,4 +114,8 @@
     <string name="focus_breakdown_desc">Average focus durations at different times of the day</string>
     <string name="focus_history">Focus history</string>
     <string name="focus_history_desc">Focus breakdown of each day of the past week (click on each cell for more info)</string>
+    <string name="less">Less</string>
+    <string name="show_chart">Show chart</string>
+    <string name="focus_history_heatmap">Focus history heatmap</string>
+    <string name="focus_history_heatmap_desc">Focus history of the past year. Deeper colors represent a longer duration. Cells are grouped by month. Tap on cells for more info.</string>
 </resources>

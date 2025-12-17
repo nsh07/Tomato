@@ -270,7 +270,7 @@ fun SharedTransitionScope.LastWeekScreen(
                             modifier = Modifier.rotate(iconRotation)
                         )
                         Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                        Text("Show chart")
+                        Text(stringResource(R.string.show_chart))
                     }
 
                     FocusBreakdownChart(
@@ -313,7 +313,7 @@ fun SharedTransitionScope.LastWeekScreen(
                         Spacer(Modifier.width(18.dp))
                         (1..9 step 2).forEach {
                             Text(
-                                (it * 10).toString() + "%\n|",
+                                "${it * 10}%\n|",
                                 style = typography.labelSmall,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.weight(1f)

@@ -271,7 +271,7 @@ fun FocusBreakRatioVisualization(
                     )
             )
             Text(
-                text = breakPercentage.roundToInt().toString() + '%',
+                text = "${breakPercentage.roundToInt()}%",
                 style = typography.bodyLarge,
                 color = colorScheme.tertiary,
                 modifier = Modifier.padding(start = 6.dp)
@@ -438,7 +438,10 @@ fun HeatmapWithWeekLabels(
                                         )
                                         Spacer(Modifier.height(4.dp))
                                         Text(
-                                            text = millisecondsToHoursMinutes(sum),
+                                            text = millisecondsToHoursMinutes(
+                                                sum,
+                                                stringResource(R.string.hours_and_minutes_format)
+                                            ),
                                             style = typography.bodyMedium
                                         )
                                         Spacer(Modifier.height(8.dp))

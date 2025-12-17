@@ -269,7 +269,7 @@ fun SharedTransitionScope.LastMonthScreen(
                             modifier = Modifier.rotate(iconRotation)
                         )
                         Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                        Text("Show chart")
+                        Text(stringResource(R.string.show_chart))
                     }
 
                     FocusBreakdownChart(
@@ -297,11 +297,11 @@ fun SharedTransitionScope.LastMonthScreen(
 
             item {
                 Text(
-                    "Focus history heatmap",
+                    "Focus history calendar",
                     style = typography.headlineSmall
                 )
                 Text(
-                    "Focus history of the past year. Brighter colors represent a longer focus duration.",
+                    "Focus history of the past month",
                     style = typography.bodySmall,
                     color = colorScheme.onSurfaceVariant
                 )

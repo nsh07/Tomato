@@ -32,8 +32,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
@@ -42,6 +45,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -65,9 +69,13 @@ import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.utils.millisecondsToMinutes
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.roundToInt
+
+val HORIZONTAL_STACKED_BAR_HEIGHT = 40.dp
 
 /**
  * A "Horizontal stacked bar" component, which can be considered as a horizontal stacked bar chart
@@ -123,9 +131,10 @@ fun HorizontalStackedBar(
             append(" (%.2f".format((value.toFloat() / total) * 100) + "%)")
         }
     },
-    height: Dp = 40.dp,
+    height: Dp = HORIZONTAL_STACKED_BAR_HEIGHT,
     gap: Dp = 2.dp
 ) {
+    val shapes = shapes
     val firstNonZeroIndex = remember(values) { values.indexOfFirst { it > 0L } }
     val lastNonZeroIndex = remember(values) { values.indexOfLast { it > 0L } }
 
@@ -139,7 +148,7 @@ fun HorizontalStackedBar(
             values.fastForEachIndexed { index, item ->
                 if (item > 0L) {
                     var showTooltip by remember { mutableStateOf(false) }
-                    val shape =
+                    val shape = remember(index, firstNonZeroIndex, lastNonZeroIndex) {
                         if (firstNonZeroIndex == lastNonZeroIndex) shapes.large
                         else when (index) {
                             firstNonZeroIndex -> shapes.large.copy(
@@ -154,6 +163,7 @@ fun HorizontalStackedBar(
 
                             else -> shapes.extraSmall
                         }
+                    }
                     Box(
                         Modifier
                             .weight(item.toFloat())
@@ -210,19 +220,34 @@ fun FocusBreakRatioVisualization(
     focusDuration: Long,
     breakDuration: Long,
     modifier: Modifier = Modifier,
-    height: Dp = 40.dp,
+    height: Dp = HORIZONTAL_STACKED_BAR_HEIGHT,
     gap: Dp = 2.dp
 ) {
     if (focusDuration + breakDuration > 0) {
+        val shapes = shapes
         val focusPercentage = ((focusDuration / (focusDuration.toFloat() + breakDuration)) * 100)
         val breakPercentage = 100 - focusPercentage
+
+        val focusShape = remember(breakDuration) {
+            if (breakDuration > 0) shapes.large.copy(
+                topEnd = shapes.extraSmall.topEnd,
+                bottomEnd = shapes.extraSmall.bottomEnd
+            ) else shapes.large
+        }
+        val breakShape = remember(focusDuration) {
+            if (focusDuration > 0) shapes.large.copy(
+                topStart = shapes.extraSmall.topStart,
+                bottomStart = shapes.extraSmall.bottomStart
+            ) else shapes.large
+        }
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(gap),
             modifier = modifier
         ) {
             Text(
-                text = focusPercentage.roundToInt().toString() + '%',
+                text = "${focusPercentage.roundToInt()}%",
                 style = typography.bodyLarge,
                 color = colorScheme.primary,
                 modifier = Modifier.padding(end = 6.dp)
@@ -233,10 +258,7 @@ fun FocusBreakRatioVisualization(
                     .height(height)
                     .background(
                         colorScheme.primary,
-                        if (breakDuration > 0) shapes.large.copy(
-                            topEnd = shapes.extraSmall.topEnd,
-                            bottomEnd = shapes.extraSmall.bottomEnd
-                        ) else shapes.large
+                        focusShape
                     )
             )
             if (breakDuration > 0) Spacer(
@@ -245,10 +267,7 @@ fun FocusBreakRatioVisualization(
                     .height(height)
                     .background(
                         colorScheme.tertiary,
-                        if (focusDuration > 0) shapes.large.copy(
-                            topStart = shapes.extraSmall.topStart,
-                            bottomStart = shapes.extraSmall.bottomStart
-                        ) else shapes.large
+                        breakShape
                     )
             )
             Text(
@@ -279,6 +298,9 @@ val HEATMAP_CELL_GAP = 2.dp
  * passed in the list can be used to insert gaps in the heatmap, and can be used to, for example,
  * delimit months by inserting a null week. Note that it is assumed that the dates are continuous
  * (without gaps) and start with a Monday.
+ * @param averageRankList A list of the ranks of the average focus duration for the 4 parts of a
+ * day. See the rankList parameter of [HorizontalStackedBar] for more info. This is used to show a
+ * [HorizontalStackedBar] in a tooltip when a cell is clicked
  * @param modifier Modifier to be applied to the heatmap
  * @param maxValue Maximum total focus duration of the items present in [data]. This value must
  * correspond to the total focus duration one of the elements in [data] for accurate representation.
@@ -286,6 +308,7 @@ val HEATMAP_CELL_GAP = 2.dp
 @Composable
 fun HeatmapWithWeekLabels(
     data: List<Stat?>,
+    averageRankList: List<Int>,
     modifier: Modifier = Modifier,
     size: Dp = HEATMAP_CELL_SIZE,
     gap: Dp = HEATMAP_CELL_GAP,
@@ -305,6 +328,20 @@ fun HeatmapWithWeekLabels(
             )
         }
     } // Names of the 7 days of the week in the current locale
+
+    val tooltipOffset = with(LocalDensity.current) {
+        (16 * 2 + // Vertical padding in the tooltip card
+                typography.titleSmall.lineHeight.value + 4 + // Heading
+                typography.bodyMedium.lineHeight.value + 8 + // Text
+                HORIZONTAL_STACKED_BAR_HEIGHT.value + // Obvious
+                8).dp.toPx().roundToInt()
+    }
+
+    val dateFormat = remember(locale) {
+        DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(locale)
+    }
+
+    var activeTooltipIndex by remember { mutableIntStateOf(-1) }
 
     Row(modifier) {
         Column(
@@ -332,14 +369,16 @@ fun HeatmapWithWeekLabels(
             horizontalArrangement = Arrangement.spacedBy(gap)
         ) {
             itemsIndexed(
-                data,
-                key = { index, it -> it?.date?.toEpochDay() ?: index.toString() }) { index, it ->
+                items = data,
+                key = { index, it -> it?.date?.toEpochDay() ?: index.toString() },
+                contentType = { _, it -> if (it == null) "spacer" else "cell" }
+            ) { index, it ->
                 if (it == null) {
                     Spacer(Modifier.size(size))
                 } else {
-                    val sum = remember { it.totalFocusTime().toFloat() }
+                    val sum = remember { it.totalFocusTime() }
 
-                    val shape = remember {
+                    val shape = remember(data, index) {
                         val top = data.getOrNull(index - 1) != null && index % 7 != 0
                         val end = data.getOrNull(index + 7) != null
                         val bottom = data.getOrNull(index + 1) != null && index % 7 != 6
@@ -353,20 +392,65 @@ fun HeatmapWithWeekLabels(
                         )
                     }
 
-                    if (sum > 0)
-                        Spacer(
-                            Modifier
-                                .size(size)
-                                .background(
-                                    colorScheme.primary.copy(0.4f + (0.6f * sum / maxValue)),
-                                    shape
-                                )
-                        )
-                    else Spacer(
+                    val isTooltipVisible = activeTooltipIndex == index
+
+                    Box(
                         Modifier
                             .size(size)
-                            .background(colorScheme.surfaceVariant, shape)
-                    )
+                            .background(
+                                if (sum > 0)
+                                    colorScheme.primary.copy(0.4f + (0.6f * sum / maxValue))
+                                else colorScheme.surfaceVariant,
+                                if (!isTooltipVisible) shape else CircleShape
+                            )
+                            .clickable { activeTooltipIndex = index }
+                    ) {
+                        if (isTooltipVisible) {
+                            val values = remember(it) {
+                                listOf(
+                                    it.focusTimeQ1,
+                                    it.focusTimeQ2,
+                                    it.focusTimeQ3,
+                                    it.focusTimeQ4
+                                )
+                            }
+
+                            Popup(
+                                alignment = Alignment.TopCenter,
+                                offset = IntOffset(0, -tooltipOffset),
+                                onDismissRequest = {
+                                    activeTooltipIndex = -1
+                                }
+                            ) {
+                                ElevatedCard(
+                                    colors = CardDefaults.elevatedCardColors(
+                                        containerColor = colorScheme.surfaceContainer,
+                                        contentColor = colorScheme.onSurfaceVariant
+                                    ),
+                                    shape = shapes.large,
+                                    elevation = CardDefaults.elevatedCardElevation(3.dp),
+                                    modifier = Modifier.padding(horizontal = 16.dp)
+                                ) {
+                                    Column(Modifier.padding(16.dp)) {
+                                        Text(
+                                            text = it.date.format(dateFormat),
+                                            style = typography.titleSmall
+                                        )
+                                        Spacer(Modifier.height(4.dp))
+                                        Text(
+                                            text = millisecondsToHoursMinutes(sum),
+                                            style = typography.bodyMedium
+                                        )
+                                        Spacer(Modifier.height(8.dp))
+                                        HorizontalStackedBar(
+                                            values = values,
+                                            rankList = averageRankList
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -389,7 +473,7 @@ fun HorizontalStackedBarPreview() {
                         values = it,
                         rankList = rankList,
                         modifier = Modifier.padding(16.dp),
-                        height = 40.dp,
+                        height = HORIZONTAL_STACKED_BAR_HEIGHT,
                         gap = 2.dp,
                     )
                 }
@@ -419,6 +503,7 @@ fun HeatmapWithWeekLabelsPreview() {
         Surface {
             HeatmapWithWeekLabels(
                 data = sampleData,
+                averageRankList = listOf(3, 0, 1, 2),
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 modifier = Modifier
                     .padding(vertical = 16.dp)

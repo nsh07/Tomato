@@ -334,6 +334,7 @@ fun SharedTransitionScope.LastYearScreen(
             item {
                 HeatmapWithWeekLabels(
                     data = focusHeatmapData,
+                    averageRankList = rankList,
                     maxValue = heatmapMaxValue,
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     modifier = Modifier.padding(start = 16.dp)

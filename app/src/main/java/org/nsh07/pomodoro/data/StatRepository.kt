@@ -33,6 +33,8 @@ interface StatRepository {
     fun getLastNDaysAverageFocusTimes(n: Int): Flow<StatFocusTime?>
 
     suspend fun getLastDate(): LocalDate?
+
+    suspend fun deleteAllStats()
 }
 
 /**
@@ -108,4 +110,8 @@ class AppStatRepository(
         statDao.getLastNDaysAvgFocusTimes(n)
 
     override suspend fun getLastDate(): LocalDate? = statDao.getLastDate()
+
+    override suspend fun deleteAllStats() =
+        statDao.clearAll()
+
 }

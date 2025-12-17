@@ -143,17 +143,21 @@ fun StatsScreen(
     val lastMonthSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
 
     LaunchedEffect(lastWeekAverageFocusTimes) {
-        lastWeekSummaryAnalysisModelProducer.runTransaction {
-            columnSeries {
-                series(lastWeekAverageFocusTimes)
+        if (lastWeekAverageFocusTimes.isNotEmpty()) {
+            lastWeekSummaryAnalysisModelProducer.runTransaction {
+                columnSeries {
+                    series(lastWeekAverageFocusTimes)
+                }
             }
         }
     }
 
     LaunchedEffect(lastMonthAverageFocusTimes) {
-        lastMonthSummaryAnalysisModelProducer.runTransaction {
-            columnSeries {
-                series(lastMonthAverageFocusTimes)
+        if (lastMonthAverageFocusTimes.isNotEmpty()) {
+            lastMonthSummaryAnalysisModelProducer.runTransaction {
+                columnSeries {
+                    series(lastMonthAverageFocusTimes)
+                }
             }
         }
     }

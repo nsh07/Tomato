@@ -300,11 +300,11 @@ fun SharedTransitionScope.LastMonthScreen(
 
             item {
                 Text(
-                    "Focus history calendar",
+                    stringResource(R.string.focus_history_calendar),
                     style = typography.headlineSmall
                 )
                 Text(
-                    "Focus history of the past month. Days of the previous month are marked with a different color. Click on a date for more info.",
+                    stringResource(R.string.focus_history_calendar_desc),
                     style = typography.bodySmall,
                     color = colorScheme.onSurfaceVariant
                 )

@@ -118,4 +118,6 @@
     <string name="show_chart">Show chart</string>
     <string name="focus_history_heatmap">Focus history heatmap</string>
     <string name="focus_history_heatmap_desc">Focus history of the past year. Deeper colors represent a longer duration. Cells are grouped by month. Tap on cells for more info.</string>
+    <string name="focus_history_calendar">Focus history calendar</string>
+    <string name="focus_history_calendar_desc">Focus history of the past month. Days of the previous month are marked with a different color. Click on a date for more info.</string>
 </resources>

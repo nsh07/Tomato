@@ -94,4 +94,6 @@
     <string name="secure_aod_desc">Belirli bir zamandan sonra cihazınızı otomatik olarak kilitler, AOD\'u halen görünür tutar</string>
     <string name="timer_reset_message">Zamanlayıcı sıfırlandı</string>
     <string name="undo">Geri al</string>
+    <string name="reset_data">İstatistikleri sıfırla</string>
+    <string name="reset_data_dialog_text">Tüm istatistiklerini sıfırlamak istediğinden eminmisin?</string>
 </resources>

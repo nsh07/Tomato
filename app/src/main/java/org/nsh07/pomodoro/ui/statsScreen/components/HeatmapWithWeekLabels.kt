@@ -47,26 +47,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastMaxBy
-import androidx.compose.ui.window.Popup
-import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
-import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.time.format.TextStyle
 import java.util.Locale
-import kotlin.math.roundToInt
 
 val HEATMAP_CELL_SIZE = 28.dp
 val HEATMAP_CELL_GAP = 2.dp
@@ -108,14 +101,6 @@ fun HeatmapWithWeekLabels(
             )
         }
     } // Names of the 7 days of the week in the current locale
-
-    val tooltipOffset = with(LocalDensity.current) {
-        (16 * 2 + // Vertical padding in the tooltip card
-                typography.titleSmall.lineHeight.value + 4 + // Heading
-                typography.bodyMedium.lineHeight.value + 8 + // Text
-                HORIZONTAL_STACKED_BAR_HEIGHT.value + // Obvious
-                8).dp.toPx().roundToInt()
-    }
 
     val dateFormat = remember(locale) {
         DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(locale)
@@ -186,51 +171,11 @@ fun HeatmapWithWeekLabels(
                             .clickable { activeTooltipIndex = index }
                     ) {
                         if (isTooltipVisible) {
-                            val values = remember(it) {
-                                listOf(
-                                    it.focusTimeQ1,
-                                    it.focusTimeQ2,
-                                    it.focusTimeQ3,
-                                    it.focusTimeQ4
-                                )
-                            }
-
-                            Popup(
-                                alignment = Alignment.TopCenter,
-                                offset = IntOffset(0, -tooltipOffset),
-                                onDismissRequest = {
-                                    activeTooltipIndex = -1
-                                }
-                            ) {
-                                Surface(
-                                    shape = shapes.large,
-                                    color = colorScheme.surfaceContainer,
-                                    contentColor = colorScheme.onSurfaceVariant,
-                                    shadowElevation = 3.dp,
-                                    tonalElevation = 3.dp,
-                                    modifier = Modifier.padding(horizontal = 16.dp)
-                                ) {
-                                    Column(Modifier.padding(16.dp)) {
-                                        Text(
-                                            text = it.date.format(dateFormat),
-                                            style = typography.titleSmall
-                                        )
-                                        Spacer(Modifier.height(4.dp))
-                                        Text(
-                                            text = millisecondsToHoursMinutes(
-                                                sum,
-                                                stringResource(R.string.hours_and_minutes_format)
-                                            ),
-                                            style = typography.bodyMedium
-                                        )
-                                        Spacer(Modifier.height(8.dp))
-                                        HorizontalStackedBar(
-                                            values = values,
-                                            rankList = averageRankList
-                                        )
-                                    }
-                                }
-                            }
+                            FocusBreakdownTooltip(
+                                it,
+                                averageRankList,
+                                dateFormat
+                            ) { activeTooltipIndex = -1 }
                         }
                     }
                 }

@@ -73,6 +73,7 @@ class StatsViewModel(
     private val yearDayFormatter = DateTimeFormatter.ofPattern("d MMM")
 
     private val lastWeekStatsFlow = statRepository.getLastNDaysStats(7)
+    private val lastMonthStatsFlow = statRepository.getLastNDaysStats(31)
     private val lastYearStatsFlow = statRepository.getLastNDaysStats(365)
 
     private val _lastYearMaxFocus = MutableStateFlow(Long.MAX_VALUE)
@@ -148,8 +149,8 @@ class StatsViewModel(
                 initialValue = Pair(listOf(0L, 0L, 0L, 0L), 0L)
             )
 
-    val lastMonthSummaryChartData: StateFlow<Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>> =
-        statRepository.getLastNDaysStats(30)
+    val lastMonthMainChartData: StateFlow<Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>> =
+        lastMonthStatsFlow
             .map { list ->
                 val reversed = list.reversed()
                 val keys = reversed.map { it.date.dayOfMonth.toString() }
@@ -167,7 +168,25 @@ class StatsViewModel(
                 initialValue = lastMonthSummary
             )
 
-    val lastMonthAverageFocusTimes: StateFlow<Pair<List<Long>, Long>> =
+    val lastMonthCalendarData: StateFlow<List<Stat?>> =
+        lastMonthStatsFlow
+            .map { list ->
+                val list = list.reversed()
+                buildList {
+                    repeat(list.first().date.dayOfWeek.value - DayOfWeek.MONDAY.value) {
+                        add(null) // Make sure that the data starts with a Monday
+                    }
+                    addAll(list)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
+            )
+
+    val lastMonthFocusBreakdownValues: StateFlow<Pair<List<Long>, Long>> =
         statRepository.getLastNDaysAverageFocusTimes(30)
             .map {
                 Pair(
@@ -223,9 +242,7 @@ class StatsViewModel(
                         if (it > 0 && list[it].date.month != list[it - 1].date.month) {
                             repeat(7) { add(null) } // Add a week gap if a new month starts
                         }
-                        with(list[it]) {
-                            add(list[it])
-                        }
+                        add(list[it])
                     }
                 }
             }

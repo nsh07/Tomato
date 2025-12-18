@@ -57,7 +57,28 @@ import kotlin.random.Random
 val CALENDAR_CELL_SIZE = 40.dp
 val CALENDAR_CELL_HORIZONTAL_GAP = 2.dp
 val CALENDAR_CELL_VERTICAL_GAP = 4.dp
+val CALENDAR_INTERNAL_PADDING = 20.dp
 
+/**
+ * A composable that displays a calendar visualizing focus history.
+ *
+ * This component shows a calendar grid (days grouped by week) that visualizes the user's focus
+ * history. Days with focus time are highlighted. It also distinguishes between days belonging
+ * to the last represented month and previous months. The cells are styled with rounded corners
+ * to indicate contiguous streaks of focus days.
+ *
+ * @param data Data to be represented in the heatmap as a [List] of [Stat] objects.. The list is
+ * expected to be ordered by date. It is assumed that this list starts with a Monday. Null entries
+ * are used for padding the start of the calendar, for example when the actual dates start with a
+ * day after Monday.
+ * @param averageRankList A list of the ranks of the average focus duration for the 4 parts of a
+ * day. See the rankList parameter of [HorizontalStackedBar] for more info. This is used to show a
+ * [HorizontalStackedBar] in a tooltip when a date is clicked
+ * @param modifier The [Modifier] to be applied to this composable.
+ * @param size The size of each calendar cell (width and height).
+ * @param horizontalGap The horizontal spacing between calendar cells.
+ * @param verticalGap The vertical spacing between calendar rows.
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FocusHistoryCalendar(
@@ -66,7 +87,8 @@ fun FocusHistoryCalendar(
     modifier: Modifier = Modifier,
     size: Dp = CALENDAR_CELL_SIZE,
     horizontalGap: Dp = CALENDAR_CELL_HORIZONTAL_GAP,
-    verticalGap: Dp = CALENDAR_CELL_VERTICAL_GAP
+    verticalGap: Dp = CALENDAR_CELL_VERTICAL_GAP,
+    internalPadding: Dp = CALENDAR_INTERNAL_PADDING
 ) {
     val locale = Locale.getDefault()
     val shapes = shapes
@@ -92,7 +114,7 @@ fun FocusHistoryCalendar(
             .fillMaxWidth()
             .background(colorScheme.surfaceContainer, shapes.largeIncreased)
             .horizontalScroll(rememberScrollState())
-            .padding(20.dp)
+            .padding(internalPadding)
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(horizontalGap)) {
             daysOfWeek.fastForEach {

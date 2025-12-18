@@ -65,9 +65,11 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakRatioVisualization
 import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakdownChart
+import org.nsh07.pomodoro.ui.statsScreen.components.FocusHistoryCalendar
 import org.nsh07.pomodoro.ui.statsScreen.components.HorizontalStackedBar
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeColumnChart
 import org.nsh07.pomodoro.ui.statsScreen.components.sharedBoundsReveal
@@ -80,8 +82,9 @@ import org.nsh07.pomodoro.utils.millisecondsToMinutes
 @Composable
 fun SharedTransitionScope.LastMonthScreen(
     contentPadding: PaddingValues,
-    lastMonthAnalysisValues: Pair<List<Long>, Long>,
-    lastMonthSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
+    focusBreakdownValues: Pair<List<Long>, Long>,
+    calendarData: List<Stat?>,
+    mainChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     hoursMinutesFormat: String,
@@ -95,18 +98,18 @@ fun SharedTransitionScope.LastMonthScreen(
     val lastMonthSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
     var breakdownChartExpanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(lastMonthAnalysisValues.first) {
+    LaunchedEffect(focusBreakdownValues.first) {
         lastMonthSummaryAnalysisModelProducer.runTransaction {
             columnSeries {
-                series(lastMonthAnalysisValues.first)
+                series(focusBreakdownValues.first)
             }
         }
     }
 
-    val rankList = remember(lastMonthAnalysisValues) {
+    val rankList = remember(focusBreakdownValues) {
         val sortedIndices =
-            lastMonthAnalysisValues.first.indices.sortedByDescending { lastMonthAnalysisValues.first[it] }
-        val ranks = MutableList(lastMonthAnalysisValues.first.size) { 0 }
+            focusBreakdownValues.first.indices.sortedByDescending { focusBreakdownValues.first[it] }
+        val ranks = MutableList(focusBreakdownValues.first.size) { 0 }
 
         sortedIndices.forEachIndexed { rank, originalIndex ->
             ranks[originalIndex] = rank
@@ -115,8 +118,8 @@ fun SharedTransitionScope.LastMonthScreen(
         ranks
     }
 
-    val focusDuration = remember(lastMonthAnalysisValues) {
-        lastMonthAnalysisValues.first.sum()
+    val focusDuration = remember(focusBreakdownValues) {
+        focusBreakdownValues.first.sum()
     }
 
     Scaffold(
@@ -203,7 +206,7 @@ fun SharedTransitionScope.LastMonthScreen(
             }
             item {
                 TimeColumnChart(
-                    modelProducer = lastMonthSummaryChartData.first,
+                    modelProducer = mainChartData.first,
                     hoursFormat = hoursFormat,
                     hoursMinutesFormat = hoursMinutesFormat,
                     minutesFormat = minutesFormat,
@@ -211,7 +214,7 @@ fun SharedTransitionScope.LastMonthScreen(
                     markerTypeface = markerTypeface,
                     thickness = 8.dp,
                     xValueFormatter = CartesianValueFormatter { context, x, _ ->
-                        context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
+                        context.model.extraStore[mainChartData.second][x.toInt()]
                     },
                     modifier = Modifier
                         .sharedBounds(
@@ -236,10 +239,10 @@ fun SharedTransitionScope.LastMonthScreen(
                 )
             }
 
-            item { HorizontalStackedBar(lastMonthAnalysisValues.first, rankList = rankList) }
+            item { HorizontalStackedBar(focusBreakdownValues.first, rankList = rankList) }
             item {
                 Row {
-                    lastMonthAnalysisValues.first.fastForEach {
+                    focusBreakdownValues.first.fastForEach {
                         Text(
                             if (it <= 60 * 60 * 1000)
                                 millisecondsToMinutes(it, minutesFormat)
@@ -289,7 +292,7 @@ fun SharedTransitionScope.LastMonthScreen(
             item {
                 FocusBreakRatioVisualization(
                     focusDuration = focusDuration,
-                    breakDuration = lastMonthAnalysisValues.second
+                    breakDuration = focusBreakdownValues.second
                 )
             }
 
@@ -301,9 +304,15 @@ fun SharedTransitionScope.LastMonthScreen(
                     style = typography.headlineSmall
                 )
                 Text(
-                    "Focus history of the past month",
+                    "Focus history of the past month. Days of the previous month are marked with a different color. Click on a date for more info.",
                     style = typography.bodySmall,
                     color = colorScheme.onSurfaceVariant
+                )
+            }
+            item {
+                FocusHistoryCalendar(
+                    data = calendarData,
+                    averageRankList = rankList
                 )
             }
         }

@@ -62,8 +62,9 @@ fun StatsScreenRoot(
     val lastWeekFocusHistoryValues by viewModel.lastWeekFocusHistoryValues.collectAsStateWithLifecycle()
     val lastWeekFocusBreakdownValues by viewModel.lastWeekFocusBreakdownValues.collectAsStateWithLifecycle()
 
-    val lastMonthSummaryChartData by viewModel.lastMonthSummaryChartData.collectAsStateWithLifecycle()
-    val lastMonthAnalysisValues by viewModel.lastMonthAverageFocusTimes.collectAsStateWithLifecycle()
+    val lastMonthMainChartData by viewModel.lastMonthMainChartData.collectAsStateWithLifecycle()
+    val lastMonthCalendarData by viewModel.lastMonthCalendarData.collectAsStateWithLifecycle()
+    val lastMonthFocusBreakdownValues by viewModel.lastMonthFocusBreakdownValues.collectAsStateWithLifecycle()
 
     val lastYearMainChartData by viewModel.lastYearMainChartData.collectAsStateWithLifecycle()
     val lastYearFocusHeatmapData by viewModel.lastYearFocusHeatmapData.collectAsStateWithLifecycle()
@@ -98,11 +99,11 @@ fun StatsScreenRoot(
                     StatsMainScreen(
                         contentPadding = contentPadding,
                         lastWeekSummaryChartData = lastWeekMainChartData,
-                        lastMonthSummaryChartData = lastMonthSummaryChartData,
+                        lastMonthSummaryChartData = lastMonthMainChartData,
                         lastYearSummaryChartData = lastYearMainChartData,
                         todayStat = todayStat,
                         lastWeekAverageFocusTimes = lastWeekFocusBreakdownValues.first,
-                        lastMonthAverageFocusTimes = lastMonthAnalysisValues.first,
+                        lastMonthAverageFocusTimes = lastMonthFocusBreakdownValues.first,
                         lastYearAverageFocusTimes = lastYearFocusBreakdownValues.first,
                         generateSampleData = viewModel::generateSampleData,
                         hoursFormat = hoursFormat,
@@ -136,8 +137,9 @@ fun StatsScreenRoot(
                 entry<Screen.Stats.LastMonth> {
                     LastMonthScreen(
                         contentPadding = contentPadding,
-                        lastMonthAnalysisValues = lastMonthAnalysisValues,
-                        lastMonthSummaryChartData = lastMonthSummaryChartData,
+                        focusBreakdownValues = lastMonthFocusBreakdownValues,
+                        calendarData = lastMonthCalendarData,
+                        mainChartData = lastMonthMainChartData,
                         onBack = backStack::removeLastOrNull,
                         hoursMinutesFormat = hoursMinutesFormat,
                         hoursFormat = hoursFormat,

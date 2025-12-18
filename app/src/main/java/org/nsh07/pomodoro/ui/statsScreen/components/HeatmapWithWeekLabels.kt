@@ -34,8 +34,6 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
@@ -204,13 +202,12 @@ fun HeatmapWithWeekLabels(
                                     activeTooltipIndex = -1
                                 }
                             ) {
-                                ElevatedCard(
-                                    colors = CardDefaults.elevatedCardColors(
-                                        containerColor = colorScheme.surfaceContainer,
-                                        contentColor = colorScheme.onSurfaceVariant
-                                    ),
+                                Surface(
                                     shape = shapes.large,
-                                    elevation = CardDefaults.elevatedCardElevation(3.dp),
+                                    color = colorScheme.surfaceContainer,
+                                    contentColor = colorScheme.onSurfaceVariant,
+                                    shadowElevation = 3.dp,
+                                    tonalElevation = 3.dp,
                                     modifier = Modifier.padding(horizontal = 16.dp)
                                 ) {
                                     Column(Modifier.padding(16.dp)) {

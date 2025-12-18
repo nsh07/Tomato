@@ -18,17 +18,20 @@
 package org.nsh07.pomodoro.ui.statsScreen.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -37,21 +40,34 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
+import androidx.compose.ui.window.Popup
+import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 val CALENDAR_CELL_SIZE = 40.dp
@@ -103,9 +119,22 @@ fun FocusHistoryCalendar(
         }
     } // Names of the 7 days of the week in the current locale
 
+    val dateFormat = remember(locale) {
+        DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(locale)
+    }
+
+    val tooltipOffset = with(LocalDensity.current) {
+        (16 * 2 + // Vertical padding in the tooltip card
+                typography.titleSmall.lineHeight.value + 4 + // Heading
+                typography.bodyMedium.lineHeight.value + 8 + // Text
+                HORIZONTAL_STACKED_BAR_HEIGHT.value + // Obvious
+                8).dp.toPx().roundToInt()
+    }
+
     val groupedData = remember(data) {
         data.chunked(7)
     }
+    var selectedItemIndex by remember { mutableIntStateOf(-1) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -120,6 +149,8 @@ fun FocusHistoryCalendar(
             daysOfWeek.fastForEach {
                 Text(
                     text = it,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center,
                     style = typography.bodySmall,
                     color = colorScheme.outline,
@@ -136,18 +167,18 @@ fun FocusHistoryCalendar(
                     modifier = Modifier.height(size)
                 ) {
                     items.fastForEachIndexed { index, it ->
-                        val background = remember(it) { (it?.totalFocusTime() ?: 0) > 0 }
+                        val sum = remember(it) { it?.totalFocusTime() ?: 0L }
+                        val background = sum > 0
                         val currentMonth =
                             remember(it, last) { it?.date?.month == last?.date?.month }
+                        val flatIndex = baseIndex * 7 + index // Calculate flat index
 
                         val shape = remember(data, background) {
                             if (background) {
                                 val next =
-                                    (data.getOrNull(baseIndex * 7 + index + 1)?.totalFocusTime()
-                                        ?: 0) > 0
+                                    (data.getOrNull(flatIndex + 1)?.totalFocusTime() ?: 0) > 0
                                 val previous =
-                                    (data.getOrNull(baseIndex * 7 + index - 1)?.totalFocusTime()
-                                        ?: 0) > 0
+                                    (data.getOrNull(flatIndex - 1)?.totalFocusTime() ?: 0) > 0
 
                                 RoundedCornerShape(
                                     topStart = if (previous) shapes.extraSmall.topStart else shapes.large.topStart,
@@ -158,6 +189,8 @@ fun FocusHistoryCalendar(
                             } else RoundedCornerShape(0)
                         }
 
+                        val isTooltipVisible = it != null && selectedItemIndex == flatIndex
+
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
@@ -166,10 +199,13 @@ fun FocusHistoryCalendar(
                                     if (background) Modifier.background(
                                         if (currentMonth) colorScheme.primaryContainer
                                         else colorScheme.secondaryContainer,
-                                        shape
+                                        if (isTooltipVisible) CircleShape else shape
                                     )
                                     else Modifier
                                 )
+                                .clickable(enabled = it != null) {
+                                    selectedItemIndex = flatIndex
+                                }
                         ) {
                             Text(
                                 text = it?.date?.dayOfMonth?.toString() ?: "",
@@ -182,6 +218,51 @@ fun FocusHistoryCalendar(
                                         else colorScheme.outline
                                     }
                             )
+
+                            if (isTooltipVisible) {
+                                val values = remember(it) {
+                                    listOf(
+                                        it.focusTimeQ1,
+                                        it.focusTimeQ2,
+                                        it.focusTimeQ3,
+                                        it.focusTimeQ4
+                                    )
+                                }
+                                Popup(
+                                    alignment = Alignment.TopCenter,
+                                    offset = IntOffset(0, -tooltipOffset),
+                                    onDismissRequest = { selectedItemIndex = -1 }
+                                ) {
+                                    Surface(
+                                        shape = shapes.large,
+                                        color = colorScheme.surfaceContainer,
+                                        contentColor = colorScheme.onSurfaceVariant,
+                                        shadowElevation = 3.dp,
+                                        tonalElevation = 3.dp,
+                                        modifier = Modifier.padding(horizontal = 16.dp)
+                                    ) {
+                                        Column(Modifier.padding(16.dp)) {
+                                            Text(
+                                                text = it.date.format(dateFormat),
+                                                style = typography.titleSmall
+                                            )
+                                            Spacer(Modifier.height(4.dp))
+                                            Text(
+                                                text = millisecondsToHoursMinutes(
+                                                    sum,
+                                                    stringResource(R.string.hours_and_minutes_format)
+                                                ),
+                                                style = typography.bodyMedium
+                                            )
+                                            Spacer(Modifier.height(8.dp))
+                                            HorizontalStackedBar(
+                                                values = values,
+                                                rankList = averageRankList
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

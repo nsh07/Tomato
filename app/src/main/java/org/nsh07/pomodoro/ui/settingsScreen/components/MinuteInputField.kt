@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -29,6 +30,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
@@ -49,13 +51,14 @@ fun MinuteInputField(
     enabled: Boolean,
     shape: Shape,
     modifier: Modifier = Modifier,
+    inputTransformation: MinutesInputTransformation = MinutesInputTransformation2Digits,
     imeAction: ImeAction = ImeAction.Next
 ) {
     BasicTextField(
         state = state,
         enabled = enabled,
         lineLimits = TextFieldLineLimits.SingleLine,
-        inputTransformation = MinutesInputTransformation,
+        inputTransformation = inputTransformation,
 //        outputTransformation = MinutesOutputTransformation,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.NumberPassword,
@@ -70,13 +73,18 @@ fun MinuteInputField(
         ),
         cursorBrush = SolidColor(colorScheme.onSurface),
         decorator = { innerTextField ->
+            val text = state.text
+            val width by animateDpAsState(
+                if (text.length < 3) 112.dp else 140.dp,
+                motionScheme.defaultSpatialSpec()
+            )
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = modifier
-                    .size(112.dp, 100.dp)
+                    .size(width, 100.dp)
                     .background(
                         animateColorAsState(
-                            if (state.text.isNotEmpty())
+                            if (text.isNotEmpty())
                                 listItemColors.containerColor
                             else colorScheme.errorContainer,
                             motionScheme.defaultEffectsSpec()

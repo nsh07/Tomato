@@ -87,6 +87,7 @@ import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputField
+import org.nsh07.pomodoro.ui.settingsScreen.components.MinutesInputTransformation3Digits
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
@@ -265,6 +266,7 @@ fun TimerSettings(
                                 topEnd = topListItemShape.bottomStart,
                                 bottomEnd = topListItemShape.bottomStart
                             ),
+                            inputTransformation = MinutesInputTransformation3Digits,
                             imeAction = ImeAction.Next
                         )
                     }

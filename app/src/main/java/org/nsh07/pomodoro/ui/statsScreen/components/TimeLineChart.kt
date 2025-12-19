@@ -15,7 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.ui.statsScreen
+package org.nsh07.pomodoro.ui.statsScreen.components
 
 import android.graphics.Typeface
 import androidx.compose.animation.core.AnimationSpec
@@ -29,13 +29,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
@@ -52,12 +55,15 @@ import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
-import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineFill.Companion.single
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.Insets
+import com.patrykandpatrick.vico.core.common.component.ShapeComponent
+import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
@@ -67,7 +73,7 @@ import org.nsh07.pomodoro.utils.millisecondsToMinutes
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun TimeColumnChart(
+fun TimeLineChart(
     modelProducer: CartesianChartModelProducer,
     hoursFormat: String,
     hoursMinutesFormat: String,
@@ -75,8 +81,8 @@ fun TimeColumnChart(
     modifier: Modifier = Modifier,
     axisTypeface: Typeface = Typeface.DEFAULT,
     markerTypeface: Typeface = Typeface.DEFAULT,
-    thickness: Dp = 40.dp,
-    columnCollectionSpacing: Dp = 4.dp,
+    thickness: Float = 2f,
+    pointSpacing: Dp = 12.dp,
     xValueFormatter: CartesianValueFormatter = CartesianValueFormatter.Default,
     yValueFormatter: CartesianValueFormatter = CartesianValueFormatter { _, value, _ ->
         if (value >= 60 * 60 * 1000) {
@@ -87,8 +93,8 @@ fun TimeColumnChart(
     },
     markerValueFormatter: DefaultCartesianMarker.ValueFormatter = DefaultCartesianMarker.ValueFormatter { _, targets ->
         val first = targets.firstOrNull()
-        val value = if (first is ColumnCartesianLayerMarkerTarget) {
-            first.columns.sumOf { it.entry.y.toLong() }
+        val value = if (first is LineCartesianLayerMarkerTarget) {
+            first.points.sumOf { it.entry.y.toLong() }
         } else 0L
 
         if (value >= 60 * 60 * 1000) {
@@ -103,17 +109,27 @@ fun TimeColumnChart(
         CartesianChartHost(
             chart =
                 rememberCartesianChart(
-                    rememberColumnCartesianLayer(
-                        ColumnCartesianLayer.ColumnProvider.series(
-                            vicoTheme.columnCartesianLayerColors.map { color ->
-                                rememberLineComponent(
-                                    fill = fill(color),
-                                    thickness = thickness,
-                                    shape = CorneredShape.Pill
+                    rememberLineCartesianLayer(
+                        LineCartesianLayer.LineProvider.series(
+                            vicoTheme.lineCartesianLayerColors.map { color ->
+                                LineCartesianLayer.rememberLine(
+                                    fill = single(fill(color)),
+                                    stroke = LineCartesianLayer.LineStroke.Continuous(
+                                        thicknessDp = thickness,
+                                    ),
+                                    areaFill = LineCartesianLayer.AreaFill.single(
+                                        fill(
+                                            ShaderProvider.verticalGradient(
+                                                color.toArgb(),
+                                                Color.Transparent.toArgb()
+                                            )
+                                        )
+                                    ),
+                                    pointConnector = LineCartesianLayer.PointConnector.cubic(0.5f)
                                 )
                             }
                         ),
-                        columnCollectionSpacing = columnCollectionSpacing
+                        pointSpacing = pointSpacing
                     ),
                     startAxis = VerticalAxis.rememberStart(
                         line = rememberLineComponent(Fill.Transparent),
@@ -143,6 +159,13 @@ fun TimeColumnChart(
                             margins = Insets(bottomDp = 2f)
                         ),
                         valueFormatter = markerValueFormatter,
+                        indicator = {
+                            ShapeComponent(
+                                fill = fill(it),
+                                shape = CorneredShape.Pill,
+                                margins = Insets(3f)
+                            )
+                        },
                         guideline = rememberLineComponent(
                             fill = fill(colorScheme.primary),
                             shape = DashedShape(
@@ -156,36 +179,36 @@ fun TimeColumnChart(
                 ),
             modelProducer = modelProducer,
             zoomState = rememberVicoZoomState(
-                zoomEnabled = false,
+                zoomEnabled = true,
                 initialZoom = Zoom.fixed(),
                 minZoom = Zoom.min(Zoom.Content, Zoom.fixed())
             ),
             animationSpec = animationSpec,
             animateIn = false,
-            modifier = modifier.height(226.dp),
+            modifier = modifier.height(224.dp),
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview
 @Composable
-private fun TimeColumnChartPreview() {
+private fun TimeLineChartPreview() {
     val modelProducer = remember { CartesianChartModelProducer() }
     val values = mutableListOf<Int>()
     LaunchedEffect(Unit) {
-        repeat(30) {
+        repeat(365) {
             values.add((0..120).random() * 60 * 1000)
         }
         modelProducer.runTransaction {
-            columnSeries {
+            lineSeries {
                 series(values)
             }
         }
     }
     TomatoTheme {
         Surface {
-            TimeColumnChart(
-                thickness = 8.dp,
+            TimeLineChart(
                 modelProducer = modelProducer,
                 hoursFormat = "%dh",
                 hoursMinutesFormat = "%dh %dm",

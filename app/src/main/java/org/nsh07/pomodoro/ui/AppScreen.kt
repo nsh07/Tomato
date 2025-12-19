@@ -297,7 +297,7 @@ fun AppScreen(
                         )
                     }
 
-                    entry<Screen.Stats> {
+                    entry<Screen.Stats.Main> {
                         StatsScreenRoot(contentPadding = contentPadding)
                     }
                 }

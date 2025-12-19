@@ -27,7 +27,7 @@ val mainScreens = listOf(
         R.string.timer
     ),
     NavItem(
-        Screen.Stats,
+        Screen.Stats.Main,
         R.drawable.monitoring,
         R.drawable.monitoring_filled,
         R.string.stats

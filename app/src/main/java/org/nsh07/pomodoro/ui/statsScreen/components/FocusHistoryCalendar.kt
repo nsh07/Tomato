@@ -125,7 +125,7 @@ fun FocusHistoryCalendar(
         verticalArrangement = Arrangement.spacedBy(verticalGap),
         modifier = modifier
             .fillMaxWidth()
-            .background(colorScheme.surfaceContainer, shapes.largeIncreased)
+            .background(colorScheme.surfaceContainerLow, shapes.largeIncreased)
             .horizontalScroll(rememberScrollState())
             .padding(internalPadding)
     ) {
@@ -153,11 +153,12 @@ fun FocusHistoryCalendar(
                     items.fastForEachIndexed { index, it ->
                         val sum = remember(it) { it?.totalFocusTime() ?: 0L }
                         val background = sum > 0
+
                         val currentMonth =
                             remember(it, last) { it?.date?.month == last?.date?.month }
-                        val flatIndex = baseIndex * 7 + index // Calculate flat index
+                        val flatIndex = baseIndex * 7 + index
 
-                        val shape = remember(data, background) {
+                        val shape = remember(data) {
                             if (background) {
                                 val next =
                                     (data.getOrNull(flatIndex + 1)?.totalFocusTime() ?: 0) > 0

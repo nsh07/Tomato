@@ -29,8 +29,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -83,12 +85,13 @@ fun HeatmapWithWeekLabels(
     data: List<Stat?>,
     averageRankList: List<Int>,
     modifier: Modifier = Modifier,
+    state: LazyGridState = rememberLazyGridState(Int.MAX_VALUE),
     size: Dp = HEATMAP_CELL_SIZE,
     gap: Dp = HEATMAP_CELL_GAP,
     contentPadding: PaddingValues = PaddingValues(),
     maxValue: Long = remember {
         data.fastMaxBy { it?.totalFocusTime() ?: 0 }?.totalFocusTime() ?: 0
-    },
+    }
 ) {
     val locale = Locale.getDefault()
     val shapes = shapes
@@ -125,6 +128,7 @@ fun HeatmapWithWeekLabels(
             }
         }
         LazyHorizontalGrid(
+            state = state,
             rows = GridCells.Fixed(7),
             modifier = Modifier
                 .height(size * 7 + gap * 6)

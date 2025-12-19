@@ -45,7 +45,7 @@
     <string name="last_month">Geçen ay</string>
     <string name="monthly_productivity_analysis">Aylık verimlilik analizi</string>
     <string name="stop_alarm_question">Alarmı Durdur?</string>
-    <string name="stop_alarm_dialog_text">Mevcut zamanlayıcı oturumu tamamlandı. Alarmı durdurmak için herhangi bir yere dokunun.</string>
+    <string name="stop_alarm_dialog_text">Mevcut zamanlayıcı tamamlandı. Alarmı durdurmak için herhangi bir yere dokunun.</string>
     <string name="timer_session_count">%1$d / %2$d</string>
     <string name="more">Daha fazla</string>
     <string name="pause">Duraklat</string>
@@ -86,6 +86,14 @@
     <string name="license">Lisans</string>
     <string name="media_volume_for_alarm">Kulaklık modu</string>
     <string name="media_volume_for_alarm_desc">Sadece kulaklıktan oynatır. Eğer kulaklık devre dışı ise alarmı direkt medya sesi düzeyinde hoparlörden oynatır.</string>
-    <string name="session_only_progress">Yalnızca bu oturumun ilerlemesi</string>
-    <string name="session_only_progress_desc">Bildirimlerde tüm ilerlemeyi göstermektense yalnızca bu oturuma ait ilerlemeyi gösterir.</string>
+    <string name="session_only_progress">Basitleştirilmiş ilerleme</string>
+    <string name="session_only_progress_desc">Bildirimlerde tüm oturumu göstermektense yalnızca bu zamanlayıcıya ait ilerlemeyi gösterir.</string>
+    <string name="auto_start_next_timer_desc">Alarmı durdurduktan hemen sonra bir sonraki zamanlayıcıyı başlat</string>
+    <string name="auto_start_next_timer">Sonraki zamanlayıcıyı otomatik başlat</string>
+    <string name="secure_aod">Güvenli AOD</string>
+    <string name="secure_aod_desc">Belirli bir zamandan sonra cihazınızı otomatik olarak kilitler, AOD\'u halen görünür tutar</string>
+    <string name="timer_reset_message">Zamanlayıcı sıfırlandı</string>
+    <string name="undo">Geri al</string>
+    <string name="reset_data">İstatistikleri sıfırla</string>
+    <string name="reset_data_dialog_text">Tüm istatistiklerini sıfırlamak istediğinden eminmisin?</string>
 </resources>

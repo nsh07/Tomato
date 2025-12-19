@@ -46,7 +46,7 @@
     <string name="last_month">先月</string>
     <string name="monthly_productivity_analysis">先月の生産性の分析</string>
     <string name="stop_alarm_question">アラームを停止しますか?</string>
-    <string name="stop_alarm_dialog_text">現在のタイマーセッションは終了しました。アラームを停止するには、任意の場所をタップしてください。</string>
+    <string name="stop_alarm_dialog_text">現在のタイマーは終了しました。アラームを停止するには、任意の場所をタップしてください。</string>
     <string name="timer_session_count">%1$d / %2$d</string>
     <string name="more">追加</string>
     <string name="pause">一時停止</string>
@@ -85,4 +85,12 @@
     <string name="license">ライセンス</string>
     <string name="media_volume_for_alarm">ヘッドホンモード</string>
     <string name="media_volume_for_alarm_desc">ヘッドホンで再生します。ヘッドホンが接続されていない場合はスピーカーからメディアボリュームで再生されます。</string>
+    <string name="session_only_progress">簡素な進行状況</string>
+    <string name="session_only_progress_desc">通知にセッション全体ではなく、現在のタイマーのみの進行状況を表示します</string>
+    <string name="auto_start_next_timer_desc">アラームを停止した後に次のアラームを開始します</string>
+    <string name="auto_start_next_timer">次のタイマーを自動的に開始</string>
+    <string name="secure_aod">安全な常時表示ディスプレイ</string>
+    <string name="secure_aod_desc">常時表示ディスプレイは見られるように維持したまま、タイムアウト後に自動的に端末をロックします</string>
+    <string name="undo">戻す</string>
+    <string name="timer_reset_message">タイマーはリセットされました</string>
 </resources>

@@ -46,7 +46,7 @@
     <string name="last_month">上月</string>
     <string name="monthly_productivity_analysis">月生产力分析</string>
     <string name="stop_alarm_question">要停止响铃吗?</string>
-    <string name="stop_alarm_dialog_text">当前计时小节已完成. 轻触任何位置来停止响铃.</string>
+    <string name="stop_alarm_dialog_text">当前计时已完成. 轻触任何位置来停止响铃.</string>
     <string name="more">更多</string>
     <string name="pause">暂停</string>
     <string name="play">开始</string>
@@ -86,6 +86,6 @@
     <string name="license">许可证</string>
     <string name="media_volume_for_alarm">耳机模式</string>
     <string name="media_volume_for_alarm_desc">仅在插入耳机时播放。如果耳机连接断开，闹铃以媒体音量通过扬声器播放。</string>
-    <string name="session_only_progress">仅会话进度</string>
-    <string name="session_only_progress_desc">在通知中只显示当前会话的进度，而非完整序列的进度。</string>
+    <string name="session_only_progress">简化进度</string>
+    <string name="session_only_progress_desc">在通知中只显示当前计时器的进度，而非完整会话的进度。</string>
 </resources>

@@ -46,13 +46,13 @@
     <string name="last_month">الشهر الماضي</string>
     <string name="monthly_productivity_analysis">تحليل الإنتاجية الشهري</string>
     <string name="stop_alarm_question">إيقاف المنبه؟</string>
-    <string name="stop_alarm_dialog_text">مؤقت الجلسة الحالية انتهي. اضغط في أي مكان لإيقاف المنبه.</string>
+    <string name="stop_alarm_dialog_text">المؤقت الحالي انتهي. اضغط في أي مكان لإيقاف المنبه.</string>
     <string name="timer_session_count">%1$d من %2$d</string>
     <string name="more">أكثر</string>
     <string name="pause">إيقاف</string>
     <string name="play">أبدا</string>
     <string name="restart">إعادة التعيين</string>
-    <string name="skip_to_next">تخطي الي التالي</string>
+    <string name="skip_to_next">تخطي إلى التالي</string>
     <string name="up_next">القادم</string>
     <string name="timer">المؤقت</string>
     <string name="timer_progress">تقدم المؤقت</string>
@@ -78,7 +78,7 @@
     <string name="hours_and_minutes_format">%1$dس %2$dد</string>
     <string name="hours_format">%1$dس</string>
     <string name="minutes_format">%1$dد</string>
-    <string name="about">عن</string>
+    <string name="about">عن البرنامج</string>
     <string name="help_with_translation_desc">ترجم Tomato إلى لغتك</string>
     <string name="rate_on_google_play_desc">هل أعجبك التطبيق؟ اكتب مراجعة!</string>
     <string name="bmc_desc">ادعمني بتبرع صغير</string>
@@ -86,12 +86,12 @@
     <string name="license">الترخيص</string>
     <string name="media_volume_for_alarm">وضع سماعات الرأس</string>
     <string name="media_volume_for_alarm_desc">يعمل فقط على سماعات الرأس. إذا كانت سماعات الرأس مفصولة، يصدر المنبه عبر سماعة الهاتف عند مستوى صوت الوسائط.</string>
-    <string name="session_only_progress">التقدم في الجلسة فقط</string>
-    <string name="session_only_progress_desc">عرض التقدم للجلسة الحالية بدلا من سلسلة الجلسات كلها</string>
+    <string name="session_only_progress">تقدم مبسط</string>
+    <string name="session_only_progress_desc">عرض التقدم للمؤقت الحالي فقط في الإشعارات، وليس الجلسة بأكملها</string>
     <string name="auto_start_next_timer_desc">ابدأ المؤقت التالي بعد إيقاف المنبه</string>
     <string name="auto_start_next_timer">التشغيل التلقائي في المؤقت القادم</string>
     <string name="secure_aod">AOD الآمن</string>
     <string name="secure_aod_desc">قم بقفل جهازك تلقائيا بعد انتهاء الوقت، مع إبقاء AOD مرئياً</string>
-    <string name="timer_reset_message">إعادة ضبط المؤقت</string>
+    <string name="timer_reset_message">أُعيد ضبط المؤقت</string>
     <string name="undo">تراجع</string>
 </resources>

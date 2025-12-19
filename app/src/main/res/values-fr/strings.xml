@@ -86,4 +86,6 @@
     <string name="session_only_progress">Progression de la session uniquement</string>
     <string name="session_only_progress_desc">Montre uniquement la progression de la session actuelle, au lieu de la séquence entière.</string>
     <string name="media_volume_for_alarm_desc">Fonctionne uniquement avec un casque. Si le casque est déconnecté, l\'alarme retentit via le haut-parleur au volume des médias.</string>
+    <string name="reset_data">Réinitialiser les données</string>
+    <string name="reset_data_dialog_text">Êtes-vous sûr de vouloir réinitialiser toutes vos données ?</string>
 </resources>

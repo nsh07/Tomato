@@ -33,4 +33,7 @@ sealed interface SettingsAction {
     data class SaveAlarmSound(val uri: Uri?) : SettingsAction
     data class SaveTheme(val theme: String) : SettingsAction
     data class SaveColorScheme(val color: Color) : SettingsAction
+    data object AskEraseData : SettingsAction
+    data object CancelEraseData : SettingsAction
+    data object EraseData : SettingsAction
 }

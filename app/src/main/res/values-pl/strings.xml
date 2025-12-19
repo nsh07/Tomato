@@ -67,7 +67,7 @@
     <string name="rate_on_google_play">Wystaw ocenę na Google Play</string>
     <string name="dynamic_color_desc">Dostosuj kolory motywu do swojej tapety</string>
     <string name="get_plus">Uzyskaj wersję Tomato+</string>
-    <string name="hours_and_minutes_format">%dg %dm</string>
+    <string name="hours_and_minutes_format">%dh %dm</string>
     <string name="hours_format">%dg</string>
     <string name="minutes_format">%dm</string>
     <string name="pomodoro_info">„Sesja” to szereg interwałów pomodoro, który obejmuje interwały skupienia, krótkie przerwy i długą przerwę. Ostatnia przerwa w sesji to zawsze długa przerwa.</string>

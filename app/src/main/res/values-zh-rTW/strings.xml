@@ -88,6 +88,14 @@
     <string name="license">授權條款</string>
     <string name="media_volume_for_alarm">耳機模式</string>
     <string name="media_volume_for_alarm_desc">僅透過耳機播放。若耳機斷線，鬧鐘將以媒體音量從喇叭播放。</string>
-    <string name="session_only_progress">僅顯示工作階段進度</string>
-    <string name="session_only_progress_desc">在通知中僅顯示目前工作階段的進度，而非完整流程。</string>
+    <string name="session_only_progress">簡化進度顯示</string>
+    <string name="session_only_progress_desc">在通知中僅顯示目前計時的進度，而非整個工作階段。</string>
+    <string name="undo">復原</string>
+    <string name="reset_data">重置統計資料</string>
+    <string name="reset_data_dialog_text">你確定要重置統計資料嗎?</string>
+    <string name="auto_start_next_timer_desc">停止鬧鐘後自動開始下一個計時</string>
+    <string name="auto_start_next_timer">自動開始下一個計時</string>
+    <string name="secure_aod">螢幕長亮模式安全鎖定</string>
+    <string name="secure_aod_desc">在逾時後自動鎖定裝置，同時維持螢幕長亮模式顯示</string>
+    <string name="timer_reset_message">計時已重設</string>
 </resources>

@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -72,9 +73,9 @@ class StatsViewModel(
 
     private val yearDayFormatter = DateTimeFormatter.ofPattern("d MMM")
 
-    private val lastWeekStatsFlow = statRepository.getLastNDaysStats(7)
-    private val lastMonthStatsFlow = statRepository.getLastNDaysStats(31)
-    private val lastYearStatsFlow = statRepository.getLastNDaysStats(365)
+    private val lastWeekStatsFlow = statRepository.getLastNDaysStats(7).filter { it.isNotEmpty() }
+    private val lastMonthStatsFlow = statRepository.getLastNDaysStats(31).filter { it.isNotEmpty() }
+    private val lastYearStatsFlow = statRepository.getLastNDaysStats(365).filter { it.isNotEmpty() }
 
     private val _lastYearMaxFocus = MutableStateFlow(Long.MAX_VALUE)
     val lastYearMaxFocus = _lastYearMaxFocus.asStateFlow()

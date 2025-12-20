@@ -173,12 +173,11 @@ private fun SettingsScreen(
             setShowSheet = { showLocaleSheet = it }
         )
 
-    if(settingsState.isShowingEraseDataDialog){
-        ResetDataDialog(resetData = {
-            onAction(SettingsAction.EraseData)
-        }, onDismiss = {
-            onAction(SettingsAction.CancelEraseData)
-        })
+    if (settingsState.isShowingEraseDataDialog) {
+        ResetDataDialog(
+            resetData = { onAction(SettingsAction.EraseData) },
+            onDismiss = { onAction(SettingsAction.CancelEraseData) }
+        )
     }
 
     NavDisplay(
@@ -310,11 +309,11 @@ private fun SettingsScreen(
                             Box(
                                 modifier = Modifier.fillMaxWidth(),
                                 contentAlignment = Alignment.Center
-                            ){
+                            ) {
 
                                 TextButton(
                                     onClick = { onAction(SettingsAction.AskEraseData) },
-                               ) {
+                                ) {
                                     Text(stringResource(R.string.reset_data))
                                 }
                             }

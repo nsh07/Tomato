@@ -25,6 +25,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.baselineprofile)
 }
 
 tasks.withType(Test::class) {
@@ -101,6 +102,14 @@ android {
         includeInApk = false
         includeInBundle = false
     }
+
+    baselineProfile {
+        variants {
+            create("playRelease") {
+                automaticGenerationDuringBuild = true
+            }
+        }
+    }
 }
 
 dependencies {
@@ -124,6 +133,8 @@ dependencies {
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.profileinstaller)
+    "baselineProfile"(project(":baselineprofile"))
     ksp(libs.androidx.room.compiler)
 
     "playImplementation"(libs.revenuecat.purchases)

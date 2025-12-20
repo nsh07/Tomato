@@ -122,4 +122,5 @@
     <string name="focus_history_calendar_desc">Focus history of the past month. Days of the previous month are marked with a different color. Tap on a date for more info.</string>
     <string name="reset_data">Reset stats</string>
     <string name="reset_data_dialog_text">Are you sure you want to reset all your stats?</string>
+    <string name="back">Back</string>
 </resources>

@@ -12,8 +12,6 @@
     <string name="system_default">Sistema</string>
     <string name="alarm">Alarma</string>
     <string name="choose_theme">Elige tema</string>
-    <string name="productivity_analysis">Análisis de productividad</string>
-    <string name="productivity_analysis_desc">Duración de la concentración en diferentes momentos del día</string>
     <string name="alarm_sound">Sonido de la alarma</string>
     <string name="black_theme">Tema negro</string>
     <string name="black_theme_desc">Utilizar un tema oscuro negro puro</string>
@@ -31,9 +29,7 @@
     <string name="last_week">Semana pasada</string>
     <string name="focus_per_day_avg">concentración por día (promedio)</string>
     <string name="more_info">Más información</string>
-    <string name="weekly_productivity_analysis">Análisis de productividad semanal</string>
     <string name="last_month">Mes pasado</string>
-    <string name="monthly_productivity_analysis">Análisis de productividad mensual</string>
     <string name="stop_alarm_question">¿Parar Alarma?</string>
     <string name="stop_alarm_dialog_text">El temporizador actual ha finalizado. Toca en cualquier lugar para detener la alarma.</string>
     <string name="timer_session_count">%1$d de %2$d</string>

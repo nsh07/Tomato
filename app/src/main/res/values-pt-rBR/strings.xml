@@ -23,8 +23,6 @@
     <string name="light">Claro</string>
     <string name="dark">Escuro</string>
     <string name="choose_theme">Escolher tema</string>
-    <string name="productivity_analysis">Análise de produtividade</string>
-    <string name="productivity_analysis_desc">Duração do foco em diferentes horas do dia</string>
     <string name="alarm_sound">Som de alarme</string>
     <string name="black_theme">Tema escuro</string>
     <string name="black_theme_desc">Use um tema preto escuro puro</string>
@@ -42,9 +40,7 @@
     <string name="last_week">Última semana</string>
     <string name="focus_per_day_avg">foco por dia (média)</string>
     <string name="more_info">Mais informações</string>
-    <string name="weekly_productivity_analysis">Análise de produtividade semanal</string>
     <string name="last_month">Último mês</string>
-    <string name="monthly_productivity_analysis">Análise de produtividade mensal</string>
     <string name="stop_alarm_question">Parar Alarme?</string>
     <string name="stop_alarm_dialog_text">A sessão atual do timer foi concluída. Toque em qualquer lugar para interromper o alarme.</string>
     <string name="timer_session_count">%1$d de %2$d</string>

@@ -34,7 +34,6 @@
     <string name="last_year">آخرین سال</string>
     <string name="light">روشن</string>
     <string name="long_break">استراحت بلند</string>
-    <string name="monthly_productivity_analysis">آنالیز خلاقیت ماهانه</string>
     <string name="more">بیشتر</string>
     <string name="more_info">اطلاعات بیشتر</string>
     <string name="ok">باشه</string>
@@ -42,11 +41,9 @@
     <string name="paused">متوقف شده</string>
     <string name="play">پخش</string>
     <string name="pomodoro_info">«جلسه» دنباله ای از فواصل پومودورو است که شامل فواصل فوکوس، وقفه های کوتاه و یک وقفه استراحت طولانی می باشد. آخرین استراحت جلسه همیشه یک استراحت طولانی است.</string>
-    <string name="productivity_analysis">تحلیل بهره وری</string>
     <string name="hours_and_minutes_format">%1$dس %2$dد</string>
     <string name="min_remaining_notification">%1$s دقیقه باقیمانده</string>
     <string name="minutes_format">%1$dد</string>
-    <string name="productivity_analysis_desc">مدت زمان تمرکز در زمان های مختلف روز</string>
     <string name="rate_on_google_play">امتیاز دادن در گوگل پلی</string>
     <string name="restart">راه اندازی مجدد</string>
     <string name="selected" tools:override="true">انتخاب شده</string>
@@ -76,7 +73,6 @@
     <string name="up_next_notification">بعدی: %1$s (%2$s)</string>
     <string name="vibrate">ویبره</string>
     <string name="vibrate_desc">ویبره در اتمام تایمر</string>
-    <string name="weekly_productivity_analysis">تحلیل بهره وری هفتگی</string>
     <string name="about">درباره</string>
     <string name="help_with_translation_desc">«گوجه فرنگی» را به زبان خود ترجمه کنید</string>
     <string name="rate_on_google_play_desc">اپلیکیشن را دوست داشتید؟ یک نقد بنویسید!</string>

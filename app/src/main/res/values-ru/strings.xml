@@ -24,7 +24,6 @@
     <string name="light">Светлая</string>
     <string name="long_break">Долгий перерыв</string>
     <string name="min_remaining_notification">%1$s минут осталось</string>
-    <string name="monthly_productivity_analysis">Анализ месячной продуктивности</string>
     <string name="more">Ещё</string>
     <string name="more_info">Больше информации</string>
     <string name="ok">Ок</string>
@@ -32,8 +31,6 @@
     <string name="paused">Приостановлено</string>
     <string name="play">Пуск</string>
     <string name="pomodoro_info">Сессия — это последовательность интервалов помодоро, которые содержат интервалы фокусировки, короткие интервалы перерыва и длинный интервал перерыва. Последний перерыв в сеансе — всегда долгий перерыв.</string>
-    <string name="productivity_analysis">Анализ продуктивности</string>
-    <string name="productivity_analysis_desc">Продолжительность фокусировки в разное время дня</string>
     <string name="restart">Перезапуск</string>
     <string name="session_length">Длинна сессии</string>
     <string name="session_length_desc">Интервалы фокусировки в одной сессии: %1$d</string>
@@ -58,7 +55,6 @@
     <string name="up_next_notification">Далее: %1$s (%2$s)</string>
     <string name="vibrate">Вибрация</string>
     <string name="vibrate_desc">Вибрация при завершении таймера</string>
-    <string name="weekly_productivity_analysis">Анализ недельной продуктивности</string>
     <string name="sound">Звук</string>
     <string name="dnd">Не беспокоить</string>
     <string name="dnd_desc">Включить режим Не беспокоить во время таймера фокусировки</string>

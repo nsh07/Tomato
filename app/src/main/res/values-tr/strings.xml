@@ -22,8 +22,6 @@
     <string name="light">Açık</string>
     <string name="dark">Koyu</string>
     <string name="choose_theme">Tema seçin</string>
-    <string name="productivity_analysis">Verimlilik analizi</string>
-    <string name="productivity_analysis_desc">Günün farklı saatlerindeki odaklanma süreleri</string>
     <string name="alarm_sound">Alarm sesi</string>
     <string name="black_theme">Siyah tema</string>
     <string name="black_theme_desc">Tam siyah koyu tema kullan</string>
@@ -41,9 +39,7 @@
     <string name="last_week">Geçen hafta</string>
     <string name="focus_per_day_avg">günlük odaklanma (ortalama)</string>
     <string name="more_info">Daha fazla bilgi</string>
-    <string name="weekly_productivity_analysis">Haftalık verimlilik analizi</string>
     <string name="last_month">Geçen ay</string>
-    <string name="monthly_productivity_analysis">Aylık verimlilik analizi</string>
     <string name="stop_alarm_question">Alarmı Durdur?</string>
     <string name="stop_alarm_dialog_text">Mevcut zamanlayıcı tamamlandı. Alarmı durdurmak için herhangi bir yere dokunun.</string>
     <string name="timer_session_count">%1$d / %2$d</string>
@@ -96,4 +92,15 @@
     <string name="undo">Geri al</string>
     <string name="reset_data">İstatistikleri sıfırla</string>
     <string name="reset_data_dialog_text">Tüm istatistiklerini sıfırlamak istediğinden eminmisin?</string>
+    <string name="focus_break_ratio">Odak kırılma oranı</string>
+    <string name="focus_breakdown">Odak dağılımı</string>
+    <string name="focus_breakdown_desc">Günün farklı saatlerinde ortalama odaklanma süreleri</string>
+    <string name="focus_history">Odaklanma geçmişi</string>
+    <string name="focus_history_desc">Geçen haftanın her gününe ait odaklanma dağılımı. Daha fazla bilgi için günlerin üzerine dokunun.</string>
+    <string name="less">Daha az</string>
+    <string name="show_chart">Grafiği göster</string>
+    <string name="focus_history_heatmap">Odak geçmişi ısı haritası</string>
+    <string name="focus_history_heatmap_desc">Geçtiğimiz yılın odak geçmişi. Daha koyu renkler daha uzun süreyi temsil eder. Günler aya göre gruplandırılmıştır. Daha fazla bilgi için bir güne dokunun.</string>
+    <string name="focus_history_calendar">Odak geçmişi takvimi</string>
+    <string name="focus_history_calendar_desc">Geçen ayın odak geçmişi. Önceki ayın günleri farklı bir renkle işaretlenmiştir. Daha fazla bilgi için bir tarihe dokunun.</string>
 </resources>

@@ -23,8 +23,6 @@
     <string name="light">Világos</string>
     <string name="dark">Sötét</string>
     <string name="choose_theme">Válassz témát</string>
-    <string name="productivity_analysis">Produktivitás elemzése</string>
-    <string name="productivity_analysis_desc">Fókuszálás időtartama a nap különböző szakaszaiban</string>
     <string name="alarm_sound">Jelzés hangja</string>
     <string name="black_theme">Fekete téma</string>
     <string name="black_theme_desc">Használjon teljesen fekete sötét témát</string>
@@ -42,9 +40,7 @@
     <string name="last_week">Múlt hét</string>
     <string name="focus_per_day_avg">naponta átlagosan fókuszált idő</string>
     <string name="more_info">További információk</string>
-    <string name="weekly_productivity_analysis">Heti produktivitás elemzés</string>
     <string name="last_month">Múlt hónap</string>
-    <string name="monthly_productivity_analysis">Havi produktivitás elemzés</string>
     <string name="stop_alarm_question">Jelzés leállítása?</string>
     <string name="stop_alarm_dialog_text">A jelenlegi időzítő munkamenet befejeződött. Érintse meg a képernyőt bárhol, hogy leállítsa a jelzést.</string>
     <string name="timer_session_count">%1$d a %2$d-ből</string>

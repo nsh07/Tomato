@@ -23,8 +23,6 @@
     <string name="light">Hell</string>
     <string name="dark">Dunkel</string>
     <string name="choose_theme">Erscheinungsbild wählen</string>
-    <string name="productivity_analysis">Produktivitätsanalyse</string>
-    <string name="productivity_analysis_desc">Fokusdauer zu verschiedenen Tageszeiten</string>
     <string name="alarm_sound">Alarmton</string>
     <string name="black_theme">Schwarzes Design</string>
     <string name="black_theme_desc">Echten Schwarzmodus verwenden</string>
@@ -42,9 +40,7 @@
     <string name="last_week">Letzte Woche</string>
     <string name="focus_per_day_avg">Fokus pro Tag (⌀)</string>
     <string name="more_info">Weitere Infos</string>
-    <string name="weekly_productivity_analysis">Wöchentliche Produktivität</string>
     <string name="last_month">Letzter Monat</string>
-    <string name="monthly_productivity_analysis">Monatliche Produktivität</string>
     <string name="stop_alarm_question">Alarm stoppen?</string>
     <string name="stop_alarm_dialog_text">Der aktuelle Timer ist beendet. Tippen Sie auf eine beliebige Stelle, um den Alarm zu stoppen.</string>
     <string name="timer_session_count">%1$d von %2$d</string>
@@ -94,4 +90,6 @@
     <string name="secure_aod_desc">Sperrt dein Gerät nach einer bestimmten Zeit automatisch, während das AOD weiterhin sichtbar bleibt</string>
     <string name="timer_reset_message">Timer wurde zurückgesetzt</string>
     <string name="undo">Rückgängig</string>
+    <string name="reset_data">Statistiken zurücksetzen</string>
+    <string name="reset_data_dialog_text">Bist du dir sicher das du alle Statistiken löschen willst?</string>
 </resources>

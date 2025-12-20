@@ -23,8 +23,6 @@
     <string name="light">فاتح</string>
     <string name="dark">داكن</string>
     <string name="choose_theme">اختر سمة</string>
-    <string name="productivity_analysis">تحليل الإنتاجية</string>
-    <string name="productivity_analysis_desc">مدة التركيز في أوقات مختلفة في اليوم</string>
     <string name="alarm_sound">صوت المنبه</string>
     <string name="black_theme">الوضع الاسود</string>
     <string name="black_theme_desc">استخدم سمة اسود نقي</string>
@@ -42,9 +40,7 @@
     <string name="last_week">الاسبوع الماضي</string>
     <string name="focus_per_day_avg">مدة التركيز في اليوم (المتوسط)</string>
     <string name="more_info">معلومات أكثر</string>
-    <string name="weekly_productivity_analysis">تحليل الإنتاجية الاسبوعي</string>
     <string name="last_month">الشهر الماضي</string>
-    <string name="monthly_productivity_analysis">تحليل الإنتاجية الشهري</string>
     <string name="stop_alarm_question">إيقاف المنبه؟</string>
     <string name="stop_alarm_dialog_text">المؤقت الحالي انتهي. اضغط في أي مكان لإيقاف المنبه.</string>
     <string name="timer_session_count">%1$d من %2$d</string>

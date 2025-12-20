@@ -23,8 +23,6 @@
     <string name="light">亮色</string>
     <string name="dark">暗色</string>
     <string name="choose_theme">选择主题</string>
-    <string name="productivity_analysis">工作效率分析</string>
-    <string name="productivity_analysis_desc">每日不同时间的专注时长</string>
     <string name="alarm_sound">铃声</string>
     <string name="black_theme">黑色主题</string>
     <string name="black_theme_desc">使用纯黑主题</string>
@@ -42,9 +40,7 @@
     <string name="last_week">上周</string>
     <string name="focus_per_day_avg">每日专注时长 (平均)</string>
     <string name="more_info">更多信息</string>
-    <string name="weekly_productivity_analysis">周生产力分析</string>
     <string name="last_month">上月</string>
-    <string name="monthly_productivity_analysis">月生产力分析</string>
     <string name="stop_alarm_question">要停止响铃吗?</string>
     <string name="stop_alarm_dialog_text">当前计时已完成. 轻触任何位置来停止响铃.</string>
     <string name="more">更多</string>

@@ -25,7 +25,6 @@
     <string name="light">淺色</string>
     <string name="long_break">長休息</string>
     <string name="min_remaining_notification">剩餘 %1$s 分鐘</string>
-    <string name="monthly_productivity_analysis">每月生產力分析</string>
     <string name="more">更多</string>
     <string name="more_info">更多資訊</string>
     <string name="ok">確定</string>
@@ -33,8 +32,6 @@
     <string name="paused">已暫停</string>
     <string name="play">開始</string>
     <string name="pomodoro_info">「循環」是一系列番茄工作階段的組合，包含專注時間、短休息與長休息。每個循環的最後一段休息都是長休息。</string>
-    <string name="productivity_analysis">生產力分析</string>
-    <string name="productivity_analysis_desc">分析一天中不同時段的專注時長</string>
     <string name="restart">重新開始</string>
     <string name="session_length">循環長度</string>
     <string name="session_length_desc">每個循環中的專注次數：%1$d</string>
@@ -59,7 +56,6 @@
     <string name="up_next_notification">下一個：%1$s（%2$s）</string>
     <string name="vibrate">震動</string>
     <string name="vibrate_desc">計時器結束時震動提醒</string>
-    <string name="weekly_productivity_analysis">每週生產力分析</string>
     <string name="appearance">外觀</string>
     <string name="durations">時長</string>
     <string name="sound">聲音</string>
@@ -98,4 +94,15 @@
     <string name="secure_aod">螢幕長亮模式安全鎖定</string>
     <string name="secure_aod_desc">在逾時後自動鎖定裝置，同時維持螢幕長亮模式顯示</string>
     <string name="timer_reset_message">計時已重設</string>
+    <string name="focus_break_ratio">專注／休息比例</string>
+    <string name="focus_breakdown">專注分佈</string>
+    <string name="focus_breakdown_desc">一天中不同時段的平均專注時長</string>
+    <string name="focus_history_desc">過去一週每天的專注分佈（點擊各個區塊以查看詳細資訊）</string>
+    <string name="focus_history">專注歷史</string>
+    <string name="less">收合</string>
+    <string name="show_chart">顯示圖表</string>
+    <string name="focus_history_heatmap">專注歷史熱度圖</string>
+    <string name="focus_history_heatmap_desc">過去一年的專注歷史。顏色越深代表專注時長越長。儲存格依月份分組，點擊可查看詳細資訊。</string>
+    <string name="focus_history_calendar">專注歷史月曆</string>
+    <string name="focus_history_calendar_desc">過去一個月的專注歷史。上個月的日期會以不同顏色標示，點擊日期可查看詳細資訊。</string>
 </resources>

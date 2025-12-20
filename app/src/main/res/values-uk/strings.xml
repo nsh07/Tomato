@@ -8,7 +8,6 @@
     <string name="exit">Завершити</string>
     <string name="skip">Пропустити</string>
     <string name="color_scheme">Колірна схема</string>
-    <string name="productivity_analysis">Аналіз продуктивності</string>
     <string name="black_theme">Чорна тема</string>
     <string name="vibrate">Вібрація</string>
     <string name="theme">Тема</string>
@@ -17,9 +16,7 @@
     <string name="stats">Статистика</string>
     <string name="today">Сьогодні</string>
     <string name="more_info">Більше інформації</string>
-    <string name="weekly_productivity_analysis">Щотижневий аналіз продуктивності</string>
     <string name="last_month">Минулого місяця</string>
-    <string name="monthly_productivity_analysis">Щомісячний аналіз продуктивності</string>
     <string name="restart">Перезапустити</string>
     <string name="skip_to_next">Перейти до наступного</string>
     <string name="up_next">Далі</string>
@@ -40,7 +37,6 @@
     <string name="light">Світла</string>
     <string name="dark">Темна</string>
     <string name="choose_theme">Обрати тему</string>
-    <string name="productivity_analysis_desc">Тривалість концентрації в різні години дня</string>
     <string name="alarm_sound">Звук сигналу</string>
     <string name="black_theme_desc">Використовувати чисту чорну тему</string>
     <string name="alarm_desc">Звуковий сигнал після завершення таймера</string>

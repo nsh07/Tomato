@@ -23,8 +23,6 @@
     <string name="light">ライト</string>
     <string name="dark">ダーク</string>
     <string name="choose_theme">テーマ選択</string>
-    <string name="productivity_analysis">生産性の分析</string>
-    <string name="productivity_analysis_desc">時間帯別の集中した時間</string>
     <string name="alarm_sound">アラーム音</string>
     <string name="black_theme">ブラックテーマ</string>
     <string name="black_theme_desc">漆黒テーマを使用します</string>
@@ -42,9 +40,7 @@
     <string name="last_week">先週</string>
     <string name="focus_per_day_avg">1日当たり (平均)</string>
     <string name="more_info">詳細</string>
-    <string name="weekly_productivity_analysis">一週間の生産性の分析</string>
     <string name="last_month">先月</string>
-    <string name="monthly_productivity_analysis">先月の生産性の分析</string>
     <string name="stop_alarm_question">アラームを停止しますか?</string>
     <string name="stop_alarm_dialog_text">現在のタイマーは終了しました。アラームを停止するには、任意の場所をタップしてください。</string>
     <string name="timer_session_count">%1$d / %2$d</string>

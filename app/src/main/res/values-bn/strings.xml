@@ -34,7 +34,6 @@
     <string name="light">উজ্জ্বল</string>
     <string name="long_break">দীর্ঘ বিরতি</string>
     <string name="min_remaining_notification">%1$s মিনিট অবশিষ্ট</string>
-    <string name="monthly_productivity_analysis">মাসিক উৎপাদনশীলতা বিশ্লেষণ</string>
     <string name="more">আরো</string>
     <string name="more_info">আরো তথ্য</string>
     <string name="ok">ঠিক আছে</string>
@@ -42,8 +41,6 @@
     <string name="paused">স্থির</string>
     <string name="play">চালু</string>
     <string name="pomodoro_info">\"সেশন\" হলো Pomodoro এর একটি ক্রম যার মধ্যে ফোকাস সময়, ছোট বিরতি এবং একটি দীর্ঘ বিরতি ব্থাকে। একটি সেশন এর শেষ বিরতি সর্বদা একটি দীর্ঘ বিরতি।</string>
-    <string name="productivity_analysis">উৎপাদনশীলতা বিশ্লেষণ</string>
-    <string name="productivity_analysis_desc">দিনের ভিন্ন ভিন্ন সময় ফোকাস স্থিতিকাল</string>
     <string name="rate_on_google_play">গুগল প্লে তে রেট করুন</string>
     <string name="restart">পুনরায় শুরু করুন</string>
     <string name="selected" tools:override="true">নির্ধারিত</string>
@@ -73,7 +70,6 @@
     <string name="up_next_notification">এরপর: %1$s (%2$s)</string>
     <string name="vibrate">ভাইব্রেশন</string>
     <string name="vibrate_desc">টাইমার শেষ হলে ভাইব্রেট করবে</string>
-    <string name="weekly_productivity_analysis">সাপ্তাহিক উৎপাদনশীলতার বিশ্লেষণ</string>
     <string name="about">এবাউট</string>
     <string name="help_with_translation_desc">আপনার ভাষায় Tomato অনুবাদ করুন</string>
     <string name="rate_on_google_play_desc">অ্যাপটি পছন্দ হয়েছে? রিভিউ দিন!</string>

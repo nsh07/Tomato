@@ -23,8 +23,6 @@
     <string name="light">Clair</string>
     <string name="dark">Sombre</string>
     <string name="choose_theme">Choisir le thème</string>
-    <string name="productivity_analysis">Analyse de productivité</string>
-    <string name="productivity_analysis_desc">Durée de concentration selon les moments de la journée</string>
     <string name="alarm_sound">Son de l\'alarme</string>
     <string name="black_theme">Thème noir</string>
     <string name="black_theme_desc">Utiliser un thème sombre noir pur</string>
@@ -42,9 +40,7 @@
     <string name="last_week">7 derniers jours</string>
     <string name="focus_per_day_avg">concentration moyenne par jour</string>
     <string name="more_info">Plus d\'infos</string>
-    <string name="weekly_productivity_analysis">Analyse hebdomadaire de la productivité</string>
     <string name="last_month">30 derniers jours</string>
-    <string name="monthly_productivity_analysis">Analyse mensuelle de la productivité</string>
     <string name="stop_alarm_question">Arrêter l\'alarme ?</string>
     <string name="stop_alarm_dialog_text">La session actuelle est terminée. Touchez n’importe où pour arrêter l’alarme.</string>
     <string name="timer_session_count">%1$d sur %2$d</string>

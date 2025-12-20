@@ -102,6 +102,14 @@ android {
         includeInApk = false
         includeInBundle = false
     }
+
+    baselineProfile {
+        variants {
+            create("playRelease") {
+                automaticGenerationDuringBuild = true
+            }
+        }
+    }
 }
 
 dependencies {

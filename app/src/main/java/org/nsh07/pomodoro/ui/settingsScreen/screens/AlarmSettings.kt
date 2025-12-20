@@ -183,7 +183,7 @@ fun AlarmSettings(
                     ) {
                         Icon(
                             painterResource(R.drawable.arrow_back),
-                            null
+                            stringResource(R.string.back)
                         )
                     }
                 },

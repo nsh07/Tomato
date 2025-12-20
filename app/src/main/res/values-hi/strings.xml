@@ -95,11 +95,12 @@
     <string name="focus_breakdown">फोकस का अनालिसिस</string>
     <string name="focus_breakdown_desc">दिन के अलग-अलग टाइम में औसत कितना फोकस करते है</string>
     <string name="focus_history">फोकस हिस्ट्री</string>
-    <string name="focus_history_desc">आखिरी हफ्ते के हर दिन के फोकस का अनालिसिस (ज्यादा जानकारी के लिए सेल पे क्लिक करें)</string>
+    <string name="focus_history_desc">आखिरी हफ्ते के हर दिन के फोकस का विश्लेषण। ज्यादा जानकारी के लिए किसी दिन के चार्ट पर टैप करें।</string>
     <string name="less">कम</string>
     <string name="show_chart">चार्ट दिखाएं</string>
     <string name="focus_history_heatmap">फोकस हिस्ट्री का हीटमैप</string>
-    <string name="focus_history_heatmap_desc">आखिरी साल का फोकस हिस्ट्री। ज्यादा गहरे रंग का मतलब ज्यादा लंबे ड्यूरेशन। सेल को महीने के हिसाब से बांटा गया है। ज्यादा जानकारी के लिए सेल पर क्लिक करें।</string>
+    <string name="focus_history_heatmap_desc">आखिरी साल का फोकस हिस्ट्री। ज्यादा गहरे रंग का मतलब ज्यादा लंबे ड्यूरेशन। दिनों को महीने के हिसाब से बांटा गया है। ज्यादा जानकारी के लिए किसी दिन पर टैप करें।</string>
     <string name="focus_history_calendar">फोकस हिस्ट्री का कैलेंडर</string>
-    <string name="focus_history_calendar_desc">आखिरी महीने का फोकस हिस्ट्री। पिछले महीने के दिनों पे दूसरा रंग है। ज्यादा जानकारी के लिए सेल पर क्लिक करें।</string>
+    <string name="focus_history_calendar_desc">आखिरी महीने का फोकस हिस्ट्री। पिछले महीने के दिनों पे दूसरा रंग है। ज्यादा जानकारी के लिए किसी दिन पर टैप करें।</string>
+    <string name="back">बैक</string>
 </resources>

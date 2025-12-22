@@ -19,7 +19,7 @@
     <string name="dark">डार्क</string>
     <string name="dynamic">डायनामिक</string>
     <string name="exit">बंद करें</string>
-    <string name="focus_per_day_avg">हर दिन कितना फोकस करते है (औसत)</string>
+    <string name="focus_per_day_avg">प्रतिदिन फोकस (औसत)</string>
     <string name="last_month">पिछले महीने</string>
     <string name="last_week">पिछले हफ्ते</string>
     <string name="sound">आवाज</string>
@@ -90,7 +90,7 @@
     <string name="timer_reset_message">टाइमर रीसेट किया गया</string>
     <string name="undo">अंडू करें</string>
     <string name="reset_data">आंकड़े रीसेट करें</string>
-    <string name="reset_data_dialog_text">सच्ची में आंकड़े रीसेट करें?</string>
+    <string name="reset_data_dialog_text">सभी सेव किए गए आंकड़े हमेशा के लिए डिलीट कर दिए जाएंगे। इसे वापस नहीं किया जा सकता।</string>
     <string name="focus_break_ratio">फोकस और ब्रेक का अनुपात</string>
     <string name="focus_breakdown">फोकस का अनालिसिस</string>
     <string name="focus_breakdown_desc">दिन के अलग-अलग टाइम में औसत कितना फोकस करते है</string>
@@ -103,4 +103,5 @@
     <string name="focus_history_calendar">फोकस हिस्ट्री का कैलेंडर</string>
     <string name="focus_history_calendar_desc">आखिरी महीने का फोकस हिस्ट्री। पिछले महीने के दिनों पे दूसरा रंग है। ज्यादा जानकारी के लिए किसी दिन पर टैप करें।</string>
     <string name="back">बैक</string>
+    <string name="reset_data_dialog_title">सभी आँकड़ों को रीसेट करें?</string>
 </resources>

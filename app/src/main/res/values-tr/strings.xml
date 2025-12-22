@@ -91,7 +91,7 @@
     <string name="timer_reset_message">Zamanlayıcı sıfırlandı</string>
     <string name="undo">Geri al</string>
     <string name="reset_data">İstatistikleri sıfırla</string>
-    <string name="reset_data_dialog_text">Tüm istatistiklerini sıfırlamak istediğinden eminmisin?</string>
+    <string name="reset_data_dialog_text">Kaydedilen tüm istatistikler kalıcı olarak silinecektir. Bu işlem geri alınamaz.</string>
     <string name="focus_break_ratio">Odak kırılma oranı</string>
     <string name="focus_breakdown">Odak dağılımı</string>
     <string name="focus_breakdown_desc">Günün farklı saatlerinde ortalama odaklanma süreleri</string>
@@ -103,4 +103,6 @@
     <string name="focus_history_heatmap_desc">Geçtiğimiz yılın odak geçmişi. Daha koyu renkler daha uzun süreyi temsil eder. Günler aya göre gruplandırılmıştır. Daha fazla bilgi için bir güne dokunun.</string>
     <string name="focus_history_calendar">Odak geçmişi takvimi</string>
     <string name="focus_history_calendar_desc">Geçen ayın odak geçmişi. Önceki ayın günleri farklı bir renkle işaretlenmiştir. Daha fazla bilgi için bir tarihe dokunun.</string>
+    <string name="reset_data_dialog_title">Tüm istatistikleri sıfırla?</string>
+    <string name="back">Geri</string>
 </resources>

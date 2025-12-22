@@ -89,4 +89,19 @@
     <string name="secure_aod_desc">Bloquea automáticamente tu dispositivo tras un tiempo de inactividad, manteniendo visible AOD (pantalla siempre encendida)</string>
     <string name="timer_reset_message">Reiniciar temporizador</string>
     <string name="undo">Deshacer</string>
+    <string name="focus_break_ratio">Ratio concentración-descanso</string>
+    <string name="focus_breakdown">Desglose de concentración</string>
+    <string name="focus_breakdown_desc">Duración media de la concentración en diferentes momentos del día</string>
+    <string name="focus_history">Histórico de concentración</string>
+    <string name="focus_history_desc">Desglose del enfoque de cada día de la semana pasada. Toque el gráfico de un día para obtener más información.</string>
+    <string name="less">Menos</string>
+    <string name="show_chart">Mostrar gráfico</string>
+    <string name="focus_history_heatmap">Mapa de calor del historial de concentración</string>
+    <string name="focus_history_heatmap_desc">Historial de concentración del año pasado. Los colores más oscuros representan una mayor duración. Los días están agrupados por mes. Toca un día para obtener más información.</string>
+    <string name="focus_history_calendar">Calendario histórico de concentración</string>
+    <string name="focus_history_calendar_desc">Historial de concentración del mes pasado. Los días del mes anterior están marcados con un color diferente. Toca una fecha para obtener más información.</string>
+    <string name="reset_data">Restablecer estadísticas</string>
+    <string name="reset_data_dialog_title">¿Restablecer todas las estadísticas?</string>
+    <string name="reset_data_dialog_text">Todas las estadísticas guardadas se eliminarán permanentemente. Esta acción no se puede deshacer.</string>
+    <string name="back">Atrás</string>
 </resources>

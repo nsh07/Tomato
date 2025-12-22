@@ -124,4 +124,5 @@
     <string name="reset_data_dialog_title">Reset all stats?</string>
     <string name="reset_data_dialog_text">All saved stats will be deleted permanently. This cannot be undone.</string>
     <string name="back">Back</string>
+    <string name="now_bar">Now Bar</string>
 </resources>

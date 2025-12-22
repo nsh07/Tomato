@@ -59,6 +59,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -302,6 +303,30 @@ private fun SettingsScreen(
                                     index = 0
                                 ) { showLocaleSheet = true }
                             }
+
+                        if (Build.VERSION.SDK_INT >= 36 && Build.MANUFACTURER == "samsung") {
+                            item {
+                                val uriHandler = LocalUriHandler.current
+                                Spacer(Modifier.height(14.dp))
+                                ClickableListItem(
+                                    leadingContent = {
+                                        Icon(
+                                            painterResource(R.drawable.mobile_text),
+                                            null
+                                        )
+                                    },
+                                    headlineContent = { Text(stringResource(R.string.now_bar)) },
+                                    trailingContent = {
+                                        Icon(
+                                            painterResource(R.drawable.open_in_browser),
+                                            null
+                                        )
+                                    },
+                                    items = 1,
+                                    index = 0
+                                ) { uriHandler.openUri("https://gist.github.com/nsh07/3b42969aef017d98f72b097f1eca8911") }
+                            }
+                        }
 
                         item { Spacer(Modifier.height(12.dp)) }
 

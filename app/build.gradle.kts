@@ -44,8 +44,8 @@ android {
         applicationId = "org.nsh07.pomodoro"
         minSdk = 27
         targetSdk = 36
-        versionCode = 23
-        versionName = "1.7.1"
+        versionCode = 24
+        versionName = "1.8.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -105,8 +105,12 @@ android {
 
     baselineProfile {
         variants {
+            create("fossRelease") {
+                saveInSrc = true
+            }
             create("playRelease") {
                 automaticGenerationDuringBuild = true
+                saveInSrc = false
             }
         }
     }

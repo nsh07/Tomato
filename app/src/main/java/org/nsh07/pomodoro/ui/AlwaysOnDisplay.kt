@@ -250,7 +250,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
                 text = timerState.timeStr,
                 style = TextStyle(
                     fontFamily = googleFlex400,
-                    fontSize = 56.sp,
+                    fontSize = if (timerState.timeStr.length < 6) 56.sp else 52.sp,
                     letterSpacing = (-2).sp,
                     fontFeatureSettings = "tnum"
                 ),

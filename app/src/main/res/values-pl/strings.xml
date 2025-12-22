@@ -29,9 +29,7 @@
     <string name="ok">Ok</string>
     <string name="pause">Wstrzymaj</string>
     <string name="paused">Wstrzymano</string>
-    <string name="monthly_productivity_analysis">Analiza miesięcznego czasu produktywności</string>
     <string name="play">Wznów</string>
-    <string name="productivity_analysis">Analiza produktywności</string>
     <string name="restart">Resetuj</string>
     <string name="session_length">Długość sesji</string>
     <string name="settings">Ustawienia</string>
@@ -51,7 +49,6 @@
     <string name="up_next_notification">Następnie: %1$s (%2$s)</string>
     <string name="vibrate">Wibracje</string>
     <string name="vibrate_desc">Wibruje gdy timer się zakończy</string>
-    <string name="weekly_productivity_analysis">Tygodniowa analiza czasu produktywności</string>
     <string name="appearance">Wygląd</string>
     <string name="durations">Długość interwałów</string>
     <string name="sound">Dźwięk</string>
@@ -67,12 +64,11 @@
     <string name="rate_on_google_play">Wystaw ocenę na Google Play</string>
     <string name="dynamic_color_desc">Dostosuj kolory motywu do swojej tapety</string>
     <string name="get_plus">Uzyskaj wersję Tomato+</string>
-    <string name="hours_and_minutes_format">%dg %dm</string>
+    <string name="hours_and_minutes_format">%dh %dm</string>
     <string name="hours_format">%dg</string>
     <string name="minutes_format">%dm</string>
     <string name="pomodoro_info">„Sesja” to szereg interwałów pomodoro, który obejmuje interwały skupienia, krótkie przerwy i długą przerwę. Ostatnia przerwa w sesji to zawsze długa przerwa.</string>
     <string name="session_length_desc">Liczba interwałów skupienia w sesji: %1$d</string>
-    <string name="productivity_analysis_desc">Czas spędzony w skupieniu o różnych porach dnia</string>
     <string name="timer_progress">Postęp timera</string>
     <string name="timer_settings_reset_info">Zresetuj timer, aby zmienić ustawienia</string>
     <string name="tomato_foss_desc">W tej wersji wszystkie funkcje są odblokowane. Jeśli moja aplikacja zmieniła Twoje życie, rozważ wsparcie mnie poprzez darowiznę na %1$s.</string>

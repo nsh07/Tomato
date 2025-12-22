@@ -301,7 +301,7 @@ fun SharedTransitionScope.TimerScreen(
                                 text = timerState.timeStr,
                                 style = TextStyle(
                                     fontFamily = googleFlex600,
-                                    fontSize = 72.sp,
+                                    fontSize = if (timerState.timeStr.length < 6) 72.sp else 64.sp,
                                     letterSpacing = (-2.6).sp,
                                     fontFeatureSettings = "tnum"
                                 ),

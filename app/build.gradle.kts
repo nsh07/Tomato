@@ -25,6 +25,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.baselineprofile)
 }
 
 tasks.withType(Test::class) {
@@ -43,8 +44,8 @@ android {
         applicationId = "org.nsh07.pomodoro"
         minSdk = 27
         targetSdk = 36
-        versionCode = 23
-        versionName = "1.7.1"
+        versionCode = 24
+        versionName = "1.8.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -101,6 +102,18 @@ android {
         includeInApk = false
         includeInBundle = false
     }
+
+    baselineProfile {
+        variants {
+            create("fossRelease") {
+                saveInSrc = true
+            }
+            create("playRelease") {
+                automaticGenerationDuringBuild = true
+                saveInSrc = false
+            }
+        }
+    }
 }
 
 dependencies {
@@ -124,6 +137,8 @@ dependencies {
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.profileinstaller)
+    "baselineProfile"(project(":baselineprofile"))
     ksp(libs.androidx.room.compiler)
 
     "playImplementation"(libs.revenuecat.purchases)

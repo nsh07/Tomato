@@ -219,9 +219,12 @@ fun AppScreen(
                                         Crossfade(selected) {
                                             if (it) Icon(
                                                 painterResource(item.selectedIcon),
-                                                null
+                                                stringResource(item.label)
                                             )
-                                            else Icon(painterResource(item.unselectedIcon), null)
+                                            else Icon(
+                                                painterResource(item.unselectedIcon),
+                                                stringResource(item.label)
+                                            )
                                         }
                                         AnimatedVisibility(
                                             visible = selected || wide,
@@ -297,7 +300,7 @@ fun AppScreen(
                         )
                     }
 
-                    entry<Screen.Stats> {
+                    entry<Screen.Stats.Main> {
                         StatsScreenRoot(contentPadding = contentPadding)
                     }
                 }

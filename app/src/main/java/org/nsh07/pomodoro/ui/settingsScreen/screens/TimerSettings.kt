@@ -87,6 +87,7 @@ import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputField
+import org.nsh07.pomodoro.ui.settingsScreen.components.MinutesInputTransformation3Digits
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
@@ -178,7 +179,7 @@ fun TimerSettings(
                 ),
                 SettingsSwitchItem(
                     checked = settingsState.secureAod && isPlus,
-                    enabled = isPlus,
+                    enabled = isPlus && settingsState.aodEnabled,
                     icon = R.drawable.mobile_lock_portrait,
                     label = R.string.secure_aod,
                     description = R.string.secure_aod_desc,
@@ -205,7 +206,8 @@ fun TimerSettings(
                     ) {
                         Icon(
                             painterResource(R.drawable.arrow_back),
-                            null
+                            stringResource(R.string.back)
+
                         )
                     }
                 },
@@ -265,6 +267,7 @@ fun TimerSettings(
                                 topEnd = topListItemShape.bottomStart,
                                 bottomEnd = topListItemShape.bottomStart
                             ),
+                            inputTransformation = MinutesInputTransformation3Digits,
                             imeAction = ImeAction.Next
                         )
                     }

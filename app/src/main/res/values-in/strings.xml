@@ -22,7 +22,6 @@
     <string name="light">Terang</string>
     <string name="long_break">Rehat panjang</string>
     <string name="min_remaining_notification">%1$s menit tersisa</string>
-    <string name="monthly_productivity_analysis">Analisis produktivitas bulanan</string>
     <string name="more">Lebih banyak</string>
     <string name="more_info">Info lebih</string>
     <string name="ok">Oke</string>
@@ -30,8 +29,6 @@
     <string name="paused">Dijeda</string>
     <string name="play">Mulai</string>
     <string name="pomodoro_info">\"Sesi\" adalah rangkaian interval pomodoro yang berisi interval fokus, interval rehat pendek, dan interval rehat panjang. Rehat terakhir dalam suatu sesi selalu merupakan rehat panjang.</string>
-    <string name="productivity_analysis">Analisis produktivitas</string>
-    <string name="productivity_analysis_desc">Durasi fokus berdasarkan segmen waktu dalam sehari</string>
     <string name="restart">Mulai ulang</string>
     <string name="session_length">Lama sesi</string>
     <string name="session_length_desc">Interval fokus dalam satu sesi: %1$d</string>
@@ -56,7 +53,6 @@
     <string name="up_next_notification">Berikutnya: %1$s (%2$s)</string>
     <string name="vibrate">Getar</string>
     <string name="vibrate_desc">Getar ketika timer selesai</string>
-    <string name="weekly_productivity_analysis">Analisis produktivitas mingguan</string>
     <string name="appearance">Tampilan</string>
     <string name="durations">Durasi</string>
     <string name="sound">Suara</string>

@@ -24,7 +24,6 @@
     <string name="light">Licht</string>
     <string name="long_break">Lange pauze</string>
     <string name="min_remaining_notification">%1$s min resterend</string>
-    <string name="monthly_productivity_analysis">Maandelijkse productiviteitsanalyse</string>
     <string name="more">Meer</string>
     <string name="more_info">Meer info</string>
     <string name="ok">OK</string>
@@ -32,8 +31,6 @@
     <string name="paused">Gepauzeerd</string>
     <string name="play">Start</string>
     <string name="pomodoro_info">Een \"sessie\" is een reeks pomodoro-intervallen die bestaan uit focusintervallen, korte pauzes en een lange pauze. De laatste pauze van een sessie is altijd een lange pauze.</string>
-    <string name="productivity_analysis">Productiviteitsanalyse</string>
-    <string name="productivity_analysis_desc">Focustijden op verschillende tijdstippen van de dag</string>
     <string name="restart">Herstart</string>
     <string name="session_length">Sessielengte</string>
     <string name="session_length_desc">Focusintervallen in één sessie: %1$d</string>
@@ -58,7 +55,6 @@
     <string name="up_next_notification">Volgende: %1$s (%2$s)</string>
     <string name="vibrate">Trilling</string>
     <string name="vibrate_desc">Tril wanneer een timer afgaat</string>
-    <string name="weekly_productivity_analysis">Wekelijkse productiviteitsanalyse</string>
     <string name="appearance">Uiterlijk</string>
     <string name="durations">Duur</string>
     <string name="sound">Geluid</string>

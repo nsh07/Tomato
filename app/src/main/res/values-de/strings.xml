@@ -23,8 +23,6 @@
     <string name="light">Hell</string>
     <string name="dark">Dunkel</string>
     <string name="choose_theme">Erscheinungsbild wählen</string>
-    <string name="productivity_analysis">Produktivitätsanalyse</string>
-    <string name="productivity_analysis_desc">Fokusdauer zu verschiedenen Tageszeiten</string>
     <string name="alarm_sound">Alarmton</string>
     <string name="black_theme">Schwarzes Design</string>
     <string name="black_theme_desc">Echten Schwarzmodus verwenden</string>
@@ -42,11 +40,9 @@
     <string name="last_week">Letzte Woche</string>
     <string name="focus_per_day_avg">Fokus pro Tag (⌀)</string>
     <string name="more_info">Weitere Infos</string>
-    <string name="weekly_productivity_analysis">Wöchentliche Produktivität</string>
     <string name="last_month">Letzter Monat</string>
-    <string name="monthly_productivity_analysis">Monatliche Produktivität</string>
     <string name="stop_alarm_question">Alarm stoppen?</string>
-    <string name="stop_alarm_dialog_text">Die aktuelle Timer-Sitzung ist beendet. Tippen Sie auf eine beliebige Stelle, um den Alarm zu stoppen.</string>
+    <string name="stop_alarm_dialog_text">Der aktuelle Timer ist beendet. Tippen Sie auf eine beliebige Stelle, um den Alarm zu stoppen.</string>
     <string name="timer_session_count">%1$d von %2$d</string>
     <string name="more">Mehr</string>
     <string name="pause">Pausieren</string>
@@ -75,8 +71,8 @@
     <string name="selected">Ausgewählt</string>
     <string name="help_with_translation">Hilf beim Übersetzen von Tomato</string>
     <string name="timer_settings_reset_info">Den Timer zurücksetzen um Einstellungen zu ändern</string>
-    <string name="hours_and_minutes_format">%1$dh%2$ddm</string>
-    <string name="hours_format">%1$dh</string>
+    <string name="hours_and_minutes_format">%1$dh %2$dm</string>
+    <string name="hours_format">%1$d</string>
     <string name="minutes_format">%1$dm</string>
     <string name="about">Über</string>
     <string name="help_with_translation_desc">Übersetze Tomato in deine Sprache</string>
@@ -86,6 +82,14 @@
     <string name="license">Lizenz</string>
     <string name="media_volume_for_alarm">Kopfhörer Modus</string>
     <string name="media_volume_for_alarm_desc">Spielt nur auf Kopfhörern. Wenn die Kopfhörer getrennt sind, wieder Alarm in Medienlautstärke abgespielt.</string>
-    <string name="session_only_progress">Sitzungs-Fortschritt</string>
-    <string name="session_only_progress_desc">Zeige in den Benachrichtigungen nur den Fortschritt der aktuellen Sitzung an, nicht die gesamte Sequenz.</string>
+    <string name="session_only_progress">Vereinfachter Fortschritt</string>
+    <string name="session_only_progress_desc">Zeige in den Benachrichtigungen nur den aktuellen Timer an, nicht die gesamte Sitzung</string>
+    <string name="auto_start_next_timer_desc">Starte den nächsten Timer nach dem Stoppen des Alarms</string>
+    <string name="auto_start_next_timer">Nächsten Timer automatisch starten</string>
+    <string name="secure_aod">Sicheres AOD</string>
+    <string name="secure_aod_desc">Sperrt dein Gerät nach einer bestimmten Zeit automatisch, während das AOD weiterhin sichtbar bleibt</string>
+    <string name="timer_reset_message">Timer wurde zurückgesetzt</string>
+    <string name="undo">Rückgängig</string>
+    <string name="reset_data">Statistiken zurücksetzen</string>
+    <string name="reset_data_dialog_text">Bist du dir sicher das du alle Statistiken löschen willst?</string>
 </resources>

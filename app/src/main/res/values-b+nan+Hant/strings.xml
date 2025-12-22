@@ -9,8 +9,6 @@
     <string name="light">淺色</string>
     <string name="dark">深色</string>
     <string name="choose_theme">選擇主題</string>
-    <string name="productivity_analysis">工課效率分析</string>
-    <string name="productivity_analysis_desc">無仝時段的專注連紲時間</string>
     <string name="alarm_sound">亂鐘聲音</string>
     <string name="black_theme">烏色的主題</string>
     <string name="black_theme_desc">使用專烏色的主題</string>

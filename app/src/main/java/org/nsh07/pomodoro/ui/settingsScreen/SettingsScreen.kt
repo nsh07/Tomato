@@ -27,9 +27,11 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -42,6 +44,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -56,6 +59,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -169,6 +173,13 @@ private fun SettingsScreen(
             currentLocales = currentLocales,
             setShowSheet = { showLocaleSheet = it }
         )
+
+    if (settingsState.isShowingEraseDataDialog) {
+        ResetDataDialog(
+            resetData = { onAction(SettingsAction.EraseData) },
+            onDismiss = { onAction(SettingsAction.CancelEraseData) }
+        )
+    }
 
     NavDisplay(
         backStack = backStack,
@@ -293,7 +304,45 @@ private fun SettingsScreen(
                                 ) { showLocaleSheet = true }
                             }
 
+                        if (Build.VERSION.SDK_INT >= 36 && Build.MANUFACTURER == "samsung") {
+                            item {
+                                val uriHandler = LocalUriHandler.current
+                                Spacer(Modifier.height(14.dp))
+                                ClickableListItem(
+                                    leadingContent = {
+                                        Icon(
+                                            painterResource(R.drawable.mobile_text),
+                                            null
+                                        )
+                                    },
+                                    headlineContent = { Text(stringResource(R.string.now_bar)) },
+                                    trailingContent = {
+                                        Icon(
+                                            painterResource(R.drawable.open_in_browser),
+                                            null
+                                        )
+                                    },
+                                    items = 1,
+                                    index = 0
+                                ) { uriHandler.openUri("https://gist.github.com/nsh07/3b42969aef017d98f72b097f1eca8911") }
+                            }
+                        }
+
                         item { Spacer(Modifier.height(12.dp)) }
+
+                        item {
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+
+                                TextButton(
+                                    onClick = { onAction(SettingsAction.AskEraseData) },
+                                ) {
+                                    Text(stringResource(R.string.reset_data))
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -23,8 +23,6 @@
     <string name="light">亮色</string>
     <string name="dark">暗色</string>
     <string name="choose_theme">选择主题</string>
-    <string name="productivity_analysis">工作效率分析</string>
-    <string name="productivity_analysis_desc">每日不同时间的专注时长</string>
     <string name="alarm_sound">铃声</string>
     <string name="black_theme">黑色主题</string>
     <string name="black_theme_desc">使用纯黑主题</string>
@@ -42,11 +40,9 @@
     <string name="last_week">上周</string>
     <string name="focus_per_day_avg">每日专注时长 (平均)</string>
     <string name="more_info">更多信息</string>
-    <string name="weekly_productivity_analysis">周生产力分析</string>
     <string name="last_month">上月</string>
-    <string name="monthly_productivity_analysis">月生产力分析</string>
     <string name="stop_alarm_question">要停止响铃吗?</string>
-    <string name="stop_alarm_dialog_text">当前计时小节已完成. 轻触任何位置来停止响铃.</string>
+    <string name="stop_alarm_dialog_text">当前计时已完成. 轻触任何位置来停止响铃.</string>
     <string name="more">更多</string>
     <string name="pause">暂停</string>
     <string name="play">开始</string>
@@ -86,6 +82,19 @@
     <string name="license">许可证</string>
     <string name="media_volume_for_alarm">耳机模式</string>
     <string name="media_volume_for_alarm_desc">仅在插入耳机时播放。如果耳机连接断开，闹铃以媒体音量通过扬声器播放。</string>
-    <string name="session_only_progress">仅会话进度</string>
-    <string name="session_only_progress_desc">在通知中只显示当前会话的进度，而非完整序列的进度。</string>
+    <string name="session_only_progress">简化进度</string>
+    <string name="session_only_progress_desc">在通知中只显示当前计时器的进度，而非完整会话的进度。</string>
+    <string name="auto_start_next_timer_desc">停止闹钟后启动下一个计时器</string>
+    <string name="auto_start_next_timer">下次自动启动</string>
+    <string name="secure_aod">安全AOD</string>
+    <string name="secure_aod_desc">时间到后将自动锁定你的设备，同时打开AOD</string>
+    <string name="timer_reset_message">复位时间</string>
+    <string name="undo">撤销</string>
+    <string name="focus_break_ratio">对焦-破坏比</string>
+    <string name="focus_history_desc">上周每天的专注分布。点击一天的图表获取更多信息。</string>
+    <string name="less">收起</string>
+    <string name="show_chart">节目排行榜</string>
+    <string name="focus_history_heatmap">焦点式历史热力图</string>
+    <string name="focus_history">焦点历史</string>
+    <string name="back">返回</string>
 </resources>

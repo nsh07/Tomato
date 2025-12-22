@@ -24,7 +24,6 @@
     <string name="light">Светлая</string>
     <string name="long_break">Долгий перерыв</string>
     <string name="min_remaining_notification">%1$s минут осталось</string>
-    <string name="monthly_productivity_analysis">Анализ месячной продуктивности</string>
     <string name="more">Ещё</string>
     <string name="more_info">Больше информации</string>
     <string name="ok">Ок</string>
@@ -32,8 +31,6 @@
     <string name="paused">Приостановлено</string>
     <string name="play">Пуск</string>
     <string name="pomodoro_info">Сессия — это последовательность интервалов помодоро, которые содержат интервалы фокусировки, короткие интервалы перерыва и длинный интервал перерыва. Последний перерыв в сеансе — всегда долгий перерыв.</string>
-    <string name="productivity_analysis">Анализ продуктивности</string>
-    <string name="productivity_analysis_desc">Продолжительность фокусировки в разное время дня</string>
     <string name="restart">Перезапуск</string>
     <string name="session_length">Длинна сессии</string>
     <string name="session_length_desc">Интервалы фокусировки в одной сессии: %1$d</string>
@@ -46,7 +43,7 @@
     <string name="stats">Статистика</string>
     <string name="stop">Стоп</string>
     <string name="stop_alarm">Сигнал остановки</string>
-    <string name="stop_alarm_dialog_text">Текущая сессия завершена. Нажмите в любое место для остановки сигнала.</string>
+    <string name="stop_alarm_dialog_text">Текущая таймер завершен. Нажмите в любое место для остановки сигнала.</string>
     <string name="stop_alarm_question">Остановить сигнал?</string>
     <string name="system_default">Система</string>
     <string name="theme">Тема</string>
@@ -58,7 +55,6 @@
     <string name="up_next_notification">Далее: %1$s (%2$s)</string>
     <string name="vibrate">Вибрация</string>
     <string name="vibrate_desc">Вибрация при завершении таймера</string>
-    <string name="weekly_productivity_analysis">Анализ недельной продуктивности</string>
     <string name="sound">Звук</string>
     <string name="dnd">Не беспокоить</string>
     <string name="dnd_desc">Включить режим Не беспокоить во время таймера фокусировки</string>
@@ -73,6 +69,25 @@
     <string name="durations">Длительности</string>
     <string name="appearance">Отображение</string>
     <string name="tomato_foss">Tomato (свободное и открытое программное обеспечение)</string>
-    <string name="help_with_translation">Помочь с переводом</string>
+    <string name="help_with_translation">Помочь перевести Tomato</string>
     <string name="timer_settings_reset_info">Сбросить таймер для изменения настроек</string>
+    <string name="hours_and_minutes_format">%1$dч %2$dмин</string>
+    <string name="hours_format">%1$dч</string>
+    <string name="minutes_format">%1$dмин</string>
+    <string name="about">О приложении</string>
+    <string name="help_with_translation_desc">Переведите Tomato на ваш язык</string>
+    <string name="rate_on_google_play_desc">Понравилось приложение? Оставьте отзыв!</string>
+    <string name="bmc_desc">Поддержать меня небольшим донатом</string>
+    <string name="tomato_plus_desc">Больше кастомизации с Tomato+</string>
+    <string name="license">Лицензия</string>
+    <string name="media_volume_for_alarm">Режим \"В наушниках\"</string>
+    <string name="media_volume_for_alarm_desc">Воспроизведение только в наушниках. Если наушники не подключены, сигнал воспроизводится через основной динамик с громкостью медиа.</string>
+    <string name="session_only_progress">Упрощённый прогресс</string>
+    <string name="session_only_progress_desc">Отображать в уведомлении прогресс только текущего таймера, а не всей сессии целиком.</string>
+    <string name="auto_start_next_timer_desc">Запускать следующий таймер после остановки сигнала</string>
+    <string name="auto_start_next_timer">Автозапуск следующего таймера</string>
+    <string name="secure_aod">Безопасный Всегда Включенный Экран</string>
+    <string name="secure_aod_desc">Автоматически блокировать устройство по истечении времени во время отображения Всегда Включенного Экрана</string>
+    <string name="timer_reset_message">Таймер сброшен</string>
+    <string name="undo">Отменить</string>
 </resources>

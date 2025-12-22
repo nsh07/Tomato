@@ -48,7 +48,19 @@ sealed class Screen : NavKey {
     }
 
     @Serializable
-    object Stats : Screen()
+    sealed class Stats : Screen() {
+        @Serializable
+        object Main : Stats()
+
+        @Serializable
+        object LastWeek : Stats()
+
+        @Serializable
+        object LastMonth : Stats()
+
+        @Serializable
+        object LastYear : Stats()
+    }
 }
 
 data class NavItem(

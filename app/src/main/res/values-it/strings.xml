@@ -23,8 +23,6 @@
     <string name="light">Chiaro</string>
     <string name="dark">Scuro</string>
     <string name="choose_theme">Scegli tema</string>
-    <string name="productivity_analysis">Analisi produttività</string>
-    <string name="productivity_analysis_desc">Durata della concentrazione in diverse ore del giorno</string>
     <string name="alarm_sound">Suono sveglia</string>
     <string name="black_theme">Tema nero</string>
     <string name="black_theme_desc">Tema scuro completamente nero</string>
@@ -42,9 +40,7 @@
     <string name="last_week">Ultima settimana</string>
     <string name="focus_per_day_avg">concentrazione al giorno (media)</string>
     <string name="more_info">Più informazioni</string>
-    <string name="weekly_productivity_analysis">Analisi produttività settimanale</string>
     <string name="last_month">Ultimo mese</string>
-    <string name="monthly_productivity_analysis">Analisi produttività mensile</string>
     <string name="stop_alarm_question">Ferma allarme?</string>
     <string name="stop_alarm_dialog_text">Il timer per la sessione corrente è scaduto. Tocca in qualsiasi punto per fermare la sveglia.</string>
     <string name="timer_session_count">%1$d di %2$d</string>

@@ -24,7 +24,6 @@
     <string name="light">Teatea</string>
     <string name="long_break">Whakatā nui</string>
     <string name="min_remaining_notification">%1$s meneti e toe ana</string>
-    <string name="monthly_productivity_analysis">Ripōata huanga ā-marama</string>
     <string name="more">Nui ake</string>
     <string name="more_info">Whakamārama tonu</string>
     <string name="ok">KtP</string>
@@ -32,8 +31,6 @@
     <string name="paused">Kua tū</string>
     <string name="play">Whakakā</string>
     <string name="pomodoro_info">Ko te \"huringa\" ko ētehi wā e takingia - he wāhanga arotahi, he wāhanga whakatā poto, ā, he wāhanga hoki o taua wā e whai whakatā nui ai te tangata. Ko te wā o te whakatā nui te wāhanga whakamutunga o te huringa.</string>
-    <string name="productivity_analysis">Ripōata huanga</string>
-    <string name="productivity_analysis_desc">Ko te arotahitanga i tēnā, i tēnā wā o te rā</string>
     <string name="restart">Tīmata anō</string>
     <string name="session_length">Ko te roa o te huringa</string>
     <string name="session_length_desc">Wā arotahi i te huringa kotahi: %1$d</string>
@@ -60,7 +57,6 @@
     <string name="up_next_notification">Whai muri mai: %1$s (%2$s)</string>
     <string name="vibrate">Ngatari</string>
     <string name="vibrate_desc">Ka ngatari inā mutu te kaitaki</string>
-    <string name="weekly_productivity_analysis">Ripōata huanga ā-wiki</string>
     <string name="appearance">Āhua</string>
     <string name="durations">Wāhanga</string>
     <string name="sound">Oro</string>

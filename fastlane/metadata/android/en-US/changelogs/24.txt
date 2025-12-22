@@ -1,0 +1,10 @@
+New features:
+- Entirely redesigned Stats screen
+  - Productivity Analysis is now replaced with Focus Breakdown, which contains a new visual along with the chart
+  - Separate screens for week/month/year that can be opened by clicking on each card
+  - New detailed stats with entirely new visuals for week/month/year
+  - Smooth animations when opening detailed stats
+
+- Added support for 3-digit focus durations
+- New reset stats button in Settings
+- Instructions for enabling Now Bar (Samsung only)

@@ -84,4 +84,17 @@
     <string name="media_volume_for_alarm_desc">仅在插入耳机时播放。如果耳机连接断开，闹铃以媒体音量通过扬声器播放。</string>
     <string name="session_only_progress">简化进度</string>
     <string name="session_only_progress_desc">在通知中只显示当前计时器的进度，而非完整会话的进度。</string>
+    <string name="auto_start_next_timer_desc">停止闹钟后启动下一个计时器</string>
+    <string name="auto_start_next_timer">下次自动启动</string>
+    <string name="secure_aod">安全AOD</string>
+    <string name="secure_aod_desc">时间到后将自动锁定你的设备，同时打开AOD</string>
+    <string name="timer_reset_message">复位时间</string>
+    <string name="undo">撤销</string>
+    <string name="focus_break_ratio">对焦-破坏比</string>
+    <string name="focus_history_desc">上周每天的专注分布。点击一天的图表获取更多信息。</string>
+    <string name="less">收起</string>
+    <string name="show_chart">节目排行榜</string>
+    <string name="focus_history_heatmap">焦点式历史热力图</string>
+    <string name="focus_history">焦点历史</string>
+    <string name="back">返回</string>
 </resources>

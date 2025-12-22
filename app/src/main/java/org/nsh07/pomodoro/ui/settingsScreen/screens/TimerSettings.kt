@@ -179,7 +179,7 @@ fun TimerSettings(
                 ),
                 SettingsSwitchItem(
                     checked = settingsState.secureAod && isPlus,
-                    enabled = isPlus,
+                    enabled = isPlus && settingsState.aodEnabled,
                     icon = R.drawable.mobile_lock_portrait,
                     label = R.string.secure_aod,
                     description = R.string.secure_aod_desc,

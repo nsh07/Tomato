@@ -39,7 +39,7 @@
     <string name="dynamic_color_desc">Προσαρμογή των χρωμάτων από την ταπετσαρία σου</string>
     <string name="exit">Έξοδος</string>
     <string name="focus">Συγκέντρωση</string>
-    <string name="focus_per_day_avg">συγκέντωρση ανά ημέρα (μο)</string>
+    <string name="focus_per_day_avg">συγκέντρωση ανά ημέρα (μο)</string>
     <string name="get_plus">Απόκτησε το Tomato+</string>
     <string name="help_with_translation">Βοήθησε στη μετάφραση του Tomato</string>
     <string name="hours_and_minutes_format">%1$dώ %2$dλ</string>

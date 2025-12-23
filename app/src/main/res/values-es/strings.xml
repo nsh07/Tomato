@@ -87,7 +87,7 @@
     <string name="auto_start_next_timer">Inicio automático del siguiente temporizador</string>
     <string name="secure_aod">AOD Seguro</string>
     <string name="secure_aod_desc">Bloquea automáticamente tu dispositivo tras un tiempo de inactividad, manteniendo visible AOD (pantalla siempre encendida)</string>
-    <string name="timer_reset_message">Reiniciar temporizador</string>
+    <string name="timer_reset_message">Temporizador reiniciado</string>
     <string name="undo">Deshacer</string>
     <string name="focus_break_ratio">Ratio concentración-descanso</string>
     <string name="focus_breakdown">Desglose de concentración</string>

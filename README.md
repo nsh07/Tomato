@@ -146,9 +146,6 @@ This app was made possible by the following libraries:
 - [Google Sans Flex](https://fonts.google.com/specimen/Google+Sans+Flex) by
   Google<br/><img src=".github/repo_photos/google-sans-flex.jpg" width="400">
 
-- [Inter](https://rsms.me/inter/) by
-  Rasmus Andersson<br/><img src=".github/repo_photos/inter-banner.png" width="400">
-
 ## Star History
 
 Please give this repo a star if you liked my work

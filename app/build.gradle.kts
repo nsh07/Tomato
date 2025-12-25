@@ -137,9 +137,13 @@ dependencies {
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
+
     implementation(libs.androidx.profileinstaller)
     "baselineProfile"(project(":baselineprofile"))
-    ksp(libs.androidx.room.compiler)
 
     "playImplementation"(libs.revenuecat.purchases)
     "playImplementation"(libs.revenuecat.purchases.ui)

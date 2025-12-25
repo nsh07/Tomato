@@ -511,7 +511,7 @@ class TimerService : Service() {
     private fun setDoNotDisturb(doNotDisturb: Boolean) {
         if (_settingsState.value.dndEnabled && notificationManagerService.isNotificationPolicyAccessGranted()) {
             if (doNotDisturb) {
-                notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALARMS)
+                notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY)
             } else notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
         }
     }

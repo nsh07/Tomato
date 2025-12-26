@@ -17,9 +17,9 @@
 
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:description="@string/app_name"
+    android:description="@string/today_widget_desc"
     android:maxResizeWidth="624dp"
-    android:maxResizeHeight="276dp"
+    android:maxResizeHeight="132dp"
     android:minWidth="109dp"
     android:minHeight="56dp"
     android:minResizeWidth="109dp"
@@ -27,5 +27,6 @@
     android:resizeMode="vertical|horizontal"
     android:targetCellWidth="2"
     android:targetCellHeight="1"
+    android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen|keyguard"
     tools:targetApi="36" />

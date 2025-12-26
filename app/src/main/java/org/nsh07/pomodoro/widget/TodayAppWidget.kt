@@ -20,8 +20,8 @@ package org.nsh07.pomodoro.widget
 import android.content.Context
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
@@ -35,8 +35,12 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Column
+import androidx.glance.layout.Row
+import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.height
 import androidx.glance.layout.padding
+import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -46,17 +50,14 @@ import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.AppStatRepository
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
+import org.nsh07.pomodoro.utils.millisecondsToMinutes
+import org.nsh07.pomodoro.widget.TomatoWidgetSize.Height2
+import org.nsh07.pomodoro.widget.TomatoWidgetSize.Width4
+import org.nsh07.pomodoro.widget.componenets.HorizontalStackedBarGlance
 import java.time.LocalDate
 
 class TodayAppWidget : GlanceAppWidget() {
-    override val sizeMode: SizeMode = SizeMode.Responsive(
-        setOf(
-            DpSize(109.dp, 56.dp),  // 2x1
-            DpSize(109.dp, 115.dp), // 2x2
-            DpSize(245.dp, 56.dp),  // 4x1
-            DpSize(245.dp, 115.dp)  // 4x2
-        )
-    )
+    override val sizeMode: SizeMode = SizeMode.Exact
 
     override suspend fun provideGlance(
         context: Context,
@@ -85,25 +86,102 @@ class TodayAppWidget : GlanceAppWidget() {
                 .padding(16.dp)
                 .clickable(actionStartActivity<MainActivity>())
         ) {
-            Text(
-                context.getString(R.string.focus),
-                style = TextStyle(
-                    color = colors.onPrimaryContainer,
-                    fontSize = typography.titleMedium.fontSize
+            Row {
+                Column(
+                    modifier = GlanceModifier.then(
+                        if (size.width >= Width4) {
+                            GlanceModifier.width(((size.width.value - 32f) / 2).dp)
+                        } else GlanceModifier
+                    )
+                ) {
+                    Text(
+                        context.getString(R.string.focus),
+                        style = TextStyle(
+                            color = colors.onPrimaryContainer,
+                            fontSize = typography.titleMedium.fontSize
+                        )
+                    )
+                    Text(
+                        millisecondsToHoursMinutes(
+                            stat.totalFocusTime(),
+                            context.getString(R.string.hours_and_minutes_format)
+                        ),
+                        style = TextStyle(
+                            color = colors.onPrimaryContainer,
+                            fontSize = typography.displaySmall.fontSize,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        maxLines = 1
+                    )
+                }
+
+//                TODO: Add an option to show break time as well
+//                if (size.width >= Width4) {
+//                    Column(
+//                        modifier = GlanceModifier.width(((size.width.value - 32f) / 2).dp)
+//                    ) {
+//                        Text(
+//                            context.getString(R.string.break_),
+//                            style = TextStyle(
+//                                color = colors.onTertiaryContainer,
+//                                fontSize = typography.titleMedium.fontSize
+//                            )
+//                        )
+//                        Text(
+//                            millisecondsToHoursMinutes(
+//                                stat.breakTime,
+//                                context.getString(R.string.hours_and_minutes_format)
+//                            ),
+//                            style = TextStyle(
+//                                color = colors.onTertiaryContainer,
+//                                fontSize = typography.displaySmall.fontSize,
+//                                fontWeight = FontWeight.Bold
+//                            ),
+//                            maxLines = 1
+//                        )
+//                    }
+//                }
+            }
+
+            Spacer(GlanceModifier.defaultWeight())
+
+            if (size.height >= Height2) {
+                val values = listOf(
+                    stat.focusTimeQ1,
+                    stat.focusTimeQ2,
+                    stat.focusTimeQ3,
+                    stat.focusTimeQ4
                 )
-            )
-            Text(
-                millisecondsToHoursMinutes(
-                    stat.totalFocusTime(),
-                    context.getString(R.string.hours_and_minutes_format)
-                ),
-                style = TextStyle(
-                    color = colors.onPrimaryContainer,
-                    fontSize = typography.displaySmall.fontSize,
-                    fontWeight = FontWeight.Bold
-                ),
-                maxLines = 1
-            )
+                if (size.width >= Width4) {
+                    Row {
+                        values.fastForEach {
+                            Text(
+                                if (it <= 60 * 60 * 1000)
+                                    millisecondsToMinutes(
+                                        it,
+                                        context.getString(R.string.minutes_format)
+                                    )
+                                else millisecondsToHoursMinutes(
+                                    it,
+                                    context.getString(R.string.hours_and_minutes_format)
+                                ),
+                                style = TextStyle(
+                                    color = colors.onSurfaceVariant,
+                                    fontSize = typography.bodyLarge.fontSize,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = androidx.glance.text.TextAlign.Center
+                                ),
+                                modifier = GlanceModifier.width(((size.width.value - 32f) / 4).dp)
+                            )
+                        }
+                    }
+                }
+                Spacer(GlanceModifier.height(8.dp))
+                HorizontalStackedBarGlance(
+                    values = values,
+                    width = size.width - 32.dp
+                )
+            }
         }
     }
 }

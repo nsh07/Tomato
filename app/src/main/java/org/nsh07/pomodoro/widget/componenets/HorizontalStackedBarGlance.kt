@@ -34,8 +34,7 @@ import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.width
-
-val HORIZONTAL_STACKED_BAR_HEIGHT = 40.dp
+import org.nsh07.pomodoro.ui.statsScreen.components.HORIZONTAL_STACKED_BAR_HEIGHT
 
 /**
  * A version of [org.nsh07.pomodoro.ui.statsScreen.components.HorizontalStackedBar] that uses Glance
@@ -80,11 +79,13 @@ fun HorizontalStackedBarGlance(
                             .height(height)
                             .cornerRadius(4.dp)
                             .background(
-                                colors.primary.getColor(context).copy(
-                                    (1f - (rankList.getOrNull(index) ?: 0) * 0.1f).coerceAtLeast(
-                                        0.1f
+                                colors.primary
+                                    .getColor(context)
+                                    .copy(
+                                        (1f - (rankList.getOrNull(index) ?: 0) * 0.1f)
+                                            .coerceAtLeast(0.1f)
                                     )
-                                ).compositeOver(colors.surfaceVariant.getColor(context))
+                                    .compositeOver(colors.surfaceVariant.getColor(context))
                             )
                     ) {}
                     Spacer(GlanceModifier.width(gap))

@@ -15,19 +15,11 @@
   ~ If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:description="@string/today_widget_desc"
-    android:maxResizeWidth="624dp"
-    android:maxResizeHeight="132dp"
-    android:minWidth="109dp"
-    android:minHeight="56dp"
-    android:minResizeWidth="109dp"
-    android:minResizeHeight="56dp"
-    android:previewLayout="@layout/today_widget_preview"
-    android:resizeMode="vertical|horizontal"
-    android:targetCellWidth="4"
-    android:targetCellHeight="2"
-    android:updatePeriodMillis="1800000"
-    android:widgetCategory="home_screen|keyguard"
-    tools:targetApi="36" />
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="#4C662B" />
+
+    <corners android:radius="4dp" />
+
+</shape>

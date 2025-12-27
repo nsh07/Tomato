@@ -82,66 +82,29 @@ class TodayAppWidget : GlanceAppWidget() {
         Column(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(colors.secondaryContainer)
+                .background(colors.surface)
                 .padding(16.dp)
                 .clickable(actionStartActivity<MainActivity>())
         ) {
-            Row {
-                Column(
-                    modifier = GlanceModifier.then(
-                        if (size.width >= Width4) {
-                            GlanceModifier.width(((size.width.value - 32f) / 2).dp)
-                        } else GlanceModifier
-                    )
-                ) {
-                    Text(
-                        context.getString(R.string.focus),
-                        style = TextStyle(
-                            color = colors.onPrimaryContainer,
-                            fontSize = typography.titleMedium.fontSize
-                        )
-                    )
-                    Text(
-                        millisecondsToHoursMinutes(
-                            stat.totalFocusTime(),
-                            context.getString(R.string.hours_and_minutes_format)
-                        ),
-                        style = TextStyle(
-                            color = colors.onPrimaryContainer,
-                            fontSize = typography.displaySmall.fontSize,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        maxLines = 1
-                    )
-                }
-
-//                TODO: Add an option to show break time as well
-//                if (size.width >= Width4) {
-//                    Column(
-//                        modifier = GlanceModifier.width(((size.width.value - 32f) / 2).dp)
-//                    ) {
-//                        Text(
-//                            context.getString(R.string.break_),
-//                            style = TextStyle(
-//                                color = colors.onTertiaryContainer,
-//                                fontSize = typography.titleMedium.fontSize
-//                            )
-//                        )
-//                        Text(
-//                            millisecondsToHoursMinutes(
-//                                stat.breakTime,
-//                                context.getString(R.string.hours_and_minutes_format)
-//                            ),
-//                            style = TextStyle(
-//                                color = colors.onTertiaryContainer,
-//                                fontSize = typography.displaySmall.fontSize,
-//                                fontWeight = FontWeight.Bold
-//                            ),
-//                            maxLines = 1
-//                        )
-//                    }
-//                }
-            }
+            Text(
+                context.getString(R.string.focus),
+                style = TextStyle(
+                    color = colors.onPrimaryContainer,
+                    fontSize = typography.titleMedium.fontSize
+                )
+            )
+            Text(
+                millisecondsToHoursMinutes(
+                    stat.totalFocusTime(),
+                    context.getString(R.string.hours_and_minutes_format)
+                ),
+                style = TextStyle(
+                    color = colors.onPrimaryContainer,
+                    fontSize = typography.displaySmall.fontSize,
+                    fontWeight = FontWeight.Bold
+                ),
+                maxLines = 1
+            )
 
             Spacer(GlanceModifier.defaultWeight())
 

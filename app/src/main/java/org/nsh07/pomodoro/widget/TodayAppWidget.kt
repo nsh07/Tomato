@@ -49,7 +49,6 @@ import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
-import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
@@ -96,7 +95,7 @@ class TodayAppWidget : GlanceAppWidget() {
         Box(
             contentAlignment = Alignment.TopEnd,
             modifier = GlanceModifier
-                .background(colors.surface)
+                .background(colors.widgetBackground)
                 .padding(16.dp)
                 .clickable(actionStartActivity<MainActivity>())
         ) {
@@ -168,9 +167,7 @@ class TodayAppWidget : GlanceAppWidget() {
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(colors.onPrimaryContainer),
                     modifier = GlanceModifier
-                        .size(40.dp)
-                        .padding(8.dp)
-                        .cornerRadius(20.dp)
+                        .cornerRadius(12.dp)
                         .clickable {
                             scope.launch { this@TodayAppWidget.updateAll(context) }
                         }

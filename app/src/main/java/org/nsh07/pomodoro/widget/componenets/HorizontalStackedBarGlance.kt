@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import androidx.glance.GlanceComposable
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme.colors
 import androidx.glance.LocalContext
@@ -41,6 +42,7 @@ import org.nsh07.pomodoro.ui.statsScreen.components.HORIZONTAL_STACKED_BAR_HEIGH
  * composables for use in widgets.
  */
 @Composable
+@GlanceComposable
 fun HorizontalStackedBarGlance(
     values: List<Long>,
     width: Dp,

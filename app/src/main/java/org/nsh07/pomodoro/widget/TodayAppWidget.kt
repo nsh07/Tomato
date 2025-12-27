@@ -20,31 +20,42 @@ package org.nsh07.pomodoro.widget
 import android.content.Context
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.GlanceTheme.colors
+import androidx.glance.Image
+import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
+import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.updateAll
 import androidx.glance.background
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
+import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.MainActivity
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.AppStatRepository
@@ -69,8 +80,10 @@ class TodayAppWidget : GlanceAppWidget() {
             ?: Stat(LocalDate.now(), 0, 0, 0, 0, 0)
 
         provideContent {
-            GlanceTheme {
-                Content(stat)
+            key(LocalSize.current) {
+                GlanceTheme {
+                    Content(stat)
+                }
             }
         }
     }
@@ -79,70 +92,88 @@ class TodayAppWidget : GlanceAppWidget() {
     private fun Content(stat: Stat) {
         val context = LocalContext.current
         val size = LocalSize.current
-        Column(
+        val scope = rememberCoroutineScope()
+        Box(
+            contentAlignment = Alignment.TopEnd,
             modifier = GlanceModifier
-                .fillMaxSize()
                 .background(colors.surface)
                 .padding(16.dp)
                 .clickable(actionStartActivity<MainActivity>())
         ) {
-            Text(
-                context.getString(R.string.focus),
-                style = TextStyle(
-                    color = colors.onPrimaryContainer,
-                    fontSize = typography.titleMedium.fontSize
+            Column(GlanceModifier.fillMaxSize()) {
+                Text(
+                    context.getString(R.string.focus),
+                    style = TextStyle(
+                        color = colors.onPrimaryContainer,
+                        fontSize = typography.titleMedium.fontSize
+                    )
                 )
-            )
-            Text(
-                millisecondsToHoursMinutes(
-                    stat.totalFocusTime(),
-                    context.getString(R.string.hours_and_minutes_format)
-                ),
-                style = TextStyle(
-                    color = colors.onPrimaryContainer,
-                    fontSize = typography.displaySmall.fontSize,
-                    fontWeight = FontWeight.Bold
-                ),
-                maxLines = 1
-            )
-
-            Spacer(GlanceModifier.defaultWeight())
-
-            if (size.height >= Height2) {
-                val values = listOf(
-                    stat.focusTimeQ1,
-                    stat.focusTimeQ2,
-                    stat.focusTimeQ3,
-                    stat.focusTimeQ4
+                Text(
+                    millisecondsToHoursMinutes(
+                        stat.totalFocusTime(),
+                        context.getString(R.string.hours_and_minutes_format)
+                    ),
+                    style = TextStyle(
+                        color = colors.onPrimaryContainer,
+                        fontSize = typography.displaySmall.fontSize,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    maxLines = 1
                 )
-                if (size.width >= Width4) {
-                    Row {
-                        values.fastForEach {
-                            Text(
-                                if (it <= 60 * 60 * 1000)
-                                    millisecondsToMinutes(
+
+                Spacer(GlanceModifier.defaultWeight())
+
+                if (size.height >= Height2) {
+                    val values = listOf(
+                        stat.focusTimeQ1,
+                        stat.focusTimeQ2,
+                        stat.focusTimeQ3,
+                        stat.focusTimeQ4
+                    )
+                    if (size.width >= Width4) {
+                        Row {
+                            values.fastForEach {
+                                Text(
+                                    if (it <= 60 * 60 * 1000)
+                                        millisecondsToMinutes(
+                                            it,
+                                            context.getString(R.string.minutes_format)
+                                        )
+                                    else millisecondsToHoursMinutes(
                                         it,
-                                        context.getString(R.string.minutes_format)
-                                    )
-                                else millisecondsToHoursMinutes(
-                                    it,
-                                    context.getString(R.string.hours_and_minutes_format)
-                                ),
-                                style = TextStyle(
-                                    color = colors.onSurfaceVariant,
-                                    fontSize = typography.bodyLarge.fontSize,
-                                    fontWeight = FontWeight.Bold,
-                                    textAlign = androidx.glance.text.TextAlign.Center
-                                ),
-                                modifier = GlanceModifier.width(((size.width.value - 32f) / 4).dp)
-                            )
+                                        context.getString(R.string.hours_and_minutes_format)
+                                    ),
+                                    style = TextStyle(
+                                        color = colors.onSurfaceVariant,
+                                        fontSize = typography.bodyLarge.fontSize,
+                                        fontWeight = FontWeight.Bold,
+                                        textAlign = androidx.glance.text.TextAlign.Center
+                                    ),
+                                    modifier = GlanceModifier.width(((size.width.value - 32f) / 4).dp)
+                                )
+                            }
                         }
                     }
+                    Spacer(GlanceModifier.height(8.dp))
+                    HorizontalStackedBarGlance(
+                        values = values,
+                        width = size.width - 32.dp
+                    )
                 }
-                Spacer(GlanceModifier.height(8.dp))
-                HorizontalStackedBarGlance(
-                    values = values,
-                    width = size.width - 32.dp
+            }
+
+            if (size.width >= Width4) {
+                Image(
+                    provider = ImageProvider(R.drawable.refresh),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(colors.onPrimaryContainer),
+                    modifier = GlanceModifier
+                        .size(40.dp)
+                        .padding(8.dp)
+                        .cornerRadius(20.dp)
+                        .clickable {
+                            scope.launch { this@TodayAppWidget.updateAll(context) }
+                        }
                 )
             }
         }

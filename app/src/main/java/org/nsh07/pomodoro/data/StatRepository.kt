@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.data
 
+import android.content.Context
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -121,7 +122,10 @@ class AppStatRepository(
 
     override suspend fun getLastDate(): LocalDate? = statDao.getLastDate()
 
-    override suspend fun deleteAllStats() =
-        statDao.clearAll()
+    override suspend fun deleteAllStats() = statDao.clearAll()
 
+    companion object {
+        fun get(context: Context) =
+            AppStatRepository(AppDatabase.getDatabase(context).statDao())
+    }
 }

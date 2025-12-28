@@ -19,7 +19,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F9FAEF"
+    android:background="@color/widget_preview_bg"
     android:paddingHorizontal="16dp"
     android:paddingVertical="16dp"
     tools:targetApi="31">
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/focus"
-            android:textColor="#354E15"
+            android:textColor="@color/widget_preview_on_primary_container"
             android:textSize="16sp" />
 
         <TextView
@@ -42,7 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="3h 15m"
-            android:textColor="#354E15"
+            android:textColor="@color/widget_preview_on_primary_container"
             android:textSize="36sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
@@ -65,7 +65,7 @@
                 android:layout_weight="1"
                 android:text="39m"
                 android:textAlignment="center"
-                android:textColor="#44483D"
+                android:textColor="@color/widget_preview_on_surface_variant"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText" />
@@ -77,7 +77,7 @@
                 android:layout_weight="1"
                 android:text="59m"
                 android:textAlignment="center"
-                android:textColor="#44483D"
+                android:textColor="@color/widget_preview_on_surface_variant"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText" />
@@ -89,7 +89,7 @@
                 android:layout_weight="1"
                 android:text="1h 18m"
                 android:textAlignment="center"
-                android:textColor="#44483D"
+                android:textColor="@color/widget_preview_on_surface_variant"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText" />
@@ -101,7 +101,7 @@
                 android:layout_weight="1"
                 android:text="19m"
                 android:textAlignment="center"
-                android:textColor="#44483D"
+                android:textColor="@color/widget_preview_on_surface_variant"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText" />
@@ -171,6 +171,6 @@
         android:paddingHorizontal="8dp"
         android:paddingVertical="8dp"
         android:src="@drawable/refresh"
-        android:tint="#354E15"
+        android:tint="@color/widget_preview_on_primary_container"
         tools:ignore="ContentDescription" />
 </FrameLayout>

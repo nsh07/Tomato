@@ -18,7 +18,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
-    <solid android:color="#4C662B" />
+    <solid android:color="@color/widget_preview_primary" />
 
     <corners android:radius="4dp" />
 

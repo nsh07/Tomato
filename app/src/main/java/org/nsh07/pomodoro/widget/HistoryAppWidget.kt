@@ -98,6 +98,7 @@ class HistoryAppWidget : GlanceAppWidget() {
                     startIcon = ImageProvider(R.drawable.monitoring),
                     title = context.getString(R.string.focus_history),
                     iconColor = colors.primary,
+                    textColor = colors.onPrimaryContainer,
                     actions = {
                         if (size.width >= Width4) {
                             Box(GlanceModifier.padding(horizontal = 16.dp)) {
@@ -159,7 +160,7 @@ class HistoryAppWidget : GlanceAppWidget() {
                                             .background(colors.primary)
                                             .width(20.dp)
                                             .height(
-                                                (92 * (it.totalFocusTime().toFloat() / maxFocus)).dp
+                                                (84 * (it.totalFocusTime().toFloat() / maxFocus)).dp
                                             )
                                             .cornerRadius(16.dp)
                                     )

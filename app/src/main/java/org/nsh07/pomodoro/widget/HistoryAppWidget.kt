@@ -95,17 +95,15 @@ class HistoryAppWidget : GlanceAppWidget() {
         Scaffold(
             titleBar = {
                 TitleBar(
-                    startIcon = ImageProvider(R.drawable.monitoring),
+                    startIcon = ImageProvider(R.drawable.tomato_logo_notification),
                     title = context.getString(R.string.focus_history),
-                    iconColor = colors.primary,
-                    textColor = colors.onPrimaryContainer,
                     actions = {
                         if (size.width >= Width4) {
                             Box(GlanceModifier.padding(horizontal = 16.dp)) {
                                 Image(
                                     provider = ImageProvider(R.drawable.refresh),
                                     contentDescription = null,
-                                    colorFilter = ColorFilter.tint(colors.onPrimaryContainer),
+                                    colorFilter = ColorFilter.tint(colors.onSurface),
                                     modifier = GlanceModifier
                                         .cornerRadius(24.dp)
                                         .clickable {
@@ -130,7 +128,7 @@ class HistoryAppWidget : GlanceAppWidget() {
                             context.getString(R.string.hours_and_minutes_format)
                         ) + " ",
                         style = TextStyle(
-                            color = colors.onPrimaryContainer,
+                            color = colors.onSurface,
                             fontSize = typography.headlineSmall.fontSize,
                             fontWeight = FontWeight.Bold
                         ),
@@ -139,7 +137,7 @@ class HistoryAppWidget : GlanceAppWidget() {
                     if (size.width >= Width4) {
                         Text(
                             text = context.getString(R.string.focus_per_day_avg),
-                            style = TextStyle(color = colors.onPrimaryContainer)
+                            style = TextStyle(color = colors.onSurfaceVariant)
                         )
                     }
                 }

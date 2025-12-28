@@ -103,7 +103,7 @@ class TodayAppWidget : GlanceAppWidget() {
                 Text(
                     context.getString(R.string.focus),
                     style = TextStyle(
-                        color = colors.onPrimaryContainer,
+                        color = colors.onSurface,
                         fontSize = typography.titleMedium.fontSize
                     )
                 )
@@ -113,7 +113,7 @@ class TodayAppWidget : GlanceAppWidget() {
                         context.getString(R.string.hours_and_minutes_format)
                     ),
                     style = TextStyle(
-                        color = colors.onPrimaryContainer,
+                        color = colors.onSurface,
                         fontSize = typography.displaySmall.fontSize,
                         fontWeight = FontWeight.Bold
                     ),
@@ -165,7 +165,7 @@ class TodayAppWidget : GlanceAppWidget() {
                 Image(
                     provider = ImageProvider(R.drawable.refresh),
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(colors.onPrimaryContainer),
+                    colorFilter = ColorFilter.tint(colors.onSurface),
                     modifier = GlanceModifier
                         .cornerRadius(12.dp)
                         .clickable {

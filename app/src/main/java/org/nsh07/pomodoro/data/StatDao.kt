@@ -47,22 +47,22 @@ interface StatDao {
     @Query("SELECT * FROM stat WHERE date = :date")
     fun getStat(date: LocalDate): Flow<Stat?>
 
-    @Query("SELECT date, focusTimeQ1, focusTimeQ2, focusTimeQ3, focusTimeQ4, breakTime FROM stat ORDER BY date DESC LIMIT :n")
+    @Query("SELECT * FROM stat ORDER BY date DESC LIMIT :n")
     fun getLastNDaysStats(n: Int): Flow<List<Stat>>
 
     @Query(
         "SELECT " +
-                "AVG(focusTimeQ1) AS focusTimeQ1, " +
-                "AVG(focusTimeQ2) AS focusTimeQ2, " +
-                "AVG(focusTimeQ3) AS focusTimeQ3, " +
-                "AVG(focusTimeQ4) AS focusTimeQ4, " +
-                "AVG(breakTime) AS breakTime " +
+                "    CAST(AVG(focusTimeQ1) AS INTEGER) AS focusTimeQ1," +
+                "    CAST(AVG(focusTimeQ2) AS INTEGER) AS focusTimeQ2," +
+                "    CAST(AVG(focusTimeQ3) AS INTEGER) AS focusTimeQ3," +
+                "    CAST(AVG(focusTimeQ4) AS INTEGER) AS focusTimeQ4," +
+                "    CAST(AVG(breakTime) AS INTEGER) AS breakTime " +
                 "FROM (" +
-                "SELECT * FROM (" +
-                "SELECT focusTimeQ1, focusTimeQ2, focusTimeQ3, focusTimeQ4, breakTime FROM stat ORDER BY date DESC LIMIT :n" +
-                ") " +
-                "WHERE focusTimeQ1 != 0 OR focusTimeQ2 != 0 OR focusTimeQ3 != 0 OR focusTimeQ4 != 0 " +
-                ")"
+                "    SELECT * FROM stat" +
+                "    ORDER BY date DESC" +
+                "    LIMIT :n" +
+                ")" +
+                "WHERE focusTimeQ1 > 0 OR focusTimeQ2 > 0 OR focusTimeQ3 > 0 OR focusTimeQ4 > 0"
     )
     fun getLastNDaysAvgStats(n: Int): Flow<StatTime?>
 

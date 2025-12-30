@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens
 
+import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
@@ -100,7 +101,6 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TimerSettings(
@@ -120,7 +120,6 @@ fun TimerSettings(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
     val inspectionMode = LocalInspectionMode.current
-    val appName = stringResource(R.string.app_name)
     val notificationManagerService = remember {
         if (!inspectionMode)
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -154,12 +153,19 @@ fun TimerSettings(
                     onClick = {
                         if (it && notificationManagerService?.isNotificationPolicyAccessGranted() == false) {
                             val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-                            Toast.makeText(
-                                context,
-                                "Enable permission for \"$appName\"",
-                                Toast.LENGTH_LONG
-                            )
+
+                            @SuppressLint("LocalContextGetResourceValueCall")
+                            Toast
+                                .makeText(
+                                    context,
+                                    context.getString(
+                                        R.string.dnd_permission_message,
+                                        context.getString(R.string.app_name)
+                                    ),
+                                    Toast.LENGTH_LONG
+                                )
                                 .show()
+
                             context.startActivity(intent)
                         } else if (!it && notificationManagerService?.isNotificationPolicyAccessGranted() == true) {
                             notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)

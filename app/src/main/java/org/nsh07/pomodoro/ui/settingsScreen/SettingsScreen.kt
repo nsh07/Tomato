@@ -87,6 +87,7 @@ import org.nsh07.pomodoro.ui.settingsScreens
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
+import org.nsh07.pomodoro.utils.onBack
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -183,7 +184,7 @@ private fun SettingsScreen(
 
     NavDisplay(
         backStack = backStack,
-        onBack = backStack::removeLastOrNull,
+        onBack = backStack::onBack,
         transitionSpec = {
             (slideInHorizontally(initialOffsetX = { it }))
                 .togetherWith(slideOutHorizontally(targetOffsetX = { -it / 4 }) + fadeOut())
@@ -351,7 +352,7 @@ private fun SettingsScreen(
                 AboutScreen(
                     contentPadding = contentPadding,
                     isPlus = isPlus,
-                    onBack = backStack::removeLastOrNull
+                    onBack = backStack::onBack
                 )
             }
 
@@ -360,7 +361,7 @@ private fun SettingsScreen(
                     settingsState = settingsState,
                     contentPadding = contentPadding,
                     onAction = onAction,
-                    onBack = backStack::removeLastOrNull,
+                    onBack = backStack::onBack,
                     modifier = modifier,
                 )
             }
@@ -371,7 +372,7 @@ private fun SettingsScreen(
                     isPlus = isPlus,
                     onAction = onAction,
                     setShowPaywall = setShowPaywall,
-                    onBack = backStack::removeLastOrNull,
+                    onBack = backStack::onBack,
                     modifier = modifier,
                 )
             }
@@ -387,7 +388,7 @@ private fun SettingsScreen(
                     sessionsSliderState = sessionsSliderState,
                     onAction = onAction,
                     setShowPaywall = setShowPaywall,
-                    onBack = backStack::removeLastOrNull,
+                    onBack = backStack::onBack,
                     modifier = modifier,
                 )
             }

@@ -451,6 +451,8 @@ class TimerService : Service() {
      * intentionally by the user
      */
     fun stopAlarm(fromAutoStop: Boolean = false) {
+        updateProgressSegments() // Make sure notification style is initialized
+
         val settingsState = _settingsState.value
         autoAlarmStopScope?.cancel()
 

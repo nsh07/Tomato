@@ -94,6 +94,7 @@ import org.nsh07.pomodoro.ui.timerScreen.AlarmDialog
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
+import org.nsh07.pomodoro.utils.onBack
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -254,7 +255,7 @@ fun AppScreen(
         SharedTransitionLayout {
             NavDisplay(
                 backStack = backStack,
-                onBack = backStack::removeLastOrNull,
+                onBack = backStack::onBack,
                 transitionSpec = {
                     fadeIn(motionScheme.defaultEffectsSpec())
                         .togetherWith(fadeOut(motionScheme.defaultEffectsSpec()))

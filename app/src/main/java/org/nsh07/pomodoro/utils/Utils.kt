@@ -82,3 +82,7 @@ fun String.toColor(): Color {
     val a = this.slice(comma3 + 1..<comma4).toFloat()
     return Color(r, g, b, a)
 }
+
+fun <T> MutableList<T>.onBack() {
+    if (size > 1) removeLastOrNull()
+}

@@ -103,4 +103,5 @@
     <string name="reset_data_dialog_title">Réinitialiser toutes les données ?</string>
     <string name="focus_breakdown">Analyse de la concentration</string>
     <string name="focus_history_heatmap">Carte thermique de la concentration</string>
+    <string name="today_widget_desc">Stats de concentration de la journée</string>
 </resources>

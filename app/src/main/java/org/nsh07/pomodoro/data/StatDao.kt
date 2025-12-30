@@ -72,6 +72,9 @@ interface StatDao {
     @Query("SELECT date FROM stat ORDER BY date DESC LIMIT 1")
     suspend fun getLastDate(): LocalDate?
 
+    @Query("SELECT SUM(focusTimeQ1 + focusTimeQ2 + focusTimeQ3 + focusTimeQ4) FROM STAT")
+    fun getAllTimeTotalFocusTime(): Flow<Long?>
+
     @Query("DELETE FROM stat")
     suspend fun clearAll()
 }

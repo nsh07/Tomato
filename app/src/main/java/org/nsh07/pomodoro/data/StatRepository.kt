@@ -43,6 +43,8 @@ interface StatRepository {
 
     fun getLastNDaysAverageFocusTimes(n: Int): Flow<StatTime?>
 
+    fun getAllTimeTotalFocusTime(): Flow<Long?>
+
     suspend fun getLastDate(): LocalDate?
 
     suspend fun deleteAllStats()
@@ -119,6 +121,9 @@ class AppStatRepository(
 
     override fun getLastNDaysAverageFocusTimes(n: Int): Flow<StatTime?> =
         statDao.getLastNDaysAvgStats(n)
+
+    override fun getAllTimeTotalFocusTime(): Flow<Long?> =
+        statDao.getAllTimeTotalFocusTime()
 
     override suspend fun getLastDate(): LocalDate? = statDao.getLastDate()
 

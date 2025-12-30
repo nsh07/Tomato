@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,6 +37,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -51,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,6 +73,7 @@ import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
@@ -82,6 +86,7 @@ fun SharedTransitionScope.StatsMainScreen(
     lastMonthSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     lastYearSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     todayStat: Stat?,
+    allTimeTotalFocus: Long?,
     lastWeekAverageFocusTimes: List<Long>,
     lastMonthAverageFocusTimes: List<Long>,
     lastYearAverageFocusTimes: List<Long>,
@@ -218,7 +223,7 @@ fun SharedTransitionScope.StatsMainScreen(
 
             item {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
                         .sharedBoundsReveal(
                             sharedTransitionScope = this@StatsMainScreen,
@@ -237,15 +242,24 @@ fun SharedTransitionScope.StatsMainScreen(
                             bottom = 20.dp
                         ) // end = 0 to let the chart touch the end
                 ) {
-                    Text(
-                        stringResource(R.string.last_week),
-                        style = typography.headlineSmall,
-                        modifier = Modifier.sharedBounds(
-                            sharedContentState = this@StatsMainScreen
-                                .rememberSharedContentState("last week heading"),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            stringResource(R.string.last_week),
+                            style = typography.headlineSmall,
+                            modifier = Modifier.sharedBounds(
+                                sharedContentState = this@StatsMainScreen
+                                    .rememberSharedContentState("last week heading"),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
                         )
-                    )
+                        Spacer(Modifier.weight(1f))
+                        Icon(
+                            painter = painterResource(R.drawable.query_stats),
+                            contentDescription = null,
+                            tint = colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(end = 20.dp)
+                        )
+                    }
 
                     Row(
                         verticalAlignment = Alignment.Bottom,
@@ -301,7 +315,7 @@ fun SharedTransitionScope.StatsMainScreen(
 
             item {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
                         .sharedBoundsReveal(
                             sharedTransitionScope = this@StatsMainScreen,
@@ -320,15 +334,24 @@ fun SharedTransitionScope.StatsMainScreen(
                             bottom = 20.dp
                         ) // end = 0 to let the chart touch the end
                 ) {
-                    Text(
-                        stringResource(R.string.last_month),
-                        style = typography.headlineSmall,
-                        modifier = Modifier.sharedBounds(
-                            sharedContentState = this@StatsMainScreen
-                                .rememberSharedContentState("last month heading"),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            stringResource(R.string.last_month),
+                            style = typography.headlineSmall,
+                            modifier = Modifier.sharedBounds(
+                                sharedContentState = this@StatsMainScreen
+                                    .rememberSharedContentState("last month heading"),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
                         )
-                    )
+                        Spacer(Modifier.weight(1f))
+                        Icon(
+                            painter = painterResource(R.drawable.query_stats),
+                            contentDescription = null,
+                            tint = colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(end = 20.dp)
+                        )
+                    }
 
                     Row(
                         verticalAlignment = Alignment.Bottom,
@@ -385,7 +408,7 @@ fun SharedTransitionScope.StatsMainScreen(
 
             item {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
                         .sharedBoundsReveal(
                             sharedTransitionScope = this@StatsMainScreen,
@@ -404,15 +427,24 @@ fun SharedTransitionScope.StatsMainScreen(
                             bottom = 20.dp
                         ) // end = 0 to let the chart touch the end
                 ) {
-                    Text(
-                        stringResource(R.string.last_year),
-                        style = typography.headlineSmall,
-                        modifier = Modifier.sharedBounds(
-                            sharedContentState = this@StatsMainScreen
-                                .rememberSharedContentState("last year heading"),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            stringResource(R.string.last_year),
+                            style = typography.headlineSmall,
+                            modifier = Modifier.sharedBounds(
+                                sharedContentState = this@StatsMainScreen
+                                    .rememberSharedContentState("last year heading"),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
                         )
-                    )
+                        Spacer(Modifier.weight(1f))
+                        Icon(
+                            painter = painterResource(R.drawable.query_stats),
+                            contentDescription = null,
+                            tint = colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(end = 20.dp)
+                        )
+                    }
 
                     Row(
                         verticalAlignment = Alignment.Bottom,
@@ -463,6 +495,44 @@ fun SharedTransitionScope.StatsMainScreen(
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current
                             )
                     )
+                }
+            }
+
+            item {
+                Spacer(Modifier.height(12.dp))
+            }
+
+            item {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(cardShape)
+                        .background(listItemColors.containerColor)
+                        .padding(20.dp)
+                ) {
+                    Text(
+                        "Lifetime",
+                        style = typography.headlineSmall,
+                    )
+
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Text(
+                            millisecondsToHoursMinutes(
+                                allTimeTotalFocus ?: 0L,
+                                hoursMinutesFormat
+                            ),
+                            style = typography.displaySmall
+                        )
+                        Text(
+                            "total",
+                            style = typography.titleSmall,
+                            modifier = Modifier.padding(bottom = 5.2.dp)
+                        )
+                    }
                 }
             }
         }

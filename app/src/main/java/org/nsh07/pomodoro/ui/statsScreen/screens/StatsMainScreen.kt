@@ -223,7 +223,7 @@ fun SharedTransitionScope.StatsMainScreen(
 
             item {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
                         .sharedBoundsReveal(
                             sharedTransitionScope = this@StatsMainScreen,
@@ -315,7 +315,7 @@ fun SharedTransitionScope.StatsMainScreen(
 
             item {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
                         .sharedBoundsReveal(
                             sharedTransitionScope = this@StatsMainScreen,
@@ -408,7 +408,7 @@ fun SharedTransitionScope.StatsMainScreen(
 
             item {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
                         .sharedBoundsReveal(
                             sharedTransitionScope = this@StatsMainScreen,
@@ -504,7 +504,7 @@ fun SharedTransitionScope.StatsMainScreen(
 
             item {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(cardShape)

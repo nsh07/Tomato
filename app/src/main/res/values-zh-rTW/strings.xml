@@ -88,7 +88,7 @@
     <string name="session_only_progress_desc">在通知中僅顯示目前計時的進度，而非整個工作階段。</string>
     <string name="undo">復原</string>
     <string name="reset_data">重置統計資料</string>
-    <string name="reset_data_dialog_text">你確定要重置統計資料嗎?</string>
+    <string name="reset_data_dialog_text">所有已儲存的統計資料都將被永久刪除，且無法復原。</string>
     <string name="auto_start_next_timer_desc">停止鬧鐘後自動開始下一個計時</string>
     <string name="auto_start_next_timer">自動開始下一個計時</string>
     <string name="secure_aod">螢幕長亮模式安全鎖定</string>
@@ -97,12 +97,17 @@
     <string name="focus_break_ratio">專注／休息比例</string>
     <string name="focus_breakdown">專注分佈</string>
     <string name="focus_breakdown_desc">一天中不同時段的平均專注時長</string>
-    <string name="focus_history_desc">過去一週每天的專注分佈（點擊各個區塊以查看詳細資訊）</string>
+    <string name="focus_history_desc">過去一週每天的專注分佈，點擊圖表以查看詳細資訊。</string>
     <string name="focus_history">專注歷史</string>
     <string name="less">收合</string>
     <string name="show_chart">顯示圖表</string>
     <string name="focus_history_heatmap">專注歷史熱度圖</string>
-    <string name="focus_history_heatmap_desc">過去一年的專注歷史。顏色越深代表專注時長越長。儲存格依月份分組，點擊可查看詳細資訊。</string>
+    <string name="focus_history_heatmap_desc">過去一年的專注歷史。顏色越深代表專注時長越長。天數依月份分組，點擊日期可查看詳細資訊。</string>
     <string name="focus_history_calendar">專注歷史月曆</string>
     <string name="focus_history_calendar_desc">過去一個月的專注歷史。上個月的日期會以不同顏色標示，點擊日期可查看詳細資訊。</string>
+    <string name="back">返回</string>
+    <string name="reset_data_dialog_title">要重設所有統計資料嗎？</string>
+    <string name="today_widget_desc">今日專注統計</string>
+    <string name="history_widget_desc">查看過去幾天的專注時長圖表。顯示的天數會依小工具大小而有所不同。</string>
+    <string name="dnd_permission_message">啟用「%1$s」的權限</string>
 </resources>

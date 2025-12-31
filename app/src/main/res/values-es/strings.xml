@@ -104,4 +104,7 @@
     <string name="reset_data_dialog_title">¿Restablecer todas las estadísticas?</string>
     <string name="reset_data_dialog_text">Todas las estadísticas guardadas se eliminarán permanentemente. Esta acción no se puede deshacer.</string>
     <string name="back">Atrás</string>
+    <string name="today_widget_desc">Estadísticas de concentración de hoy</string>
+    <string name="history_widget_desc">Ver un gráfico con la duración de la concentración de los últimos días. El número de días que se muestra depende del tamaño del widget.</string>
+    <string name="dnd_permission_message">Habilitar permiso para \"%1$s\"</string>
 </resources>

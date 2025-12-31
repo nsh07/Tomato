@@ -107,4 +107,5 @@
     <string name="back">Geri</string>
     <string name="today_widget_desc">Bugünün odaklanma istatistikleri</string>
     <string name="history_widget_desc">Geçmiş birkaç günlerdeki odaklanma sürelerine dair bir grafik görün. Görüntülenen gün sayısı, widget\'ın boyutuna bağlıdır.</string>
+    <string name="dnd_permission_message">\"%1$s\" için yetkileri aktifleştirin</string>
 </resources>

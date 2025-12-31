@@ -17,15 +17,18 @@
 
 package org.nsh07.pomodoro.widget.componenets
 
+import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceComposable
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme.colors
+import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
@@ -35,6 +38,7 @@ import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.width
+import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.statsScreen.components.HORIZONTAL_STACKED_BAR_HEIGHT
 
 /**
@@ -66,6 +70,7 @@ fun HorizontalStackedBarGlance(
     val totalSum = remember(values) { values.sum() }
 
     val context = LocalContext.current
+    val roundedCornersSupported = Build.VERSION.SDK_INT >= 31
 
     if (firstNonZeroIndex != -1)
         Row(
@@ -79,15 +84,31 @@ fun HorizontalStackedBarGlance(
                         GlanceModifier
                             .width((effectiveWidth.value * (item.toFloat() / totalSum)).dp)
                             .height(height)
-                            .cornerRadius(4.dp)
-                            .background(
-                                colors.primary
-                                    .getColor(context)
-                                    .copy(
-                                        (1f - (rankList.getOrNull(index) ?: 0) * 0.1f)
+                            .then(
+                                if (roundedCornersSupported)
+                                    GlanceModifier
+                                        .cornerRadius(4.dp)
+                                        .background(
+                                            colors.primary
+                                                .getColor(context)
+                                                .copy(
+                                                    (1f - (rankList.getOrNull(index) ?: 0) * 0.1f)
+                                                        .coerceAtLeast(0.1f)
+                                                )
+                                                .compositeOver(
+                                                    colors.surfaceVariant.getColor(
+                                                        context
+                                                    )
+                                                )
+                                        )
+                                else
+                                    GlanceModifier.background(
+                                        ImageProvider(R.drawable.rounded_4dp),
+                                        colorFilter = ColorFilter.tint(colors.primary),
+                                        alpha = (1f - (rankList.getOrNull(index) ?: 0) * 0.1f)
                                             .coerceAtLeast(0.1f)
                                     )
-                                    .compositeOver(colors.surfaceVariant.getColor(context))
+
                             )
                     ) {}
                     Spacer(GlanceModifier.width(gap))
@@ -99,7 +120,16 @@ fun HorizontalStackedBarGlance(
             modifier
                 .fillMaxWidth()
                 .height(height)
-                .cornerRadius(16.dp)
-                .background(colors.surfaceVariant)
+                .then(
+                    if (roundedCornersSupported)
+                        GlanceModifier
+                            .cornerRadius(16.dp)
+                            .background(colors.surfaceVariant)
+                    else
+                        GlanceModifier.background(
+                            ImageProvider(R.drawable.rounded_16dp),
+                            colorFilter = ColorFilter.tint(colors.surfaceVariant)
+                        )
+                )
         ) {}
 }

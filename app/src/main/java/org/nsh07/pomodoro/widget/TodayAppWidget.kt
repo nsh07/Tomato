@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.widget
 
 import android.content.Context
+import android.os.Build
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
@@ -95,7 +96,13 @@ class TodayAppWidget : GlanceAppWidget() {
         Box(
             contentAlignment = Alignment.TopEnd,
             modifier = GlanceModifier
-                .background(colors.widgetBackground)
+                .then(
+                    if (Build.VERSION.SDK_INT >= 31) GlanceModifier.background(colors.widgetBackground)
+                    else GlanceModifier.background(
+                        ImageProvider(R.drawable.rounded_24dp),
+                        colorFilter = ColorFilter.tint(colors.widgetBackground)
+                    )
+                )
                 .padding(16.dp)
                 .clickable(actionStartActivity<MainActivity>())
         ) {

@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.widget
 
 import android.content.Context
+import android.os.Build
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
@@ -37,7 +38,6 @@ import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
-import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.components.TitleBar
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
@@ -92,35 +92,44 @@ class HistoryAppWidget : GlanceAppWidget() {
         val context = LocalContext.current
         val size = LocalSize.current
         val scope = rememberCoroutineScope()
-        Scaffold(
-            titleBar = {
-                TitleBar(
-                    startIcon = ImageProvider(R.drawable.tomato_logo_notification),
-                    title = context.getString(R.string.focus_history),
-                    actions = {
-                        if (size.width >= Width4) {
-                            Box(GlanceModifier.padding(horizontal = 16.dp)) {
-                                Image(
-                                    provider = ImageProvider(R.drawable.refresh),
-                                    contentDescription = null,
-                                    colorFilter = ColorFilter.tint(colors.onSurface),
-                                    modifier = GlanceModifier
-                                        .cornerRadius(24.dp)
-                                        .clickable {
-                                            scope.launch { this@HistoryAppWidget.updateAll(context) }
-                                        }
-                                )
-                            }
+        val roundedCornersSupported = Build.VERSION.SDK_INT >= 31
+        Column(
+            modifier =
+                GlanceModifier
+                    .fillMaxSize()
+                    .then(
+                        if (roundedCornersSupported) GlanceModifier.background(colors.widgetBackground)
+                        else GlanceModifier.background(
+                            ImageProvider(R.drawable.rounded_24dp),
+                            colorFilter = ColorFilter.tint(colors.widgetBackground)
+                        )
+                    )
+                    .clickable(actionStartActivity<MainActivity>())
+        ) {
+            TitleBar(
+                startIcon = ImageProvider(R.drawable.tomato_logo_notification),
+                title = context.getString(R.string.focus_history),
+                actions = {
+                    if (size.width >= Width4) {
+                        Box(GlanceModifier.padding(horizontal = 16.dp)) {
+                            Image(
+                                provider = ImageProvider(R.drawable.refresh),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(colors.onSurface),
+                                modifier = GlanceModifier
+                                    .cornerRadius(24.dp)
+                                    .clickable {
+                                        scope.launch { this@HistoryAppWidget.updateAll(context) }
+                                    }
+                            )
                         }
                     }
-                )
-            },
-            horizontalPadding = 16.dp,
-            modifier = GlanceModifier
-                .padding(bottom = 16.dp)
-                .clickable(actionStartActivity<MainActivity>())
-        ) {
-            Column(GlanceModifier.fillMaxSize()) {
+                },
+            )
+
+            Column(
+                GlanceModifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+            ) {
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
                         text = millisecondsToHoursMinutes(
@@ -141,6 +150,7 @@ class HistoryAppWidget : GlanceAppWidget() {
                         )
                     }
                 }
+
                 Row(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = GlanceModifier.fillMaxWidth()
@@ -155,12 +165,20 @@ class HistoryAppWidget : GlanceAppWidget() {
                                 Box(GlanceModifier.padding(end = if (flatIndex != history.lastIndex) 4.dp else 0.dp)) {
                                     Spacer(
                                         GlanceModifier
-                                            .background(colors.primary)
                                             .width(20.dp)
                                             .height(
                                                 (84 * (it.totalFocusTime().toFloat() / maxFocus)).dp
                                             )
-                                            .cornerRadius(16.dp)
+                                            .then(
+                                                if (roundedCornersSupported)
+                                                    GlanceModifier
+                                                        .background(colors.primary)
+                                                        .cornerRadius(16.dp)
+                                                else GlanceModifier.background(
+                                                    ImageProvider(R.drawable.rounded_16dp),
+                                                    colorFilter = ColorFilter.tint(colors.primary)
+                                                )
+                                            )
                                     )
                                 }
                             }

@@ -104,4 +104,9 @@
     <string name="focus_history_calendar_desc">आखिरी महीने का फोकस हिस्ट्री। पिछले महीने के दिनों पे दूसरा रंग है। ज्यादा जानकारी के लिए किसी दिन पर टैप करें।</string>
     <string name="back">बैक</string>
     <string name="reset_data_dialog_title">सभी आँकड़ों को रीसेट करें?</string>
+    <string name="today_widget_desc">आज के फोकस आंकड़े</string>
+    <string name="history_widget_desc">पिछले कुछ दिनों के फोकस ड्यूरेशन का चार्ट देखें। दिखाए जाने वाले दिनों की संख्या विजेट के साइज़ पर निर्भर करती है।</string>
+    <string name="dnd_permission_message">\"%1$s\" के लिए परमिशन चालू करें</string>
+    <string name="lifetime">लाइफटाइम</string>
+    <string name="total">कुल</string>
 </resources>

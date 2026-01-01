@@ -451,6 +451,8 @@ class TimerService : Service() {
      * intentionally by the user
      */
     fun stopAlarm(fromAutoStop: Boolean = false) {
+        updateProgressSegments() // Make sure notification style is initialized
+
         val settingsState = _settingsState.value
         autoAlarmStopScope?.cancel()
 
@@ -511,7 +513,7 @@ class TimerService : Service() {
     private fun setDoNotDisturb(doNotDisturb: Boolean) {
         if (_settingsState.value.dndEnabled && notificationManagerService.isNotificationPolicyAccessGranted()) {
             if (doNotDisturb) {
-                notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALARMS)
+                notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY)
             } else notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
         }
     }

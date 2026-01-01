@@ -15,16 +15,19 @@
   ~ If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="widget_preview_bg">#DCE7C7</color>
-    <color name="widget_preview_on_primary_container">#354E15</color>
-    <color name="widget_preview_on_surface_variant">#44483D</color>
-    <color name="widget_preview_primary">#4C662B</color>
-</resources>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:description="@string/today_widget_desc"
+    android:maxResizeWidth="624dp"
+    android:maxResizeHeight="132dp"
+    android:minWidth="109dp"
+    android:minHeight="56dp"
+    android:minResizeWidth="109dp"
+    android:minResizeHeight="56dp"
+    android:previewImage="@drawable/today_widget_preview"
+    android:resizeMode="vertical|horizontal"
+    android:targetCellWidth="4"
+    android:targetCellHeight="2"
+    android:updatePeriodMillis="1800000"
+    android:widgetCategory="home_screen|keyguard"
+    tools:targetApi="36" />

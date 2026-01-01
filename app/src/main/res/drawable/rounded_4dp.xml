@@ -15,16 +15,9 @@
   ~ If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="widget_preview_bg">#DCE7C7</color>
-    <color name="widget_preview_on_primary_container">#354E15</color>
-    <color name="widget_preview_on_surface_variant">#44483D</color>
-    <color name="widget_preview_primary">#4C662B</color>
-</resources>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <corners android:radius="4dp" />
+
+</shape>

@@ -91,5 +91,17 @@
     <string name="timer_reset_message">Timer wurde zurückgesetzt</string>
     <string name="undo">Rückgängig</string>
     <string name="reset_data">Statistiken zurücksetzen</string>
-    <string name="reset_data_dialog_text">Bist du dir sicher das du alle Statistiken löschen willst?</string>
+    <string name="reset_data_dialog_text">Alle gespeicherten Statistiken werden dauerhaft gelöscht. Dieser Vorgang kann nicht rückgängig gemacht werden.</string>
+    <string name="focus_break_ratio">Fokus-Unterbrechungsrate</string>
+    <string name="focus_breakdown">Fokusanalyse</string>
+    <string name="focus_breakdown_desc">Durchschnittliche Fokusdauer zu verschiedenen Tageszeiten</string>
+    <string name="focus_history">Fokus-Verlauf</string>
+    <string name="focus_history_desc">Aufschlüsselung der Fokuszeiten für jeden Tag der vergangenen Woche. Tippe auf das Diagramm eines Tages, um weitere Informationen zu erhalten.</string>
+    <string name="less">Weniger</string>
+    <string name="show_chart">Diagramm anzeigen</string>
+    <string name="focus_history_heatmap_desc">Fokus auf die Historie des vergangenen Jahres. Intensivere Farben stehen für einen längeren Zeitraum. Die Tage sind nach Monaten gruppiert. Tippe auf einen Tag, um weitere Informationen zu erhalten.</string>
+    <string name="focus_history_calendar">Fokus-Verlaufskalender</string>
+    <string name="focus_history_calendar_desc">Fokus-Verlauf des letzten Monats. Die Tage des Vormonats sind mit einer anderen Farbe markiert. Tippe auf ein Datum, um weitere Informationen zu erhalten.</string>
+    <string name="reset_data_dialog_title">Alle Statistiken zurücksetzen?</string>
+    <string name="back">Zurück</string>
 </resources>

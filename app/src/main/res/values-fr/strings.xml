@@ -101,4 +101,12 @@
     <string name="focus_history_calendar">Calendrier de l\'historique de concentration</string>
     <string name="focus_history_calendar_desc">Historique de concentration du mois dernier. Les jours du mois précédent sont indiqués par une couleur différente. Appuyez sur une date pour obtenir plus d\'informations.</string>
     <string name="reset_data_dialog_title">Réinitialiser toutes les données ?</string>
+    <string name="focus_breakdown">Analyse de la concentration</string>
+    <string name="focus_history_heatmap">Carte thermique de la concentration</string>
+    <string name="today_widget_desc">Stats de concentration de la journée</string>
+    <string name="history_widget_desc">Afficher un graphique des durées de concentration des derniers jours. Le nombre de jours affichés dépend de la taille du widget.</string>
+    <string name="dnd_permission_message">Autoriser l\'accès pour \"%1$s\"</string>
+    <string name="minutes_format">%1$dm</string>
+    <string name="hours_and_minutes_format">%1$dh %2$dm</string>
+    <string name="hours_format">%1$dh</string>
 </resources>

@@ -19,6 +19,7 @@ package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
 import android.net.Uri
 import android.provider.Settings
+import android.util.Log
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
@@ -221,7 +222,16 @@ class SettingsViewModel(
     }
 
     fun cancelTextFieldFlowCollection() {
-        if (!serviceRunning.value) serviceHelper.startService(TimerAction.ResetTimer)
+        if (!serviceRunning.value)
+            try {
+                serviceHelper.startService(TimerAction.ResetTimer)
+            } catch (e: Exception) {
+                Log.e(
+                    "Service",
+                    "Unable to start start service with action ResetTimer: ${e.message}"
+                )
+                e.printStackTrace()
+            }
         focusFlowCollectionJob?.cancel()
         shortBreakFlowCollectionJob?.cancel()
         longBreakFlowCollectionJob?.cancel()

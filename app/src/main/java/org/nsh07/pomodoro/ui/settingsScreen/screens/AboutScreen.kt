@@ -170,7 +170,7 @@ fun AboutScreen(
                         Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                             FilledTonalIconButton(
                                 onClick = {
-                                    uriHandler.openUri("http://discord.com/users/658886962048008192")
+                                    uriHandler.openUri("https://discord.gg/MHhBQcxHu6")
                                 },
                                 shapes = IconButtonDefaults.shapes()
                             ) {

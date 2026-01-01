@@ -90,4 +90,19 @@
     <string name="secure_aod_desc">قم بقفل جهازك تلقائيا بعد انتهاء الوقت، مع إبقاء AOD مرئياً</string>
     <string name="timer_reset_message">أُعيد ضبط المؤقت</string>
     <string name="undo">تراجع</string>
+    <string name="focus_break_ratio">نسبة كسر التركيز</string>
+    <string name="focus_breakdown">تفصيل التركيز</string>
+    <string name="focus_breakdown_desc">متوسط مدة التركيز في أوقات مختلفة من اليوم</string>
+    <string name="focus_history">تاريخ التركيز</string>
+    <string name="focus_history_desc">تفصيل التركيز لكل يوم من أيام الأسبوع الماضي. انقر على مخطط اليوم لمزيد من المعلومات.</string>
+    <string name="less">أقل</string>
+    <string name="show_chart">مخطط البرامج</string>
+    <string name="focus_history_heatmap">خريطة تاريخ التركيز</string>
+    <string name="focus_history_heatmap_desc">تاريخ التركيز. الألوان الداكنة تمثل المدة الأطول. الأيام مجمعة حسب الشهر. اضغط على يوم لمزيد من المعلومات.</string>
+    <string name="focus_history_calendar">تقويم تاريخ التركيز</string>
+    <string name="focus_history_calendar_desc">تاريخ الشهر الماضي. أيام الشهر السابق معلمة بلون مختلف. اضغط على تاريخ لمزيد من المعلومات.</string>
+    <string name="reset_data">إعادة ضبط الإحصائيات</string>
+    <string name="reset_data_dialog_title">إعادة تعيين كل الإحصائيات؟</string>
+    <string name="reset_data_dialog_text">سيتم حذف جميع الإحصائيات المحفوظة بشكل دائم. لا يمكن التراجع عن هذا.</string>
+    <string name="back">خلف</string>
 </resources>

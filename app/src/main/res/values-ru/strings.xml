@@ -24,7 +24,7 @@
     <string name="light">Светлая</string>
     <string name="long_break">Долгий перерыв</string>
     <string name="min_remaining_notification">%1$s минут осталось</string>
-    <string name="more">Ещё</string>
+    <string name="more">Больше</string>
     <string name="more_info">Больше информации</string>
     <string name="ok">Ок</string>
     <string name="pause">Пауза</string>
@@ -43,7 +43,7 @@
     <string name="stats">Статистика</string>
     <string name="stop">Стоп</string>
     <string name="stop_alarm">Сигнал остановки</string>
-    <string name="stop_alarm_dialog_text">Текущая таймер завершен. Нажмите в любое место для остановки сигнала.</string>
+    <string name="stop_alarm_dialog_text">Текущий таймер завершен. Нажмите в любом месте для остановки сигнала.</string>
     <string name="stop_alarm_question">Остановить сигнал?</string>
     <string name="system_default">Система</string>
     <string name="theme">Тема</string>
@@ -67,10 +67,10 @@
     <string name="rate_on_google_play">Оценить в Google Play</string>
     <string name="selected">Выбрано</string>
     <string name="durations">Длительности</string>
-    <string name="appearance">Отображение</string>
+    <string name="appearance">Внешний вид</string>
     <string name="tomato_foss">Tomato (свободное и открытое программное обеспечение)</string>
     <string name="help_with_translation">Помочь перевести Tomato</string>
-    <string name="timer_settings_reset_info">Сбросить таймер для изменения настроек</string>
+    <string name="timer_settings_reset_info">Необходимо сбросить таймер для изменения настроек</string>
     <string name="hours_and_minutes_format">%1$dч %2$dмин</string>
     <string name="hours_format">%1$dч</string>
     <string name="minutes_format">%1$dмин</string>
@@ -90,4 +90,21 @@
     <string name="secure_aod_desc">Автоматически блокировать устройство по истечении времени во время отображения Всегда Включенного Экрана</string>
     <string name="timer_reset_message">Таймер сброшен</string>
     <string name="undo">Отменить</string>
+    <string name="focus_break_ratio">Соотношение Фокус-Перерыв</string>
+    <string name="focus_breakdown_desc">Средняя продолжительность фокуса в разное время суток</string>
+    <string name="focus_history">История фокусировки</string>
+    <string name="less">Меньше</string>
+    <string name="show_chart">Показать график</string>
+    <string name="focus_history_heatmap">Тепловая карта истории фокуса</string>
+    <string name="focus_history_heatmap_desc">История фокуса за прошлый год. Более тёмные цвета обозначают большую продолжительность. Дни сгруппированы по месяцам. Нажмите на день, чтобы узнать подробности.</string>
+    <string name="focus_history_calendar">Календарь истории фокуса</string>
+    <string name="focus_history_calendar_desc">История фокуса за прошлый месяц. Дни предыдущего месяца выделены другим цветом. Нажмите на дату, чтобы узнать подробности.</string>
+    <string name="reset_data">Сбросить статистику</string>
+    <string name="reset_data_dialog_title">Сбросить всю статистику?</string>
+    <string name="reset_data_dialog_text">Вся сохраненная статистика будет удалена навсегда. Это действие нельзя отменить.</string>
+    <string name="back">Назад</string>
+    <string name="today_widget_desc">Статистика фокуса за сегодня</string>
+    <string name="focus_history_desc">Разбивка фокуса по каждому дню прошлой недели. Нажмите на график дня, чтобы узнать подробнее.</string>
+    <string name="focus_breakdown">Разбивка фокуса</string>
+    <string name="total">всего</string>
 </resources>

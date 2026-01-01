@@ -46,6 +46,7 @@ import org.nsh07.pomodoro.ui.statsScreen.screens.StatsMainScreen
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex400
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
+import org.nsh07.pomodoro.utils.onBack
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -57,6 +58,7 @@ fun StatsScreenRoot(
     val backStack = viewModel.backStack
 
     val todayStat by viewModel.todayStat.collectAsStateWithLifecycle(null)
+    val allTimeTotalFocus by viewModel.allTimeTotalFocus.collectAsStateWithLifecycle(null)
 
     val lastWeekMainChartData by viewModel.lastWeekMainChartData.collectAsStateWithLifecycle()
     val lastWeekFocusHistoryValues by viewModel.lastWeekFocusHistoryValues.collectAsStateWithLifecycle()
@@ -84,7 +86,7 @@ fun StatsScreenRoot(
     SharedTransitionLayout {
         NavDisplay(
             backStack = backStack,
-            onBack = backStack::removeLastOrNull,
+            onBack = backStack::onBack,
             transitionSpec = {
                 fadeIn().togetherWith(veilOut(targetColor = colorScheme.surfaceDim))
             },
@@ -102,6 +104,7 @@ fun StatsScreenRoot(
                         lastMonthSummaryChartData = lastMonthMainChartData,
                         lastYearSummaryChartData = lastYearMainChartData,
                         todayStat = todayStat,
+                        allTimeTotalFocus = allTimeTotalFocus,
                         lastWeekAverageFocusTimes = lastWeekFocusBreakdownValues.first,
                         lastMonthAverageFocusTimes = lastMonthFocusBreakdownValues.first,
                         lastYearAverageFocusTimes = lastYearFocusBreakdownValues.first,
@@ -125,7 +128,7 @@ fun StatsScreenRoot(
                         focusBreakdownValues = lastWeekFocusBreakdownValues,
                         focusHistoryValues = lastWeekFocusHistoryValues,
                         mainChartData = lastWeekMainChartData,
-                        onBack = backStack::removeLastOrNull,
+                        onBack = backStack::onBack,
                         hoursMinutesFormat = hoursMinutesFormat,
                         hoursFormat = hoursFormat,
                         minutesFormat = minutesFormat,
@@ -140,7 +143,7 @@ fun StatsScreenRoot(
                         focusBreakdownValues = lastMonthFocusBreakdownValues,
                         calendarData = lastMonthCalendarData,
                         mainChartData = lastMonthMainChartData,
-                        onBack = backStack::removeLastOrNull,
+                        onBack = backStack::onBack,
                         hoursMinutesFormat = hoursMinutesFormat,
                         hoursFormat = hoursFormat,
                         minutesFormat = minutesFormat,
@@ -156,7 +159,7 @@ fun StatsScreenRoot(
                         focusHeatmapData = lastYearFocusHeatmapData,
                         heatmapMaxValue = lastYearMaxFocus,
                         mainChartData = lastYearMainChartData,
-                        onBack = backStack::removeLastOrNull,
+                        onBack = backStack::onBack,
                         hoursMinutesFormat = hoursMinutesFormat,
                         hoursFormat = hoursFormat,
                         minutesFormat = minutesFormat,

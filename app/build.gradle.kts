@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -44,8 +44,8 @@ android {
         applicationId = "org.nsh07.pomodoro"
         minSdk = 27
         targetSdk = 36
-        versionCode = 24
-        versionName = "1.8.0"
+        versionCode = 25
+        versionName = "1.8.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -137,9 +137,13 @@ dependencies {
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
+
     implementation(libs.androidx.profileinstaller)
     "baselineProfile"(project(":baselineprofile"))
-    ksp(libs.androidx.room.compiler)
 
     "playImplementation"(libs.revenuecat.purchases)
     "playImplementation"(libs.revenuecat.purchases.ui)

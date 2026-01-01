@@ -64,6 +64,14 @@ class StatsViewModel(
             initialValue = null
         )
 
+    val allTimeTotalFocus = statRepository
+        .getAllTimeTotalFocusTime()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
+
     private val lastWeekSummary =
         Pair(CartesianChartModelProducer(), ExtraStore.Key<List<String>>())
     private val lastMonthSummary =

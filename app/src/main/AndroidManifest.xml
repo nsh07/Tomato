@@ -36,6 +36,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Tomato"
         tools:targetApi="36">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -46,6 +47,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".service.TimerService"
             android:foregroundServiceType="specialUse">
@@ -53,6 +55,30 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="Required to keep the timer running in the background" />
         </service>
+
+        <receiver
+            android:name=".widget.TodayWidgetReceiver"
+            android:exported="true"
+            android:label="@string/today">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/today_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.HistoryWidgetReceiver"
+            android:exported="true"
+            android:label="@string/focus_history">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/history_widget_info" />
+        </receiver>
     </application>
 
 </manifest>

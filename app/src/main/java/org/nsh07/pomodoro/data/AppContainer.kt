@@ -52,7 +52,7 @@ class DefaultAppContainer(context: Context) : AppContainer {
     }
 
     override val appStatRepository: AppStatRepository by lazy {
-        AppStatRepository(AppDatabase.getDatabase(context).statDao())
+        AppStatRepository.get(context)
     }
 
     override val stateRepository: StateRepository by lazy {

@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.data
 
+import android.content.Context
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -41,6 +42,8 @@ interface StatRepository {
     fun getLastNDaysStats(n: Int): Flow<List<Stat>>
 
     fun getLastNDaysAverageFocusTimes(n: Int): Flow<StatTime?>
+
+    fun getAllTimeTotalFocusTime(): Flow<Long?>
 
     suspend fun getLastDate(): LocalDate?
 
@@ -119,9 +122,15 @@ class AppStatRepository(
     override fun getLastNDaysAverageFocusTimes(n: Int): Flow<StatTime?> =
         statDao.getLastNDaysAvgStats(n)
 
+    override fun getAllTimeTotalFocusTime(): Flow<Long?> =
+        statDao.getAllTimeTotalFocusTime()
+
     override suspend fun getLastDate(): LocalDate? = statDao.getLastDate()
 
-    override suspend fun deleteAllStats() =
-        statDao.clearAll()
+    override suspend fun deleteAllStats() = statDao.clearAll()
 
+    companion object {
+        fun get(context: Context) =
+            AppStatRepository(AppDatabase.getDatabase(context).statDao())
+    }
 }

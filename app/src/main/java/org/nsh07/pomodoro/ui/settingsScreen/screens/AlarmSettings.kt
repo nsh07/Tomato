@@ -23,6 +23,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
@@ -98,9 +99,14 @@ fun AlarmSettings(
 
     LaunchedEffect(settingsState.alarmSoundUri) {
         withContext(Dispatchers.IO) {
-            alarmName =
+            alarmName = try {
                 RingtoneManager.getRingtone(context, settingsState.alarmSoundUri)
                     ?.getTitle(context) ?: ""
+            } catch (e: Exception) {
+                Log.e("AlarmSettings", "Unable to get ringtone title: ${e.message}")
+                e.printStackTrace()
+                ""
+            }
         }
     }
 
@@ -213,6 +219,7 @@ fun AlarmSettings(
                     },
                     headlineContent = { Text(stringResource(R.string.alarm_sound)) },
                     supportingContent = { Text(alarmName) },
+                    trailingContent = { Icon(painterResource(R.drawable.arrow_forward_big), null) },
                     colors = listItemColors,
                     modifier = Modifier
                         .clip(topListItemShape)

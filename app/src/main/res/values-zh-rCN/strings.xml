@@ -93,7 +93,7 @@
     <string name="focus_break_ratio">对焦-破坏比</string>
     <string name="focus_history_desc">上周每天的专注分布。点击一天的图表获取更多信息。</string>
     <string name="less">收起</string>
-    <string name="show_chart">节目排行榜</string>
+    <string name="show_chart">显示图表</string>
     <string name="focus_history_heatmap">焦点式历史热力图</string>
     <string name="focus_history">焦点历史</string>
     <string name="back">返回</string>

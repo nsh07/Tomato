@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -91,31 +91,7 @@ class BaselineProfileGenerator {
                 onElement { contentDescription == "Settings" }.click()
                 waitForStableInActiveWindow()
 
-                onElement { textAsString() == "Timer" }.click()
-                waitForStableInActiveWindow()
-                scrollThroughContent()
-                onElement { contentDescription == "Back" }.click()
-
-                waitForStableInActiveWindow()
-
-                onElement { textAsString() == "Appearance" }.click()
-                waitForStableInActiveWindow()
-                scrollThroughContent()
-                onElement { contentDescription == "Back" }.click()
-
-                waitForStableInActiveWindow()
-
-                onElement { textAsString() == "Alarm" }.click()
-                waitForStableInActiveWindow()
-                scrollThroughContent()
-                onElement { contentDescription == "Back" }.click()
-
-                waitForStableInActiveWindow()
-
-                onElement { textAsString() == "About" }.click()
-                waitForStableInActiveWindow()
-                scrollThroughContent()
-                onElement { contentDescription == "Back" }.click()
+                pressBack()
             }
         }
     }

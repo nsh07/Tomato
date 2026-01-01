@@ -1,0 +1,12 @@
+Tomato now has a Discord server! Join by clicking the Discord icon in the About screen.
+
+New features:
+- Added 2 new home screen widgets
+- Lifetime stats are now shown at the bottom of the stats screen
+- Added icons in Stats screen
+
+Fixes:
+- Stats screen performance improvements
+- Contacts excluded from Do Not Disturb in system settings can now ring calls and notifications while DND is on
+
+Translation updates (thanks to contributors on Weblate)

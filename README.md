@@ -21,7 +21,9 @@ Tomato is a minimalist Pomodoro timer for Android based on Material 3 Expressive
 <a href="https://github.com/nsh07/tomato/blob/main/LICENSE">
   <img src="https://img.shields.io/github/license/nsh07/tomato?logo=gnu&color=blue&labelColor=1a1a1a">
 </a>
-<img src="https://img.shields.io/badge/API-27+-blue?logo=android&labelColor=1a1a1a">
+<a href="https://discord.gg/MHhBQcxHu6">
+  <img src=https://img.shields.io/discord/1455603400254292196?logo=discord&label=Discord&labelColor=1a1a1a&color=5865F2>
+</a>
 
 <p>
   <a href="https://play.google.com/store/apps/details?id=org.nsh07.pomodoro">

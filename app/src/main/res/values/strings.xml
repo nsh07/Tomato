@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2025 Nishant Mishra
+  ~ Copyright (c) 2025-2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
   ~
@@ -128,4 +128,6 @@
     <string name="today_widget_desc">Today\'s focus stats</string>
     <string name="history_widget_desc">See a chart of the focus durations of the past few days. The number of days displayed depends on the size of the widget.</string>
     <string name="dnd_permission_message">Enable permission for \"%1$s\"</string>
+    <string name="lifetime">Lifetime</string>
+    <string name="total">total</string>
 </resources>

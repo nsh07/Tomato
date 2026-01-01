@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -512,7 +512,7 @@ fun SharedTransitionScope.StatsMainScreen(
                         .padding(20.dp)
                 ) {
                     Text(
-                        "Lifetime",
+                        stringResource(R.string.lifetime),
                         style = typography.headlineSmall,
                     )
 
@@ -528,7 +528,7 @@ fun SharedTransitionScope.StatsMainScreen(
                             style = typography.displaySmall
                         )
                         Text(
-                            "total",
+                            stringResource(R.string.total),
                             style = typography.titleSmall,
                             modifier = Modifier.padding(bottom = 5.2.dp)
                         )

@@ -23,6 +23,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.os.VibrationEffect.DEFAULT_AMPLITUDE
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -176,6 +177,32 @@ fun AlarmSettings(
                 )
             )
         )
+    }
+
+    val durationSliderState = rememberSliderState(
+        value = settingsState.vibrationOnDuration.toFloat(),
+        valueRange = 10f..5000f
+    ).apply {
+        onValueChangeFinished = {
+            onAction(SettingsAction.SaveVibrationOnDuration(value.toLong()))
+        }
+    }
+    val gapSliderState = rememberSliderState(
+        value = settingsState.vibrationOffDuration.toFloat(),
+        valueRange = 10f..5000f
+    ).apply {
+        onValueChangeFinished = {
+            onAction(SettingsAction.SaveVibrationOffDuration(value.toLong()))
+        }
+    }
+    val strengthSliderState = rememberSliderState(
+        value = if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE) 255f
+        else settingsState.vibrationAmplitude.toFloat(),
+        valueRange = 2f..255f
+    ).apply {
+        onValueChangeFinished = {
+            onAction(SettingsAction.SaveVibrationAmplitude(value.roundToInt()))
+        }
     }
 
     Scaffold(
@@ -343,45 +370,30 @@ fun AlarmSettings(
                     modifier = Modifier.clip(topListItemShape)
                 )
             }
-            item {
-                val sliderState = rememberSliderState(
-                    value = 1000f,
-                    valueRange = 10f..5000f,
-                    onValueChangeFinished = {}
-                )
 
+            item {
                 SliderListItem(
-                    sliderState = sliderState,
+                    sliderState = durationSliderState,
                     label = stringResource(R.string.duration),
-                    trailingLabel = "${sliderState.value.roundToInt()}ms",
+                    trailingLabel = "${durationSliderState.value.roundToInt()}ms",
                     shape = middleListItemShape
                 ) { Icon(painterResource(R.drawable.airwave), null) }
             }
             item {
-                val sliderState = rememberSliderState(
-                    value = 1000f,
-                    valueRange = 10f..5000f,
-                    onValueChangeFinished = {}
-                )
-
                 SliderListItem(
-                    sliderState = sliderState,
+                    sliderState = gapSliderState,
                     label = stringResource(R.string.gap),
-                    trailingLabel = "${sliderState.value.roundToInt()}ms",
+                    trailingLabel = "${gapSliderState.value.roundToInt()}ms",
                     shape = middleListItemShape
                 ) { Icon(painterResource(R.drawable.menu), null) }
             }
             item {
-                val sliderState = rememberSliderState(
-                    value = 255f,
-                    valueRange = 2f..255f,
-                    onValueChangeFinished = {}
-                )
-
                 SliderListItem(
-                    sliderState = sliderState,
+                    sliderState = strengthSliderState,
                     label = stringResource(R.string.vibration_strength),
-                    trailingLabel = "${((sliderState.value * 100) / 255f).roundToInt()}%",
+                    trailingLabel = if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE)
+                        stringResource(R.string.system_default)
+                    else "${((strengthSliderState.value * 100) / 255f).roundToInt()}%",
                     shape = bottomListItemShape
                 ) { Icon(painterResource(R.drawable.bolt), null) }
             }

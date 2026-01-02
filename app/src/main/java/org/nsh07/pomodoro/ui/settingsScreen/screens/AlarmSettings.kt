@@ -31,12 +31,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -51,11 +48,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
-import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -67,7 +61,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -83,6 +76,7 @@ import kotlinx.coroutines.withContext
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
+import org.nsh07.pomodoro.ui.settingsScreen.components.SliderListItem
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
@@ -356,28 +350,12 @@ fun AlarmSettings(
                     onValueChangeFinished = {}
                 )
 
-                Column(
-                    Modifier
-                        .background(listItemColors.containerColor, middleListItemShape)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                    ) {
-                        Text(stringResource(R.string.on_duration), style = typography.bodyLarge)
-                        Spacer(Modifier.weight(1f))
-                        Text(
-                            "${sliderState.value.roundToInt()}ms",
-                            style = typography.labelMedium,
-                            color = colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Slider(
-                        sliderState, modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
-                    )
-                }
+                SliderListItem(
+                    sliderState = sliderState,
+                    label = stringResource(R.string.duration),
+                    trailingLabel = "${sliderState.value.roundToInt()}ms",
+                    shape = middleListItemShape
+                ) { Icon(painterResource(R.drawable.airwave), null) }
             }
             item {
                 val sliderState = rememberSliderState(
@@ -386,28 +364,12 @@ fun AlarmSettings(
                     onValueChangeFinished = {}
                 )
 
-                Column(
-                    Modifier
-                        .background(listItemColors.containerColor, middleListItemShape)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                    ) {
-                        Text(stringResource(R.string.off_duration), style = typography.bodyLarge)
-                        Spacer(Modifier.weight(1f))
-                        Text(
-                            "${sliderState.value.roundToInt()}ms",
-                            style = typography.labelMedium,
-                            color = colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Slider(
-                        sliderState, modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
-                    )
-                }
+                SliderListItem(
+                    sliderState = sliderState,
+                    label = stringResource(R.string.gap),
+                    trailingLabel = "${sliderState.value.roundToInt()}ms",
+                    shape = middleListItemShape
+                ) { Icon(painterResource(R.drawable.menu), null) }
             }
             item {
                 val sliderState = rememberSliderState(
@@ -416,28 +378,12 @@ fun AlarmSettings(
                     onValueChangeFinished = {}
                 )
 
-                Column(
-                    Modifier
-                        .background(listItemColors.containerColor, bottomListItemShape)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                    ) {
-                        Text("Strength", style = typography.bodyLarge)
-                        Spacer(Modifier.weight(1f))
-                        Text(
-                            "${((sliderState.value * 100) / 255f).roundToInt()}%",
-                            style = typography.labelMedium,
-                            color = colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Slider(
-                        sliderState, modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
-                    )
-                }
+                SliderListItem(
+                    sliderState = sliderState,
+                    label = stringResource(R.string.vibration_strength),
+                    trailingLabel = "${((sliderState.value * 100) / 255f).roundToInt()}%",
+                    shape = bottomListItemShape
+                ) { Icon(painterResource(R.drawable.bolt), null) }
             }
 
             item { Spacer(Modifier.height(12.dp)) }

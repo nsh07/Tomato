@@ -130,4 +130,6 @@
     <string name="dnd_permission_message">Enable permission for \"%1$s\"</string>
     <string name="lifetime">Lifetime</string>
     <string name="total">total</string>
+    <string name="on_duration">ON duration</string>
+    <string name="off_duration">OFF duration</string>
 </resources>

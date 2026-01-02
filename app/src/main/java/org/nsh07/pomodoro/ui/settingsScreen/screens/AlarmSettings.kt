@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -29,34 +29,45 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -82,6 +93,7 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -284,6 +296,147 @@ fun AlarmSettings(
 
                 item {
                     Spacer(Modifier.height(12.dp))
+                }
+            }
+
+            item {
+                var vibrationPlaying by remember { mutableStateOf(false) }
+                val interactionSources = remember { List(2) { MutableInteractionSource() } }
+
+                ListItem(
+                    headlineContent = { Text("Vibration pattern") },
+                    trailingContent = {
+                        ButtonGroup(
+                            overflowIndicator = {},
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            customItem(
+                                buttonGroupContent = {
+                                    FilledIconToggleButton(
+                                        checked = vibrationPlaying,
+                                        onCheckedChange = { vibrationPlaying = it },
+                                        interactionSource = interactionSources[0],
+                                        modifier = Modifier
+                                            .size(52.dp, 40.dp)
+                                            .animateWidth(interactionSources[0])
+                                    ) {
+                                        if (vibrationPlaying)
+                                            Icon(painterResource(R.drawable.stop), null)
+                                        else
+                                            Icon(painterResource(R.drawable.play), null)
+                                    }
+                                },
+                                menuContent = {}
+                            )
+                            customItem(
+                                buttonGroupContent = {
+                                    FilledTonalIconButton(
+                                        onClick = {},
+                                        shapes = IconButtonDefaults.shapes(),
+                                        interactionSource = interactionSources[1],
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .animateWidth(interactionSources[1])
+                                    ) {
+                                        Icon(painterResource(R.drawable.restore_default), null)
+                                    }
+                                },
+                                menuContent = {}
+                            )
+                        }
+                    },
+                    colors = listItemColors,
+                    modifier = Modifier.clip(topListItemShape)
+                )
+            }
+            item {
+                val sliderState = rememberSliderState(
+                    value = 1000f,
+                    valueRange = 10f..5000f,
+                    onValueChangeFinished = {}
+                )
+
+                Column(
+                    Modifier
+                        .background(listItemColors.containerColor, middleListItemShape)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
+                    ) {
+                        Text(stringResource(R.string.on_duration), style = typography.bodyLarge)
+                        Spacer(Modifier.weight(1f))
+                        Text(
+                            "${sliderState.value.roundToInt()}ms",
+                            style = typography.labelMedium,
+                            color = colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Slider(
+                        sliderState, modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+                    )
+                }
+            }
+            item {
+                val sliderState = rememberSliderState(
+                    value = 1000f,
+                    valueRange = 10f..5000f,
+                    onValueChangeFinished = {}
+                )
+
+                Column(
+                    Modifier
+                        .background(listItemColors.containerColor, middleListItemShape)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
+                    ) {
+                        Text(stringResource(R.string.off_duration), style = typography.bodyLarge)
+                        Spacer(Modifier.weight(1f))
+                        Text(
+                            "${sliderState.value.roundToInt()}ms",
+                            style = typography.labelMedium,
+                            color = colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Slider(
+                        sliderState, modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+                    )
+                }
+            }
+            item {
+                val sliderState = rememberSliderState(
+                    value = 255f,
+                    valueRange = 2f..255f,
+                    onValueChangeFinished = {}
+                )
+
+                Column(
+                    Modifier
+                        .background(listItemColors.containerColor, bottomListItemShape)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
+                    ) {
+                        Text("Strength", style = typography.bodyLarge)
+                        Spacer(Modifier.weight(1f))
+                        Text(
+                            "${((sliderState.value * 100) / 255f).roundToInt()}%",
+                            style = typography.labelMedium,
+                            color = colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Slider(
+                        sliderState, modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+                    )
                 }
             }
 

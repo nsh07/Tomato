@@ -19,11 +19,16 @@ package org.nsh07.pomodoro.ui.settingsScreen.screens
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context.VIBRATOR_MANAGER_SERVICE
+import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.os.VibrationEffect
 import android.os.VibrationEffect.DEFAULT_AMPLITUDE
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -56,6 +61,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -107,6 +113,7 @@ fun AlarmSettings(
     val context = LocalContext.current
 
     var alarmName by remember { mutableStateOf("...") }
+    var vibrationPlaying by remember { mutableStateOf(false) }
 
     LaunchedEffect(settingsState.alarmSoundUri) {
         withContext(Dispatchers.IO) {
@@ -137,6 +144,20 @@ fun AlarmSettings(
                 }
             onAction(SettingsAction.SaveAlarmSound(uri))
         }
+    }
+
+    val vibrator = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager =
+                context.getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION") context.getSystemService(VIBRATOR_SERVICE) as Vibrator
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose { vibrator.cancel() }
     }
 
     @SuppressLint("LocalContextGetResourceValueCall")
@@ -303,7 +324,6 @@ fun AlarmSettings(
             else item { Spacer(Modifier.height(12.dp)) }
 
             item {
-                var vibrationPlaying by remember { mutableStateOf(false) }
                 val interactionSources = remember { List(2) { MutableInteractionSource() } }
 
                 ListItem(
@@ -317,7 +337,32 @@ fun AlarmSettings(
                                 buttonGroupContent = {
                                     FilledIconToggleButton(
                                         checked = vibrationPlaying,
-                                        onCheckedChange = { vibrationPlaying = it },
+                                        onCheckedChange = {
+                                            vibrationPlaying = it
+                                            if (it && vibrator.hasVibrator()) {
+                                                val timings = longArrayOf(
+                                                    0,
+                                                    settingsState.vibrationOnDuration,
+                                                    settingsState.vibrationOffDuration,
+                                                    settingsState.vibrationOnDuration
+                                                )
+                                                val amplitudes = intArrayOf(
+                                                    0,
+                                                    settingsState.vibrationAmplitude,
+                                                    0,
+                                                    settingsState.vibrationAmplitude
+                                                )
+                                                val repeat = 2
+                                                val effect = VibrationEffect.createWaveform(
+                                                    timings,
+                                                    amplitudes,
+                                                    repeat
+                                                )
+                                                vibrator.vibrate(effect)
+                                            } else {
+                                                vibrator.cancel()
+                                            }
+                                        },
                                         interactionSource = interactionSources[0],
                                         modifier = Modifier
                                             .size(52.dp, 40.dp)

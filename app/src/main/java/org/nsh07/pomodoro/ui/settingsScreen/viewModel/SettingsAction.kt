@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -33,6 +33,11 @@ sealed interface SettingsAction {
     data class SaveAlarmSound(val uri: Uri?) : SettingsAction
     data class SaveTheme(val theme: String) : SettingsAction
     data class SaveColorScheme(val color: Color) : SettingsAction
+
+    data class SaveVibrationOnDuration(val duration: Long) : SettingsAction
+    data class SaveVibrationOffDuration(val duration: Long) : SettingsAction
+    data class SaveVibrationAmplitude(val amplitude: Int) : SettingsAction
+
     data object AskEraseData : SettingsAction
     data object CancelEraseData : SettingsAction
     data object EraseData : SettingsAction

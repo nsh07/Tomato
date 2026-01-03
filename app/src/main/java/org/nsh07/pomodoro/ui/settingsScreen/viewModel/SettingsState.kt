@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
 import android.net.Uri
+import android.os.VibrationEffect.DEFAULT_AMPLITUDE
 import android.provider.Settings
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
@@ -36,6 +37,10 @@ data class SettingsState(
     val autostartNextSession: Boolean = false,
     val secureAod: Boolean = true,
     val isShowingEraseDataDialog: Boolean = false,
+
+    val vibrationOnDuration: Long = 1000L,
+    val vibrationOffDuration: Long = 1000L,
+    val vibrationAmplitude: Int = DEFAULT_AMPLITUDE,
 
     val focusTime: Long = 25 * 60 * 1000L,
     val shortBreakTime: Long = 5 * 60 * 1000L,

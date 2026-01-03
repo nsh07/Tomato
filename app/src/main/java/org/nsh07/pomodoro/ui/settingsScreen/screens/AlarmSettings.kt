@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -19,16 +19,23 @@ package org.nsh07.pomodoro.ui.settingsScreen.screens
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context.VIBRATOR_MANAGER_SERVICE
+import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.os.VibrationEffect
+import android.os.VibrationEffect.DEFAULT_AMPLITUDE
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -38,8 +45,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -52,6 +61,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -66,12 +76,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachIndexed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
+import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
+import org.nsh07.pomodoro.ui.settingsScreen.components.SliderListItem
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
@@ -82,13 +94,18 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AlarmSettings(
     settingsState: SettingsState,
+    isPlus: Boolean,
     contentPadding: PaddingValues,
     onAction: (SettingsAction) -> Unit,
+    setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -96,6 +113,7 @@ fun AlarmSettings(
     val context = LocalContext.current
 
     var alarmName by remember { mutableStateOf("...") }
+    var vibrationPlaying by remember { mutableStateOf(false) }
 
     LaunchedEffect(settingsState.alarmSoundUri) {
         withContext(Dispatchers.IO) {
@@ -126,6 +144,23 @@ fun AlarmSettings(
                 }
             onAction(SettingsAction.SaveAlarmSound(uri))
         }
+    }
+
+    val vibrator = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager =
+                context.getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION") context.getSystemService(VIBRATOR_SERVICE) as Vibrator
+        }
+    }
+
+    val hasVibrator = vibrator.hasVibrator()
+    val hasAmplitudeControl = vibrator.hasAmplitudeControl()
+
+    DisposableEffect(Unit) {
+        onDispose { vibrator.cancel() }
     }
 
     @SuppressLint("LocalContextGetResourceValueCall")
@@ -226,7 +261,7 @@ fun AlarmSettings(
                         .clickable(onClick = { ringtonePickerLauncher.launch(ringtonePickerIntent) })
                 )
             }
-            switchItems.fastForEach { items ->
+            switchItems.fastForEachIndexed { baseIndex, items ->
                 itemsIndexed(items) { index, item ->
                     ListItem(
                         leadingContent = {
@@ -282,12 +317,150 @@ fun AlarmSettings(
                     )
                 }
 
+                if (baseIndex != switchItems.lastIndex)
+                    item {
+                        Spacer(Modifier.height(12.dp))
+                    }
+            }
+
+            if (hasVibrator) {
+                if (!isPlus) item { PlusDivider(setShowPaywall) }
+                else item { Spacer(Modifier.height(12.dp)) }
+
                 item {
-                    Spacer(Modifier.height(12.dp))
+                    val interactionSources = remember { List(2) { MutableInteractionSource() } }
+
+                    ListItem(
+                        headlineContent = { Text("Vibration pattern") },
+                        trailingContent = {
+                            ButtonGroup(
+                                overflowIndicator = {},
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                customItem(
+                                    buttonGroupContent = {
+                                        FilledIconToggleButton(
+                                            checked = vibrationPlaying,
+                                            onCheckedChange = {
+                                                vibrationPlaying = it
+                                                if (it && vibrator.hasVibrator()) {
+                                                    val timings = longArrayOf(
+                                                        0,
+                                                        settingsState.vibrationOnDuration,
+                                                        settingsState.vibrationOffDuration,
+                                                        settingsState.vibrationOnDuration
+                                                    )
+                                                    val amplitudes = intArrayOf(
+                                                        0,
+                                                        settingsState.vibrationAmplitude,
+                                                        0,
+                                                        settingsState.vibrationAmplitude
+                                                    )
+                                                    val repeat = 2
+                                                    val effect = VibrationEffect.createWaveform(
+                                                        timings,
+                                                        amplitudes,
+                                                        repeat
+                                                    )
+                                                    vibrator.vibrate(effect)
+                                                } else {
+                                                    vibrator.cancel()
+                                                }
+                                            },
+                                            interactionSource = interactionSources[0],
+                                            modifier = Modifier
+                                                .size(52.dp, 40.dp)
+                                                .animateWidth(interactionSources[0])
+                                        ) {
+                                            if (vibrationPlaying)
+                                                Icon(painterResource(R.drawable.stop), null)
+                                            else
+                                                Icon(painterResource(R.drawable.play), null)
+                                        }
+                                    },
+                                    menuContent = {}
+                                )
+                                customItem(
+                                    buttonGroupContent = {
+                                        FilledTonalIconButton(
+                                            onClick = {
+                                                onAction(
+                                                    SettingsAction.SaveVibrationOnDuration(
+                                                        1000L
+                                                    )
+                                                )
+                                                onAction(
+                                                    SettingsAction.SaveVibrationOffDuration(
+                                                        1000L
+                                                    )
+                                                )
+                                                onAction(
+                                                    SettingsAction.SaveVibrationAmplitude(
+                                                        DEFAULT_AMPLITUDE
+                                                    )
+                                                )
+                                            },
+                                            enabled = isPlus,
+                                            shapes = IconButtonDefaults.shapes(),
+                                            interactionSource = interactionSources[1],
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .animateWidth(interactionSources[1])
+                                        ) {
+                                            Icon(painterResource(R.drawable.restore_default), null)
+                                        }
+                                    },
+                                    menuContent = {}
+                                )
+                            }
+                        },
+                        colors = listItemColors,
+                        modifier = Modifier.clip(topListItemShape)
+                    )
+                }
+                item {
+                    SliderListItem(
+                        value = settingsState.vibrationOnDuration.toFloat(),
+                        valueRange = 10f..5000f,
+                        enabled = isPlus,
+                        label = stringResource(R.string.duration),
+                        trailingLabel = { "${it.roundToInt()}ms" },
+                        icon = { Icon(painterResource(R.drawable.airwave), null) },
+                        shape = middleListItemShape
+                    ) { onAction(SettingsAction.SaveVibrationOnDuration(it.roundToLong())) }
+                }
+                item {
+                    SliderListItem(
+                        value = settingsState.vibrationOffDuration.toFloat(),
+                        valueRange = 10f..5000f,
+                        enabled = isPlus,
+                        label = stringResource(R.string.gap),
+                        trailingLabel = { "${it.roundToInt()}ms" },
+                        icon = { Icon(painterResource(R.drawable.menu), null) },
+                        shape = if (hasAmplitudeControl) middleListItemShape else bottomListItemShape
+                    ) { onAction(SettingsAction.SaveVibrationOffDuration(it.roundToLong())) }
+                }
+
+                if (hasAmplitudeControl) item {
+                    SliderListItem(
+                        value = if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE) 127f
+                        else settingsState.vibrationAmplitude.toFloat(),
+                        valueRange = 2f..255f,
+                        enabled = isPlus,
+                        label = stringResource(R.string.vibration_strength),
+                        trailingLabel = {
+                            if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE)
+                                @SuppressLint("LocalContextGetResourceValueCall")
+                                context.getString(R.string.system_default)
+                            else "${((it * 100) / 255f).roundToInt()}%"
+                        },
+                        icon = { Icon(painterResource(R.drawable.bolt), null) },
+                        shape = bottomListItemShape
+                    ) { onAction(SettingsAction.SaveVibrationAmplitude(it.roundToInt())) }
                 }
             }
 
-            item { Spacer(Modifier.height(12.dp)) }
+            item { Spacer(Modifier.height(14.dp)) }
         }
     }
 }
@@ -297,10 +470,14 @@ fun AlarmSettings(
 @Composable
 fun AlarmSettingsPreview() {
     val settingsState = SettingsState()
-    AlarmSettings(
-        settingsState = settingsState,
-        contentPadding = PaddingValues(),
-        onAction = {},
-        onBack = {}
-    )
+    TomatoTheme {
+        AlarmSettings(
+            settingsState = settingsState,
+            contentPadding = PaddingValues(),
+            isPlus = false,
+            onAction = {},
+            setShowPaywall = {},
+            onBack = {}
+        )
+    }
 }

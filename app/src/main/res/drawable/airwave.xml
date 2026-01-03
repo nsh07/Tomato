@@ -1,0 +1,26 @@
+<!--
+  ~ Copyright (c) 2026 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+    <path
+        android:fillColor="#e3e3e3"
+        android:pathData="M750,346q-27,27 -62,41t-70,14q-35,0 -69,-13.5T488,346l-75,-75q-15,-15 -34,-22.5t-39,-7.5q-20,0 -39,7.5T267,271l-47,47q-12,12 -28,11.5T164,317q-12,-12 -12,-28.5t12,-28.5l46,-46q27,-27 61,-40.5t69,-13.5q35,0 68.5,13.5T469,214l75,75q16,16 35,23.5t39,7.5q20,0 39.5,-7.5T693,289l47,-47q12,-12 28.5,-12t28.5,12q12,12 12,28.5T797,299l-47,47ZM750,546q-27,27 -61.5,40.5T619,600q-35,0 -69.5,-13.5T488,546l-75,-75q-15,-15 -34,-22.5t-39,-7.5q-20,0 -39,7.5T267,471l-47,47q-11,11 -27.5,11.5T164,518q-12,-11 -12.5,-28t11.5,-29l47,-47q27,-27 61,-40.5t69,-13.5q35,0 68.5,13.5T469,414l75,75q16,16 35,23.5t39,7.5q20,0 39.5,-7.5T693,489l47,-47q12,-12 28.5,-12t28.5,12q12,12 12,28.5T797,499l-47,47ZM749,746q-27,27 -61,40.5T619,800q-35,0 -69.5,-13.5T488,746l-76,-75q-15,-15 -34,-22.5t-39,-7.5q-20,0 -39,7.5T266,671l-47,47q-11,11 -27.5,11.5T163,718q-11,-11 -11,-28t11,-28l47,-48q27,-27 61,-40.5t69,-13.5q35,0 68.5,13.5T469,614l75,75q16,16 35.5,23.5T619,720q20,0 39,-7.5t35,-23.5l47,-47q12,-12 28,-11.5t28,12.5q11,12 11.5,28T796,699l-47,47Z" />
+</vector>

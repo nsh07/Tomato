@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -123,6 +123,11 @@ class SettingsViewModel(
             is SettingsAction.SaveTheme -> saveTheme(action.theme)
             is SettingsAction.SaveBlackTheme -> saveBlackTheme(action.enabled)
             is SettingsAction.SaveAodEnabled -> saveAodEnabled(action.enabled)
+
+            is SettingsAction.SaveVibrationOnDuration -> saveVibrationOnDuration(action.duration)
+            is SettingsAction.SaveVibrationOffDuration -> saveVibrationOffDuration(action.duration)
+            is SettingsAction.SaveVibrationAmplitude -> saveVibrationAmplitude(action.amplitude)
+
             is SettingsAction.AskEraseData -> askEraseData()
             is SettingsAction.CancelEraseData -> cancelEraseData()
             is SettingsAction.EraseData -> deleteStats()
@@ -357,6 +362,42 @@ class SettingsViewModel(
         }
     }
 
+    private fun saveVibrationOnDuration(vibrationOnDuration: Long) {
+        viewModelScope.launch {
+            _settingsState.update { currentState ->
+                currentState.copy(vibrationOnDuration = vibrationOnDuration)
+            }
+            preferenceRepository.saveIntPreference(
+                "vibration_on_duration",
+                vibrationOnDuration.toInt()
+            )
+        }
+    }
+
+    private fun saveVibrationOffDuration(vibrationOffDuration: Long) {
+        viewModelScope.launch {
+            _settingsState.update { currentState ->
+                currentState.copy(vibrationOffDuration = vibrationOffDuration)
+            }
+            preferenceRepository.saveIntPreference(
+                "vibration_off_duration",
+                vibrationOffDuration.toInt()
+            )
+        }
+    }
+
+    private fun saveVibrationAmplitude(vibrationAmplitude: Int) {
+        viewModelScope.launch {
+            _settingsState.update { currentState ->
+                currentState.copy(vibrationAmplitude = vibrationAmplitude)
+            }
+            preferenceRepository.saveIntPreference(
+                "vibration_amplitude",
+                vibrationAmplitude
+            )
+        }
+    }
+
     suspend fun reloadSettings() {
         var settingsState = _settingsState.value
         val focusTime =
@@ -431,7 +472,26 @@ class SettingsViewModel(
                     settingsState.autostartNextSession
                 )
         val secureAod = preferenceRepository.getBooleanPreference("secure_aod")
-            ?: preferenceRepository.saveBooleanPreference("secure_aod", true)
+            ?: preferenceRepository.saveBooleanPreference("secure_aod", settingsState.secureAod)
+
+        val vibrationOnDuration = (preferenceRepository.getIntPreference("vibration_on_duration")
+            ?: preferenceRepository.saveIntPreference(
+                "vibration_on_duration",
+                settingsState.vibrationOnDuration.toInt()
+            )).toLong()
+
+        val vibrationOffDuration = (preferenceRepository.getIntPreference("vibration_off_duration")
+            ?: preferenceRepository.saveIntPreference(
+                "vibration_off_duration",
+                settingsState.vibrationOffDuration.toInt()
+            )).toLong()
+
+        val vibrationAmplitude = preferenceRepository.getIntPreference("vibration_amplitude")
+            ?: preferenceRepository.saveIntPreference(
+                "vibration_amplitude",
+                settingsState.vibrationAmplitude
+            )
+
 
         _settingsState.update { currentState ->
             currentState.copy(
@@ -450,7 +510,10 @@ class SettingsViewModel(
                 mediaVolumeForAlarm = mediaVolumeForAlarm,
                 singleProgressBar = singleProgressBar,
                 autostartNextSession = autostartNextSession,
-                secureAod = secureAod
+                secureAod = secureAod,
+                vibrationOnDuration = vibrationOnDuration,
+                vibrationOffDuration = vibrationOffDuration,
+                vibrationAmplitude = vibrationAmplitude
             )
         }
 

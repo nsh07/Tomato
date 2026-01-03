@@ -28,9 +28,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,14 +43,18 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SliderListItem(
-    sliderState: SliderState,
+    value: Float,
+    valueRange: ClosedFloatingPointRange<Float>,
+    enabled: Boolean,
     label: String,
-    trailingLabel: String,
+    trailingLabel: (Float) -> String,
     shape: CornerBasedShape,
+    icon: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = listItemColors.containerColor,
-    icon: @Composable () -> Unit,
+    onValueChangeFinished: (Float) -> Unit,
 ) {
+    var value by remember { mutableFloatStateOf(value) }
     Column(modifier.background(containerColor, shape)) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -56,7 +63,7 @@ fun SliderListItem(
             Text(label, style = typography.bodyLarge)
             Spacer(Modifier.weight(1f))
             Text(
-                trailingLabel,
+                trailingLabel(value),
                 style = typography.labelMedium,
                 color = colorScheme.onSurfaceVariant
             )
@@ -66,7 +73,11 @@ fun SliderListItem(
             modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 8.dp)
         ) {
             Slider(
-                sliderState,
+                value = value,
+                onValueChange = { value = it },
+                onValueChangeFinished = { onValueChangeFinished(value) },
+                valueRange = valueRange,
+                enabled = enabled,
                 modifier = Modifier.weight(1f)
             )
             Spacer(Modifier.width(20.dp))

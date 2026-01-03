@@ -55,7 +55,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -71,12 +70,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachIndexed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
+import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
 import org.nsh07.pomodoro.ui.settingsScreen.components.SliderListItem
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
@@ -88,14 +88,18 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AlarmSettings(
     settingsState: SettingsState,
+    isPlus: Boolean,
     contentPadding: PaddingValues,
     onAction: (SettingsAction) -> Unit,
+    setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -179,32 +183,6 @@ fun AlarmSettings(
         )
     }
 
-    val durationSliderState = rememberSliderState(
-        value = settingsState.vibrationOnDuration.toFloat(),
-        valueRange = 10f..5000f
-    ).apply {
-        onValueChangeFinished = {
-            onAction(SettingsAction.SaveVibrationOnDuration(value.toLong()))
-        }
-    }
-    val gapSliderState = rememberSliderState(
-        value = settingsState.vibrationOffDuration.toFloat(),
-        valueRange = 10f..5000f
-    ).apply {
-        onValueChangeFinished = {
-            onAction(SettingsAction.SaveVibrationOffDuration(value.toLong()))
-        }
-    }
-    val strengthSliderState = rememberSliderState(
-        value = if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE) 255f
-        else settingsState.vibrationAmplitude.toFloat(),
-        valueRange = 2f..255f
-    ).apply {
-        onValueChangeFinished = {
-            onAction(SettingsAction.SaveVibrationAmplitude(value.roundToInt()))
-        }
-    }
-
     Scaffold(
         topBar = {
             LargeFlexibleTopAppBar(
@@ -259,7 +237,7 @@ fun AlarmSettings(
                         .clickable(onClick = { ringtonePickerLauncher.launch(ringtonePickerIntent) })
                 )
             }
-            switchItems.fastForEach { items ->
+            switchItems.fastForEachIndexed { baseIndex, items ->
                 itemsIndexed(items) { index, item ->
                     ListItem(
                         leadingContent = {
@@ -315,10 +293,14 @@ fun AlarmSettings(
                     )
                 }
 
-                item {
-                    Spacer(Modifier.height(12.dp))
-                }
+                if (baseIndex != switchItems.lastIndex)
+                    item {
+                        Spacer(Modifier.height(12.dp))
+                    }
             }
+
+            if (!isPlus) item { PlusDivider(setShowPaywall) }
+            else item { Spacer(Modifier.height(12.dp)) }
 
             item {
                 var vibrationPlaying by remember { mutableStateOf(false) }
@@ -353,6 +335,7 @@ fun AlarmSettings(
                                 buttonGroupContent = {
                                     FilledTonalIconButton(
                                         onClick = {},
+                                        enabled = isPlus,
                                         shapes = IconButtonDefaults.shapes(),
                                         interactionSource = interactionSources[1],
                                         modifier = Modifier
@@ -370,35 +353,47 @@ fun AlarmSettings(
                     modifier = Modifier.clip(topListItemShape)
                 )
             }
-
             item {
                 SliderListItem(
-                    sliderState = durationSliderState,
+                    value = settingsState.vibrationOnDuration.toFloat(),
+                    valueRange = 10f..5000f,
+                    enabled = isPlus,
                     label = stringResource(R.string.duration),
-                    trailingLabel = "${durationSliderState.value.roundToInt()}ms",
+                    trailingLabel = { "${it.roundToInt()}ms" },
+                    icon = { Icon(painterResource(R.drawable.airwave), null) },
                     shape = middleListItemShape
-                ) { Icon(painterResource(R.drawable.airwave), null) }
+                ) { onAction(SettingsAction.SaveVibrationOnDuration(it.roundToLong())) }
             }
             item {
                 SliderListItem(
-                    sliderState = gapSliderState,
+                    value = settingsState.vibrationOffDuration.toFloat(),
+                    valueRange = 10f..5000f,
+                    enabled = isPlus,
                     label = stringResource(R.string.gap),
-                    trailingLabel = "${gapSliderState.value.roundToInt()}ms",
+                    trailingLabel = { "${it.roundToInt()}ms" },
+                    icon = { Icon(painterResource(R.drawable.menu), null) },
                     shape = middleListItemShape
-                ) { Icon(painterResource(R.drawable.menu), null) }
+                ) { onAction(SettingsAction.SaveVibrationOffDuration(it.roundToLong())) }
             }
             item {
                 SliderListItem(
-                    sliderState = strengthSliderState,
+                    value = if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE) 255f
+                    else settingsState.vibrationAmplitude.toFloat(),
+                    valueRange = 2f..255f,
+                    enabled = isPlus,
                     label = stringResource(R.string.vibration_strength),
-                    trailingLabel = if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE)
-                        stringResource(R.string.system_default)
-                    else "${((strengthSliderState.value * 100) / 255f).roundToInt()}%",
+                    trailingLabel = {
+                        if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE)
+                            @SuppressLint("LocalContextGetResourceValueCall")
+                            context.getString(R.string.system_default)
+                        else "${((it * 100) / 255f).roundToInt()}%"
+                    },
+                    icon = { Icon(painterResource(R.drawable.bolt), null) },
                     shape = bottomListItemShape
-                ) { Icon(painterResource(R.drawable.bolt), null) }
+                ) { onAction(SettingsAction.SaveVibrationAmplitude(it.roundToInt())) }
             }
 
-            item { Spacer(Modifier.height(12.dp)) }
+            item { Spacer(Modifier.height(14.dp)) }
         }
     }
 }
@@ -408,10 +403,14 @@ fun AlarmSettings(
 @Composable
 fun AlarmSettingsPreview() {
     val settingsState = SettingsState()
-    AlarmSettings(
-        settingsState = settingsState,
-        contentPadding = PaddingValues(),
-        onAction = {},
-        onBack = {}
-    )
+    TomatoTheme {
+        AlarmSettings(
+            settingsState = settingsState,
+            contentPadding = PaddingValues(),
+            isPlus = false,
+            onAction = {},
+            setShowPaywall = {},
+            onBack = {}
+        )
+    }
 }

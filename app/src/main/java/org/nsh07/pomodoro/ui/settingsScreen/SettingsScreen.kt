@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -359,8 +359,10 @@ private fun SettingsScreen(
             entry<Screen.Settings.Alarm> {
                 AlarmSettings(
                     settingsState = settingsState,
+                    isPlus = isPlus,
                     contentPadding = contentPadding,
                     onAction = onAction,
+                    setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,
                     modifier = modifier,
                 )

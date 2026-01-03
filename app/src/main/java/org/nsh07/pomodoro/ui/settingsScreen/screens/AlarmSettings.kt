@@ -383,7 +383,23 @@ fun AlarmSettings(
                                 customItem(
                                     buttonGroupContent = {
                                         FilledTonalIconButton(
-                                            onClick = {},
+                                            onClick = {
+                                                onAction(
+                                                    SettingsAction.SaveVibrationOnDuration(
+                                                        1000L
+                                                    )
+                                                )
+                                                onAction(
+                                                    SettingsAction.SaveVibrationOffDuration(
+                                                        1000L
+                                                    )
+                                                )
+                                                onAction(
+                                                    SettingsAction.SaveVibrationAmplitude(
+                                                        DEFAULT_AMPLITUDE
+                                                    )
+                                                )
+                                            },
                                             enabled = isPlus,
                                             shapes = IconButtonDefaults.shapes(),
                                             interactionSource = interactionSources[1],
@@ -427,7 +443,7 @@ fun AlarmSettings(
 
                 if (hasAmplitudeControl) item {
                     SliderListItem(
-                        value = if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE) 255f
+                        value = if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE) 127f
                         else settingsState.vibrationAmplitude.toFloat(),
                         valueRange = 2f..255f,
                         enabled = isPlus,

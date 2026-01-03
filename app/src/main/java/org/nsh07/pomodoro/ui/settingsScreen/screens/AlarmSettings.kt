@@ -156,6 +156,9 @@ fun AlarmSettings(
         }
     }
 
+    val hasVibrator = vibrator.hasVibrator()
+    val hasAmplitudeControl = vibrator.hasAmplitudeControl()
+
     DisposableEffect(Unit) {
         onDispose { vibrator.cancel() }
     }
@@ -320,122 +323,125 @@ fun AlarmSettings(
                     }
             }
 
-            if (!isPlus) item { PlusDivider(setShowPaywall) }
-            else item { Spacer(Modifier.height(12.dp)) }
+            if (hasVibrator) {
+                if (!isPlus) item { PlusDivider(setShowPaywall) }
+                else item { Spacer(Modifier.height(12.dp)) }
 
-            item {
-                val interactionSources = remember { List(2) { MutableInteractionSource() } }
+                item {
+                    val interactionSources = remember { List(2) { MutableInteractionSource() } }
 
-                ListItem(
-                    headlineContent = { Text("Vibration pattern") },
-                    trailingContent = {
-                        ButtonGroup(
-                            overflowIndicator = {},
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            customItem(
-                                buttonGroupContent = {
-                                    FilledIconToggleButton(
-                                        checked = vibrationPlaying,
-                                        onCheckedChange = {
-                                            vibrationPlaying = it
-                                            if (it && vibrator.hasVibrator()) {
-                                                val timings = longArrayOf(
-                                                    0,
-                                                    settingsState.vibrationOnDuration,
-                                                    settingsState.vibrationOffDuration,
-                                                    settingsState.vibrationOnDuration
-                                                )
-                                                val amplitudes = intArrayOf(
-                                                    0,
-                                                    settingsState.vibrationAmplitude,
-                                                    0,
-                                                    settingsState.vibrationAmplitude
-                                                )
-                                                val repeat = 2
-                                                val effect = VibrationEffect.createWaveform(
-                                                    timings,
-                                                    amplitudes,
-                                                    repeat
-                                                )
-                                                vibrator.vibrate(effect)
-                                            } else {
-                                                vibrator.cancel()
-                                            }
-                                        },
-                                        interactionSource = interactionSources[0],
-                                        modifier = Modifier
-                                            .size(52.dp, 40.dp)
-                                            .animateWidth(interactionSources[0])
-                                    ) {
-                                        if (vibrationPlaying)
-                                            Icon(painterResource(R.drawable.stop), null)
-                                        else
-                                            Icon(painterResource(R.drawable.play), null)
-                                    }
-                                },
-                                menuContent = {}
-                            )
-                            customItem(
-                                buttonGroupContent = {
-                                    FilledTonalIconButton(
-                                        onClick = {},
-                                        enabled = isPlus,
-                                        shapes = IconButtonDefaults.shapes(),
-                                        interactionSource = interactionSources[1],
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .animateWidth(interactionSources[1])
-                                    ) {
-                                        Icon(painterResource(R.drawable.restore_default), null)
-                                    }
-                                },
-                                menuContent = {}
-                            )
-                        }
-                    },
-                    colors = listItemColors,
-                    modifier = Modifier.clip(topListItemShape)
-                )
-            }
-            item {
-                SliderListItem(
-                    value = settingsState.vibrationOnDuration.toFloat(),
-                    valueRange = 10f..5000f,
-                    enabled = isPlus,
-                    label = stringResource(R.string.duration),
-                    trailingLabel = { "${it.roundToInt()}ms" },
-                    icon = { Icon(painterResource(R.drawable.airwave), null) },
-                    shape = middleListItemShape
-                ) { onAction(SettingsAction.SaveVibrationOnDuration(it.roundToLong())) }
-            }
-            item {
-                SliderListItem(
-                    value = settingsState.vibrationOffDuration.toFloat(),
-                    valueRange = 10f..5000f,
-                    enabled = isPlus,
-                    label = stringResource(R.string.gap),
-                    trailingLabel = { "${it.roundToInt()}ms" },
-                    icon = { Icon(painterResource(R.drawable.menu), null) },
-                    shape = middleListItemShape
-                ) { onAction(SettingsAction.SaveVibrationOffDuration(it.roundToLong())) }
-            }
-            item {
-                SliderListItem(
-                    value = if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE) 255f
-                    else settingsState.vibrationAmplitude.toFloat(),
-                    valueRange = 2f..255f,
-                    enabled = isPlus,
-                    label = stringResource(R.string.vibration_strength),
-                    trailingLabel = {
-                        if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE)
-                            @SuppressLint("LocalContextGetResourceValueCall")
-                            context.getString(R.string.system_default)
-                        else "${((it * 100) / 255f).roundToInt()}%"
-                    },
-                    icon = { Icon(painterResource(R.drawable.bolt), null) },
-                    shape = bottomListItemShape
-                ) { onAction(SettingsAction.SaveVibrationAmplitude(it.roundToInt())) }
+                    ListItem(
+                        headlineContent = { Text("Vibration pattern") },
+                        trailingContent = {
+                            ButtonGroup(
+                                overflowIndicator = {},
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                customItem(
+                                    buttonGroupContent = {
+                                        FilledIconToggleButton(
+                                            checked = vibrationPlaying,
+                                            onCheckedChange = {
+                                                vibrationPlaying = it
+                                                if (it && vibrator.hasVibrator()) {
+                                                    val timings = longArrayOf(
+                                                        0,
+                                                        settingsState.vibrationOnDuration,
+                                                        settingsState.vibrationOffDuration,
+                                                        settingsState.vibrationOnDuration
+                                                    )
+                                                    val amplitudes = intArrayOf(
+                                                        0,
+                                                        settingsState.vibrationAmplitude,
+                                                        0,
+                                                        settingsState.vibrationAmplitude
+                                                    )
+                                                    val repeat = 2
+                                                    val effect = VibrationEffect.createWaveform(
+                                                        timings,
+                                                        amplitudes,
+                                                        repeat
+                                                    )
+                                                    vibrator.vibrate(effect)
+                                                } else {
+                                                    vibrator.cancel()
+                                                }
+                                            },
+                                            interactionSource = interactionSources[0],
+                                            modifier = Modifier
+                                                .size(52.dp, 40.dp)
+                                                .animateWidth(interactionSources[0])
+                                        ) {
+                                            if (vibrationPlaying)
+                                                Icon(painterResource(R.drawable.stop), null)
+                                            else
+                                                Icon(painterResource(R.drawable.play), null)
+                                        }
+                                    },
+                                    menuContent = {}
+                                )
+                                customItem(
+                                    buttonGroupContent = {
+                                        FilledTonalIconButton(
+                                            onClick = {},
+                                            enabled = isPlus,
+                                            shapes = IconButtonDefaults.shapes(),
+                                            interactionSource = interactionSources[1],
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .animateWidth(interactionSources[1])
+                                        ) {
+                                            Icon(painterResource(R.drawable.restore_default), null)
+                                        }
+                                    },
+                                    menuContent = {}
+                                )
+                            }
+                        },
+                        colors = listItemColors,
+                        modifier = Modifier.clip(topListItemShape)
+                    )
+                }
+                item {
+                    SliderListItem(
+                        value = settingsState.vibrationOnDuration.toFloat(),
+                        valueRange = 10f..5000f,
+                        enabled = isPlus,
+                        label = stringResource(R.string.duration),
+                        trailingLabel = { "${it.roundToInt()}ms" },
+                        icon = { Icon(painterResource(R.drawable.airwave), null) },
+                        shape = middleListItemShape
+                    ) { onAction(SettingsAction.SaveVibrationOnDuration(it.roundToLong())) }
+                }
+                item {
+                    SliderListItem(
+                        value = settingsState.vibrationOffDuration.toFloat(),
+                        valueRange = 10f..5000f,
+                        enabled = isPlus,
+                        label = stringResource(R.string.gap),
+                        trailingLabel = { "${it.roundToInt()}ms" },
+                        icon = { Icon(painterResource(R.drawable.menu), null) },
+                        shape = if (hasAmplitudeControl) middleListItemShape else bottomListItemShape
+                    ) { onAction(SettingsAction.SaveVibrationOffDuration(it.roundToLong())) }
+                }
+
+                if (hasAmplitudeControl) item {
+                    SliderListItem(
+                        value = if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE) 255f
+                        else settingsState.vibrationAmplitude.toFloat(),
+                        valueRange = 2f..255f,
+                        enabled = isPlus,
+                        label = stringResource(R.string.vibration_strength),
+                        trailingLabel = {
+                            if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE)
+                                @SuppressLint("LocalContextGetResourceValueCall")
+                                context.getString(R.string.system_default)
+                            else "${((it * 100) / 255f).roundToInt()}%"
+                        },
+                        icon = { Icon(painterResource(R.drawable.bolt), null) },
+                        shape = bottomListItemShape
+                    ) { onAction(SettingsAction.SaveVibrationAmplitude(it.roundToInt())) }
+                }
             }
 
             item { Spacer(Modifier.height(14.dp)) }

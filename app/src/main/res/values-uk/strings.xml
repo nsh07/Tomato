@@ -106,4 +106,9 @@
     <string name="reset_data_dialog_title">Скинути всю статистику?</string>
     <string name="reset_data_dialog_text">Вся збережена статистика буде остаточно видалена. Цю дію неможливо скасувати.</string>
     <string name="back">Назад</string>
+    <string name="today_widget_desc">Сьогоднішня статистика концентрації</string>
+    <string name="history_widget_desc">Перегляньте діаграму тривалості концентрації за останні кілька днів. Кількість днів, що відображаються, залежить від розміру віджета.</string>
+    <string name="dnd_permission_message">Надати дозвіл для \"%1$s\"</string>
+    <string name="lifetime">Назавжди</string>
+    <string name="total">усього</string>
 </resources>

@@ -110,4 +110,7 @@
     <string name="dnd_permission_message">\"%1$s\" için yetkileri aktifleştirin</string>
     <string name="lifetime">Hayat boyu</string>
     <string name="total">toplam</string>
+    <string name="duration">Süre</string>
+    <string name="gap">Boşluk</string>
+    <string name="vibration_strength">Güç</string>
 </resources>

@@ -133,4 +133,9 @@
     <string name="vibrate">Vibration</string>
     <string name="vibrate_desc">Vibrate when a timer completes</string>
     <string name="vibration_strength">Strength</string>
+    <string name="backup_and_restore">Backup and restore</string>
+    <string name="backup">Backup</string>
+    <string name="backup_desc">Backup all stats and settings to a file</string>
+    <string name="restore">Restore</string>
+    <string name="restore_desc">Restore stats and settings from a backup file</string>
 </resources>

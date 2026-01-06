@@ -107,4 +107,9 @@
     <string name="today_widget_desc">Estadísticas de concentración de hoy</string>
     <string name="history_widget_desc">Ver un gráfico con la duración de la concentración de los últimos días. El número de días que se muestra depende del tamaño del widget.</string>
     <string name="dnd_permission_message">Habilitar permiso para \"%1$s\"</string>
+    <string name="duration">Duración</string>
+    <string name="lifetime">Total</string>
+    <string name="total">en total</string>
+    <string name="vibration_strength">Intensidad</string>
+    <string name="gap">Intervalo</string>
 </resources>

@@ -1,3 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about">정보</string>
+    <string name="alarm">알람</string>
+    <string name="alarm_desc">타이머가 완료되면 알람이 울립니다</string>
+    <string name="back">뒤로</string>
+    <string name="black_theme">블랙 테마</string>
+    <string name="black_theme_desc">순수 블랙 다크 테마 사용</string>
+    <string name="bmc_desc">소액 기부로 저를 지원해 주세요</string>
+    <string name="alarm_sound">알람소리</string>
+    <string name="always_on_display">올웨이즈 온 디스플레이</string>
+    <string name="always_on_display_desc">타이머를 볼 때 아무 곳이나 탭하여 AOD 모드로</string>
+    <string name="auto_start_next_timer_desc">알람 중지 후 다음 타이머 시작</string>
+    <string name="choose_language">언어 선택</string>
+    <string name="choose_theme">테마 선택</string>
+    <string name="color">색상</string>
+    <string name="color_scheme">색 구성표</string>
+    <string name="completed">완료됨</string>
 </resources>

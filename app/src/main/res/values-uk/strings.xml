@@ -111,4 +111,7 @@
     <string name="dnd_permission_message">Надати дозвіл для \"%1$s\"</string>
     <string name="lifetime">Назавжди</string>
     <string name="total">усього</string>
+    <string name="duration">Тривалість</string>
+    <string name="gap">Проміжок</string>
+    <string name="vibration_strength">Сила</string>
 </resources>

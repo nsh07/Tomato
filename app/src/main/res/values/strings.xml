@@ -138,4 +138,7 @@
     <string name="backup_desc">Backup all stats and settings to a file</string>
     <string name="restore">Restore</string>
     <string name="restore_desc">Restore stats and settings from a backup file</string>
+    <string name="backup_dialog_desc">Your stats and settings will be saved to a single file in your chosen folder. You can restore this data later in %1$s</string>
+    <string name="choose_folder">Choose folder</string>
+    <string name="start_backup">Start backup</string>
 </resources>

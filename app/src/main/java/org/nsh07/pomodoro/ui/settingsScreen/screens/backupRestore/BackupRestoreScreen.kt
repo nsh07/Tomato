@@ -15,7 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.ui.settingsScreen.screens
+package org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +35,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
@@ -57,6 +61,13 @@ fun BackupRestoreScreen(
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    var showDialog by remember { mutableIntStateOf(0) }
+
+    if (showDialog == 1) BackupBottomSheet(
+        onDismissRequest = { showDialog = 0 },
+        onStartBackup = {}
+    )
 
     Scaffold(
         topBar = {
@@ -105,7 +116,7 @@ fun BackupRestoreScreen(
                     leadingContent = { Icon(painterResource(R.drawable.backup), null) },
                     items = 2,
                     index = 0
-                ) { }
+                ) { showDialog = 1 }
             }
             item {
                 ClickableListItem(

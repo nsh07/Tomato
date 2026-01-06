@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -66,7 +66,7 @@ fun PlusPromo(
             supportingColor = colorScheme.onPrimary,
             headlineColor = colorScheme.onPrimary
         ),
-        items = 2,
+        items = 1,
         index = 0,
         modifier = modifier
     ) { setShowPaywall(true) }

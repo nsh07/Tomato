@@ -20,6 +20,8 @@ package org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +34,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
@@ -41,7 +44,9 @@ import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +54,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -56,6 +62,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
@@ -64,8 +71,10 @@ import kotlin.text.Typography.nbsp
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun BackupBottomSheet(
+    backupState: BackupRestoreState,
     onDismissRequest: () -> Unit,
     onStartBackup: (Uri) -> Unit,
+    resetBackupState: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var selectedUri: Uri? by remember { mutableStateOf(null) }
@@ -74,10 +83,22 @@ fun BackupBottomSheet(
         contract = ActivityResultContracts.OpenDocumentTree()
     ) { uri: Uri? ->
         selectedUri = uri
+        resetBackupState()
     }
+
+    val animatedBgColor by animateColorAsState(
+        targetValue = when (backupState) {
+            BackupRestoreState.DONE -> colorScheme.primaryContainer
+            else -> colorScheme.surfaceBright
+        },
+        label = "backupBackground"
+    )
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        containerColor = colorScheme.surfaceContainer,
+        contentColor = colorScheme.onSurface,
         modifier = modifier
     ) {
         Column(
@@ -111,23 +132,47 @@ fun BackupBottomSheet(
                 modifier = Modifier
                     .clip(RoundedCornerShape(40.dp))
                     .clickable { openDirectoryLauncher.launch(null) }
-                    .background(colorScheme.surfaceVariant)
+                    .drawBehind { drawRect(animatedBgColor) }
                     .padding(16.dp)
                     .fillMaxWidth()
             ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .background(colorScheme.onSurfaceVariant, shapes.extraLarge)
-                        .size(48.dp)
-                ) {
-                    Icon(
-                        painterResource(R.drawable.folder),
-                        null,
-                        tint = colorScheme.surfaceVariant,
-                        modifier = Modifier.size(28.dp)
-                    )
+                AnimatedContent(backupState) {
+                    when (it) {
+                        BackupRestoreState.CHOOSE_FILE ->
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .background(colorScheme.onSurfaceVariant, shapes.extraLarge)
+                                    .size(48.dp)
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.folder),
+                                    null,
+                                    tint = colorScheme.surfaceVariant,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
+
+                        BackupRestoreState.LOADING ->
+                            ContainedLoadingIndicator()
+
+                        BackupRestoreState.DONE ->
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .background(colorScheme.onPrimaryContainer, shapes.extraLarge)
+                                    .size(48.dp)
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.check),
+                                    null,
+                                    tint = colorScheme.surfaceVariant,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
+                    }
                 }
+
                 Text(
                     selectedUri?.path?.substringAfter(':')
                         ?: stringResource(R.string.choose_folder),
@@ -165,7 +210,17 @@ fun BackupBottomSheet(
 @Preview
 @Composable
 fun BackupBottomSheetPreview() {
+    var state by remember { mutableStateOf(BackupRestoreState.CHOOSE_FILE) }
     TomatoTheme(dynamicColor = false) {
-        BackupBottomSheet({}, {})
+        BackupBottomSheet(state, {}, {}, {})
+    }
+
+    LaunchedEffect(state) {
+        delay(3000)
+        state = when (state) {
+            BackupRestoreState.CHOOSE_FILE -> BackupRestoreState.LOADING
+            BackupRestoreState.LOADING -> BackupRestoreState.DONE
+            else -> BackupRestoreState.CHOOSE_FILE
+        }
     }
 }

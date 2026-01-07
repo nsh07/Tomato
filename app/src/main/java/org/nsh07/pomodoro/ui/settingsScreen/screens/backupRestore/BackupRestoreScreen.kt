@@ -37,7 +37,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -45,6 +47,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
@@ -60,13 +64,25 @@ fun BackupRestoreScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     var showDialog by remember { mutableIntStateOf(0) }
 
+    var backupState by remember { mutableStateOf(BackupRestoreState.CHOOSE_FILE) }
+
+
     if (showDialog == 1) BackupBottomSheet(
+        backupState = backupState,
         onDismissRequest = { showDialog = 0 },
-        onStartBackup = {}
+        onStartBackup = {
+            scope.launch {
+                backupState = BackupRestoreState.LOADING
+                delay(1000)
+                backupState = BackupRestoreState.DONE
+            }
+        },
+        resetBackupState = { backupState = BackupRestoreState.CHOOSE_FILE }
     )
 
     Scaffold(

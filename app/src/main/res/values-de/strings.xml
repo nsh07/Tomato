@@ -104,4 +104,13 @@
     <string name="focus_history_calendar_desc">Fokus-Verlauf des letzten Monats. Die Tage des Vormonats sind mit einer anderen Farbe markiert. Tippe auf ein Datum, um weitere Informationen zu erhalten.</string>
     <string name="reset_data_dialog_title">Alle Statistiken zurücksetzen?</string>
     <string name="back">Zurück</string>
+    <string name="dnd_permission_message">Erlaube Rechte für \"%1$s\"</string>
+    <string name="duration">Dauer</string>
+    <string name="gap">Lücke</string>
+    <string name="history_widget_desc">Sieh ein Diagramm der Fokus Dauern der letzten Tage. Die Anzahl an Tagen hängt von der Größe des Widget ab.</string>
+    <string name="lifetime">Lebenslang</string>
+    <string name="today_widget_desc">Heutige Fokus Statistiken</string>
+    <string name="total">Gesamt</string>
+    <string name="vibration_strength">Stärke</string>
+    <string name="focus_history_heatmap">Fokusverlauf - Heatmap</string>
 </resources>

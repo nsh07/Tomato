@@ -20,57 +20,27 @@ package org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ContainedLoadingIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MaterialTheme.shapes
-import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import kotlin.text.Typography.nbsp
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun BackupBottomSheet(
     backupState: BackupRestoreState,
@@ -79,146 +49,91 @@ fun BackupBottomSheet(
     resetBackupState: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scope = rememberCoroutineScope()
     var selectedUri: Uri? by remember { mutableStateOf(null) }
 
-    val openDirectoryLauncher = rememberLauncherForActivityResult(
+    val chooseFolder = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocumentTree()
     ) { uri: Uri? ->
         selectedUri = uri
         resetBackupState()
     }
 
-    val animatedBgColor by animateColorAsState(
-        targetValue = when (backupState) {
-            BackupRestoreState.DONE -> colorScheme.primaryContainer
-            else -> colorScheme.surfaceBright
+    BackupBottomSheetTemplate(
+        backupState = backupState,
+        onDismissRequest = onDismissRequest,
+        onStartAction = onStartBackup,
+        resetBackupState = resetBackupState,
+        openPicker = { chooseFolder.launch(null) },
+        icon = {
+            Icon(
+                painterResource(R.drawable.backup_40dp),
+                null,
+                tint = colorScheme.secondary
+            )
         },
-        label = "backupBackground"
-    )
-
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-    ModalBottomSheet(
-        onDismissRequest = {
-            resetBackupState()
-            onDismissRequest()
+        titleText = stringResource(R.string.backup),
+        labelText = buildAnnotatedString {
+            append(stringResource(R.string.backup_dialog_desc, ""))
+            withStyle(SpanStyle(fontFamily = googleFlex600)) {
+                append(stringResource(R.string.settings))
+                append("$nbsp>$nbsp")
+                append(stringResource(R.string.backup_and_restore))
+                append("$nbsp>$nbsp")
+                append(stringResource(R.string.restore))
+                append('.')
+            }
         },
-        sheetState = sheetState,
-        containerColor = colorScheme.surfaceContainer,
-        contentColor = colorScheme.onSurface,
+        buttonText = if (backupState == BackupRestoreState.DONE) stringResource(R.string.exit)
+        else if (selectedUri == null) stringResource(R.string.choose_folder)
+        else stringResource(R.string.backup),
+        selectedUri = selectedUri,
         modifier = modifier
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(24.dp)
-        ) {
-            Icon(painterResource(R.drawable.backup_40dp), null, tint = colorScheme.secondary)
-            Text(
-                stringResource(R.string.backup),
-                style = typography.headlineSmall,
-                color = colorScheme.onSurface
-            )
-            Text(
-                buildAnnotatedString {
-                    append(stringResource(R.string.backup_dialog_desc, ""))
-                    withStyle(SpanStyle(fontFamily = googleFlex600)) {
-                        append(stringResource(R.string.settings))
-                        append("$nbsp>$nbsp")
-                        append(stringResource(R.string.backup_and_restore))
-                        append("$nbsp>$nbsp")
-                        append(stringResource(R.string.restore))
-                        append('.')
-                    }
-                },
-                style = typography.bodyMedium,
-                color = colorScheme.onSurfaceVariant
-            )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(40.dp))
-                    .clickable { openDirectoryLauncher.launch(null) }
-                    .drawBehind { drawRect(animatedBgColor) }
-                    .padding(16.dp)
-                    .fillMaxWidth()
-            ) {
-                AnimatedContent(backupState) {
-                    when (it) {
-                        BackupRestoreState.CHOOSE_FILE ->
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .background(colorScheme.onSurfaceVariant, shapes.extraLarge)
-                                    .size(48.dp)
-                            ) {
-                                Icon(
-                                    painterResource(R.drawable.folder),
-                                    null,
-                                    tint = colorScheme.surfaceVariant,
-                                    modifier = Modifier.size(28.dp)
-                                )
-                            }
+    )
+}
 
-                        BackupRestoreState.LOADING ->
-                            ContainedLoadingIndicator()
+@Composable
+fun RestoreBottomSheet(
+    restoreState: BackupRestoreState,
+    onDismissRequest: () -> Unit,
+    onStartRestore: (Uri) -> Unit,
+    resetRestoreState: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var selectedUri: Uri? by remember { mutableStateOf(null) }
 
-                        BackupRestoreState.DONE ->
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .background(colorScheme.onPrimaryContainer, shapes.extraLarge)
-                                    .size(48.dp)
-                            ) {
-                                Icon(
-                                    painterResource(R.drawable.check),
-                                    null,
-                                    tint = colorScheme.surfaceVariant,
-                                    modifier = Modifier.size(28.dp)
-                                )
-                            }
-                    }
-                }
-
-                Text(
-                    selectedUri?.path?.substringAfter(':')
-                        ?: stringResource(R.string.choose_folder),
-                    style = typography.bodyMedium,
-                    color = colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                FilledTonalButton(
-                    onClick = {
-                        scope.launch {
-                            sheetState.hide()
-                            resetBackupState()
-                            onDismissRequest()
-                        }
-                    },
-                    shapes = ButtonDefaults.shapes()
-                ) { Text(stringResource(android.R.string.cancel)) }
-                Button(
-                    onClick = {
-                        if (selectedUri == null) openDirectoryLauncher.launch(null)
-                        else onStartBackup(selectedUri!!)
-                    },
-                    shapes = ButtonDefaults.shapes()
-                ) {
-                    Text(
-                        if (selectedUri == null) stringResource(R.string.choose_folder)
-                        else stringResource(R.string.start_backup)
-                    )
-                }
-            }
-        }
+    val chooseFile = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri: Uri? ->
+        selectedUri = uri
+        resetRestoreState()
     }
+
+    BackupBottomSheetTemplate(
+        backupState = restoreState,
+        onDismissRequest = onDismissRequest,
+        onStartAction = onStartRestore,
+        resetBackupState = resetRestoreState,
+        openPicker = { chooseFile.launch(arrayOf("*/*")) },
+        icon = {
+            Icon(
+                painterResource(R.drawable.restore_40dp),
+                null,
+                tint = colorScheme.secondary
+            )
+        },
+        titleText = stringResource(R.string.restore),
+        labelText = buildAnnotatedString {
+            append(stringResource(R.string.restore_dialog_desc, ""))
+            withStyle(SpanStyle(fontFamily = googleFlex600)) {
+                append(stringResource(R.string.restore_dialog_desc_bold_text))
+            }
+        },
+        buttonText = if (restoreState == BackupRestoreState.DONE) stringResource(R.string.exit_app)
+        else if (selectedUri == null) stringResource(R.string.choose_file)
+        else stringResource(R.string.restore),
+        selectedUri = selectedUri,
+        modifier = modifier
+    )
 }
 
 @Preview

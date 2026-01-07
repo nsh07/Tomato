@@ -84,6 +84,18 @@ fun BackupRestoreScreen(
         },
         resetBackupState = { backupState = BackupRestoreState.CHOOSE_FILE }
     )
+    else if (showDialog == 2) RestoreBottomSheet(
+        restoreState = backupState,
+        onDismissRequest = { showDialog = 0 },
+        onStartRestore = {
+            scope.launch {
+                backupState = BackupRestoreState.LOADING
+                delay(1000)
+                backupState = BackupRestoreState.DONE
+            }
+        },
+        resetRestoreState = { backupState = BackupRestoreState.CHOOSE_FILE }
+    )
 
     Scaffold(
         topBar = {
@@ -141,7 +153,7 @@ fun BackupRestoreScreen(
                     leadingContent = { Icon(painterResource(R.drawable.restore), null) },
                     items = 2,
                     index = 1
-                ) { }
+                ) { showDialog = 2 }
             }
         }
     }

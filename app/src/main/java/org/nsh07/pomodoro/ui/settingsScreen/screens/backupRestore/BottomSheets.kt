@@ -50,6 +50,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,6 +64,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
@@ -77,6 +79,7 @@ fun BackupBottomSheet(
     resetBackupState: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val scope = rememberCoroutineScope()
     var selectedUri: Uri? by remember { mutableStateOf(null) }
 
     val openDirectoryLauncher = rememberLauncherForActivityResult(
@@ -94,9 +97,14 @@ fun BackupBottomSheet(
         label = "backupBackground"
     )
 
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
     ModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        onDismissRequest = {
+            resetBackupState()
+            onDismissRequest()
+        },
+        sheetState = sheetState,
         containerColor = colorScheme.surfaceContainer,
         contentColor = colorScheme.onSurface,
         modifier = modifier
@@ -187,7 +195,13 @@ fun BackupBottomSheet(
                 modifier = Modifier.align(Alignment.End)
             ) {
                 FilledTonalButton(
-                    onClick = onDismissRequest,
+                    onClick = {
+                        scope.launch {
+                            sheetState.hide()
+                            resetBackupState()
+                            onDismissRequest()
+                        }
+                    },
                     shapes = ButtonDefaults.shapes()
                 ) { Text(stringResource(android.R.string.cancel)) }
                 Button(

@@ -15,7 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore
+package org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel
 
 enum class BackupRestoreState {
     CHOOSE_FILE, LOADING, DONE

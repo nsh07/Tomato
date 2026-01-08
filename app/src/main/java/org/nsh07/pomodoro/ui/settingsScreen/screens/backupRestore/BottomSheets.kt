@@ -128,7 +128,7 @@ fun RestoreBottomSheet(
                 append(stringResource(R.string.restore_dialog_desc_bold_text))
             }
         },
-        buttonText = if (restoreState == BackupRestoreState.DONE) stringResource(R.string.exit_app)
+        buttonText = if (restoreState == BackupRestoreState.DONE) stringResource(R.string.restart_app)
         else if (selectedUri == null) stringResource(R.string.choose_file)
         else stringResource(R.string.restore),
         selectedUri = selectedUri,

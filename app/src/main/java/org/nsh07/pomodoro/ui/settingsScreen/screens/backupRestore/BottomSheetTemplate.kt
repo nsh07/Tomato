@@ -114,7 +114,10 @@ fun BackupBottomSheetTemplate(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .clip(RoundedCornerShape(40.dp))
-                    .clickable { openPicker() }
+                    .clickable(
+                        onClick = { openPicker() },
+                        enabled = backupState == BackupRestoreState.CHOOSE_FILE
+                    )
                     .drawBehind { drawRect(animatedBgColor) }
                     .padding(16.dp)
                     .fillMaxWidth()

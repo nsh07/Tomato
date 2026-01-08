@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -43,6 +44,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,6 +66,7 @@ fun BackupRestoreScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -86,7 +89,21 @@ fun BackupRestoreScreen(
     )
     else if (showDialog == 2) RestoreBottomSheet(
         restoreState = backupState,
-        onDismissRequest = { showDialog = 0 },
+        onDismissRequest = if (backupState == BackupRestoreState.DONE) {
+            {
+                val packageManager = context.packageManager
+                val intent = packageManager.getLaunchIntentForPackage(context.packageName)
+                val componentName = intent?.component
+
+                val mainIntent = Intent.makeRestartActivityTask(componentName)
+                mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                context.startActivity(mainIntent)
+                Runtime.getRuntime().exit(0)
+            }
+        } else {
+            { showDialog = 0 }
+        },
         onStartRestore = {
             scope.launch {
                 backupState = BackupRestoreState.LOADING

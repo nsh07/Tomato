@@ -72,6 +72,7 @@ import androidx.navigation3.ui.NavDisplay
 import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.Screen
+import org.nsh07.pomodoro.ui.SettingsNavItem
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.LocaleBottomSheet
@@ -80,6 +81,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.screens.AboutScreen
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.TimerSettings
+import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.BackupRestoreScreen
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
@@ -235,25 +237,6 @@ private fun SettingsScreen(
                             PlusPromo(isPlus, setShowPaywall)
                         }
 
-                        item {
-                            ClickableListItem(
-                                leadingContent = {
-                                    Icon(painterResource(R.drawable.info), null)
-                                },
-                                headlineContent = {
-                                    Text(stringResource(R.string.about))
-                                },
-                                supportingContent = {
-                                    Text(stringResource(R.string.app_name) + " ${BuildConfig.VERSION_NAME}")
-                                },
-                                trailingContent = {
-                                    Icon(painterResource(R.drawable.arrow_forward_big), null)
-                                },
-                                items = 2,
-                                index = 1
-                            ) { backStack.add(Screen.Settings.About) }
-                        }
-
                         item { Spacer(Modifier.height(12.dp)) }
 
                         itemsIndexed(settingsScreens) { index, item ->
@@ -279,6 +262,59 @@ private fun SettingsScreen(
                                 items = settingsScreens.size,
                                 index = index
                             ) { backStack.add(item.route) }
+                        }
+
+                        item { Spacer(Modifier.height(12.dp)) }
+
+                        item {
+                            val item = remember {
+                                SettingsNavItem(
+                                    Screen.Settings.Backup,
+                                    R.drawable.backup,
+                                    R.string.backup_and_restore,
+                                    listOf(R.string.backup, R.string.restore, R.string.reset_data)
+                                )
+                            }
+                            ClickableListItem(
+                                leadingContent = {
+                                    Icon(painterResource(item.icon), null)
+                                },
+                                headlineContent = { Text(stringResource(item.label)) },
+                                supportingContent = {
+                                    Text(
+                                        remember {
+                                            item.innerSettings.joinToString(", ") {
+                                                context.getString(it)
+                                            }
+                                        },
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                },
+                                trailingContent = {
+                                    Icon(painterResource(R.drawable.arrow_forward_big), null)
+                                },
+                                items = 2,
+                                index = 0
+                            ) { backStack.add(item.route) }
+                        }
+                        item {
+                            ClickableListItem(
+                                leadingContent = {
+                                    Icon(painterResource(R.drawable.info), null)
+                                },
+                                headlineContent = {
+                                    Text(stringResource(R.string.about))
+                                },
+                                supportingContent = {
+                                    Text(stringResource(R.string.app_name) + " ${BuildConfig.VERSION_NAME}")
+                                },
+                                trailingContent = {
+                                    Icon(painterResource(R.drawable.arrow_forward_big), null)
+                                },
+                                items = 2,
+                                index = 1
+                            ) { backStack.add(Screen.Settings.About) }
                         }
 
                         item { Spacer(Modifier.height(12.dp)) }
@@ -367,6 +403,7 @@ private fun SettingsScreen(
                     modifier = modifier,
                 )
             }
+
             entry<Screen.Settings.Appearance> {
                 AppearanceSettings(
                     settingsState = settingsState,
@@ -378,6 +415,15 @@ private fun SettingsScreen(
                     modifier = modifier,
                 )
             }
+
+            entry<Screen.Settings.Backup> {
+                BackupRestoreScreen(
+                    contentPadding = contentPadding,
+                    onBack = backStack::onBack,
+                    modifier = modifier,
+                )
+            }
+
             entry<Screen.Settings.Timer> {
                 TimerSettings(
                     isPlus = isPlus,

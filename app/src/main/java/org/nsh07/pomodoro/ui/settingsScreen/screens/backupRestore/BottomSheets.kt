@@ -114,7 +114,7 @@ fun RestoreBottomSheet(
         onDismissRequest = onDismissRequest,
         onStartAction = onStartRestore,
         resetBackupState = resetRestoreState,
-        openPicker = { chooseFile.launch(arrayOf("*/*")) },
+        openPicker = { chooseFile.launch(arrayOf("application/octet-stream")) },
         icon = {
             Icon(
                 painterResource(R.drawable.restore_40dp),

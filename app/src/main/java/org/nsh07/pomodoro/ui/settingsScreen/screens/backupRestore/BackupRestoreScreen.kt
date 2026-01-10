@@ -49,12 +49,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
+import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
@@ -65,7 +66,8 @@ import org.nsh07.pomodoro.ui.theme.TomatoTheme
 fun BackupRestoreScreen(
     contentPadding: PaddingValues,
     onBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: BackupRestoreViewModel = viewModel(factory = BackupRestoreViewModel.Factory)
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -82,7 +84,7 @@ fun BackupRestoreScreen(
         onStartBackup = {
             scope.launch {
                 backupState = BackupRestoreState.LOADING
-                delay(1000)
+                viewModel.performBackup(context, it)
                 backupState = BackupRestoreState.DONE
             }
         },
@@ -108,7 +110,7 @@ fun BackupRestoreScreen(
         onStartRestore = {
             scope.launch {
                 backupState = BackupRestoreState.LOADING
-                delay(1000)
+                viewModel.performRestore(context, it)
                 backupState = BackupRestoreState.DONE
             }
         },

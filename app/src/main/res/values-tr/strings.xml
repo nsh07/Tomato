@@ -113,4 +113,15 @@
     <string name="duration">Süre</string>
     <string name="gap">Boşluk</string>
     <string name="vibration_strength">Güç</string>
+    <string name="backup_and_restore">Yedekle ve kurtar</string>
+    <string name="backup">Yedekle</string>
+    <string name="backup_desc">Tüm istatistikleri ve ayarları yedekle</string>
+    <string name="restore">Kurtar</string>
+    <string name="restore_desc">İstatistikleri ve ayarları geri yükle</string>
+    <string name="backup_dialog_desc">İstatistikleriniz ve ayarlarınız seçtiğiniz klasördeki bir dosyaya kaydedilecektir. Bu verileri daha sonra %1$s adresinden geri yükleyebilirsiniz</string>
+    <string name="restore_dialog_desc">İstatistikleriniz ve ayarlarınız seçilen yedekleme dosyasından geri yüklenecektir. Geri yükleme işlemi tamamlandığında uygulamanın yeniden başlatılması gerekecektir. %1$s</string>
+    <string name="restore_dialog_desc_bold_text">Mevcut tüm veriler silinecektir, bu işlem geri alınamaz.</string>
+    <string name="choose_folder">Klasör seç</string>
+    <string name="choose_file">Dosya seç</string>
+    <string name="restart_app">Uygulamayı yeniden başlat</string>
 </resources>

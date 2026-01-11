@@ -68,9 +68,9 @@
     <string name="hours_and_minutes_format">%1$dh %2$dm</string>
     <string name="hours_format">%1$dh</string>
     <string name="language">Language</string>
-    <string name="last_month">Last month</string>
-    <string name="last_week">Last week</string>
-    <string name="last_year">Last year</string>
+    <string name="last_month">This month</string>
+    <string name="last_week">This week</string>
+    <string name="last_year">This year</string>
     <string name="less">Less</string>
     <string name="license">License</string>
     <string name="lifetime">Lifetime</string>

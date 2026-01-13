@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.statsScreen.components
 
+import android.graphics.Paint
 import android.graphics.Typeface
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.layout.height
@@ -48,7 +49,6 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.fill
-import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
 import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
@@ -56,14 +56,15 @@ import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineFill.Companion.single
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.Insets
+import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
-import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
+import com.patrykandpatrick.vico.core.common.shader.ShaderProvider.Companion.verticalGradient
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
@@ -75,10 +76,12 @@ import org.nsh07.pomodoro.utils.millisecondsToMinutes
 @Composable
 fun TimeLineChart(
     modelProducer: CartesianChartModelProducer,
+    goal: Long = 4 * 60 * 60 * 1000,
     hoursFormat: String,
     hoursMinutesFormat: String,
     minutesFormat: String,
     modifier: Modifier = Modifier,
+    zoomEnabled: Boolean = true,
     axisTypeface: Typeface = Typeface.DEFAULT,
     markerTypeface: Typeface = Typeface.DEFAULT,
     thickness: Float = 2f,
@@ -111,23 +114,32 @@ fun TimeLineChart(
                 rememberCartesianChart(
                     rememberLineCartesianLayer(
                         LineCartesianLayer.LineProvider.series(
-                            vicoTheme.lineCartesianLayerColors.map { color ->
-                                LineCartesianLayer.rememberLine(
-                                    fill = single(fill(color)),
-                                    stroke = LineCartesianLayer.LineStroke.Continuous(
-                                        thicknessDp = thickness,
-                                    ),
-                                    areaFill = LineCartesianLayer.AreaFill.single(
-                                        fill(
-                                            ShaderProvider.verticalGradient(
-                                                color.toArgb(),
-                                                Color.Transparent.toArgb()
-                                            )
+                            LineCartesianLayer.rememberLine(
+                                fill = LineCartesianLayer.LineFill.double(
+                                    topFill = fill(colorScheme.primary),
+                                    bottomFill = fill(colorScheme.secondary),
+                                    splitY = { goal }
+                                ),
+                                stroke = LineCartesianLayer.LineStroke.Continuous(
+                                    thickness, Paint.Cap.ROUND
+                                ),
+                                areaFill = LineCartesianLayer.AreaFill.double(
+                                    topFill = fill(
+                                        verticalGradient(
+                                            colorScheme.primary.toArgb(),
+                                            Color.Transparent.toArgb()
                                         )
                                     ),
-                                    pointConnector = LineCartesianLayer.PointConnector.cubic(0.5f)
-                                )
-                            }
+                                    bottomFill = fill(
+                                        verticalGradient(
+                                            Color.Transparent.toArgb(),
+                                            colorScheme.secondary.toArgb()
+                                        )
+                                    ),
+                                    splitY = { goal }
+                                ),
+                                pointConnector = LineCartesianLayer.PointConnector.cubic(0.5f)
+                            )
                         ),
                         pointSpacing = pointSpacing
                     ),
@@ -145,6 +157,23 @@ fun TimeLineChart(
                         guideline = rememberLineComponent(Fill.Transparent),
                         valueFormatter = xValueFormatter
                     ),
+                    decorations = if (goal > 0) listOf(
+                        HorizontalLine(
+                            y = { goal.toDouble() },
+                            line = rememberLineComponent(
+                                fill = fill(colorScheme.primary),
+                                thickness = 1.dp,
+                                shape = DashedShape(
+                                    shape = CorneredShape.Pill,
+                                    dashLengthDp = 2f,
+                                    gapLengthDp = 2f
+                                )
+                            ),
+                            horizontalLabelPosition = Position.Horizontal.Start,
+                            verticalLabelPosition = Position.Vertical.Center
+                        )
+                    )
+                    else emptyList(),
                     marker = rememberDefaultCartesianMarker(
                         rememberTextComponent(
                             color = colorScheme.inverseOnSurface,
@@ -170,8 +199,8 @@ fun TimeLineChart(
                             fill = fill(colorScheme.primary),
                             shape = DashedShape(
                                 shape = CorneredShape.Pill,
-                                dashLengthDp = 16f,
-                                gapLengthDp = 8f
+                                dashLengthDp = 2f,
+                                gapLengthDp = 2f
                             )
                         )
                     ),
@@ -179,7 +208,7 @@ fun TimeLineChart(
                 ),
             modelProducer = modelProducer,
             zoomState = rememberVicoZoomState(
-                zoomEnabled = true,
+                zoomEnabled = zoomEnabled,
                 initialZoom = Zoom.fixed(),
                 minZoom = Zoom.min(Zoom.Content, Zoom.fixed())
             ),

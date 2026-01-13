@@ -74,7 +74,7 @@ fun TimeColumnChart(
     hoursMinutesFormat: String,
     minutesFormat: String,
     modifier: Modifier = Modifier,
-    zoomEnabled: Boolean = false,
+    zoomEnabled: Boolean = true,
     axisTypeface: Typeface = Typeface.DEFAULT,
     markerTypeface: Typeface = Typeface.DEFAULT,
     thickness: Dp = 40.dp,
@@ -109,7 +109,7 @@ fun TimeColumnChart(
                         Providers.columnProviderWithLimit(
                             limit = goal,
                             belowLimitComponent = rememberLineComponent(
-                                fill = fill(colorScheme.primary.copy(0.66f)),
+                                fill = fill(colorScheme.secondary),
                                 thickness = thickness,
                                 shape = CorneredShape.Pill
                             ),
@@ -145,7 +145,7 @@ fun TimeColumnChart(
                                 shape = DashedShape(
                                     shape = CorneredShape.Pill,
                                     dashLengthDp = 2f,
-                                    gapLengthDp = 4f
+                                    gapLengthDp = 2f
                                 )
                             ),
                             horizontalLabelPosition = Position.Horizontal.Start,
@@ -171,8 +171,8 @@ fun TimeColumnChart(
                             fill = fill(colorScheme.primary),
                             shape = DashedShape(
                                 shape = CorneredShape.Pill,
-                                dashLengthDp = 16f,
-                                gapLengthDp = 8f
+                                dashLengthDp = 2f,
+                                gapLengthDp = 2f
                             )
                         )
                     ),

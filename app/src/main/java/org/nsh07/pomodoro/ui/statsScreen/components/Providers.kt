@@ -48,7 +48,7 @@ class Providers {
         }
 
         fun columnProviderWithLimit(
-            limit: Long,
+            limit: Number,
             belowLimitComponent: LineComponent,
             aboveLimitComponent: LineComponent
         ): ColumnProvider =

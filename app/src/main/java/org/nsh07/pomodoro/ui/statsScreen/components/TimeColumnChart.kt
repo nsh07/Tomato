@@ -55,6 +55,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
 import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
@@ -73,6 +74,7 @@ fun TimeColumnChart(
     hoursMinutesFormat: String,
     minutesFormat: String,
     modifier: Modifier = Modifier,
+    zoomEnabled: Boolean = false,
     axisTypeface: Typeface = Typeface.DEFAULT,
     markerTypeface: Typeface = Typeface.DEFAULT,
     thickness: Dp = 40.dp,
@@ -107,7 +109,7 @@ fun TimeColumnChart(
                         Providers.columnProviderWithLimit(
                             limit = goal,
                             belowLimitComponent = rememberLineComponent(
-                                fill = fill(colorScheme.primary.copy(0.5f)),
+                                fill = fill(colorScheme.primary.copy(0.66f)),
                                 thickness = thickness,
                                 shape = CorneredShape.Pill
                             ),
@@ -120,21 +122,21 @@ fun TimeColumnChart(
                         columnCollectionSpacing = columnCollectionSpacing
                     ),
                     startAxis = VerticalAxis.rememberStart(
-                        line = null,
+                        line = rememberLineComponent(Fill.Transparent),
                         label = rememberTextComponent(colorScheme.onSurface, axisTypeface),
-                        tick = null,
-                        guideline = null,
+                        tick = rememberLineComponent(Fill.Transparent),
+                        guideline = rememberLineComponent(Fill.Transparent),
                         itemPlacer = VerticalAxis.ItemPlacer.count({ 4 }),
                         valueFormatter = yValueFormatter
                     ),
                     bottomAxis = HorizontalAxis.rememberBottom(
-                        line = null,
+                        line = rememberLineComponent(Fill.Transparent),
                         label = rememberTextComponent(colorScheme.onSurface, axisTypeface),
-                        tick = null,
-                        guideline = null,
+                        tick = rememberLineComponent(Fill.Transparent),
+                        guideline = rememberLineComponent(Fill.Transparent),
                         valueFormatter = xValueFormatter
                     ),
-                    decorations = listOf(
+                    decorations = if (goal > 0) listOf(
                         HorizontalLine(
                             y = { goal.toDouble() },
                             line = rememberLineComponent(
@@ -142,14 +144,15 @@ fun TimeColumnChart(
                                 thickness = 1.dp,
                                 shape = DashedShape(
                                     shape = CorneredShape.Pill,
-                                    dashLengthDp = 16f,
-                                    gapLengthDp = 8f
+                                    dashLengthDp = 2f,
+                                    gapLengthDp = 4f
                                 )
                             ),
                             horizontalLabelPosition = Position.Horizontal.Start,
                             verticalLabelPosition = Position.Vertical.Center
                         )
-                    ),
+                    )
+                    else emptyList(),
                     marker = rememberDefaultCartesianMarker(
                         rememberTextComponent(
                             color = colorScheme.inverseOnSurface,
@@ -177,7 +180,7 @@ fun TimeColumnChart(
                 ),
             modelProducer = modelProducer,
             zoomState = rememberVicoZoomState(
-                zoomEnabled = false,
+                zoomEnabled = zoomEnabled,
                 initialZoom = Zoom.fixed(),
                 minZoom = Zoom.min(Zoom.Content, Zoom.fixed())
             ),

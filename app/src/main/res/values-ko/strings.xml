@@ -16,4 +16,12 @@
     <string name="color">색상</string>
     <string name="color_scheme">색 구성표</string>
     <string name="completed">완료됨</string>
+    <string name="restart_app">앱 재시작</string>
+    <string name="appearance">”모양</string>
+    <string name="auto_start_next_timer">다음 타이머 자동시작</string>
+    <string name="break_">휴식</string>
+    <string name="choose_color_scheme">색상 구성표 선택</string>
+    <string name="dark">다크</string>
+    <string name="dnd">방해금지</string>
+    <string name="dnd_desc">포커스 타이머를 실행할 때 방해금지 모드를 켜세요</string>
 </resources>

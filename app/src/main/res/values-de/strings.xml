@@ -113,4 +113,10 @@
     <string name="total">Gesamt</string>
     <string name="vibration_strength">Stärke</string>
     <string name="focus_history_heatmap">Fokusverlauf - Heatmap</string>
+    <string name="restart_app">App neustarten</string>
+    <string name="backup_and_restore">Sicherung und wiederherstellen</string>
+    <string name="backup">Sicherung</string>
+    <string name="backup_desc">Sicherung aller Statistiken und Einstellungen</string>
+    <string name="restore">Wiederherstellen</string>
+    <string name="restore_desc">Statistiken und Einstellungen wiederherstellen</string>
 </resources>

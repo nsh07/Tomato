@@ -65,6 +65,7 @@ import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.Screen
+import org.nsh07.pomodoro.ui.StatusBarProtection
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeColumnChart
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeLineChart
@@ -537,4 +538,6 @@ fun SharedTransitionScope.StatsMainScreen(
             }
         }
     }
+
+    StatusBarProtection(topBarColors.containerColor)
 }

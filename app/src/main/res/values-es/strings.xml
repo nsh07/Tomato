@@ -112,4 +112,15 @@
     <string name="total">en total</string>
     <string name="vibration_strength">Intensidad</string>
     <string name="gap">Intervalo</string>
+    <string name="backup_and_restore">Copia de seguridad y restauración</string>
+    <string name="backup">Copia de seguridad</string>
+    <string name="backup_desc">Respaldar todas las estadísticas y ajustes</string>
+    <string name="restore">Restaurar</string>
+    <string name="restore_desc">Restaurar estadísticas y ajustes</string>
+    <string name="backup_dialog_desc">Tus estadísticas y ajustes se guardarán en un archivo en la carpeta que hayas elegido. Puedes restaurar estos datos más tarde en %1$s</string>
+    <string name="restore_dialog_desc">Tus estadísticas y ajustes serán restaurados del archivo de copia de seguridad elegido. La aplicación tendrá que ser reiniciada cuando la restauración esté completa. %1$s</string>
+    <string name="restore_dialog_desc_bold_text">Todos los datos existentes serán borrados, y esto no se puede deshacer.</string>
+    <string name="choose_folder">Elegir carpeta</string>
+    <string name="choose_file">Elegir archivo</string>
+    <string name="restart_app">Reiniciar app</string>
 </resources>

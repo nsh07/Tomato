@@ -1,7 +1,7 @@
 [versions]
 activityCompose = "1.12.2"
 adaptive = "1.2.0"
-agp = "8.13.2"
+agp = "9.0.0"
 composeBom = "2025.12.01"
 coreKtx = "1.17.0"
 espressoCore = "3.7.0"

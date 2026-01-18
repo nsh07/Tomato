@@ -2,7 +2,7 @@
 activityCompose = "1.12.2"
 adaptive = "1.2.0"
 agp = "9.0.0"
-composeBom = "2025.12.01"
+composeBom = "2026.01.00"
 coreKtx = "1.17.0"
 espressoCore = "3.7.0"
 glance = "1.2.0-rc01"

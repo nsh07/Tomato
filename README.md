@@ -27,12 +27,6 @@ Tomato is a minimalist Pomodoro timer for Android based on Material 3 Expressive
 
 </div>
 
-## Screenshots
-
-<p align="center" width="100%">
-<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/7.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8.png" width="25%">
-</p>
-
 <br/>
 
 > *"It just might be the best looking timer app that I've ever seen"*
@@ -46,6 +40,14 @@ is Tomato."*
 
 \- [*Android
 Authority*](https://www.androidauthority.com/best-new-android-apps-october-2025-3602966/)
+
+<br/>
+
+## Screenshots
+
+<p align="center" width="100%">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/7.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8.png" width="25%">
+</p>
 
 <br/>
 
@@ -154,3 +156,4 @@ This app was made possible by the following libraries:
 Please give this repo a star if you liked my work
 
 [![Star History Chart](https://app.repohistory.com/api/svg?repo=nsh07/Tomato&type=Date&background=F9FAEF&color=4C662B)](https://app.repohistory.com/star-history)
+

@@ -124,6 +124,8 @@ class SettingsViewModel(
             is SettingsAction.SaveBlackTheme -> saveBlackTheme(action.enabled)
             is SettingsAction.SaveAodEnabled -> saveAodEnabled(action.enabled)
 
+            is SettingsAction.SaveFocusGoal -> saveFocusGoal(action.goal)
+
             is SettingsAction.SaveVibrationOnDuration -> saveVibrationOnDuration(action.duration)
             is SettingsAction.SaveVibrationOffDuration -> saveVibrationOffDuration(action.duration)
             is SettingsAction.SaveVibrationAmplitude -> saveVibrationAmplitude(action.amplitude)
@@ -240,6 +242,15 @@ class SettingsViewModel(
         focusFlowCollectionJob?.cancel()
         shortBreakFlowCollectionJob?.cancel()
         longBreakFlowCollectionJob?.cancel()
+    }
+
+    private fun saveFocusGoal(goal: Long) {
+        viewModelScope.launch {
+            _settingsState.update { currentState ->
+                currentState.copy(focusGoal = goal)
+            }
+            preferenceRepository.saveIntPreference("focus_goal", goal.toInt())
+        }
     }
 
     private fun saveAlarmEnabled(enabled: Boolean) {
@@ -418,6 +429,10 @@ class SettingsViewModel(
                     "long_break_time",
                     settingsState.longBreakTime.toInt()
                 ).toLong()
+        val focusGoal = preferenceRepository.getIntPreference("focus_goal")?.toLong()
+            ?: preferenceRepository.saveIntPreference("focus_goal", settingsState.focusGoal.toInt())
+                .toLong()
+
         val sessionLength =
             preferenceRepository.getIntPreference("session_length")
                 ?: preferenceRepository.saveIntPreference(
@@ -498,6 +513,7 @@ class SettingsViewModel(
                 focusTime = focusTime,
                 shortBreakTime = shortBreakTime,
                 longBreakTime = longBreakTime,
+                focusGoal = focusGoal,
                 sessionLength = sessionLength,
                 theme = theme,
                 colorScheme = colorScheme,

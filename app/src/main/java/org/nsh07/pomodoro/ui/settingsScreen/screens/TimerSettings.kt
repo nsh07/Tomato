@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -90,6 +90,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputField
 import org.nsh07.pomodoro.ui.settingsScreen.components.MinutesInputTransformation3Digits
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
+import org.nsh07.pomodoro.ui.settingsScreen.components.SliderListItem
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
@@ -100,6 +101,7 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -320,7 +322,7 @@ fun TimerSettings(
                 Spacer(Modifier.height(12.dp))
             }
             item {
-                Column(Modifier.background(listItemColors.containerColor, cardShape)) {
+                Column(Modifier.background(listItemColors.containerColor, topListItemShape)) {
                     ListItem(
                         leadingContent = {
                             Icon(painterResource(R.drawable.clocks), null)
@@ -345,6 +347,21 @@ fun TimerSettings(
                         modifier = Modifier
                             .padding(start = (16 * 2 + 24).dp, end = 16.dp, bottom = 12.dp)
                     )
+                }
+            }
+            item {
+                val hmf = stringResource(R.string.hours_and_minutes_format)
+                SliderListItem(
+                    value = settingsState.focusGoal.toFloat(),
+                    valueRange = 0f..16 * 60 * 60 * 1000f,
+                    enabled = true,
+                    label = "Daily focus goal",
+                    trailingLabel = { millisecondsToHoursMinutes(it.toLong(), hmf) },
+                    shape = bottomListItemShape
+                ) {
+                    with(it.toLong()) {
+                        onAction(SettingsAction.SaveFocusGoal(this - (this % (30 * 60 * 1000))))
+                    }
                 }
             }
             item { Spacer(Modifier.height(12.dp)) }
@@ -584,8 +601,8 @@ private fun TimerSettingsPreview() {
     val longBreakTimeInputFieldState = rememberTextFieldState("15")
     val sessionsSliderState = rememberSliderState(
         value = 4f,
-        valueRange = 1f..8f,
-        steps = 6
+        valueRange = 1f..10f,
+        steps = 8
     )
     TimerSettings(
         isPlus = false,

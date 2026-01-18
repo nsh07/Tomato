@@ -45,6 +45,7 @@ data class SettingsState(
     val focusTime: Long = 25 * 60 * 1000L,
     val shortBreakTime: Long = 5 * 60 * 1000L,
     val longBreakTime: Long = 15 * 60 * 1000L,
+    val focusGoal: Long = 0L,
 
     val sessionLength: Int = 4,
 

@@ -83,6 +83,7 @@ import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 @Composable
 fun SharedTransitionScope.StatsMainScreen(
     contentPadding: PaddingValues,
+    goal: Long,
     lastWeekSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     lastMonthSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     lastYearSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
@@ -304,6 +305,7 @@ fun SharedTransitionScope.StatsMainScreen(
                         xValueFormatter = CartesianValueFormatter { context, x, _ ->
                             context.model.extraStore[lastWeekSummaryChartData.second][x.toInt()]
                         },
+                        goal = goal,
                         modifier = Modifier
                             .sharedBounds(
                                 sharedContentState = this@StatsMainScreen
@@ -397,6 +399,7 @@ fun SharedTransitionScope.StatsMainScreen(
                         xValueFormatter = CartesianValueFormatter { context, x, _ ->
                             context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
                         },
+                        goal = goal,
                         modifier = Modifier
                             .sharedBounds(
                                 sharedContentState = this@StatsMainScreen
@@ -489,6 +492,7 @@ fun SharedTransitionScope.StatsMainScreen(
                         xValueFormatter = CartesianValueFormatter { context, x, _ ->
                             context.model.extraStore[lastYearSummaryChartData.second][x.toInt()]
                         },
+                        goal = goal,
                         modifier = Modifier
                             .sharedBounds(
                                 sharedContentState = this@StatsMainScreen

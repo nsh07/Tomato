@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -52,6 +52,7 @@ import org.nsh07.pomodoro.utils.onBack
 @Composable
 fun StatsScreenRoot(
     contentPadding: PaddingValues,
+    focusGoal: Long,
     modifier: Modifier = Modifier,
     viewModel: StatsViewModel = viewModel(factory = StatsViewModel.Factory)
 ) {
@@ -99,6 +100,7 @@ fun StatsScreenRoot(
             entryProvider = entryProvider {
                 entry<Screen.Stats.Main> {
                     StatsMainScreen(
+                        goal = focusGoal,
                         contentPadding = contentPadding,
                         lastWeekSummaryChartData = lastWeekMainChartData,
                         lastMonthSummaryChartData = lastMonthMainChartData,
@@ -124,6 +126,7 @@ fun StatsScreenRoot(
 
                 entry<Screen.Stats.LastWeek> {
                     LastWeekScreen(
+                        goal = focusGoal,
                         contentPadding = contentPadding,
                         focusBreakdownValues = lastWeekFocusBreakdownValues,
                         focusHistoryValues = lastWeekFocusHistoryValues,
@@ -133,12 +136,13 @@ fun StatsScreenRoot(
                         hoursFormat = hoursFormat,
                         minutesFormat = minutesFormat,
                         axisTypeface = axisTypeface,
-                        markerTypeface = markerTypeface
+                        markerTypeface = markerTypeface,
                     )
                 }
 
                 entry<Screen.Stats.LastMonth> {
                     LastMonthScreen(
+                        goal = focusGoal,
                         contentPadding = contentPadding,
                         focusBreakdownValues = lastMonthFocusBreakdownValues,
                         calendarData = lastMonthCalendarData,
@@ -148,12 +152,13 @@ fun StatsScreenRoot(
                         hoursFormat = hoursFormat,
                         minutesFormat = minutesFormat,
                         axisTypeface = axisTypeface,
-                        markerTypeface = markerTypeface
+                        markerTypeface = markerTypeface,
                     )
                 }
 
                 entry<Screen.Stats.LastYear> {
                     LastYearScreen(
+                        goal = focusGoal,
                         contentPadding = contentPadding,
                         focusBreakdownValues = lastYearFocusBreakdownValues,
                         focusHeatmapData = lastYearFocusHeatmapData,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -91,7 +91,8 @@ fun SharedTransitionScope.LastMonthScreen(
     hoursFormat: String,
     minutesFormat: String,
     axisTypeface: Typeface,
-    markerTypeface: Typeface
+    markerTypeface: Typeface,
+    goal: Long
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -216,6 +217,7 @@ fun SharedTransitionScope.LastMonthScreen(
                     xValueFormatter = CartesianValueFormatter { context, x, _ ->
                         context.model.extraStore[mainChartData.second][x.toInt()]
                     },
+                    goal = goal,
                     modifier = Modifier
                         .sharedBounds(
                             sharedContentState = this@LastMonthScreen
@@ -278,6 +280,7 @@ fun SharedTransitionScope.LastMonthScreen(
                     FocusBreakdownChart(
                         expanded = breakdownChartExpanded,
                         modelProducer = lastMonthSummaryAnalysisModelProducer,
+                        goal = goal,
                         modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
                     )
                 }

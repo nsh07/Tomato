@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -30,6 +30,7 @@ import org.nsh07.pomodoro.R
 @Composable
 fun ColumnScope.FocusBreakdownChart(
     expanded: Boolean,
+    goal: Long,
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier = Modifier,
     axisTypeface: Typeface = Typeface.DEFAULT,
@@ -52,6 +53,7 @@ fun ColumnScope.FocusBreakdownChart(
                     else -> ""
                 }
             },
+            goal = goal,
             modifier = modifier
         )
     }

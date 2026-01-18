@@ -18,7 +18,7 @@
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.snap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,8 +54,8 @@ fun SliderListItem(
     label: String,
     trailingLabel: (Float) -> String,
     shape: CornerBasedShape,
-    icon: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    icon: (@Composable () -> Unit)? = null,
     containerColor: Color = listItemColors.containerColor,
     onValueChangeFinished: (Float) -> Unit,
 ) {
@@ -65,7 +65,7 @@ fun SliderListItem(
     val valueAnimated by animateFloatAsState(
         value,
         animationSpec = if (animateSliderValue) motionScheme.defaultSpatialSpec()
-        else tween(durationMillis = 0)
+        else snap()
     )
 
     Column(modifier.background(containerColor, shape)) {
@@ -100,7 +100,7 @@ fun SliderListItem(
                 modifier = Modifier.weight(1f)
             )
             Spacer(Modifier.width(20.dp))
-            icon()
+            icon?.invoke()
         }
     }
 }

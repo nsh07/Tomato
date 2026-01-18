@@ -69,7 +69,7 @@ import org.nsh07.pomodoro.utils.millisecondsToMinutes
 @Composable
 fun TimeColumnChart(
     modelProducer: CartesianChartModelProducer,
-    goal: Long = 4 * 60 * 60 * 1000,
+    goal: Long,
     hoursFormat: String,
     hoursMinutesFormat: String,
     minutesFormat: String,

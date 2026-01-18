@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.ui.statsScreen.screens
 
 import android.graphics.Typeface
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -102,14 +103,6 @@ fun SharedTransitionScope.LastMonthScreen(
 
     val lastMonthSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
     var breakdownChartExpanded by remember { mutableStateOf(false) }
-
-    LaunchedEffect(focusBreakdownValues.first) {
-        lastMonthSummaryAnalysisModelProducer.runTransaction {
-            columnSeries {
-                series(focusBreakdownValues.first)
-            }
-        }
-    }
 
     val rankList = remember(focusBreakdownValues) {
         val sortedIndices =
@@ -283,11 +276,20 @@ fun SharedTransitionScope.LastMonthScreen(
                         Text(stringResource(R.string.show_chart))
                     }
 
-                    FocusBreakdownChart(
-                        expanded = breakdownChartExpanded,
-                        modelProducer = lastMonthSummaryAnalysisModelProducer,
-                        modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
-                    )
+                    AnimatedVisibility(breakdownChartExpanded) {
+                        LaunchedEffect(focusBreakdownValues.first) {
+                            lastMonthSummaryAnalysisModelProducer.runTransaction {
+                                columnSeries {
+                                    series(focusBreakdownValues.first)
+                                }
+                            }
+                        }
+
+                        FocusBreakdownChart(
+                            modelProducer = lastMonthSummaryAnalysisModelProducer,
+                            modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
+                        )
+                    }
                 }
             }
 

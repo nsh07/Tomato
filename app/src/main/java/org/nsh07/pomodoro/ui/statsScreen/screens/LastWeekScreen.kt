@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.ui.statsScreen.screens
 
 import android.graphics.Typeface
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -101,14 +102,6 @@ fun SharedTransitionScope.LastWeekScreen(
 
     val lastWeekSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
     var breakdownChartExpanded by remember { mutableStateOf(false) }
-
-    LaunchedEffect(focusBreakdownValues.first) {
-        lastWeekSummaryAnalysisModelProducer.runTransaction {
-            columnSeries {
-                series(focusBreakdownValues.first)
-            }
-        }
-    }
 
     val rankList = remember(focusBreakdownValues) {
         val sortedIndices =
@@ -281,11 +274,20 @@ fun SharedTransitionScope.LastWeekScreen(
                         Text(stringResource(R.string.show_chart))
                     }
 
-                    FocusBreakdownChart(
-                        expanded = breakdownChartExpanded,
-                        modelProducer = lastWeekSummaryAnalysisModelProducer,
-                        modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
-                    )
+                    AnimatedVisibility(breakdownChartExpanded) {
+                        LaunchedEffect(focusBreakdownValues.first) {
+                            lastWeekSummaryAnalysisModelProducer.runTransaction {
+                                columnSeries {
+                                    series(focusBreakdownValues.first)
+                                }
+                            }
+                        }
+
+                        FocusBreakdownChart(
+                            modelProducer = lastWeekSummaryAnalysisModelProducer,
+                            modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
+                        )
+                    }
                 }
             }
 

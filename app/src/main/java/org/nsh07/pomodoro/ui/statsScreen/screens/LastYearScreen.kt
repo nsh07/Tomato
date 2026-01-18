@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.ui.statsScreen.screens
 
 import android.graphics.Typeface
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -109,14 +110,6 @@ fun SharedTransitionScope.LastYearScreen(
 
     val lastYearSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
     var breakdownChartExpanded by remember { mutableStateOf(false) }
-
-    LaunchedEffect(focusBreakdownValues.first) {
-        lastYearSummaryAnalysisModelProducer.runTransaction {
-            columnSeries {
-                series(focusBreakdownValues.first)
-            }
-        }
-    }
 
     val rankList = remember(focusBreakdownValues) {
         val sortedIndices =
@@ -301,11 +294,20 @@ fun SharedTransitionScope.LastYearScreen(
                         Text(stringResource(R.string.show_chart))
                     }
 
-                    FocusBreakdownChart(
-                        expanded = breakdownChartExpanded,
-                        modelProducer = lastYearSummaryAnalysisModelProducer,
-                        modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
-                    )
+                    AnimatedVisibility(breakdownChartExpanded) {
+                        LaunchedEffect(focusBreakdownValues.first) {
+                            lastYearSummaryAnalysisModelProducer.runTransaction {
+                                columnSeries {
+                                    series(focusBreakdownValues.first)
+                                }
+                            }
+                        }
+
+                        FocusBreakdownChart(
+                            modelProducer = lastYearSummaryAnalysisModelProducer,
+                            modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
+                        )
+                    }
                 }
             }
 

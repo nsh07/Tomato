@@ -17,8 +17,8 @@ revenuecat = "9.18.1"
 room = "2.8.4"
 vico = "2.3.6"
 uiautomator = "2.4.0-alpha07"
-benchmarkMacroJunit4 = "1.4.1"
-baselineprofile = "1.4.1"
+benchmarkMacroJunit4 = "1.5.0-alpha01"
+baselineprofile = "1.5.0-alpha01"
 profileinstaller = "1.4.1"
 
 [libraries]
@@ -56,7 +56,6 @@ androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profi
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

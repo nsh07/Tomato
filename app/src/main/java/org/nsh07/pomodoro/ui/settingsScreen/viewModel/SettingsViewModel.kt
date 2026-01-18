@@ -93,8 +93,8 @@ class SettingsViewModel(
     val sessionsSliderState by lazy {
         SliderState(
             value = _settingsState.value.sessionLength.toFloat(),
-            steps = 4,
-            valueRange = 1f..6f,
+            steps = 8,
+            valueRange = 1f..10f,
             onValueChangeFinished = ::updateSessionLength
         )
     }

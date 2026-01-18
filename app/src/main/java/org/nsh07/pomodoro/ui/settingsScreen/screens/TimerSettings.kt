@@ -355,8 +355,9 @@ fun TimerSettings(
                     value = settingsState.focusGoal.toFloat(),
                     valueRange = 0f..16 * 60 * 60 * 1000f,
                     enabled = true,
-                    label = "Daily focus goal",
+                    label = stringResource(R.string.daily_focus_goal),
                     trailingLabel = { millisecondsToHoursMinutes(it.toLong(), hmf) },
+                    icon = { Icon(painterResource(R.drawable.flag), null) },
                     shape = bottomListItemShape
                 ) {
                     with(it.toLong()) {

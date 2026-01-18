@@ -133,4 +133,6 @@
     <string name="vibrate">Vibration</string>
     <string name="vibrate_desc">Vibrate when a timer completes</string>
     <string name="vibration_strength">Strength</string>
+    <string name="daily_focus_goal">Daily focus goal</string>
+    <string name="milliseconds_format">%1$dms</string>
 </resources>

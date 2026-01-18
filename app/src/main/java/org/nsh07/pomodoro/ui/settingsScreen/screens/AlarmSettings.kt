@@ -114,6 +114,7 @@ fun AlarmSettings(
 
     var alarmName by remember { mutableStateOf("...") }
     var vibrationPlaying by remember { mutableStateOf(false) }
+    val msFormat = stringResource(R.string.milliseconds_format)
 
     LaunchedEffect(settingsState.alarmSoundUri) {
         withContext(Dispatchers.IO) {
@@ -424,8 +425,8 @@ fun AlarmSettings(
                         valueRange = 10f..5000f,
                         enabled = isPlus,
                         label = stringResource(R.string.duration),
-                        trailingLabel = { "${it.roundToInt()}ms" },
-                        icon = { Icon(painterResource(R.drawable.airwave), null) },
+                        trailingLabel = { String.format(msFormat, it.roundToInt()) },
+                        trailingIcon = { Icon(painterResource(R.drawable.airwave), null) },
                         shape = middleListItemShape
                     ) { onAction(SettingsAction.SaveVibrationOnDuration(it.roundToLong())) }
                 }
@@ -435,8 +436,8 @@ fun AlarmSettings(
                         valueRange = 10f..5000f,
                         enabled = isPlus,
                         label = stringResource(R.string.gap),
-                        trailingLabel = { "${it.roundToInt()}ms" },
-                        icon = { Icon(painterResource(R.drawable.menu), null) },
+                        trailingLabel = { String.format(msFormat, it.roundToInt()) },
+                        trailingIcon = { Icon(painterResource(R.drawable.menu), null) },
                         shape = if (hasAmplitudeControl) middleListItemShape else bottomListItemShape
                     ) { onAction(SettingsAction.SaveVibrationOffDuration(it.roundToLong())) }
                 }
@@ -454,7 +455,7 @@ fun AlarmSettings(
                                 context.getString(R.string.system_default)
                             else "${((it * 100) / 255f).roundToInt()}%"
                         },
-                        icon = { Icon(painterResource(R.drawable.bolt), null) },
+                        trailingIcon = { Icon(painterResource(R.drawable.bolt), null) },
                         shape = bottomListItemShape
                     ) { onAction(SettingsAction.SaveVibrationAmplitude(it.roundToInt())) }
                 }

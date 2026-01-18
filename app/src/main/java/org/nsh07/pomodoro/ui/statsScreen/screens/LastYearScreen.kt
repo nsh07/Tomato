@@ -64,6 +64,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
+import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
@@ -99,6 +101,8 @@ fun SharedTransitionScope.LastYearScreen(
     minutesFormat: String,
     axisTypeface: Typeface,
     markerTypeface: Typeface,
+    zoomState: VicoZoomState,
+    scrollState: VicoScrollState,
     goal: Long
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -223,6 +227,8 @@ fun SharedTransitionScope.LastYearScreen(
                         context.model.extraStore[mainChartData.second][x.toInt()]
                     },
                     goal = goal,
+                    zoomState = zoomState,
+                    scrollState = scrollState,
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .sharedBounds(

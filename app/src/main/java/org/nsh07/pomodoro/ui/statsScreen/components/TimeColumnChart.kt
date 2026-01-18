@@ -33,12 +33,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
+import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
@@ -46,6 +49,8 @@ import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
+import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
+import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
@@ -99,6 +104,16 @@ fun TimeColumnChart(
             millisecondsToMinutes(value, minutesFormat)
         }
     },
+    zoomState: VicoZoomState = rememberVicoZoomState(
+        zoomEnabled = zoomEnabled,
+        initialZoom = Zoom.fixed(),
+        minZoom = Zoom.min(Zoom.Content, Zoom.fixed())
+    ),
+    scrollState: VicoScrollState = rememberVicoScrollState(
+        initialScroll = Scroll.Absolute.End,
+        autoScrollCondition = AutoScrollCondition.OnModelGrowth,
+        autoScrollAnimationSpec = motionScheme.defaultSpatialSpec()
+    ),
     animationSpec: AnimationSpec<Float>? = motionScheme.defaultEffectsSpec()
 ) {
     ProvideVicoTheme(rememberM3VicoTheme()) {
@@ -179,11 +194,8 @@ fun TimeColumnChart(
                     fadingEdges = rememberFadingEdges()
                 ),
             modelProducer = modelProducer,
-            zoomState = rememberVicoZoomState(
-                zoomEnabled = zoomEnabled,
-                initialZoom = Zoom.fixed(),
-                minZoom = Zoom.min(Zoom.Content, Zoom.fixed())
-            ),
+            zoomState = zoomState,
+            scrollState = scrollState,
             animationSpec = animationSpec,
             animateIn = false,
             modifier = modifier.height(226.dp),

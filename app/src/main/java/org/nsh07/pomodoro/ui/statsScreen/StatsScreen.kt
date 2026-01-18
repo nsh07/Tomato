@@ -116,6 +116,8 @@ fun StatsScreenRoot(
                         minutesFormat = minutesFormat,
                         axisTypeface = axisTypeface,
                         markerTypeface = markerTypeface,
+                        zoomStates = viewModel.chartZoomStates,
+                        scrollStates = viewModel.chartScrollStates,
                         onNavigate = {
                             if (backStack.size < 2) backStack.add(it)
                             else backStack[backStack.lastIndex] = it
@@ -137,6 +139,8 @@ fun StatsScreenRoot(
                         minutesFormat = minutesFormat,
                         axisTypeface = axisTypeface,
                         markerTypeface = markerTypeface,
+                        zoomState = viewModel.chartZoomStates[0],
+                        scrollState = viewModel.chartScrollStates[0]
                     )
                 }
 
@@ -153,6 +157,8 @@ fun StatsScreenRoot(
                         minutesFormat = minutesFormat,
                         axisTypeface = axisTypeface,
                         markerTypeface = markerTypeface,
+                        zoomState = viewModel.chartZoomStates[1],
+                        scrollState = viewModel.chartScrollStates[1]
                     )
                 }
 
@@ -169,7 +175,9 @@ fun StatsScreenRoot(
                         hoursFormat = hoursFormat,
                         minutesFormat = minutesFormat,
                         axisTypeface = axisTypeface,
-                        markerTypeface = markerTypeface
+                        markerTypeface = markerTypeface,
+                        zoomState = viewModel.chartZoomStates[2],
+                        scrollState = viewModel.chartScrollStates[2]
                     )
                 }
             }

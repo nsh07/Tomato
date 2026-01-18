@@ -58,6 +58,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
+import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -98,6 +100,8 @@ fun SharedTransitionScope.StatsMainScreen(
     minutesFormat: String,
     axisTypeface: Typeface,
     markerTypeface: Typeface,
+    zoomStates: List<VicoZoomState>,
+    scrollStates: List<VicoScrollState>,
     onNavigate: (Screen.Stats) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -306,6 +310,8 @@ fun SharedTransitionScope.StatsMainScreen(
                             context.model.extraStore[lastWeekSummaryChartData.second][x.toInt()]
                         },
                         goal = goal,
+                        zoomState = zoomStates[0],
+                        scrollState = scrollStates[0],
                         modifier = Modifier
                             .sharedBounds(
                                 sharedContentState = this@StatsMainScreen
@@ -400,6 +406,8 @@ fun SharedTransitionScope.StatsMainScreen(
                             context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
                         },
                         goal = goal,
+                        zoomState = zoomStates[1],
+                        scrollState = scrollStates[1],
                         modifier = Modifier
                             .sharedBounds(
                                 sharedContentState = this@StatsMainScreen
@@ -493,6 +501,8 @@ fun SharedTransitionScope.StatsMainScreen(
                             context.model.extraStore[lastYearSummaryChartData.second][x.toInt()]
                         },
                         goal = goal,
+                        zoomState = zoomStates[2],
+                        scrollState = scrollStates[2],
                         modifier = Modifier
                             .sharedBounds(
                                 sharedContentState = this@StatsMainScreen

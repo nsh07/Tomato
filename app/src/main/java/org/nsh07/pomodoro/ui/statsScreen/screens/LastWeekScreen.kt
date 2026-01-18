@@ -278,7 +278,6 @@ fun SharedTransitionScope.LastWeekScreen(
                     FocusBreakdownChart(
                         expanded = breakdownChartExpanded,
                         modelProducer = lastWeekSummaryAnalysisModelProducer,
-                        goal = goal,
                         modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
                     )
                 }

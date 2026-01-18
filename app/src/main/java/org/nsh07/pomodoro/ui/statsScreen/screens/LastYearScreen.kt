@@ -298,7 +298,6 @@ fun SharedTransitionScope.LastYearScreen(
                     FocusBreakdownChart(
                         expanded = breakdownChartExpanded,
                         modelProducer = lastYearSummaryAnalysisModelProducer,
-                        goal = goal,
                         modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
                     )
                 }

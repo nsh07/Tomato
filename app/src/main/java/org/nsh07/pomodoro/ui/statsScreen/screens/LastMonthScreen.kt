@@ -280,7 +280,6 @@ fun SharedTransitionScope.LastMonthScreen(
                     FocusBreakdownChart(
                         expanded = breakdownChartExpanded,
                         modelProducer = lastMonthSummaryAnalysisModelProducer,
-                        goal = goal,
                         modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
                     )
                 }

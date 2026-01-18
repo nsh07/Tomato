@@ -148,6 +148,7 @@ fun TimeLineChart(
                         label = rememberTextComponent(colorScheme.onSurface, axisTypeface),
                         tick = rememberLineComponent(Fill.Transparent),
                         guideline = rememberLineComponent(Fill.Transparent),
+                        itemPlacer = VerticalAxis.ItemPlacer.count({ 4 }),
                         valueFormatter = yValueFormatter
                     ),
                     bottomAxis = HorizontalAxis.rememberBottom(

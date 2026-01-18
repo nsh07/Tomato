@@ -135,4 +135,15 @@
     <string name="vibration_strength">Strength</string>
     <string name="daily_focus_goal">Daily focus goal</string>
     <string name="milliseconds_format">%1$dms</string>
+    <string name="backup_and_restore">Backup and restore</string>
+    <string name="backup">Backup</string>
+    <string name="backup_desc">Backup all stats and settings</string>
+    <string name="restore">Restore</string>
+    <string name="restore_desc">Restore stats and settings</string>
+    <string name="backup_dialog_desc">Your stats and settings will be saved to a file in your chosen folder. You can restore this data later in %1$s</string>
+    <string name="restore_dialog_desc">Your stats and settings will be restored from the chosen backup file. The app will need to be restarted when the restore is complete. %1$s</string>
+    <string name="restore_dialog_desc_bold_text">All existing data will be erased, and this cannot be undone.</string>
+    <string name="choose_folder">Choose folder</string>
+    <string name="choose_file">Choose file</string>
+    <string name="restart_app">Restart app</string>
 </resources>

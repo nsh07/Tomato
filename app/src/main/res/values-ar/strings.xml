@@ -105,4 +105,12 @@
     <string name="reset_data_dialog_title">إعادة تعيين كل الإحصائيات؟</string>
     <string name="reset_data_dialog_text">سيتم حذف جميع الإحصائيات المحفوظة بشكل دائم. لا يمكن التراجع عن هذا.</string>
     <string name="back">خلف</string>
+    <string name="dnd_permission_message">تفعيل الإذن ل \"%1$s\"</string>
+    <string name="duration">المدة</string>
+    <string name="gap">الفجوة</string>
+    <string name="history_widget_desc">شاهد مخططا لفترات التركيز في الأيام القليلة الماضية. عدد الأيام المعروضة يعتمد على حجم الأداة (widget).</string>
+    <string name="lifetime">العمر</string>
+    <string name="today_widget_desc">إحصائيات التركيز اليوم</string>
+    <string name="total">الإجمالي</string>
+    <string name="vibration_strength">القوة</string>
 </resources>

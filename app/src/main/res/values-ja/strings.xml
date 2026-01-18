@@ -89,4 +89,20 @@
     <string name="secure_aod_desc">常時表示ディスプレイは見られるように維持したまま、タイムアウト後に自動的に端末をロックします</string>
     <string name="undo">戻す</string>
     <string name="timer_reset_message">タイマーはリセットされました</string>
+    <string name="focus_breakdown">集中時間の内訳</string>
+    <string name="focus_breakdown_desc">一日の時間帯別の平均集中時間</string>
+    <string name="focus_history">集中の履歴</string>
+    <string name="show_chart">チャートを表示</string>
+    <string name="focus_history_heatmap">集中履歴のヒートマップ</string>
+    <string name="focus_history_heatmap_desc">過去1年間の集中履歴。濃い色ほどより長い時間を意味します。日付は月ごとにグループ化されています。日付をタップして詳細を表示します。</string>
+    <string name="focus_history_calendar">集中履歴カレンダー</string>
+    <string name="focus_history_calendar_desc">過去1ヶ月分の集中履歴。先月の日付は異なる色で表示されます。日付をタップして詳細を表示します。</string>
+    <string name="reset_data">統計をリセット</string>
+    <string name="reset_data_dialog_title">全ての統計をリセットしますか？</string>
+    <string name="reset_data_dialog_text">保存された全ての統計情報が完全に削除されます。元に戻すことはできません。</string>
+    <string name="back">戻る</string>
+    <string name="today_widget_desc">今日の集中統計</string>
+    <string name="history_widget_desc">過去数日間の集中継続時間のチャートを表示します。表示される日数はウィジェットのサイズによって異なります。</string>
+    <string name="lifetime">全ての期間</string>
+    <string name="total">合計</string>
 </resources>

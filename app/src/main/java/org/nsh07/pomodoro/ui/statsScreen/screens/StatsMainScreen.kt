@@ -58,6 +58,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
+import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
@@ -65,6 +67,7 @@ import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.Screen
+import org.nsh07.pomodoro.ui.StatusBarProtection
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeColumnChart
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeLineChart
@@ -82,6 +85,7 @@ import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 @Composable
 fun SharedTransitionScope.StatsMainScreen(
     contentPadding: PaddingValues,
+    goal: Long,
     lastWeekSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     lastMonthSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
     lastYearSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
@@ -96,6 +100,8 @@ fun SharedTransitionScope.StatsMainScreen(
     minutesFormat: String,
     axisTypeface: Typeface,
     markerTypeface: Typeface,
+    zoomStates: List<VicoZoomState>,
+    scrollStates: List<VicoScrollState>,
     onNavigate: (Screen.Stats) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -303,6 +309,9 @@ fun SharedTransitionScope.StatsMainScreen(
                         xValueFormatter = CartesianValueFormatter { context, x, _ ->
                             context.model.extraStore[lastWeekSummaryChartData.second][x.toInt()]
                         },
+                        goal = goal,
+                        zoomState = zoomStates[0],
+                        scrollState = scrollStates[0],
                         modifier = Modifier
                             .sharedBounds(
                                 sharedContentState = this@StatsMainScreen
@@ -396,6 +405,9 @@ fun SharedTransitionScope.StatsMainScreen(
                         xValueFormatter = CartesianValueFormatter { context, x, _ ->
                             context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
                         },
+                        goal = goal,
+                        zoomState = zoomStates[1],
+                        scrollState = scrollStates[1],
                         modifier = Modifier
                             .sharedBounds(
                                 sharedContentState = this@StatsMainScreen
@@ -488,6 +500,9 @@ fun SharedTransitionScope.StatsMainScreen(
                         xValueFormatter = CartesianValueFormatter { context, x, _ ->
                             context.model.extraStore[lastYearSummaryChartData.second][x.toInt()]
                         },
+                        goal = goal,
+                        zoomState = zoomStates[2],
+                        scrollState = scrollStates[2],
                         modifier = Modifier
                             .sharedBounds(
                                 sharedContentState = this@StatsMainScreen
@@ -537,4 +552,6 @@ fun SharedTransitionScope.StatsMainScreen(
             }
         }
     }
+
+    StatusBarProtection(topBarColors.containerColor)
 }

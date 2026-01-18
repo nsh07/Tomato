@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.statsScreen.components
 
+import android.graphics.Paint
 import android.graphics.Typeface
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.layout.height
@@ -35,6 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
+import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
@@ -42,28 +45,31 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLa
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.fill
-import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
+import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
+import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineFill.Companion.single
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.Insets
+import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
-import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
+import com.patrykandpatrick.vico.core.common.shader.ShaderProvider.Companion.verticalGradient
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
@@ -75,6 +81,7 @@ import org.nsh07.pomodoro.utils.millisecondsToMinutes
 @Composable
 fun TimeLineChart(
     modelProducer: CartesianChartModelProducer,
+    goal: Long,
     hoursFormat: String,
     hoursMinutesFormat: String,
     minutesFormat: String,
@@ -103,6 +110,17 @@ fun TimeLineChart(
             millisecondsToMinutes(value, minutesFormat)
         }
     },
+    zoomState: VicoZoomState = rememberVicoZoomState(
+        zoomEnabled = true,
+        initialZoom = Zoom.fixed(),
+        minZoom = Zoom.min(Zoom.Content, Zoom.fixed())
+    ),
+    scrollState: VicoScrollState = rememberVicoScrollState(
+        scrollEnabled = true,
+        initialScroll = Scroll.Absolute.End,
+        autoScrollCondition = AutoScrollCondition.OnModelGrowth,
+        autoScrollAnimationSpec = motionScheme.defaultSpatialSpec()
+    ),
     animationSpec: AnimationSpec<Float>? = motionScheme.defaultEffectsSpec()
 ) {
     ProvideVicoTheme(rememberM3VicoTheme()) {
@@ -111,23 +129,32 @@ fun TimeLineChart(
                 rememberCartesianChart(
                     rememberLineCartesianLayer(
                         LineCartesianLayer.LineProvider.series(
-                            vicoTheme.lineCartesianLayerColors.map { color ->
-                                LineCartesianLayer.rememberLine(
-                                    fill = single(fill(color)),
-                                    stroke = LineCartesianLayer.LineStroke.Continuous(
-                                        thicknessDp = thickness,
-                                    ),
-                                    areaFill = LineCartesianLayer.AreaFill.single(
-                                        fill(
-                                            ShaderProvider.verticalGradient(
-                                                color.toArgb(),
-                                                Color.Transparent.toArgb()
-                                            )
+                            LineCartesianLayer.rememberLine(
+                                fill = LineCartesianLayer.LineFill.double(
+                                    topFill = fill(colorScheme.primary),
+                                    bottomFill = fill(colorScheme.secondary),
+                                    splitY = { goal }
+                                ),
+                                stroke = LineCartesianLayer.LineStroke.Continuous(
+                                    thickness, Paint.Cap.ROUND
+                                ),
+                                areaFill = LineCartesianLayer.AreaFill.double(
+                                    topFill = fill(
+                                        verticalGradient(
+                                            colorScheme.primary.toArgb(),
+                                            Color.Transparent.toArgb()
                                         )
                                     ),
-                                    pointConnector = LineCartesianLayer.PointConnector.cubic(0.5f)
-                                )
-                            }
+                                    bottomFill = fill(
+                                        verticalGradient(
+                                            Color.Transparent.toArgb(),
+                                            colorScheme.secondary.toArgb()
+                                        )
+                                    ),
+                                    splitY = { goal }
+                                ),
+                                pointConnector = LineCartesianLayer.PointConnector.cubic(0.5f)
+                            )
                         ),
                         pointSpacing = pointSpacing
                     ),
@@ -136,6 +163,7 @@ fun TimeLineChart(
                         label = rememberTextComponent(colorScheme.onSurface, axisTypeface),
                         tick = rememberLineComponent(Fill.Transparent),
                         guideline = rememberLineComponent(Fill.Transparent),
+                        itemPlacer = VerticalAxis.ItemPlacer.count({ 4 }),
                         valueFormatter = yValueFormatter
                     ),
                     bottomAxis = HorizontalAxis.rememberBottom(
@@ -145,6 +173,23 @@ fun TimeLineChart(
                         guideline = rememberLineComponent(Fill.Transparent),
                         valueFormatter = xValueFormatter
                     ),
+                    decorations = if (goal > 0) listOf(
+                        HorizontalLine(
+                            y = { goal.toDouble() },
+                            line = rememberLineComponent(
+                                fill = fill(colorScheme.primary),
+                                thickness = 1.dp,
+                                shape = DashedShape(
+                                    shape = CorneredShape.Pill,
+                                    dashLengthDp = 2f,
+                                    gapLengthDp = 2f
+                                )
+                            ),
+                            horizontalLabelPosition = Position.Horizontal.Start,
+                            verticalLabelPosition = Position.Vertical.Center
+                        )
+                    )
+                    else emptyList(),
                     marker = rememberDefaultCartesianMarker(
                         rememberTextComponent(
                             color = colorScheme.inverseOnSurface,
@@ -170,19 +215,16 @@ fun TimeLineChart(
                             fill = fill(colorScheme.primary),
                             shape = DashedShape(
                                 shape = CorneredShape.Pill,
-                                dashLengthDp = 16f,
-                                gapLengthDp = 8f
+                                dashLengthDp = 2f,
+                                gapLengthDp = 2f
                             )
                         )
                     ),
                     fadingEdges = rememberFadingEdges()
                 ),
             modelProducer = modelProducer,
-            zoomState = rememberVicoZoomState(
-                zoomEnabled = true,
-                initialZoom = Zoom.fixed(),
-                minZoom = Zoom.min(Zoom.Content, Zoom.fixed())
-            ),
+            zoomState = zoomState,
+            scrollState = scrollState,
             animationSpec = animationSpec,
             animateIn = false,
             modifier = modifier.height(224.dp),
@@ -210,6 +252,7 @@ private fun TimeLineChartPreview() {
         Surface {
             TimeLineChart(
                 modelProducer = modelProducer,
+                goal = 60 * 60 * 1000,
                 hoursFormat = "%dh",
                 hoursMinutesFormat = "%dh %dm",
                 minutesFormat = "%dm"

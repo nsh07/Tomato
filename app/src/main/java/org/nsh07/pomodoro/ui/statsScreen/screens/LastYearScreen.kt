@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.ui.statsScreen.screens
 
 import android.graphics.Typeface
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -64,6 +65,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
+import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
@@ -98,20 +101,15 @@ fun SharedTransitionScope.LastYearScreen(
     hoursFormat: String,
     minutesFormat: String,
     axisTypeface: Typeface,
-    markerTypeface: Typeface
+    markerTypeface: Typeface,
+    zoomState: VicoZoomState,
+    scrollState: VicoScrollState,
+    goal: Long
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val lastYearSummaryAnalysisModelProducer = remember { CartesianChartModelProducer() }
     var breakdownChartExpanded by remember { mutableStateOf(false) }
-
-    LaunchedEffect(focusBreakdownValues.first) {
-        lastYearSummaryAnalysisModelProducer.runTransaction {
-            columnSeries {
-                series(focusBreakdownValues.first)
-            }
-        }
-    }
 
     val rankList = remember(focusBreakdownValues) {
         val sortedIndices =
@@ -221,6 +219,9 @@ fun SharedTransitionScope.LastYearScreen(
                     xValueFormatter = CartesianValueFormatter { context, x, _ ->
                         context.model.extraStore[mainChartData.second][x.toInt()]
                     },
+                    goal = goal,
+                    zoomState = zoomState,
+                    scrollState = scrollState,
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .sharedBounds(
@@ -293,11 +294,20 @@ fun SharedTransitionScope.LastYearScreen(
                         Text(stringResource(R.string.show_chart))
                     }
 
-                    FocusBreakdownChart(
-                        expanded = breakdownChartExpanded,
-                        modelProducer = lastYearSummaryAnalysisModelProducer,
-                        modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
-                    )
+                    AnimatedVisibility(breakdownChartExpanded) {
+                        LaunchedEffect(focusBreakdownValues.first) {
+                            lastYearSummaryAnalysisModelProducer.runTransaction {
+                                columnSeries {
+                                    series(focusBreakdownValues.first)
+                                }
+                            }
+                        }
+
+                        FocusBreakdownChart(
+                            modelProducer = lastYearSummaryAnalysisModelProducer,
+                            modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
+                        )
+                    }
                 }
             }
 

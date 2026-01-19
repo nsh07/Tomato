@@ -37,10 +37,10 @@
     <string name="stats">统计</string>
     <string name="today">今天</string>
     <string name="break_">休息</string>
-    <string name="last_week">上周</string>
+    <string name="last_week">本周</string>
     <string name="focus_per_day_avg">每日平均专注次数</string>
     <string name="more_info">更多信息</string>
-    <string name="last_month">上个月</string>
+    <string name="last_month">本月</string>
     <string name="stop_alarm_question">要停止响铃吗？</string>
     <string name="stop_alarm_dialog_text">当前计时已完成。轻触任何位置以停止响铃。</string>
     <string name="more">更多</string>
@@ -52,7 +52,7 @@
     <string name="timer">计时</string>
     <string name="timer_progress">计时器进度</string>
     <string name="timer_session_count">%1$d / %2$d</string>
-    <string name="last_year">去年</string>
+    <string name="last_year">今年</string>
     <string name="always_on_display">息屏显示</string>
     <string name="always_on_display_desc">查看计时器时点击任意位置切换至 AOD 模式</string>
     <string name="appearance">外观</string>

@@ -37,10 +37,10 @@
     <string name="stats">الإحصائيات</string>
     <string name="today">اليوم</string>
     <string name="break_">استراحة</string>
-    <string name="last_week">الاسبوع الماضي</string>
+    <string name="last_week">هذا الإسبوع</string>
     <string name="focus_per_day_avg">مدة التركيز في اليوم (المتوسط)</string>
     <string name="more_info">معلومات أكثر</string>
-    <string name="last_month">الشهر الماضي</string>
+    <string name="last_month">هذا الشهر</string>
     <string name="stop_alarm_question">إيقاف المنبه؟</string>
     <string name="stop_alarm_dialog_text">المؤقت الحالي انتهي. اضغط في أي مكان لإيقاف المنبه.</string>
     <string name="timer_session_count">%1$d من %2$d</string>
@@ -52,7 +52,7 @@
     <string name="up_next">القادم</string>
     <string name="timer">المؤقت</string>
     <string name="timer_progress">تقدم المؤقت</string>
-    <string name="last_year">السنة الماضية</string>
+    <string name="last_year">هذا العام</string>
     <string name="always_on_display">العرض الدائم علي الشاشة</string>
     <string name="always_on_display_desc">اضغط في أي مكان أثناء عرض المؤقت للتبديل إلى وضع العرض الدائم على الشاشة</string>
     <string name="appearance">المظهر</string>
@@ -113,4 +113,16 @@
     <string name="today_widget_desc">إحصائيات التركيز اليوم</string>
     <string name="total">الإجمالي</string>
     <string name="vibration_strength">القوة</string>
+    <string name="daily_focus_goal">هدف التركيز اليومي</string>
+    <string name="backup_and_restore">النسخ الاحتياطي والاستعادة</string>
+    <string name="backup">النسخ الاحتياطي</string>
+    <string name="backup_desc">قم بعمل نسخة احتياطية من جميع الإحصائيات والإعدادات</string>
+    <string name="restore">الاستعادة</string>
+    <string name="restore_desc">استعادة الإحصائيات والإعدادات</string>
+    <string name="backup_dialog_desc">سيتم حفظ إحصائياتك وإعداداتك في ملف في المجلد الذي اخترته. يمكنك استعادة هذه البيانات لاحقا في %1$s</string>
+    <string name="restore_dialog_desc">سيتم استعادة إحصائياتك وإعداداتك من ملف النسخ الاحتياطي المختار. سيحتاج التطبيق إلى إعادة تشغيل عند اكتمال الاستعادة. %1$s</string>
+    <string name="restore_dialog_desc_bold_text">سيتم مسح جميع البيانات الموجودة، ولا يمكن التراجع عن ذلك.</string>
+    <string name="choose_folder">اختيار المجلد</string>
+    <string name="choose_file">اختر ملف</string>
+    <string name="restart_app">إعادة تشغيل التطبيق</string>
 </resources>

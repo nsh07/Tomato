@@ -14,9 +14,9 @@
     <string name="get_plus">Získej Tomato+</string>
     <string name="help_with_translation">Pomož přeložit Tomato</string>
     <string name="language">Jazyk</string>
-    <string name="last_month">Poslední měsíc</string>
-    <string name="last_week">Poslední týden</string>
-    <string name="last_year">Poslední rok</string>
+    <string name="last_month">Tento měsíc</string>
+    <string name="last_week">Tento týden</string>
+    <string name="last_year">Tento rok</string>
     <string name="long_break">Dlouhá přestávka</string>
     <string name="min_remaining_notification">Zbývá %1$s minut</string>
     <string name="more">Více</string>
@@ -123,4 +123,6 @@
     <string name="choose_folder">Vybrat složku</string>
     <string name="choose_file">Vybrat soubor</string>
     <string name="restart_app">Restartovat aplikaci</string>
+    <string name="daily_focus_goal">Cíl denního soustředění</string>
+    <string name="milliseconds_format">%1$d ms</string>
 </resources>

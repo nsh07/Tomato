@@ -110,4 +110,9 @@
     <string name="restore_dialog_desc">Ваша статистика и настройки будут восстановлены из выбранного файла бекапа. Приложение нужно будет перезагрузить после завершения восстановления. %1$ с</string>
     <string name="restore_desc">Восстановить статистики и настройки</string>
     <string name="backup_dialog_desc">Ваша статистика и настройки будут сохранены в файл в выбранной папке. Вы сможете восстановит эти данные через %1$ с</string>
+    <string name="dnd_permission_message">Необходимо предоставить разрешение для \"%1$s\"</string>
+    <string name="duration">Длительность</string>
+    <string name="history_widget_desc">Просмотреть график длительности фокусировок за последние несколько дней. Количество отображаемых дней зависит от размера виджета.</string>
+    <string name="milliseconds_format">%1$dмс</string>
+    <string name="restore_dialog_desc_bold_text">Все данные будут безвозвратно удалены, это действие нельзя отменить.</string>
 </resources>

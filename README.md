@@ -25,8 +25,6 @@ Tomato is a minimalist Pomodoro timer for Android based on Material 3 Expressive
   <img src=https://img.shields.io/discord/1455603400254292196?logo=discord&label=Discord&labelColor=1a1a1a&color=5865F2>
 </a>
 
-</div>
-
 <br/>
 
 > *"It just might be the best looking timer app that I've ever seen"*
@@ -40,6 +38,8 @@ is Tomato."*
 
 \- [*Android
 Authority*](https://www.androidauthority.com/best-new-android-apps-october-2025-3602966/)
+
+</div>
 
 <br/>
 

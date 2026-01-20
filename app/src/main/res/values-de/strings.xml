@@ -37,10 +37,10 @@
     <string name="stats">Statistik</string>
     <string name="today">Heute</string>
     <string name="break_">Pause</string>
-    <string name="last_week">Letzte Woche</string>
+    <string name="last_week">Diese Woche</string>
     <string name="focus_per_day_avg">Fokus pro Tag (⌀)</string>
     <string name="more_info">Weitere Infos</string>
-    <string name="last_month">Letzter Monat</string>
+    <string name="last_month">Dieser Monat</string>
     <string name="stop_alarm_question">Alarm stoppen?</string>
     <string name="stop_alarm_dialog_text">Der aktuelle Timer ist beendet. Tippen Sie auf eine beliebige Stelle, um den Alarm zu stoppen.</string>
     <string name="timer_session_count">%1$d von %2$d</string>
@@ -54,7 +54,7 @@
     <string name="timer_progress">Timer-Fortschritt</string>
     <string name="always_on_display">Always-On Display</string>
     <string name="always_on_display_desc">Tippe irgendwo, während der Timer angezeigt wird, um in den AOD-Modus zu wechseln</string>
-    <string name="last_year">Letztes Jahr</string>
+    <string name="last_year">Dieses Jahr</string>
     <string name="appearance">Aussehen</string>
     <string name="durations">Dauer</string>
     <string name="sound">Sound</string>
@@ -114,7 +114,7 @@
     <string name="vibration_strength">Stärke</string>
     <string name="focus_history_heatmap">Fokusverlauf - Heatmap</string>
     <string name="restart_app">App neustarten</string>
-    <string name="backup_and_restore">Sicherung und wiederherstellen</string>
+    <string name="backup_and_restore">Sichern und wiederherstellen</string>
     <string name="backup">Sicherung</string>
     <string name="backup_desc">Sicherung aller Statistiken und Einstellungen</string>
     <string name="restore">Wiederherstellen</string>
@@ -124,4 +124,6 @@
     <string name="restore_dialog_desc_bold_text">Alle existierenden Daten werden gelöscht. Dieser Vorgang kann nicht rückgängig gemacht werden.</string>
     <string name="choose_folder">Wähle einen Ordner</string>
     <string name="choose_file">Wähle eine Datei</string>
+    <string name="milliseconds_format">%1$d ms</string>
+    <string name="daily_focus_goal">Tägliches Fokus Ziel</string>
 </resources>

@@ -20,10 +20,10 @@
     <string name="dynamic">डायनामिक</string>
     <string name="exit">बंद करें</string>
     <string name="focus_per_day_avg">प्रतिदिन फोकस (औसत)</string>
-    <string name="last_month">पिछले महीने</string>
-    <string name="last_week">पिछले हफ्ते</string>
+    <string name="last_month">इस महीने</string>
+    <string name="last_week">इस सप्ताह</string>
     <string name="sound">आवाज</string>
-    <string name="last_year">पिछले साल</string>
+    <string name="last_year">इस साल</string>
     <string name="light">लाइट</string>
     <string name="long_break">लंबा ब्रेक</string>
     <string name="min_remaining_notification">%1$s मिनट बाकी</string>
@@ -109,4 +109,20 @@
     <string name="dnd_permission_message">\"%1$s\" के लिए परमिशन चालू करें</string>
     <string name="lifetime">लाइफटाइम</string>
     <string name="total">कुल</string>
+    <string name="duration">अवधि</string>
+    <string name="gap">अन्तराल</string>
+    <string name="vibration_strength">तीव्रता</string>
+    <string name="daily_focus_goal">दैनिक फोकस लक्ष्य</string>
+    <string name="milliseconds_format">%1$dमि से</string>
+    <string name="backup_and_restore">बैकअप एवं रिस्टोर</string>
+    <string name="backup">बैकअप</string>
+    <string name="backup_desc">सभी आँकड़ों और सेटिंग्स का बैकअप लें</string>
+    <string name="restore">रिस्टोर</string>
+    <string name="restore_desc">आंकड़ों और सेटिंग्स को रीस्टोर करें</string>
+    <string name="backup_dialog_desc">आपके आंकड़े और सेटिंग्स आपके चुने हुए फ़ोल्डर में एक फ़ाइल में सेव हो जाएँगे। आप बाद में %1$s से इस डेटा को रिस्टोर कर सकते हैं</string>
+    <string name="restore_dialog_desc">आपके आंकड़े और सेटिंग्स चुनी हुई बैकअप फ़ाइल से रिस्टोर हो जाएँगे। रिस्टोर पूरा होने पर ऐप को रीस्टार्ट करना होगा। %1$s</string>
+    <string name="restore_dialog_desc_bold_text">सारा मौजूदा डेटा मिट जाएगा, और इसे वापस नहीं किया जा सकता।</string>
+    <string name="choose_folder">फ़ोल्डर चुनें</string>
+    <string name="choose_file">फ़ाइल चुनें</string>
+    <string name="restart_app">ऐप रीस्टार्ट करें</string>
 </resources>

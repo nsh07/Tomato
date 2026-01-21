@@ -1,0 +1,26 @@
+<!--
+  ~ Copyright (c) 2026 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+    <path
+        android:fillColor="#e3e3e3"
+        android:pathData="M280,560v240q0,17 -11.5,28.5T240,840q-17,0 -28.5,-11.5T200,800v-600q0,-17 11.5,-28.5T240,160h287q14,0 25,9t14,23l10,48h184q17,0 28.5,11.5T800,280v320q0,17 -11.5,28.5T760,640L553,640q-14,0 -25,-9t-14,-23l-10,-48L280,560Z" />
+</vector>

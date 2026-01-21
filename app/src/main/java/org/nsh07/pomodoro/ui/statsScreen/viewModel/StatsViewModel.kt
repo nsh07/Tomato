@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.statsScreen.viewModel
 
+import androidx.compose.animation.core.spring
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.util.fastMaxBy
 import androidx.lifecycle.ViewModel
@@ -25,6 +26,11 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
+import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
+import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
+import com.patrykandpatrick.vico.core.cartesian.Scroll
+import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
@@ -55,6 +61,25 @@ class StatsViewModel(
     private val statRepository: StatRepository
 ) : ViewModel() {
     val backStack = mutableStateListOf<Screen.Stats>(Screen.Stats.Main)
+
+    val chartScrollStates = List(3) {
+        VicoScrollState(
+            scrollEnabled = true,
+            initialScroll = Scroll.Absolute.Start,
+            autoScroll = Scroll.Absolute.End,
+            autoScrollCondition = AutoScrollCondition.OnModelGrowth,
+            autoScrollAnimationSpec = spring(0.8f, 380f)
+        )
+    }
+
+    val chartZoomStates = List(3) {
+        VicoZoomState(
+            zoomEnabled = true,
+            initialZoom = Zoom.fixed(),
+            minZoom = Zoom.min(Zoom.Content, Zoom.fixed()),
+            maxZoom = Zoom.max(Zoom.fixed(10f), Zoom.Content)
+        )
+    }
 
     val todayStat = statRepository
         .getTodayStat()

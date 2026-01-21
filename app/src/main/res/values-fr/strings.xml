@@ -109,4 +109,7 @@
     <string name="minutes_format">%1$dm</string>
     <string name="hours_and_minutes_format">%1$dh %2$dm</string>
     <string name="hours_format">%1$dh</string>
+    <string name="vibration_strength">Force</string>
+    <string name="duration">Durée</string>
+    <string name="gap">Espacement</string>
 </resources>

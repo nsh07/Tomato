@@ -110,4 +110,20 @@
     <string name="today_widget_desc">今日專注統計</string>
     <string name="history_widget_desc">查看過去幾天的專注時長圖表。顯示的天數會依小工具大小而有所不同。</string>
     <string name="dnd_permission_message">啟用「%1$s」的權限</string>
+    <string name="duration">時長</string>
+    <string name="gap">間隔</string>
+    <string name="lifetime">使用期間</string>
+    <string name="total">總計</string>
+    <string name="vibration_strength">強度</string>
+    <string name="backup_and_restore">備份與還原</string>
+    <string name="backup">備份</string>
+    <string name="backup_desc">備份所有統計資料與設定</string>
+    <string name="restore">還原</string>
+    <string name="restore_desc">還原統計資料與設定</string>
+    <string name="backup_dialog_desc">你的統計資料與設定將儲存為檔案至你選擇的資料夾中。之後可在 %1$s 中還原這些資料</string>
+    <string name="restore_dialog_desc">你的統計資料與設定將從所選的備份檔案中還原。還原完成後需要重新啟動應用程式。%1$s</string>
+    <string name="restore_dialog_desc_bold_text">所有現有資料都將被清除，且無法復原。</string>
+    <string name="choose_folder">選擇資料夾</string>
+    <string name="choose_file">選擇檔案</string>
+    <string name="restart_app">重新啟動應用程式</string>
 </resources>

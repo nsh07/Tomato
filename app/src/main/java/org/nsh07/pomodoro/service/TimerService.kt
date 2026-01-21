@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -437,9 +437,20 @@ class TimerService : Service() {
             if (!vibrator.hasVibrator()) {
                 return
             }
-            val vibrationPattern = longArrayOf(0, 1000, 1000, 1000)
+            val timings = longArrayOf(
+                0,
+                settingsState.vibrationOnDuration,
+                settingsState.vibrationOffDuration,
+                settingsState.vibrationOnDuration
+            )
+            val amplitudes = intArrayOf(
+                0,
+                settingsState.vibrationAmplitude,
+                0,
+                settingsState.vibrationAmplitude
+            )
             val repeat = 2
-            val effect = VibrationEffect.createWaveform(vibrationPattern, repeat)
+            val effect = VibrationEffect.createWaveform(timings, amplitudes, repeat)
             vibrator.vibrate(effect)
         }
     }

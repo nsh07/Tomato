@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -41,6 +41,7 @@ interface AppContainer {
     val notificationManagerService: NotificationManager
     val notificationBuilder: NotificationCompat.Builder
     val serviceHelper: ServiceHelper
+    val systemDao: SystemDao
     val time: MutableStateFlow<Long>
     var activityTurnScreenOn: (Boolean) -> Unit
 }
@@ -88,9 +89,9 @@ class DefaultAppContainer(context: Context) : AppContainer {
             .setVisibility(VISIBILITY_PUBLIC)
     }
 
-    override val serviceHelper: ServiceHelper by lazy {
-        ServiceHelper(context)
-    }
+    override val serviceHelper: ServiceHelper by lazy { ServiceHelper(context) }
+
+    override val systemDao: SystemDao by lazy { AppDatabase.getDatabase(context).systemDao() }
 
     override val time: MutableStateFlow<Long> by lazy {
         MutableStateFlow(stateRepository.settingsState.value.focusTime)

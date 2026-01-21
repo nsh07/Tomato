@@ -64,14 +64,14 @@ class BaselineProfileGenerator {
                 waitForStableInActiveWindow()
                 scrollThroughContent()
 
-                onElement { textAsString() == "Last week" }.click()
+                onElement { textAsString() == "This week" }.click()
                 waitForStableInActiveWindow()
                 scrollThroughContent()
                 onElement { contentDescription == "Back" }.click()
 
                 waitForStableInActiveWindow()
 
-                onElement { textAsString() == "Last month" }.click()
+                onElement { textAsString() == "This month" }.click()
                 waitForStableInActiveWindow()
                 scrollThroughContent()
                 onElement { contentDescription == "Back" }.click()
@@ -81,7 +81,7 @@ class BaselineProfileGenerator {
                 fling(500, 1500, "UP")
                 waitForStableInActiveWindow()
 
-                onElement { textAsString() == "Last year" }.click()
+                onElement { textAsString() == "This year" }.click()
                 waitForStableInActiveWindow()
                 scrollThroughContent()
                 onElement { contentDescription == "Back" }.click()

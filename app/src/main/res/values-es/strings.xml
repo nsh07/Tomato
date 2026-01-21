@@ -26,10 +26,10 @@
     <string name="stats">Estadísticas</string>
     <string name="today">Hoy</string>
     <string name="break_">Descanso</string>
-    <string name="last_week">Semana pasada</string>
+    <string name="last_week">Esta semana</string>
     <string name="focus_per_day_avg">concentración por día (promedio)</string>
     <string name="more_info">Más información</string>
-    <string name="last_month">Mes pasado</string>
+    <string name="last_month">Este mes</string>
     <string name="stop_alarm_question">¿Parar Alarma?</string>
     <string name="stop_alarm_dialog_text">El temporizador actual ha finalizado. Toca en cualquier lugar para detener la alarma.</string>
     <string name="timer_session_count">%1$d de %2$d</string>
@@ -52,7 +52,7 @@
     <string name="color">Color</string>
     <string name="light">Claro</string>
     <string name="dark">Oscuro</string>
-    <string name="last_year">Año pasado</string>
+    <string name="last_year">Este año</string>
     <string name="appearance">Apariencia</string>
     <string name="durations">Duraciones</string>
     <string name="sound">Sonido</string>
@@ -123,4 +123,6 @@
     <string name="choose_folder">Elegir carpeta</string>
     <string name="choose_file">Elegir archivo</string>
     <string name="restart_app">Reiniciar app</string>
+    <string name="daily_focus_goal">Objetivo de concentración diario</string>
+    <string name="milliseconds_format">%1$dms</string>
 </resources>

@@ -19,9 +19,9 @@
     <string name="exit">離開</string>
     <string name="focus">專注</string>
     <string name="focus_per_day_avg">每日平均專注次數</string>
-    <string name="last_month">上個月</string>
-    <string name="last_week">上週</string>
-    <string name="last_year">去年</string>
+    <string name="last_month">本月</string>
+    <string name="last_week">本週</string>
+    <string name="last_year">這年</string>
     <string name="light">淺色</string>
     <string name="long_break">長休息</string>
     <string name="min_remaining_notification">剩餘 %1$s 分鐘</string>
@@ -126,4 +126,6 @@
     <string name="choose_folder">選擇資料夾</string>
     <string name="choose_file">選擇檔案</string>
     <string name="restart_app">重新啟動應用程式</string>
+    <string name="daily_focus_goal">每日專注目標</string>
+    <string name="milliseconds_format">%1$d 毫秒</string>
 </resources>

@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep the no-argument constructor for WorkManager InputMergers,
+# which are instantiated via reflection. This fixes widgets being broken.
+-keep class androidx.work.OverwritingInputMerger {
+    public <init>();
+}

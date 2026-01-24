@@ -1,0 +1,10 @@
+This update contains fixes for widgets and other bugs
+
+New in v1.8.2:
+New features:
+- Vibration customization for alarms [Plus only]
+- Backup/Restore feature
+- You can now set your daily focus goal. The goal is displayed on charts and days where you met your goal are highlighted. You can set the goal to 0 to disable this feature.
+
+Enhancements:
+- Improved stats screens performance

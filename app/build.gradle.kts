@@ -43,8 +43,8 @@ android {
         applicationId = "org.nsh07.pomodoro"
         minSdk = 27
         targetSdk = 36
-        versionCode = 26
-        versionName = "1.8.2"
+        versionCode = 27
+        versionName = "1.8.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -97,7 +97,7 @@ android {
 
 kotlin {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17) // Use the enum for target JVM version
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 ksp {

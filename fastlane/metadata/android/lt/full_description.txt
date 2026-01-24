@@ -1,0 +1,6 @@
+<i>tomato </i> yra minimalistiškas pomodro laikmatis Andriod įrenginiams, Material you expresive pagrindu.
+
+Tomato yra visiškai nemokamas ir pilnai atviro kodo, ir visada bus. Galite rasti pirminį kodą ir pranešti apie problemas šiuo adresu:
+https://github.com/nsh07/Tomato
+
+<b>įpatybės</b>

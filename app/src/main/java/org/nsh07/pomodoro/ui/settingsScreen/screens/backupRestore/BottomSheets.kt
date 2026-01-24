@@ -31,14 +31,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.delay
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
-import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import kotlin.text.Typography.nbsp
 
@@ -73,17 +71,14 @@ fun BackupBottomSheet(
             )
         },
         titleText = stringResource(R.string.backup),
-        labelText = buildAnnotatedString {
-            append(stringResource(R.string.backup_dialog_desc, ""))
-            withStyle(SpanStyle(fontFamily = googleFlex600)) {
-                append(stringResource(R.string.settings))
-                append("$nbsp>$nbsp")
-                append(stringResource(R.string.backup_and_restore))
-                append("$nbsp>$nbsp")
-                append(stringResource(R.string.restore))
-                append('.')
-            }
-        },
+        labelText = AnnotatedString.fromHtml(
+            stringResource(
+                R.string.backup_dialog_desc,
+                "<b>${stringResource(R.string.settings)}$nbsp>$nbsp${
+                    stringResource(R.string.backup_and_restore)
+                }$nbsp>$nbsp${stringResource(R.string.restore)}</b>"
+            )
+        ),
         buttonText = if (backupState == BackupRestoreState.DONE) stringResource(R.string.exit)
         else if (selectedUri == null) stringResource(R.string.choose_folder)
         else stringResource(R.string.backup),
@@ -123,12 +118,7 @@ fun RestoreBottomSheet(
             )
         },
         titleText = stringResource(R.string.restore),
-        labelText = buildAnnotatedString {
-            append(stringResource(R.string.restore_dialog_desc, ""))
-            withStyle(SpanStyle(fontFamily = googleFlex600)) {
-                append(stringResource(R.string.restore_dialog_desc_bold_text))
-            }
-        },
+        labelText = AnnotatedString.fromHtml(stringResource(R.string.restore_dialog_desc)),
         buttonText = if (restoreState == BackupRestoreState.DONE) stringResource(R.string.restart_app)
         else if (selectedUri == null) stringResource(R.string.choose_file)
         else stringResource(R.string.restore),

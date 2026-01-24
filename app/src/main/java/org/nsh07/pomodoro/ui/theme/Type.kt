@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -21,6 +21,7 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex400
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
@@ -97,4 +98,9 @@ object AppFonts {
     val googleFlex600 = FontFamily(Font(R.font.google_sans_flex_600))
 
     val robotoFlexTopBar = FontFamily(Font(R.font.roboto_flex_logo))
+
+    val annotatedStringFontFamily = FontFamily(
+        Font(resId = R.font.google_sans_flex_400, weight = FontWeight.Normal),
+        Font(resId = R.font.google_sans_flex_600, weight = FontWeight.Bold) // Used for <b> tags
+    )
 }

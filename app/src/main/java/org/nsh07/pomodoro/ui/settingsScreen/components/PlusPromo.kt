@@ -50,9 +50,6 @@ fun PlusPromo(
                 else stringResource(R.string.app_name_plus)
             )
         },
-        supportingContent = {
-            if (!isPlus) Text(stringResource(R.string.tomato_plus_desc))
-        },
         trailingContent = {
             Icon(
                 painterResource(R.drawable.arrow_forward_big),

@@ -48,4 +48,16 @@
     <string name="last_year">Šiais metais</string>
     <string name="less">Mažiau</string>
     <string name="license">Licencija</string>
+    <string name="light">Šviesi</string>
+    <string name="long_break">Ilga pertrauka</string>
+    <string name="media_volume_for_alarm">Su ausinėmis</string>
+    <string name="media_volume_for_alarm_desc">Skamba tik per ausines. Jeigu ausinės neprijungtos, tada groja per garsiakalbį medijos garsumu.</string>
+    <string name="min_remaining_notification">Liko %1$s minučių</string>
+    <string name="minutes_format">%1$dm</string>
+    <string name="more">Daugiau</string>
+    <string name="more_info">Daugiau info</string>
+    <string name="ok">Gerai</string>
+    <string name="pause">Sustabdyti</string>
+    <string name="paused">Sustabdyta</string>
+    <string name="play">Paleisti</string>
 </resources>

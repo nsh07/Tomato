@@ -1,4 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2026 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  -->
+
 <resources>
     <string name="start">शुरू करें</string>
     <string name="stop">रोकें</string>
@@ -119,8 +135,8 @@
     <string name="backup_desc">सभी आँकड़ों और सेटिंग्स का बैकअप लें</string>
     <string name="restore">रिस्टोर</string>
     <string name="restore_desc">आंकड़ों और सेटिंग्स को रीस्टोर करें</string>
-    <string name="backup_dialog_desc">आपके आंकड़े और सेटिंग्स आपके चुने हुए फ़ोल्डर में एक फ़ाइल में सेव हो जाएँगे। आप बाद में %1$s से इस डेटा को रिस्टोर कर सकते हैं</string>
-    <string name="restore_dialog_desc">आपके आंकड़े और सेटिंग्स चुनी हुई बैकअप फ़ाइल से रिस्टोर हो जाएँगे। रिस्टोर पूरा होने पर ऐप को रीस्टार्ट करना होगा। %1$s</string>
+    <string name="backup_dialog_desc">आपके आंकड़े और सेटिंग्स आपके चुने हुए फ़ोल्डर में एक फ़ाइल में सेव हो जाएँगे। आप बाद में %1$s से इस डेटा को रिस्टोर कर सकते हैं।</string>
+    <string name="restore_dialog_desc">आपके आंकड़े और सेटिंग्स चुनी हुई बैकअप फ़ाइल से रिस्टोर हो जाएँगे। रिस्टोर पूरा होने पर ऐप को रीस्टार्ट करना होगा। &lt;b>सारा मौजूदा डेटा मिट जाएगा, और इसे वापस नहीं किया जा सकता।&lt;/b></string>
     <string name="choose_folder">फ़ोल्डर चुनें</string>
     <string name="choose_file">फ़ाइल चुनें</string>
     <string name="restart_app">ऐप रीस्टार्ट करें</string>

@@ -1,4 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2026 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  -->
+
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="about">பற்றி</string>
     <string name="alarm">அலாரம்</string>
@@ -118,7 +134,7 @@
     <string name="restore">மீட்டமைக்கவும்</string>
     <string name="restore_desc">புள்ளிவிவரங்களையும் அமைப்புகளையும் மீட்டமைக்கவும்</string>
     <string name="backup_dialog_desc">உங்கள் புள்ளிவிவரங்களும் அமைப்புகளும் நீங்கள் தேர்ந்தெடுத்த கோப்புறையில் உள்ள ஒரு கோப்பில் சேமிக்கப்படும். இந்தத் தரவை நீங்கள் பின்னர் %1$s இல் மீட்டெடுக்கலாம்</string>
-    <string name="restore_dialog_desc">உங்கள் புள்ளிவிவரங்களும் அமைப்புகளும் தேர்ந்தெடுக்கப்பட்ட காப்புப் பிரதி கோப்பிலிருந்து மீட்டெடுக்கப்படும். மீட்டெடுப்பு முடிந்ததும், செயலி மறுதொடக்கம் செய்யப்பட வேண்டும். %1$s</string>
+    <string name="restore_dialog_desc">உங்கள் புள்ளிவிவரங்களும் அமைப்புகளும் தேர்ந்தெடுக்கப்பட்ட காப்புப் பிரதி கோப்பிலிருந்து மீட்டெடுக்கப்படும். மீட்டெடுப்பு முடிந்ததும், செயலி மறுதொடக்கம் செய்யப்பட வேண்டும். &lt;b>ஏற்கனவே உள்ள அனைத்துத் தரவுகளும் அழிக்கப்படும், இதை மீண்டும் பழைய நிலைக்குத் திருப்ப முடியாது.&lt;/b></string>
     <string name="choose_folder">கோப்புறையைத் தேர்ந்தெடுக்கவும்</string>
     <string name="choose_file">கோப்பைத் தேர்ந்தெடுக்கவும்</string>
     <string name="restart_app">பயன்பாட்டை மீண்டும் தொடங்கு</string>

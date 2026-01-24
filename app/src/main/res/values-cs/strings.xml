@@ -1,4 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2026 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  -->
+
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="start">Zapnout</string>
     <string name="stop">Zastavit</string>
@@ -118,7 +134,7 @@
     <string name="restore">Obnovit</string>
     <string name="restore_desc">Obnovit statistiky a nastavení</string>
     <string name="backup_dialog_desc">Vaše statistiky a nastavení budou uloženy do souboru ve zvolené složce. Tato data můžete obnovit později v %1$s</string>
-    <string name="restore_dialog_desc">Vaše statistiky a nastavení budou obnoveny ze zvoleného souboru zálohy. Po dokončení obnovení bude potřeba aplikaci restartovat. %1$s</string>
+    <string name="restore_dialog_desc">Vaše statistiky a nastavení budou obnoveny ze zvoleného souboru zálohy. Po dokončení obnovení bude potřeba aplikaci restartovat. &lt;b>Všechna existující data budou vymazána, tato akce je nevratná.&lt;/b></string>
     <string name="choose_folder">Vybrat složku</string>
     <string name="choose_file">Vybrat soubor</string>
     <string name="restart_app">Restartovat aplikaci</string>

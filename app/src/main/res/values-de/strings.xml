@@ -1,4 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2026 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  -->
+
 <resources>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
@@ -120,7 +136,7 @@
     <string name="restore">Wiederherstellen</string>
     <string name="restore_desc">Statistiken und Einstellungen wiederherstellen</string>
     <string name="backup_dialog_desc">Deine Statistiken und Einstellungen werden in einer Datei in deinem gewähltem Ordner gespeichert. Du kannst diese Datei später in %1$s wiederherstellen</string>
-    <string name="restore_dialog_desc">Deine Statistiken und Einstellungen werden von der gewählten Backup Datei wiederhergestellt. Die App muss neu gestartet werden, wenn die Wiederherstellung abgeschlossen ist. %1$s</string>
+    <string name="restore_dialog_desc">Deine Statistiken und Einstellungen werden von der gewählten Backup Datei wiederhergestellt. Die App muss neu gestartet werden, wenn die Wiederherstellung abgeschlossen ist. &lt;b>Alle existierenden Daten werden gelöscht. Dieser Vorgang kann nicht rückgängig gemacht werden.&lt;/b></string>
     <string name="choose_folder">Wähle einen Ordner</string>
     <string name="choose_file">Wähle eine Datei</string>
     <string name="milliseconds_format">%1$d ms</string>

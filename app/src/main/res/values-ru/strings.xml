@@ -1,4 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2026 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  -->
+
 <resources>
     <string name="alarm">Сигнал</string>
     <string name="alarm_desc">Воспроизвести сигнал по окончании таймера</string>
@@ -107,7 +123,7 @@
     <string name="focus_history_desc">Разбивка фокуса по каждому дню прошлой недели. Нажмите на график дня, чтобы узнать подробнее.</string>
     <string name="focus_breakdown">Разбивка фокуса</string>
     <string name="total">всего</string>
-    <string name="restore_dialog_desc">Ваша статистика и настройки будут восстановлены из выбранного файла бекапа. Приложение нужно будет перезагрузить после завершения восстановления. %1$ с</string>
+    <string name="restore_dialog_desc">Ваша статистика и настройки будут восстановлены из выбранного файла бекапа. Приложение нужно будет перезагрузить после завершения восстановления. &lt;b>Все данные будут безвозвратно удалены, это действие нельзя отменить.&lt;/b></string>
     <string name="restore_desc">Восстановить статистики и настройки</string>
     <string name="backup_dialog_desc">Ваша статистика и настройки будут сохранены в файл в выбранной папке. Вы сможете восстановит эти данные через %1$ с</string>
     <string name="dnd_permission_message">Необходимо предоставить разрешение для \"%1$s\"</string>

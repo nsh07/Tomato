@@ -1,4 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2026 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  -->
+
 <resources>
     <string name="start">Başlat</string>
     <string name="stop">Durdur</string>
@@ -119,7 +135,7 @@
     <string name="restore">Kurtar</string>
     <string name="restore_desc">İstatistikleri ve ayarları geri yükle</string>
     <string name="backup_dialog_desc">İstatistikleriniz ve ayarlarınız seçtiğiniz klasördeki bir dosyaya kaydedilecektir. Bu verileri daha sonra %1$s adresinden geri yükleyebilirsiniz</string>
-    <string name="restore_dialog_desc">İstatistikleriniz ve ayarlarınız seçilen yedekleme dosyasından geri yüklenecektir. Geri yükleme işlemi tamamlandığında uygulamanın yeniden başlatılması gerekecektir. %1$s</string>
+    <string name="restore_dialog_desc">İstatistikleriniz ve ayarlarınız seçilen yedekleme dosyasından geri yüklenecektir. Geri yükleme işlemi tamamlandığında uygulamanın yeniden başlatılması gerekecektir. &lt;b>Mevcut tüm veriler silinecektir, bu işlem geri alınamaz.&lt;/b></string>
     <string name="choose_folder">Klasör seç</string>
     <string name="choose_file">Dosya seç</string>
     <string name="restart_app">Uygulamayı yeniden başlat</string>

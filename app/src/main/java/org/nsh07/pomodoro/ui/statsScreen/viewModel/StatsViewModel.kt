@@ -106,7 +106,7 @@ class StatsViewModel(
 
     private val yearDayFormatter = DateTimeFormatter.ofPattern("d MMM")
 
-    private val lastWeekStatsFlow = statRepository.getLastNDaysStats(7).filter { it.isNotEmpty() }
+    private val lastWeekStatsFlow = statRepository.getLastNDaysStats(7)
     private val lastMonthStatsFlow = statRepository.getLastNDaysStats(31).filter { it.isNotEmpty() }
     private val lastYearStatsFlow = statRepository.getLastNDaysStats(365).filter { it.isNotEmpty() }
 
@@ -116,15 +116,17 @@ class StatsViewModel(
     val lastWeekMainChartData: StateFlow<Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>> =
         lastWeekStatsFlow
             .map { list ->
-                // reversing is required because we need ascending order while the DB returns descending order
-                val reversed = list.reversed()
-                val keys = reversed.map {
-                    it.date.dayOfWeek.getDisplayName(
+                val today = LocalDate.now()
+                val last7Days = (0..6).map { today.minusDays(it.toLong()) }.reversed()
+                val statsMap = list.associateBy { it.date }
+
+                val keys = last7Days.map {
+                    it.dayOfWeek.getDisplayName(
                         TextStyle.NARROW,
                         Locale.getDefault()
                     )
                 }
-                val values = reversed.map { it.totalFocusTime() }
+                val values = last7Days.map { statsMap[it]?.totalFocusTime() ?: 0L }
                 lastWeekSummary.first.runTransaction {
                     columnSeries { series(values) }
                     extras { it[lastWeekSummary.second] = keys }
@@ -140,18 +142,23 @@ class StatsViewModel(
 
     val lastWeekFocusHistoryValues: StateFlow<List<Pair<String, List<Long>>>> =
         lastWeekStatsFlow
-            .map { value ->
-                value.reversed().map {
+            .map { list ->
+                val today = LocalDate.now()
+                val last7Days = (0..6).map { today.minusDays(it.toLong()) }.reversed()
+                val statsMap = list.associateBy { it.date }
+
+                last7Days.map { date ->
+                    val stat = statsMap[date]
                     Pair(
-                        it.date.dayOfWeek.getDisplayName(
+                        date.dayOfWeek.getDisplayName(
                             TextStyle.NARROW,
                             Locale.getDefault()
                         ),
                         listOf(
-                            it.focusTimeQ1,
-                            it.focusTimeQ2,
-                            it.focusTimeQ3,
-                            it.focusTimeQ4
+                            stat?.focusTimeQ1 ?: 0L,
+                            stat?.focusTimeQ2 ?: 0L,
+                            stat?.focusTimeQ3 ?: 0L,
+                            stat?.focusTimeQ4 ?: 0L
                         )
                     )
                 }

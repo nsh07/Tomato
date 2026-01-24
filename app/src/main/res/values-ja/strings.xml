@@ -115,7 +115,6 @@
     <string name="backup_dialog_desc">統計と設定は、選択されたフォルダにあるファイルに保存されます。後でこのデータを %1$s で復元できます。</string>
     <string name="daily_focus_goal">日毎の集中時間の目標</string>
     <string name="restore_dialog_desc">統計と設定は選択されたバックアップファイルから復元されます。復元完了時にアプリの再起動が必要となります。%1$s</string>
-    <string name="restore_dialog_desc_bold_text">既存の全てのデータが削除され、元に戻すことはできません。</string>
     <string name="choose_folder">フォルダ選択</string>
     <string name="choose_file">ファイル選択</string>
     <string name="restart_app">アプリを再起動</string>

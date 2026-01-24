@@ -121,7 +121,6 @@
     <string name="restore_desc">Відновити статистику та налаштування</string>
     <string name="backup_dialog_desc">Ваші статистичні дані та налаштування будуть збережені у файлі у вибраній Вами папці. Ви можете відновити ці дані пізніше в %1$s</string>
     <string name="restore_dialog_desc">Ваші статистичні дані та налаштування будуть відновлені з вибраного файлу резервної копії. Після завершення відновлення потрібно буде перезапустити програму. %1$s</string>
-    <string name="restore_dialog_desc_bold_text">Всі існуючі дані будуть видалені, і це не можна скасувати.</string>
     <string name="choose_folder">Вибрати папку</string>
     <string name="choose_file">Вибрати файл</string>
     <string name="restart_app">Перезапустити додаток</string>

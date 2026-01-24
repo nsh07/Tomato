@@ -114,5 +114,4 @@
     <string name="duration">Длительность</string>
     <string name="history_widget_desc">Просмотреть график длительности фокусировок за последние несколько дней. Количество отображаемых дней зависит от размера виджета.</string>
     <string name="milliseconds_format">%1$dмс</string>
-    <string name="restore_dialog_desc_bold_text">Все данные будут безвозвратно удалены, это действие нельзя отменить.</string>
 </resources>

@@ -69,4 +69,8 @@
     <string name="dynamic_color">Colore dinamico</string>
     <string name="tomato_foss_desc">Tutte le funzionalità sono sbloccate in questa versione. Se la mia app ha fatto la differenza nella tua vita, considera di supportarmi con una donazione su %1$s.</string>
     <string name="always_on_display">Schermo sempre attivo</string>
+    <string name="auto_start_next_timer">Avvio automatico del timer successivo</string>
+    <string name="back">Indietro</string>
+    <string name="bmc_desc">Sostienimi con una piccola donazione</string>
+    <string name="duration">Durata</string>
 </resources>

@@ -120,8 +120,8 @@
     <string name="backup_desc">備份所有統計資料與設定</string>
     <string name="restore">還原</string>
     <string name="restore_desc">還原統計資料與設定</string>
-    <string name="backup_dialog_desc">你的統計資料與設定將儲存為檔案至你選擇的資料夾中。之後可在 %1$s 中還原這些資料</string>
-    <string name="restore_dialog_desc">你的統計資料與設定將從所選的備份檔案中還原。還原完成後需要重新啟動應用程式。&lt;b>所有現有資料都將被清除，且無法復原。&lt;/b></string>
+    <string name="backup_dialog_desc">你的統計資料與設定將儲存為檔案至你選擇的資料夾中。之後可在 %1$s 中還原這些資料。</string>
+    <string name="restore_dialog_desc">你的統計資料與設定將從所選的備份檔案中還原。還原完成後需要重新啟動應用程式。&lt;b&gt;所有現有資料都將被清除，且無法復原。&lt;/b&gt;</string>
     <string name="choose_folder">選擇資料夾</string>
     <string name="choose_file">選擇檔案</string>
     <string name="restart_app">重新啟動應用程式</string>

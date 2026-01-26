@@ -112,4 +112,16 @@
     <string name="vibration_strength">Force</string>
     <string name="duration">Durée</string>
     <string name="gap">Espacement</string>
+    <string name="total">total</string>
+    <string name="daily_focus_goal">Objectif de focus quotidien</string>
+    <string name="backup_and_restore">Sauvegarde et restauration</string>
+    <string name="backup">Sauvegarde</string>
+    <string name="backup_desc">Sauvegarder toutes les statistiques et paramètres</string>
+    <string name="restore">Restauration</string>
+    <string name="restore_desc">Restaurer les statistiques et les paramètres</string>
+    <string name="backup_dialog_desc">Vos statistiques et paramètres seront enregistrées dans un fichier du dossier choisi. Vous pouvez restaurer après ces données dans %1$s.</string>
+    <string name="restore_dialog_desc">Vos statistiques et paramètres seront restaurés à partir du fichier de sauvegarde choisi. L\'application devra être redémarrée une fois la restauration terminée. <b>Toutes les données existantes seront effacées, et cette opération est irréversible.</b></string>
+    <string name="choose_folder">Choisir un dossier</string>
+    <string name="choose_file">Choisir un fichier</string>
+    <string name="restart_app">Redémarrer l\'application</string>
 </resources>

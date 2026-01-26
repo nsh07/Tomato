@@ -1,3 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about">Относно</string>
+    <string name="alarm">Аларма</string>
+    <string name="alarm_desc">Аларма да позвънява, когато таймер приключи.</string>
+    <string name="alarm_sound">Алармен звън</string>
+    <string name="always_on_display_desc">"Натисни някъде, докято  виждяаш таймера, за да превключиш към режим на постоянно включен екран."</string>
+    <string name="always_on_display">Винаги  включен екран.</string>
+    <string name="appearance">Изглед</string>
+    <string name="auto_start_next_timer">Автоматично начало на следващия таймер.</string>
+    <string name="auto_start_next_timer_desc">Зяпочни следващия таймер след спиране на аларма</string>
+    <string name="back">Обратно</string>
+    <string name="black_theme">Тъмна тема</string>
+    <string name="black_theme_desc">Използвай чисто черна тъмна тема</string>
+    <string name="bmc_desc">Подкрепи ме с малко дарение</string>
+    <string name="break_">Почивка</string>
+    <string name="choose_color_scheme">Избери цветова схема</string>
+    <string name="choose_language">Избери език</string>
+    <string name="choose_theme">Избери тема</string>
+    <string name="color">Цвят</string>
+    <string name="color_scheme">Цветова схема</string>
+    <string name="completed">Завършено</string>
+    <string name="dark">Тъмно</string>
+    <string name="dnd">Не безпокой</string>
+    <string name="dnd_desc">Включи \"Не Безпокой\", когато е включен Фокус таймер</string>
+    <string name="dnd_permission_message">Вкоючи позволение за \"%1$s\"</string>
+    <string name="duration">Продължителност</string>
+    <string name="durations">Продължителности</string>
+    <string name="dynamic">Динамичност</string>
+    <string name="dynamic_color">Динамичен цвят</string>
+    <string name="dynamic_color_desc">Адаптирай цветовете на темата от тапета ти</string>
+    <string name="exit">Изход</string>
+    <string name="focus">Фокус</string>
+    <string name="focus_break_ratio">Съотношение Фокус-Почивка</string>
+    <string name="focus_breakdown">Разпад на Фокуса</string>
+    <string name="focus_breakdown_desc">Средна продължителност на Фокуса пре различни пероди ня деня</string>
+    <string name="focus_history">История на Съсредоточаването</string>
+    <string name="focus_history_calendar">Календар на историята на Съсредоточаването</string>
+    <string name="focus_history_calendar_desc">История на Съсредоточаванията за изминалия месец. Дните на миналите месеци са маркирани с отделен цвят. Натисни на ден за повече имформация.</string>
 </resources>

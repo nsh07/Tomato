@@ -17,33 +17,20 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
@@ -55,31 +42,12 @@ fun DetailPlaceholder() {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .padding(WindowInsets.safeDrawing.asPaddingValues())
-            .background(colorScheme.surface, shapes.extraLarge)
-
+            .background(colorScheme.surfaceContainerLow)
     ) {
-        val transition = rememberInfiniteTransition(
-            label = "Cookie rotate"
-        )
-        val angle by transition.animateFloat(
-            initialValue = 0f,
-            targetValue = 360f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(
-                    durationMillis = 10000,
-                    easing = LinearEasing
-                ),
-                repeatMode = RepeatMode.Restart
-            ),
-            label = "Cookie animation"
-        )
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Box(contentAlignment = Alignment.Center) {
                 Spacer(
                     Modifier
-                        .graphicsLayer { rotationZ = angle }
                         .background(
                             colorScheme.surfaceVariant,
                             MaterialShapes.Cookie12Sided.toShape()

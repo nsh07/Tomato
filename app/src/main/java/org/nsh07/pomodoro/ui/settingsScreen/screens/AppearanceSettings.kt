@@ -38,6 +38,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,6 +47,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
@@ -55,6 +57,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.components.ThemePickerListItem
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
@@ -75,6 +78,10 @@ fun AppearanceSettings(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+    val widthExpanded = currentWindowAdaptiveInfo()
+        .windowSizeClass
+        .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
+
     Scaffold(
         topBar = {
             LargeFlexibleTopAppBar(
@@ -85,18 +92,19 @@ fun AppearanceSettings(
                     Text(stringResource(R.string.settings))
                 },
                 navigationIcon = {
-                    FilledTonalIconButton(
-                        onClick = onBack,
-                        shapes = IconButtonDefaults.shapes(),
-                        colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = listItemColors.containerColor)
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.arrow_back),
-                            stringResource(R.string.back)
-                        )
-                    }
+                    if (!widthExpanded)
+                        FilledTonalIconButton(
+                            onClick = onBack,
+                            shapes = IconButtonDefaults.shapes(),
+                            colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = listItemColors.containerColor)
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.arrow_back),
+                                stringResource(R.string.back)
+                            )
+                        }
                 },
-                colors = topBarColors,
+                colors = if (widthExpanded) detailPaneTopBarColors else topBarColors,
                 scrollBehavior = scrollBehavior
             )
         },
@@ -107,7 +115,10 @@ fun AppearanceSettings(
             verticalArrangement = Arrangement.spacedBy(2.dp),
             contentPadding = insets,
             modifier = Modifier
-                .background(topBarColors.containerColor)
+                .background(
+                    if (widthExpanded) detailPaneTopBarColors.containerColor
+                    else topBarColors.containerColor
+                )
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {

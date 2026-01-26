@@ -40,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,6 +56,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.Screen
@@ -84,6 +86,10 @@ fun SettingsMainScreen(
 ) {
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    val widthExpanded = currentWindowAdaptiveInfo()
+        .windowSizeClass
+        .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
 
     val currentLocales =
         if (Build.VERSION.SDK_INT >= 33) {
@@ -164,9 +170,9 @@ fun SettingsMainScreen(
                             overflow = TextOverflow.Ellipsis
                         )
                     },
-                    trailingContent = {
-                        Icon(painterResource(R.drawable.arrow_forward_big), null)
-                    },
+                    trailingContent = if (!widthExpanded) {
+                        { Icon(painterResource(R.drawable.arrow_forward_big), null) }
+                    } else null,
                     items = settingsScreens.size,
                     index = index
                 ) { onNavigate(item.route) }
@@ -200,9 +206,9 @@ fun SettingsMainScreen(
                             overflow = TextOverflow.Ellipsis
                         )
                     },
-                    trailingContent = {
-                        Icon(painterResource(R.drawable.arrow_forward_big), null)
-                    },
+                    trailingContent = if (!widthExpanded) {
+                        { Icon(painterResource(R.drawable.arrow_forward_big), null) }
+                    } else null,
                     items = 2,
                     index = 0
                 ) { onNavigate(item.route) }
@@ -218,9 +224,9 @@ fun SettingsMainScreen(
                     supportingContent = {
                         Text(stringResource(R.string.app_name) + " ${BuildConfig.VERSION_NAME}")
                     },
-                    trailingContent = {
-                        Icon(painterResource(R.drawable.arrow_forward_big), null)
-                    },
+                    trailingContent = if (!widthExpanded) {
+                        { Icon(painterResource(R.drawable.arrow_forward_big), null) }
+                    } else null,
                     items = 2,
                     index = 1
                 ) { onNavigate(Screen.Settings.About) }

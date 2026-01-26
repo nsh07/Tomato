@@ -65,6 +65,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -84,6 +85,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
@@ -94,6 +96,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.components.SliderListItem
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
@@ -128,6 +131,10 @@ fun TimerSettings(
         else
             null
     }
+
+    val widthExpanded = currentWindowAdaptiveInfo()
+        .windowSizeClass
+        .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
 
     val switchItems = remember(
         settingsState.dndEnabled,
@@ -207,19 +214,20 @@ fun TimerSettings(
                     Text(stringResource(R.string.settings))
                 },
                 navigationIcon = {
-                    FilledTonalIconButton(
-                        onClick = onBack,
-                        shapes = IconButtonDefaults.shapes(),
-                        colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = listItemColors.containerColor)
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.arrow_back),
-                            stringResource(R.string.back)
+                    if (!widthExpanded)
+                        FilledTonalIconButton(
+                            onClick = onBack,
+                            shapes = IconButtonDefaults.shapes(),
+                            colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = listItemColors.containerColor)
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.arrow_back),
+                                stringResource(R.string.back)
 
-                        )
-                    }
+                            )
+                        }
                 },
-                colors = topBarColors,
+                colors = if (widthExpanded) detailPaneTopBarColors else topBarColors,
                 scrollBehavior = scrollBehavior
             )
         },
@@ -230,7 +238,10 @@ fun TimerSettings(
             verticalArrangement = Arrangement.spacedBy(2.dp),
             contentPadding = insets,
             modifier = Modifier
-                .background(topBarColors.containerColor)
+                .background(
+                    if (widthExpanded) detailPaneTopBarColors.containerColor
+                    else topBarColors.containerColor
+                )
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {

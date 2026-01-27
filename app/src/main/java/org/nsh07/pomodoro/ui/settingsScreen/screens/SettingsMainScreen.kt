@@ -71,6 +71,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.settingsScreens
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.singleItemListItemShapes
 
@@ -175,6 +176,7 @@ fun SettingsMainScreen(
                         { Icon(painterResource(R.drawable.arrow_forward_big), null) }
                     } else null,
                     shapes = ListItemDefaults.segmentedShapes(index, settingsScreens.size),
+                    colors = listItemColors,
                     selected = widthExpanded && currentScreen == item.route,
                     onClick = { onNavigate(item.route) }
                 ) { Text(stringResource(item.label)) }
@@ -212,6 +214,7 @@ fun SettingsMainScreen(
                     } else null,
                     selected = currentScreen == Screen.Settings.Backup,
                     shapes = ListItemDefaults.segmentedShapes(0, 2),
+                    colors = listItemColors,
                     onClick = { onNavigate(item.route) }
                 ) { Text(stringResource(item.label)) }
             }
@@ -228,6 +231,7 @@ fun SettingsMainScreen(
                     } else null,
                     selected = currentScreen == Screen.Settings.About,
                     shapes = ListItemDefaults.segmentedShapes(1, 2),
+                    colors = listItemColors,
                     onClick = { onNavigate(Screen.Settings.About) }
                 ) { Text(stringResource(R.string.about)) }
             }
@@ -248,6 +252,7 @@ fun SettingsMainScreen(
                         },
                         selected = showLocaleSheet,
                         shapes = ListItemDefaults.segmentedShapes(0, 1, singleItemListItemShapes),
+                        colors = listItemColors,
                         onClick = { showLocaleSheet = true }
                     ) { Text(stringResource(R.string.language)) }
                 }
@@ -264,6 +269,7 @@ fun SettingsMainScreen(
                             Icon(painterResource(R.drawable.open_in_browser), null)
                         },
                         shapes = ListItemDefaults.segmentedShapes(0, 1, singleItemListItemShapes),
+                        colors = listItemColors,
                         onClick = { uriHandler.openUri("https://gist.github.com/nsh07/3b42969aef017d98f72b097f1eca8911") }
                     ) { Text(stringResource(R.string.now_bar)) }
                 }

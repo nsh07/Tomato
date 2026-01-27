@@ -28,6 +28,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
@@ -40,6 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import org.nsh07.pomodoro.ui.Screen
+import org.nsh07.pomodoro.ui.calculatePaneScaffoldDirective
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AboutScreen
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
@@ -103,7 +105,9 @@ fun SettingsScreenRoot(
             (slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn())
                 .togetherWith(slideOutHorizontally(targetOffsetX = { it }))
         },
-        sceneStrategy = rememberListDetailSceneStrategy(),
+        sceneStrategy = rememberListDetailSceneStrategy(
+            directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
+        ),
         entryProvider = entryProvider {
             entry<Screen.Settings.Main>(
                 metadata = ListDetailSceneStrategy.listPane(

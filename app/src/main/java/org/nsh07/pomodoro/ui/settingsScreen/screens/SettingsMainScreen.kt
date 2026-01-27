@@ -34,8 +34,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -63,21 +65,21 @@ import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.SettingsNavItem
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.ResetDataDialog
-import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.LocaleBottomSheet
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusPromo
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.settingsScreens
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
-import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.singleItemListItemShapes
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingsMainScreen(
     settingsState: SettingsState,
     contentPadding: PaddingValues,
+    currentScreen: Screen.Settings,
     isPlus: Boolean,
     onAction: (SettingsAction) -> Unit,
     onNavigate: (Screen.Settings) -> Unit,
@@ -153,11 +155,10 @@ fun SettingsMainScreen(
             item { Spacer(Modifier.height(12.dp)) }
 
             itemsIndexed(settingsScreens) { index, item ->
-                ClickableListItem(
+                SegmentedListItem(
                     leadingContent = {
                         Icon(painterResource(item.icon), null)
                     },
-                    headlineContent = { Text(stringResource(item.label)) },
                     supportingContent = {
                         @SuppressLint("LocalContextGetResourceValueCall")
                         Text(
@@ -173,9 +174,10 @@ fun SettingsMainScreen(
                     trailingContent = if (!widthExpanded) {
                         { Icon(painterResource(R.drawable.arrow_forward_big), null) }
                     } else null,
-                    items = settingsScreens.size,
-                    index = index
-                ) { onNavigate(item.route) }
+                    shapes = ListItemDefaults.segmentedShapes(index, settingsScreens.size),
+                    selected = widthExpanded && currentScreen == item.route,
+                    onClick = { onNavigate(item.route) }
+                ) { Text(stringResource(item.label)) }
             }
 
             item { Spacer(Modifier.height(12.dp)) }
@@ -189,11 +191,10 @@ fun SettingsMainScreen(
                         listOf(R.string.backup, R.string.restore, R.string.reset_data)
                     )
                 }
-                ClickableListItem(
+                SegmentedListItem(
                     leadingContent = {
                         Icon(painterResource(item.icon), null)
                     },
-                    headlineContent = { Text(stringResource(item.label)) },
                     supportingContent = {
                         @SuppressLint("LocalContextGetResourceValueCall")
                         Text(
@@ -209,17 +210,15 @@ fun SettingsMainScreen(
                     trailingContent = if (!widthExpanded) {
                         { Icon(painterResource(R.drawable.arrow_forward_big), null) }
                     } else null,
-                    items = 2,
-                    index = 0
-                ) { onNavigate(item.route) }
+                    selected = currentScreen == Screen.Settings.Backup,
+                    shapes = ListItemDefaults.segmentedShapes(0, 2),
+                    onClick = { onNavigate(item.route) }
+                ) { Text(stringResource(item.label)) }
             }
             item {
-                ClickableListItem(
+                SegmentedListItem(
                     leadingContent = {
                         Icon(painterResource(R.drawable.info), null)
-                    },
-                    headlineContent = {
-                        Text(stringResource(R.string.about))
                     },
                     supportingContent = {
                         Text(stringResource(R.string.app_name) + " ${BuildConfig.VERSION_NAME}")
@@ -227,56 +226,46 @@ fun SettingsMainScreen(
                     trailingContent = if (!widthExpanded) {
                         { Icon(painterResource(R.drawable.arrow_forward_big), null) }
                     } else null,
-                    items = 2,
-                    index = 1
-                ) { onNavigate(Screen.Settings.About) }
+                    selected = currentScreen == Screen.Settings.About,
+                    shapes = ListItemDefaults.segmentedShapes(1, 2),
+                    onClick = { onNavigate(Screen.Settings.About) }
+                ) { Text(stringResource(R.string.about)) }
             }
 
             item { Spacer(Modifier.height(12.dp)) }
 
             if (currentLocales != null)
                 item {
-                    ClickableListItem(
+                    SegmentedListItem(
                         leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.language),
-                                contentDescription = null
-                            )
+                            Icon(painterResource(R.drawable.language), contentDescription = null)
                         },
-                        headlineContent = { Text(stringResource(R.string.language)) },
                         supportingContent = {
                             Text(
                                 if (currentLocalesSize > 0) currentLocales.get(0).displayName
                                 else stringResource(R.string.system_default)
                             )
                         },
-                        colors = listItemColors,
-                        items = 1,
-                        index = 0
-                    ) { showLocaleSheet = true }
+                        selected = showLocaleSheet,
+                        shapes = ListItemDefaults.segmentedShapes(0, 1, singleItemListItemShapes),
+                        onClick = { showLocaleSheet = true }
+                    ) { Text(stringResource(R.string.language)) }
                 }
 
             if (Build.VERSION.SDK_INT >= 36 && Build.MANUFACTURER == "samsung") {
                 item {
                     val uriHandler = LocalUriHandler.current
                     Spacer(Modifier.height(14.dp))
-                    ClickableListItem(
+                    SegmentedListItem(
                         leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.mobile_text),
-                                null
-                            )
+                            Icon(painterResource(R.drawable.mobile_text), null)
                         },
-                        headlineContent = { Text(stringResource(R.string.now_bar)) },
                         trailingContent = {
-                            Icon(
-                                painterResource(R.drawable.open_in_browser),
-                                null
-                            )
+                            Icon(painterResource(R.drawable.open_in_browser), null)
                         },
-                        items = 1,
-                        index = 0
-                    ) { uriHandler.openUri("https://gist.github.com/nsh07/3b42969aef017d98f72b097f1eca8911") }
+                        shapes = ListItemDefaults.segmentedShapes(0, 1, singleItemListItemShapes),
+                        onClick = { uriHandler.openUri("https://gist.github.com/nsh07/3b42969aef017d98f72b097f1eca8911") }
+                    ) { Text(stringResource(R.string.now_bar)) }
                 }
             }
 

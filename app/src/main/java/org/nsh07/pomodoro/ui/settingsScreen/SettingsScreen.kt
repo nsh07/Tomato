@@ -113,6 +113,7 @@ fun SettingsScreenRoot(
                 SettingsMainScreen(
                     settingsState = settingsState,
                     contentPadding = contentPadding,
+                    currentScreen = backStack.last(),
                     isPlus = isPlus,
                     onAction = viewModel::onAction,
                     onNavigate = backStack::onTopLevelNavigate,

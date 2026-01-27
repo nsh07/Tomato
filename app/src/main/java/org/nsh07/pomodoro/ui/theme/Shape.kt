@@ -10,6 +10,7 @@ package org.nsh07.pomodoro.ui.theme
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.runtime.Composable
 
@@ -40,4 +41,15 @@ object TomatoShapeDefaults {
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     val cardShape: CornerBasedShape
         @Composable get() = shapes.largeIncreased
+
+    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
+    val singleItemListItemShapes: ListItemShapes
+        @Composable get() = ListItemShapes(
+            shapes.large,
+            shapes.large,
+            shapes.large,
+            shapes.large,
+            shapes.large,
+            shapes.large
+        )
 }

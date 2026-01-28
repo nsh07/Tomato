@@ -119,9 +119,10 @@
     <string name="backup_desc">قم بعمل نسخة احتياطية من جميع الإحصائيات والإعدادات</string>
     <string name="restore">الاستعادة</string>
     <string name="restore_desc">استعادة الإحصائيات والإعدادات</string>
-    <string name="backup_dialog_desc">سيتم حفظ إحصائياتك وإعداداتك في ملف في المجلد الذي اخترته. يمكنك استعادة هذه البيانات لاحقا في %1$s</string>
-    <string name="restore_dialog_desc">سيتم استعادة إحصائياتك وإعداداتك من ملف النسخ الاحتياطي المختار. سيحتاج التطبيق إلى إعادة تشغيل عند اكتمال الاستعادة. %1$s</string>
+    <string name="backup_dialog_desc">سيتم حفظ إحصائياتك وإعداداتك في ملف في المجلد الذي اخترته. يمكنك استعادة هذه البيانات لاحقا في %1$.s</string>
+    <string name="restore_dialog_desc">سيتم استعادة إحصائياتك وإعداداتك من ملف النسخ الاحتياطي المختار. سيحتاج التطبيق إلى إعادة تشغيل عند اكتمال الاستعادة. <b>سيتم مسح جميع البيانات الموجودة، ولا يمكن التراجع عن ذلك.</b></string>
     <string name="choose_folder">اختيار المجلد</string>
     <string name="choose_file">اختر ملف</string>
     <string name="restart_app">إعادة تشغيل التطبيق</string>
+    <string name="milliseconds_format">%1$dملي ثانية</string>
 </resources>

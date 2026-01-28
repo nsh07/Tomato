@@ -117,8 +117,8 @@
     <string name="backup_desc">Respaldar todas las estadísticas y ajustes</string>
     <string name="restore">Restaurar</string>
     <string name="restore_desc">Restaurar estadísticas y ajustes</string>
-    <string name="backup_dialog_desc">Tus estadísticas y ajustes se guardarán en un archivo en la carpeta que hayas elegido. Puedes restaurar estos datos más tarde en %1$s</string>
-    <string name="restore_dialog_desc">Tus estadísticas y ajustes serán restaurados del archivo de copia de seguridad elegido. La aplicación tendrá que ser reiniciada cuando la restauración esté completa. &lt;b>Todos los datos existentes serán borrados, y esto no se puede deshacer.&lt;/b></string>
+    <string name="backup_dialog_desc">Tus estadísticas y ajustes se guardarán en un archivo en la carpeta que hayas elegido. Puedes restaurar estos datos más tarde en %1$s.</string>
+    <string name="restore_dialog_desc">Tus estadísticas y ajustes serán restaurados del archivo de copia de seguridad elegido. La aplicación tendrá que ser reiniciada cuando la restauración esté completa. &lt;b&gt;Todos los datos existentes serán borrados, y esto no se puede deshacer.&lt;/b&gt;</string>
     <string name="choose_folder">Elegir carpeta</string>
     <string name="choose_file">Elegir archivo</string>
     <string name="restart_app">Reiniciar app</string>

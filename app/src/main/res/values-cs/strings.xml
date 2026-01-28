@@ -40,11 +40,11 @@
     <string name="up_next_notification">Další: %1$s (%2$s)</string>
     <string name="vibrate">Vibrace</string>
     <string name="about">O aplikaci</string>
-    <string name="rate_on_google_play_desc">Líbí se ti aplikace? Napiš hodnocení!</string>
+    <string name="rate_on_google_play_desc">Líbí se vám aplikace? Napište recenzi!</string>
     <string name="license">Licence</string>
     <string name="focus_history">Historie soustředění</string>
     <string name="less">Méně</string>
-    <string name="show_chart">Ukázat graf</string>
+    <string name="show_chart">Zobrazit graf</string>
     <string name="focus_history_calendar">Kalendář historie soustředění</string>
     <string name="reset_data">Resetovat statistiky</string>
     <string name="reset_data_dialog_title">Resetovat všechny statistiky?</string>

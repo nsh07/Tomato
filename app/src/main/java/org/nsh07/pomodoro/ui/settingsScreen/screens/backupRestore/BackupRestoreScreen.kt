@@ -35,6 +35,7 @@ import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -50,6 +51,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
@@ -57,6 +59,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreViewModel
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
@@ -77,6 +80,9 @@ fun BackupRestoreScreen(
 
     var backupState by remember { mutableStateOf(BackupRestoreState.CHOOSE_FILE) }
 
+    val widthExpanded = currentWindowAdaptiveInfo()
+        .windowSizeClass
+        .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
 
     if (showDialog == 1) BackupBottomSheet(
         backupState = backupState,
@@ -127,18 +133,19 @@ fun BackupRestoreScreen(
                     Text(stringResource(R.string.settings))
                 },
                 navigationIcon = {
-                    FilledTonalIconButton(
-                        onClick = onBack,
-                        shapes = IconButtonDefaults.shapes(),
-                        colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = listItemColors.containerColor)
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.arrow_back),
-                            stringResource(R.string.back)
-                        )
-                    }
+                    if (!widthExpanded)
+                        FilledTonalIconButton(
+                            onClick = onBack,
+                            shapes = IconButtonDefaults.shapes(),
+                            colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = listItemColors.containerColor)
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.arrow_back),
+                                stringResource(R.string.back)
+                            )
+                        }
                 },
-                colors = topBarColors,
+                colors = if (widthExpanded) detailPaneTopBarColors else topBarColors,
                 scrollBehavior = scrollBehavior
             )
         },
@@ -149,7 +156,10 @@ fun BackupRestoreScreen(
             verticalArrangement = Arrangement.spacedBy(2.dp),
             contentPadding = insets,
             modifier = Modifier
-                .background(topBarColors.containerColor)
+                .background(
+                    if (widthExpanded) detailPaneTopBarColors.containerColor
+                    else topBarColors.containerColor
+                )
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {

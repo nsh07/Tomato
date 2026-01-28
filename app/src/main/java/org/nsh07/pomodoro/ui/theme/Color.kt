@@ -17,7 +17,7 @@
 
 package org.nsh07.pomodoro.ui.theme
 
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -103,7 +103,6 @@ val surfaceContainerHighestDark = Color(0xFF33362E)
 object CustomColors {
     var black = false
 
-    @OptIn(ExperimentalMaterial3Api::class)
     val topBarColors: TopAppBarColors
         @Composable get() =
             TopAppBarDefaults.topAppBarColors(
@@ -111,19 +110,17 @@ object CustomColors {
                 scrolledContainerColor = if (!black) colorScheme.surfaceContainer else colorScheme.surface
             )
 
+    val detailPaneTopBarColors: TopAppBarColors
+        @Composable get() =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = if (!black) colorScheme.surfaceContainerLow else colorScheme.surface,
+                scrolledContainerColor = if (!black) colorScheme.surfaceContainerLow else colorScheme.surface
+            )
+
+    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     val listItemColors: ListItemColors
         @Composable get() =
-            ListItemDefaults.colors(containerColor = if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainerHigh)
-
-    val selectedListItemColors: ListItemColors
-        @Composable get() =
-            ListItemDefaults.colors(
-                containerColor = colorScheme.secondaryContainer,
-                headlineColor = colorScheme.secondary,
-                leadingIconColor = colorScheme.onSecondaryContainer,
-                supportingColor = colorScheme.onSecondaryFixedVariant,
-                trailingIconColor = colorScheme.onSecondaryFixedVariant
-            )
+            ListItemDefaults.segmentedColors(containerColor = if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainerHigh)
 
     val switchColors: SwitchColors
         @Composable get() = SwitchDefaults.colors(

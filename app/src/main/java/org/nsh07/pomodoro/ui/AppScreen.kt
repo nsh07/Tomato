@@ -272,6 +272,7 @@ fun AppScreen(
                     entry<Screen.Timer> {
                         TimerScreen(
                             timerState = uiState,
+                            settingsState = settingsState,
                             isPlus = isPlus,
                             contentPadding = contentPadding,
                             progress = { progress },

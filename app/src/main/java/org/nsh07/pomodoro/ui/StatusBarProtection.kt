@@ -31,7 +31,7 @@ import androidx.compose.ui.platform.LocalDensity
 
 @Composable
 fun StatusBarProtection(
-    color: Color = MaterialTheme.colorScheme.surfaceContainer,
+    color: Color = MaterialTheme.colorScheme.surfaceContainer.copy(0.7f),
     heightProvider: () -> Float = calculateGradientHeight(),
 ) {
     Canvas(Modifier.fillMaxSize()) {

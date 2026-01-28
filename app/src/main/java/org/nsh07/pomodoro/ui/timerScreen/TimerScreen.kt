@@ -42,6 +42,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -82,6 +83,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AdaptStrategy
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffold
@@ -116,6 +118,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
@@ -163,6 +166,10 @@ fun SharedTransitionScope.TimerScreen(
         animationSpec = motionScheme.slowEffectsSpec()
     )
 
+    val widthExpanded = currentWindowAdaptiveInfo()
+        .windowSizeClass
+        .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
+
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = {}
@@ -175,7 +182,6 @@ fun SharedTransitionScope.TimerScreen(
         adaptStrategies = SupportingPaneScaffoldDefaults.adaptStrategies(supportingPaneAdaptStrategy = AdaptStrategy.Hide)
     )
     val expansionState = rememberPaneExpansionState()
-
 
     SupportingPaneScaffold(
         directive = navigator.scaffoldDirective,
@@ -259,8 +265,7 @@ fun SharedTransitionScope.TimerScreen(
                     },
                     bottomBar = { Spacer(Modifier.height(contentPadding.calculateBottomPadding())) },
                     snackbarHost = { SnackbarHost(snackbarHostState) },
-                    modifier = modifier
-                        .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
                 ) { innerPadding ->
                     LazyColumn(
                         verticalArrangement = Arrangement.Center,
@@ -552,65 +557,66 @@ fun SharedTransitionScope.TimerScreen(
 
                         item { Spacer(Modifier.height(32.dp)) }
 
-                        item {
-                            Column(horizontalAlignment = CenterHorizontally) {
-                                Text(
-                                    stringResource(R.string.up_next),
-                                    style = typography.titleSmall
-                                )
-                                AnimatedContent(
-                                    timerState.nextTimeStr,
-                                    transitionSpec = {
-                                        slideInVertically(
-                                            animationSpec = motionScheme.defaultSpatialSpec(),
-                                            initialOffsetY = { (-it * 1.25).toInt() }
-                                        ).togetherWith(
-                                            slideOutVertically(
+                        if (!widthExpanded)
+                            item {
+                                Column(horizontalAlignment = CenterHorizontally) {
+                                    Text(
+                                        stringResource(R.string.up_next),
+                                        style = typography.titleSmall
+                                    )
+                                    AnimatedContent(
+                                        timerState.nextTimeStr,
+                                        transitionSpec = {
+                                            slideInVertically(
                                                 animationSpec = motionScheme.defaultSpatialSpec(),
-                                                targetOffsetY = { (it * 1.25).toInt() }
+                                                initialOffsetY = { (-it * 1.25).toInt() }
+                                            ).togetherWith(
+                                                slideOutVertically(
+                                                    animationSpec = motionScheme.defaultSpatialSpec(),
+                                                    targetOffsetY = { (it * 1.25).toInt() }
+                                                )
                                             )
+                                        }
+                                    ) {
+                                        Text(
+                                            it,
+                                            style = TextStyle(
+                                                fontFamily = googleFlex600,
+                                                fontSize = 22.sp,
+                                                lineHeight = 28.sp,
+                                                color = if (timerState.nextTimerMode == TimerMode.FOCUS) colorScheme.primary else colorScheme.tertiary,
+                                                textAlign = TextAlign.Center
+                                            ),
+                                            modifier = Modifier.width(200.dp)
                                         )
                                     }
-                                ) {
-                                    Text(
-                                        it,
-                                        style = TextStyle(
-                                            fontFamily = googleFlex600,
-                                            fontSize = 22.sp,
-                                            lineHeight = 28.sp,
-                                            color = if (timerState.nextTimerMode == TimerMode.FOCUS) colorScheme.primary else colorScheme.tertiary,
-                                            textAlign = TextAlign.Center
-                                        ),
-                                        modifier = Modifier.width(200.dp)
-                                    )
-                                }
-                                AnimatedContent(
-                                    timerState.nextTimerMode,
-                                    transitionSpec = {
-                                        slideInVertically(
-                                            animationSpec = motionScheme.defaultSpatialSpec(),
-                                            initialOffsetY = { (-it * 1.25).toInt() }
-                                        ).togetherWith(
-                                            slideOutVertically(
+                                    AnimatedContent(
+                                        timerState.nextTimerMode,
+                                        transitionSpec = {
+                                            slideInVertically(
                                                 animationSpec = motionScheme.defaultSpatialSpec(),
-                                                targetOffsetY = { (it * 1.25).toInt() }
+                                                initialOffsetY = { (-it * 1.25).toInt() }
+                                            ).togetherWith(
+                                                slideOutVertically(
+                                                    animationSpec = motionScheme.defaultSpatialSpec(),
+                                                    targetOffsetY = { (it * 1.25).toInt() }
+                                                )
                                             )
+                                        }
+                                    ) {
+                                        Text(
+                                            when (it) {
+                                                TimerMode.FOCUS -> stringResource(R.string.focus)
+                                                TimerMode.SHORT_BREAK -> stringResource(R.string.short_break)
+                                                else -> stringResource(R.string.long_break)
+                                            },
+                                            style = typography.titleMediumEmphasized,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.width(200.dp)
                                         )
                                     }
-                                ) {
-                                    Text(
-                                        when (it) {
-                                            TimerMode.FOCUS -> stringResource(R.string.focus)
-                                            TimerMode.SHORT_BREAK -> stringResource(R.string.short_break)
-                                            else -> stringResource(R.string.long_break)
-                                        },
-                                        style = typography.titleMediumEmphasized,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.width(200.dp)
-                                    )
                                 }
                             }
-                        }
 
                         item { Spacer(Modifier.height(16.dp)) }
                     }
@@ -628,6 +634,19 @@ fun SharedTransitionScope.TimerScreen(
                         .fillMaxSize()
                         .padding(horizontal = 16.dp)
                 ) {
+                    item {
+                        TopAppBar(
+                            title = {
+                                Text(
+                                    text = stringResource(R.string.up_next),
+                                    fontFamily = robotoFlexTopBar
+                                )
+                            },
+                            subtitle = {},
+                            windowInsets = WindowInsets(),
+                            colors = detailPaneTopBarColors
+                        )
+                    }
                     items(timerState.totalFocusCount) {
                         val currentSession = it + 1 == timerState.currentFocusCount
                         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {

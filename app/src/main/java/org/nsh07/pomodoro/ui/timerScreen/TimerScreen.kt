@@ -57,7 +57,6 @@ import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -125,6 +124,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
+import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -628,7 +628,7 @@ fun SharedTransitionScope.TimerScreen(
             AnimatedPane {
                 LazyColumn(
                     contentPadding = contentPadding,
-                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
                         .background(detailPaneTopBarColors.containerColor)
                         .fillMaxSize()
@@ -648,27 +648,46 @@ fun SharedTransitionScope.TimerScreen(
                         )
                     }
                     items(timerState.totalFocusCount) {
-                        val currentSession = it + 1 == timerState.currentFocusCount
+                        val currentSession =
+                            it + 1 == timerState.currentFocusCount // currentFocusCount is 1-indexed
                         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             SegmentedListItem(
                                 onClick = {},
+                                enabled = it + 1 >= timerState.currentFocusCount,
                                 selected = currentSession && isFocus,
-                                shapes = ListItemDefaults.segmentedShapes(
-                                    it * 2,
-                                    timerState.totalFocusCount * 2
-                                ),
+                                shapes = ListItemDefaults.segmentedShapes(0, 2),
+                                colors = listItemColors,
                                 leadingContent = {
-                                    if (currentSession && isFocus)
-                                        ContainedLoadingIndicator(
-                                            progress,
-                                            modifier = Modifier.size(40.dp)
-                                        )
-                                    else if (it < timerState.currentFocusCount)
-                                        Icon(painterResource(R.drawable.check_circle_40dp), null)
-                                    else
-                                        Icon(painterResource(R.drawable.pending_40dp), null)
+                                    AnimatedContent(
+                                        if (currentSession && isFocus) 1
+                                        else if (it < timerState.currentFocusCount) 2
+                                        else 3
+                                    ) { show ->
+                                        when (show) {
+                                            1 -> Icon(
+                                                painterResource(R.drawable.in_progress_40dp),
+                                                null
+                                            )
+
+                                            2 -> Icon(
+                                                painterResource(R.drawable.check_circle_40dp),
+                                                null
+                                            )
+
+                                            else -> Icon(
+                                                painterResource(R.drawable.not_started_40dp),
+                                                null
+                                            )
+                                        }
+                                    }
                                 },
-                                supportingContent = { Text(millisecondsToStr(settingsState.focusTime)) }
+                                supportingContent = {
+                                    Text(
+                                        millisecondsToStr(settingsState.focusTime),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
                             ) {
                                 Text(
                                     stringResource(R.string.focus),
@@ -679,28 +698,42 @@ fun SharedTransitionScope.TimerScreen(
 
                             SegmentedListItem(
                                 onClick = {},
+                                enabled = it + 1 >= timerState.currentFocusCount,
                                 selected = currentSession && !isFocus,
-                                shapes = ListItemDefaults.segmentedShapes(
-                                    it * 2 + 1,
-                                    timerState.totalFocusCount * 2
-                                ),
+                                shapes = ListItemDefaults.segmentedShapes(1, 2),
+                                colors = listItemColors,
                                 leadingContent = {
-                                    if (currentSession && !isFocus)
-                                        ContainedLoadingIndicator(
-                                            progress,
-                                            modifier = Modifier.size(40.dp)
-                                        )
-                                    else if (it + 1 < timerState.currentFocusCount)
-                                        Icon(painterResource(R.drawable.check_circle_40dp), null)
-                                    else
-                                        Icon(painterResource(R.drawable.pending_40dp), null)
+                                    AnimatedContent(
+                                        if (currentSession && !isFocus) 1
+                                        else if (it + 1 < timerState.currentFocusCount) 2
+                                        else 3
+                                    ) { show ->
+                                        when (show) {
+                                            1 -> Icon(
+                                                painterResource(R.drawable.in_progress_40dp),
+                                                null
+                                            )
+
+                                            2 -> Icon(
+                                                painterResource(R.drawable.check_circle_40dp),
+                                                null
+                                            )
+
+                                            else -> Icon(
+                                                painterResource(R.drawable.not_started_40dp),
+                                                null
+                                            )
+                                        }
+                                    }
                                 },
                                 supportingContent = {
                                     Text(
                                         if (it != timerState.totalFocusCount - 1) millisecondsToStr(
                                             settingsState.shortBreakTime
                                         )
-                                        else millisecondsToStr(settingsState.longBreakTime)
+                                        else millisecondsToStr(settingsState.longBreakTime),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
                                     )
                                 }
                             ) {

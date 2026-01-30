@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -75,6 +76,7 @@ import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
@@ -105,176 +107,187 @@ fun AboutScreen(
 
     var showLicense by rememberSaveable { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = {
-            LargeFlexibleTopAppBar(
-                title = {
-                    Text(stringResource(R.string.about), fontFamily = robotoFlexTopBar)
-                },
-                subtitle = {
-                    Text(stringResource(R.string.app_name))
-                },
-                navigationIcon = {
-                    if (!widthExpanded)
-                        FilledTonalIconButton(
-                            onClick = onBack,
-                            shapes = IconButtonDefaults.shapes(),
-                            colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = listItemColors.containerColor)
+    val barColors = if (widthExpanded) detailPaneTopBarColors
+    else topBarColors
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(barColors.containerColor)
+    ) {
+        Scaffold(
+            topBar = {
+                LargeFlexibleTopAppBar(
+                    title = {
+                        Text(stringResource(R.string.about), fontFamily = robotoFlexTopBar)
+                    },
+                    subtitle = {
+                        Text(stringResource(R.string.app_name))
+                    },
+                    navigationIcon = {
+                        if (!widthExpanded)
+                            FilledTonalIconButton(
+                                onClick = onBack,
+                                shapes = IconButtonDefaults.shapes(),
+                                colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                    containerColor = listItemColors.containerColor
+                                )
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.arrow_back),
+                                    stringResource(R.string.back)
+                                )
+                            }
+                    },
+                    colors = barColors,
+                    scrollBehavior = scrollBehavior
+                )
+            },
+            containerColor = barColors.containerColor,
+            modifier = modifier
+                .widthIn(max = PANE_MAX_WIDTH)
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+        ) { innerPadding ->
+            val insets = mergePaddingValues(innerPadding, contentPadding)
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+                contentPadding = insets,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+            ) {
+                item {
+                    Box(Modifier.background(listItemColors.containerColor, topListItemShape)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(16.dp)
                         ) {
                             Icon(
-                                painterResource(R.drawable.arrow_back),
-                                stringResource(R.string.back)
-                            )
-                        }
-                },
-                colors = if (widthExpanded) detailPaneTopBarColors else topBarColors,
-                scrollBehavior = scrollBehavior
-            )
-        },
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-    ) { innerPadding ->
-        val insets = mergePaddingValues(innerPadding, contentPadding)
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(2.dp),
-            contentPadding = insets,
-            modifier = Modifier
-                .background(
-                    if (widthExpanded) detailPaneTopBarColors.containerColor
-                    else topBarColors.containerColor
-                )
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-        ) {
-            item {
-                Box(Modifier.background(listItemColors.containerColor, topListItemShape)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.ic_launcher_monochrome),
-                            tint = colorScheme.onPrimaryContainer,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(64.dp)
-                                .background(
-                                    colorScheme.primaryContainer,
-                                    MaterialShapes.Cookie12Sided.toShape()
-                                )
-                        )
-                        Spacer(Modifier.width(16.dp))
-                        Column {
-                            Text(
-                                if (!isPlus) stringResource(R.string.app_name)
-                                else stringResource(R.string.app_name_plus),
-                                color = colorScheme.onSurface,
-                                style = typography.titleLarge,
-                                fontFamily = googleFlex600
-                            )
-                            Text(
-                                text = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
-                                style = typography.labelLarge,
-                                color = colorScheme.primary
-                            )
-                        }
-                        Spacer(Modifier.weight(1f))
-                        Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                            FilledTonalIconButton(
-                                onClick = {
-                                    uriHandler.openUri("https://discord.gg/MHhBQcxHu6")
-                                },
-                                shapes = IconButtonDefaults.shapes()
-                            ) {
-                                Icon(
-                                    painterResource(R.drawable.discord),
-                                    contentDescription = "Discord",
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-
-                            FilledTonalIconButton(
-                                onClick = { uriHandler.openUri("https://github.com/nsh07/Tomato") },
-                                shapes = IconButtonDefaults.shapes()
-                            ) {
-                                Icon(
-                                    painterResource(R.drawable.github),
-                                    contentDescription = "GitHub",
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-            item {
-                Box(Modifier.background(listItemColors.containerColor, bottomListItemShape)) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                painterResource(R.drawable.pfp),
-                                tint = colorScheme.onSecondaryContainer,
+                                painterResource(R.drawable.ic_launcher_monochrome),
+                                tint = colorScheme.onPrimaryContainer,
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(64.dp)
                                     .background(
-                                        colorScheme.secondaryContainer,
-                                        MaterialShapes.Square.toShape()
+                                        colorScheme.primaryContainer,
+                                        MaterialShapes.Cookie12Sided.toShape()
                                     )
-                                    .padding(8.dp)
                             )
                             Spacer(Modifier.width(16.dp))
                             Column {
                                 Text(
-                                    "Nishant Mishra",
-                                    style = typography.titleLarge,
+                                    if (!isPlus) stringResource(R.string.app_name)
+                                    else stringResource(R.string.app_name_plus),
                                     color = colorScheme.onSurface,
+                                    style = typography.titleLarge,
                                     fontFamily = googleFlex600
                                 )
                                 Text(
-                                    "Developer",
+                                    text = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
                                     style = typography.labelLarge,
-                                    color = colorScheme.secondary
+                                    color = colorScheme.primary
                                 )
                             }
                             Spacer(Modifier.weight(1f))
+                            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        uriHandler.openUri("https://discord.gg/MHhBQcxHu6")
+                                    },
+                                    shapes = IconButtonDefaults.shapes()
+                                ) {
+                                    Icon(
+                                        painterResource(R.drawable.discord),
+                                        contentDescription = "Discord",
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+
+                                FilledTonalIconButton(
+                                    onClick = { uriHandler.openUri("https://github.com/nsh07/Tomato") },
+                                    shapes = IconButtonDefaults.shapes()
+                                ) {
+                                    Icon(
+                                        painterResource(R.drawable.github),
+                                        contentDescription = "GitHub",
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                            }
                         }
-                        Spacer(Modifier.height(8.dp))
-                        Row {
-                            Spacer(Modifier.width((64 + 16).dp))
-                            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                socialLinks.fastForEach {
-                                    FilledTonalIconButton(
-                                        onClick = { uriHandler.openUri(it.url) },
-                                        shapes = IconButtonDefaults.shapes(),
-                                        modifier = Modifier.width(52.dp)
-                                    ) {
-                                        Icon(
-                                            painterResource(it.icon),
-                                            null,
-                                            modifier = Modifier.size(ButtonDefaults.SmallIconSize)
+                    }
+                }
+                item {
+                    Box(Modifier.background(listItemColors.containerColor, bottomListItemShape)) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    painterResource(R.drawable.pfp),
+                                    tint = colorScheme.onSecondaryContainer,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .background(
+                                            colorScheme.secondaryContainer,
+                                            MaterialShapes.Square.toShape()
                                         )
+                                        .padding(8.dp)
+                                )
+                                Spacer(Modifier.width(16.dp))
+                                Column {
+                                    Text(
+                                        "Nishant Mishra",
+                                        style = typography.titleLarge,
+                                        color = colorScheme.onSurface,
+                                        fontFamily = googleFlex600
+                                    )
+                                    Text(
+                                        "Developer",
+                                        style = typography.labelLarge,
+                                        color = colorScheme.secondary
+                                    )
+                                }
+                                Spacer(Modifier.weight(1f))
+                            }
+                            Spacer(Modifier.height(8.dp))
+                            Row {
+                                Spacer(Modifier.width((64 + 16).dp))
+                                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    socialLinks.fastForEach {
+                                        FilledTonalIconButton(
+                                            onClick = { uriHandler.openUri(it.url) },
+                                            shapes = IconButtonDefaults.shapes(),
+                                            modifier = Modifier.width(52.dp)
+                                        ) {
+                                            Icon(
+                                                painterResource(it.icon),
+                                                null,
+                                                modifier = Modifier.size(ButtonDefaults.SmallIconSize)
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-            }
-            item { Spacer(Modifier.height(12.dp)) }
+                item { Spacer(Modifier.height(12.dp)) }
 
-            item { TopButton() }
-            item { BottomButton() }
+                item { TopButton() }
+                item { BottomButton() }
 
-            item { Spacer(Modifier.height(12.dp)) }
+                item { Spacer(Modifier.height(12.dp)) }
 
-            item {
-                ClickableListItem(
-                    leadingContent = { Icon(painterResource(R.drawable.gavel), null) },
-                    headlineContent = { Text(stringResource(R.string.license)) },
-                    supportingContent = { Text("GNU General Public License Version 3") },
-                    items = 1,
-                    index = 0
-                ) { showLicense = true }
+                item {
+                    ClickableListItem(
+                        leadingContent = { Icon(painterResource(R.drawable.gavel), null) },
+                        headlineContent = { Text(stringResource(R.string.license)) },
+                        supportingContent = { Text("GNU General Public License Version 3") },
+                        items = 1,
+                        index = 0
+                    ) { showLicense = true }
+                }
             }
         }
     }

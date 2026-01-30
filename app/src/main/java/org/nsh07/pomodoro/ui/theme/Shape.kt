@@ -13,6 +13,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 
 object TomatoShapeDefaults {
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -52,4 +53,6 @@ object TomatoShapeDefaults {
             shapes.large,
             shapes.large
         )
+
+    val PANE_MAX_WIDTH = 600.dp
 }

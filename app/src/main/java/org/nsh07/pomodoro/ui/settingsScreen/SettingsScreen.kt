@@ -146,7 +146,7 @@ fun SettingsScreenRoot(
                     onAction = viewModel::onAction,
                     setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,
-                    modifier = modifier,
+                    modifier = modifier
                 )
             }
 

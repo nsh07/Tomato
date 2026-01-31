@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,33 +32,36 @@ import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import org.nsh07.pomodoro.R
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun DetailPlaceholder() {
+fun DetailPlaceholder(
+    @DrawableRes icon: Int,
+    background: Color = colorScheme.surfaceContainerLow
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
-            .background(colorScheme.surfaceContainerLow)
+            .background(background)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Box(contentAlignment = Alignment.Center) {
                 Spacer(
                     Modifier
                         .background(
-                            colorScheme.surfaceVariant,
+                            colorScheme.secondaryContainer,
                             MaterialShapes.Cookie12Sided.toShape()
                         )
                         .size(128.dp)
                 )
                 Icon(
-                    painterResource(R.drawable.settings_filled),
+                    painterResource(icon),
                     contentDescription = null,
-                    tint = colorScheme.onSurfaceVariant,
+                    tint = colorScheme.onSecondaryContainer,
                     modifier = Modifier
                         .size(72.dp)
                 )

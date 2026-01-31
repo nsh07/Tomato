@@ -29,7 +29,8 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.detailPane
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.listPane
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -40,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.calculatePaneScaffoldDirective
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AboutScreen
@@ -110,9 +112,7 @@ fun SettingsScreenRoot(
         ),
         entryProvider = entryProvider {
             entry<Screen.Settings.Main>(
-                metadata = ListDetailSceneStrategy.listPane(
-                    detailPlaceholder = { DetailPlaceholder() }
-                )
+                metadata = listPane(detailPlaceholder = { DetailPlaceholder(R.drawable.settings_filled) })
             ) {
                 SettingsMainScreen(
                     settingsState = settingsState,
@@ -127,7 +127,7 @@ fun SettingsScreenRoot(
             }
 
             entry<Screen.Settings.About>(
-                metadata = ListDetailSceneStrategy.detailPane()
+                metadata = detailPane()
             ) {
                 AboutScreen(
                     contentPadding = contentPadding,
@@ -137,7 +137,7 @@ fun SettingsScreenRoot(
             }
 
             entry<Screen.Settings.Alarm>(
-                metadata = ListDetailSceneStrategy.detailPane()
+                metadata = detailPane()
             ) {
                 AlarmSettings(
                     settingsState = settingsState,
@@ -151,7 +151,7 @@ fun SettingsScreenRoot(
             }
 
             entry<Screen.Settings.Appearance>(
-                metadata = ListDetailSceneStrategy.detailPane()
+                metadata = detailPane()
             ) {
                 AppearanceSettings(
                     settingsState = settingsState,
@@ -165,7 +165,7 @@ fun SettingsScreenRoot(
             }
 
             entry<Screen.Settings.Backup>(
-                metadata = ListDetailSceneStrategy.detailPane()
+                metadata = detailPane()
             ) {
                 BackupRestoreScreen(
                     contentPadding = contentPadding,
@@ -175,7 +175,7 @@ fun SettingsScreenRoot(
             }
 
             entry<Screen.Settings.Timer>(
-                metadata = ListDetailSceneStrategy.detailPane()
+                metadata = detailPane()
             ) {
                 TimerSettings(
                     isPlus = isPlus,

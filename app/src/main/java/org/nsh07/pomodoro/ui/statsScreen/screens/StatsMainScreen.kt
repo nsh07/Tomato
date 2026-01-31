@@ -47,6 +47,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -58,6 +59,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -106,6 +108,10 @@ fun SharedTransitionScope.StatsMainScreen(
     modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+    val widthExpanded = currentWindowAdaptiveInfo()
+        .windowSizeClass
+        .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
 
     Scaffold(
         topBar = {
@@ -231,13 +237,17 @@ fun SharedTransitionScope.StatsMainScreen(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
-                        .sharedBoundsReveal(
-                            sharedTransitionScope = this@StatsMainScreen,
-                            sharedContentState = this@StatsMainScreen.rememberSharedContentState(
-                                "last week card"
-                            ),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                            clipShape = topListItemShape
+                        .then(
+                            if (!widthExpanded) {
+                                Modifier.sharedBoundsReveal(
+                                    sharedTransitionScope = this@StatsMainScreen,
+                                    sharedContentState = this@StatsMainScreen.rememberSharedContentState(
+                                        "last week card"
+                                    ),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                    clipShape = topListItemShape
+                                )
+                            } else Modifier
                         )
                         .clip(topListItemShape)
                         .background(listItemColors.containerColor)
@@ -252,11 +262,11 @@ fun SharedTransitionScope.StatsMainScreen(
                         Text(
                             stringResource(R.string.last_week),
                             style = typography.headlineSmall,
-                            modifier = Modifier.sharedBounds(
+                            modifier = if (!widthExpanded) Modifier.sharedBounds(
                                 sharedContentState = this@StatsMainScreen
                                     .rememberSharedContentState("last week heading"),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                            )
+                            ) else Modifier
                         )
                         Spacer(Modifier.weight(1f))
                         Icon(
@@ -279,22 +289,28 @@ fun SharedTransitionScope.StatsMainScreen(
                                 hoursMinutesFormat
                             ),
                             style = typography.displaySmall,
-                            modifier = Modifier
-                                .sharedElement(
-                                    sharedContentState = this@StatsMainScreen
-                                        .rememberSharedContentState("last week average focus timer"),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                )
+                            modifier = if (!widthExpanded) {
+                                Modifier
+                                    .sharedElement(
+                                        sharedContentState = this@StatsMainScreen
+                                            .rememberSharedContentState("last week average focus timer"),
+                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                    )
+                            } else Modifier
                         )
                         Text(
                             stringResource(R.string.focus_per_day_avg),
                             style = typography.titleSmall,
                             modifier = Modifier
                                 .padding(bottom = 5.2.dp)
-                                .sharedElement(
-                                    sharedContentState = this@StatsMainScreen
-                                        .rememberSharedContentState("focus per day average (week)"),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                .then(
+                                    if (!widthExpanded) {
+                                        Modifier.sharedElement(
+                                            sharedContentState = this@StatsMainScreen
+                                                .rememberSharedContentState("focus per day average (week)"),
+                                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                        )
+                                    } else Modifier
                                 )
                         )
                     }
@@ -312,12 +328,14 @@ fun SharedTransitionScope.StatsMainScreen(
                         goal = goal,
                         zoomState = zoomStates[0],
                         scrollState = scrollStates[0],
-                        modifier = Modifier
-                            .sharedBounds(
-                                sharedContentState = this@StatsMainScreen
-                                    .rememberSharedContentState("last week chart"),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                            )
+                        modifier = if (!widthExpanded) {
+                            Modifier
+                                .sharedBounds(
+                                    sharedContentState = this@StatsMainScreen
+                                        .rememberSharedContentState("last week chart"),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
+                        } else Modifier
                     )
                 }
             }
@@ -326,13 +344,17 @@ fun SharedTransitionScope.StatsMainScreen(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
-                        .sharedBoundsReveal(
-                            sharedTransitionScope = this@StatsMainScreen,
-                            sharedContentState = this@StatsMainScreen.rememberSharedContentState(
-                                "last month card"
-                            ),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                            clipShape = middleListItemShape
+                        .then(
+                            if (!widthExpanded) {
+                                Modifier.sharedBoundsReveal(
+                                    sharedTransitionScope = this@StatsMainScreen,
+                                    sharedContentState = this@StatsMainScreen.rememberSharedContentState(
+                                        "last month card"
+                                    ),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                    clipShape = middleListItemShape
+                                )
+                            } else Modifier
                         )
                         .clip(middleListItemShape)
                         .background(listItemColors.containerColor)
@@ -347,11 +369,13 @@ fun SharedTransitionScope.StatsMainScreen(
                         Text(
                             stringResource(R.string.last_month),
                             style = typography.headlineSmall,
-                            modifier = Modifier.sharedBounds(
-                                sharedContentState = this@StatsMainScreen
-                                    .rememberSharedContentState("last month heading"),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                            )
+                            modifier = if (!widthExpanded) {
+                                Modifier.sharedBounds(
+                                    sharedContentState = this@StatsMainScreen
+                                        .rememberSharedContentState("last month heading"),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
+                            } else Modifier
                         )
                         Spacer(Modifier.weight(1f))
                         Icon(
@@ -374,22 +398,28 @@ fun SharedTransitionScope.StatsMainScreen(
                                 hoursMinutesFormat
                             ),
                             style = typography.displaySmall,
-                            modifier = Modifier
-                                .sharedElement(
-                                    sharedContentState = this@StatsMainScreen
-                                        .rememberSharedContentState("last month average focus timer"),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                )
+                            modifier = if (!widthExpanded) {
+                                Modifier
+                                    .sharedElement(
+                                        sharedContentState = this@StatsMainScreen
+                                            .rememberSharedContentState("last month average focus timer"),
+                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                    )
+                            } else Modifier
                         )
                         Text(
                             text = stringResource(R.string.focus_per_day_avg),
                             style = typography.titleSmall,
                             modifier = Modifier
                                 .padding(bottom = 5.2.dp)
-                                .sharedElement(
-                                    sharedContentState = this@StatsMainScreen
-                                        .rememberSharedContentState("focus per day average (month)"),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                .then(
+                                    if (!widthExpanded) {
+                                        Modifier.sharedElement(
+                                            sharedContentState = this@StatsMainScreen
+                                                .rememberSharedContentState("focus per day average (month)"),
+                                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                        )
+                                    } else Modifier
                                 )
                         )
                     }
@@ -408,12 +438,14 @@ fun SharedTransitionScope.StatsMainScreen(
                         goal = goal,
                         zoomState = zoomStates[1],
                         scrollState = scrollStates[1],
-                        modifier = Modifier
-                            .sharedBounds(
-                                sharedContentState = this@StatsMainScreen
-                                    .rememberSharedContentState("last month chart"),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                            )
+                        modifier = if (!widthExpanded) {
+                            Modifier
+                                .sharedBounds(
+                                    sharedContentState = this@StatsMainScreen
+                                        .rememberSharedContentState("last month chart"),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
+                        } else Modifier
                     )
                 }
             }
@@ -422,13 +454,17 @@ fun SharedTransitionScope.StatsMainScreen(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
-                        .sharedBoundsReveal(
-                            sharedTransitionScope = this@StatsMainScreen,
-                            sharedContentState = this@StatsMainScreen.rememberSharedContentState(
-                                "last year card"
-                            ),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                            clipShape = bottomListItemShape
+                        .then(
+                            if (!widthExpanded) {
+                                Modifier.sharedBoundsReveal(
+                                    sharedTransitionScope = this@StatsMainScreen,
+                                    sharedContentState = this@StatsMainScreen.rememberSharedContentState(
+                                        "last year card"
+                                    ),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                    clipShape = bottomListItemShape
+                                )
+                            } else Modifier
                         )
                         .clip(bottomListItemShape)
                         .background(listItemColors.containerColor)
@@ -443,11 +479,13 @@ fun SharedTransitionScope.StatsMainScreen(
                         Text(
                             stringResource(R.string.last_year),
                             style = typography.headlineSmall,
-                            modifier = Modifier.sharedBounds(
-                                sharedContentState = this@StatsMainScreen
-                                    .rememberSharedContentState("last year heading"),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                            )
+                            modifier = if (!widthExpanded) {
+                                Modifier.sharedBounds(
+                                    sharedContentState = this@StatsMainScreen
+                                        .rememberSharedContentState("last year heading"),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
+                            } else Modifier
                         )
                         Spacer(Modifier.weight(1f))
                         Icon(
@@ -471,10 +509,14 @@ fun SharedTransitionScope.StatsMainScreen(
                             ),
                             style = typography.displaySmall,
                             modifier = Modifier
-                                .sharedElement(
-                                    sharedContentState = this@StatsMainScreen
-                                        .rememberSharedContentState("last year average focus timer"),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                .then(
+                                    if (!widthExpanded) {
+                                        Modifier.sharedElement(
+                                            sharedContentState = this@StatsMainScreen
+                                                .rememberSharedContentState("last year average focus timer"),
+                                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                        )
+                                    } else Modifier
                                 )
                         )
                         Text(
@@ -482,10 +524,14 @@ fun SharedTransitionScope.StatsMainScreen(
                             style = typography.titleSmall,
                             modifier = Modifier
                                 .padding(bottom = 5.2.dp)
-                                .sharedElement(
-                                    sharedContentState = this@StatsMainScreen
-                                        .rememberSharedContentState("focus per day average (year)"),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                .then(
+                                    if (!widthExpanded) {
+                                        Modifier.sharedElement(
+                                            sharedContentState = this@StatsMainScreen
+                                                .rememberSharedContentState("focus per day average (year)"),
+                                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                        )
+                                    } else Modifier
                                 )
                         )
                     }
@@ -503,12 +549,14 @@ fun SharedTransitionScope.StatsMainScreen(
                         goal = goal,
                         zoomState = zoomStates[2],
                         scrollState = scrollStates[2],
-                        modifier = Modifier
-                            .sharedBounds(
-                                sharedContentState = this@StatsMainScreen
-                                    .rememberSharedContentState("last year chart"),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                            )
+                        modifier = if (!widthExpanded) {
+                            Modifier
+                                .sharedBounds(
+                                    sharedContentState = this@StatsMainScreen
+                                        .rememberSharedContentState("last year chart"),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
+                        } else Modifier
                     )
                 }
             }

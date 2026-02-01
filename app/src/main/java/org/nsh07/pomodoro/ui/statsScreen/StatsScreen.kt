@@ -27,6 +27,11 @@ import androidx.compose.animation.unveilIn
 import androidx.compose.animation.veilOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.detailPane
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.listPane
+import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -39,6 +44,8 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.Screen
+import org.nsh07.pomodoro.ui.calculatePaneScaffoldDirective
+import org.nsh07.pomodoro.ui.settingsScreen.DetailPlaceholder
 import org.nsh07.pomodoro.ui.statsScreen.screens.LastMonthScreen
 import org.nsh07.pomodoro.ui.statsScreen.screens.LastWeekScreen
 import org.nsh07.pomodoro.ui.statsScreen.screens.LastYearScreen
@@ -48,7 +55,7 @@ import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex400
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.utils.onBack
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun StatsScreenRoot(
     contentPadding: PaddingValues,
@@ -97,8 +104,18 @@ fun StatsScreenRoot(
             predictivePopTransitionSpec = {
                 unveilIn(initialColor = colorScheme.surfaceDim).togetherWith(fadeOut())
             },
+            sceneStrategy = rememberListDetailSceneStrategy(
+                directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
+            ),
             entryProvider = entryProvider {
-                entry<Screen.Stats.Main> {
+                entry<Screen.Stats.Main>(
+                    metadata = listPane(detailPlaceholder = {
+                        DetailPlaceholder(
+                            icon = R.drawable.query_stats,
+                            background = colorScheme.surface
+                        )
+                    })
+                ) {
                     StatsMainScreen(
                         goal = focusGoal,
                         contentPadding = contentPadding,
@@ -126,7 +143,9 @@ fun StatsScreenRoot(
                     )
                 }
 
-                entry<Screen.Stats.LastWeek> {
+                entry<Screen.Stats.LastWeek>(
+                    metadata = detailPane()
+                ) {
                     LastWeekScreen(
                         goal = focusGoal,
                         contentPadding = contentPadding,
@@ -144,7 +163,9 @@ fun StatsScreenRoot(
                     )
                 }
 
-                entry<Screen.Stats.LastMonth> {
+                entry<Screen.Stats.LastMonth>(
+                    metadata = detailPane()
+                ) {
                     LastMonthScreen(
                         goal = focusGoal,
                         contentPadding = contentPadding,
@@ -162,7 +183,9 @@ fun StatsScreenRoot(
                     )
                 }
 
-                entry<Screen.Stats.LastYear> {
+                entry<Screen.Stats.LastYear>(
+                    metadata = detailPane()
+                ) {
                     LastYearScreen(
                         goal = focusGoal,
                         contentPadding = contentPadding,

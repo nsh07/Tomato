@@ -130,6 +130,7 @@ dependencies {
 
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.compose.adaptive.navigation3)
 
     implementation(libs.vico.compose.m3)
     implementation(libs.material.kolor)

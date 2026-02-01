@@ -17,82 +17,49 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen
 
-import android.annotation.SuppressLint
-import android.app.LocaleManager
-import android.os.Build
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SliderState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.detailPane
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.listPane
+import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.Screen
-import org.nsh07.pomodoro.ui.SettingsNavItem
-import org.nsh07.pomodoro.ui.mergePaddingValues
-import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
-import org.nsh07.pomodoro.ui.settingsScreen.components.LocaleBottomSheet
-import org.nsh07.pomodoro.ui.settingsScreen.components.PlusPromo
+import org.nsh07.pomodoro.ui.calculatePaneScaffoldDirective
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AboutScreen
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
+import org.nsh07.pomodoro.ui.settingsScreen.screens.SettingsMainScreen
 import org.nsh07.pomodoro.ui.settingsScreen.screens.TimerSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.BackupRestoreScreen
-import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
-import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
-import org.nsh07.pomodoro.ui.settingsScreens
-import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
-import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.utils.onBack
+import org.nsh07.pomodoro.utils.onTopLevelNavigate
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class,
+    ExperimentalMaterial3ExpressiveApi::class
+)
 @Composable
 fun SettingsScreenRoot(
     setShowPaywall: (Boolean) -> Unit,
@@ -125,65 +92,6 @@ fun SettingsScreenRoot(
         viewModel.sessionsSliderState
     }
 
-    SettingsScreen(
-        isPlus = isPlus,
-        serviceRunning = serviceRunning,
-        settingsState = settingsState,
-        backStack = backStack,
-        contentPadding = contentPadding,
-        focusTimeInputFieldState = focusTimeInputFieldState,
-        shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
-        longBreakTimeInputFieldState = longBreakTimeInputFieldState,
-        sessionsSliderState = sessionsSliderState,
-        onAction = viewModel::onAction,
-        setShowPaywall = setShowPaywall,
-        modifier = modifier
-    )
-}
-
-@SuppressLint("LocalContextGetResourceValueCall")
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-private fun SettingsScreen(
-    isPlus: Boolean,
-    serviceRunning: Boolean,
-    settingsState: SettingsState,
-    backStack: SnapshotStateList<Screen.Settings>,
-    contentPadding: PaddingValues,
-    focusTimeInputFieldState: TextFieldState,
-    shortBreakTimeInputFieldState: TextFieldState,
-    longBreakTimeInputFieldState: TextFieldState,
-    sessionsSliderState: SliderState,
-    onAction: (SettingsAction) -> Unit,
-    setShowPaywall: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val context = LocalContext.current
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
-    val currentLocales =
-        if (Build.VERSION.SDK_INT >= 33) {
-            context
-                .getSystemService(LocaleManager::class.java)
-                .applicationLocales
-        } else null
-    val currentLocalesSize = currentLocales?.size() ?: 0
-
-    var showLocaleSheet by remember { mutableStateOf(false) }
-
-    if (showLocaleSheet && currentLocales != null)
-        LocaleBottomSheet(
-            currentLocales = currentLocales,
-            setShowSheet = { showLocaleSheet = it }
-        )
-
-    if (settingsState.isShowingEraseDataDialog) {
-        ResetDataDialog(
-            resetData = { onAction(SettingsAction.EraseData) },
-            onDismiss = { onAction(SettingsAction.CancelEraseData) }
-        )
-    }
-
     NavDisplay(
         backStack = backStack,
         onBack = backStack::onBack,
@@ -199,192 +107,28 @@ private fun SettingsScreen(
             (slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn())
                 .togetherWith(slideOutHorizontally(targetOffsetX = { it }))
         },
+        sceneStrategy = rememberListDetailSceneStrategy(
+            directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
+        ),
         entryProvider = entryProvider {
-            entry<Screen.Settings.Main> {
-                Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            title = {
-                                Text(
-                                    stringResource(R.string.settings),
-                                    style = LocalTextStyle.current.copy(
-                                        fontFamily = robotoFlexTopBar,
-                                        fontSize = 32.sp,
-                                        lineHeight = 32.sp
-                                    )
-                                )
-                            },
-                            subtitle = {},
-                            colors = topBarColors,
-                            titleHorizontalAlignment = Alignment.CenterHorizontally,
-                            scrollBehavior = scrollBehavior
-                        )
-                    },
-                    modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-                ) { innerPadding ->
-                    val insets = mergePaddingValues(innerPadding, contentPadding)
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(2.dp),
-                        contentPadding = insets,
-                        modifier = Modifier
-                            .background(topBarColors.containerColor)
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        item { Spacer(Modifier.height(14.dp)) }
-
-                        item {
-                            PlusPromo(isPlus, setShowPaywall)
-                        }
-
-                        item { Spacer(Modifier.height(12.dp)) }
-
-                        itemsIndexed(settingsScreens) { index, item ->
-                            ClickableListItem(
-                                leadingContent = {
-                                    Icon(painterResource(item.icon), null)
-                                },
-                                headlineContent = { Text(stringResource(item.label)) },
-                                supportingContent = {
-                                    Text(
-                                        remember {
-                                            item.innerSettings.joinToString(", ") {
-                                                context.getString(it)
-                                            }
-                                        },
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                },
-                                trailingContent = {
-                                    Icon(painterResource(R.drawable.arrow_forward_big), null)
-                                },
-                                items = settingsScreens.size,
-                                index = index
-                            ) { backStack.add(item.route) }
-                        }
-
-                        item { Spacer(Modifier.height(12.dp)) }
-
-                        item {
-                            val item = remember {
-                                SettingsNavItem(
-                                    Screen.Settings.Backup,
-                                    R.drawable.backup,
-                                    R.string.backup_and_restore,
-                                    listOf(R.string.backup, R.string.restore, R.string.reset_data)
-                                )
-                            }
-                            ClickableListItem(
-                                leadingContent = {
-                                    Icon(painterResource(item.icon), null)
-                                },
-                                headlineContent = { Text(stringResource(item.label)) },
-                                supportingContent = {
-                                    Text(
-                                        remember {
-                                            item.innerSettings.joinToString(", ") {
-                                                context.getString(it)
-                                            }
-                                        },
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                },
-                                trailingContent = {
-                                    Icon(painterResource(R.drawable.arrow_forward_big), null)
-                                },
-                                items = 2,
-                                index = 0
-                            ) { backStack.add(item.route) }
-                        }
-                        item {
-                            ClickableListItem(
-                                leadingContent = {
-                                    Icon(painterResource(R.drawable.info), null)
-                                },
-                                headlineContent = {
-                                    Text(stringResource(R.string.about))
-                                },
-                                supportingContent = {
-                                    Text(stringResource(R.string.app_name) + " ${BuildConfig.VERSION_NAME}")
-                                },
-                                trailingContent = {
-                                    Icon(painterResource(R.drawable.arrow_forward_big), null)
-                                },
-                                items = 2,
-                                index = 1
-                            ) { backStack.add(Screen.Settings.About) }
-                        }
-
-                        item { Spacer(Modifier.height(12.dp)) }
-
-                        if (currentLocales != null)
-                            item {
-                                ClickableListItem(
-                                    leadingContent = {
-                                        Icon(
-                                            painterResource(R.drawable.language),
-                                            contentDescription = null
-                                        )
-                                    },
-                                    headlineContent = { Text(stringResource(R.string.language)) },
-                                    supportingContent = {
-                                        Text(
-                                            if (currentLocalesSize > 0) currentLocales.get(0).displayName
-                                            else stringResource(R.string.system_default)
-                                        )
-                                    },
-                                    colors = listItemColors,
-                                    items = 1,
-                                    index = 0
-                                ) { showLocaleSheet = true }
-                            }
-
-                        if (Build.VERSION.SDK_INT >= 36 && Build.MANUFACTURER == "samsung") {
-                            item {
-                                val uriHandler = LocalUriHandler.current
-                                Spacer(Modifier.height(14.dp))
-                                ClickableListItem(
-                                    leadingContent = {
-                                        Icon(
-                                            painterResource(R.drawable.mobile_text),
-                                            null
-                                        )
-                                    },
-                                    headlineContent = { Text(stringResource(R.string.now_bar)) },
-                                    trailingContent = {
-                                        Icon(
-                                            painterResource(R.drawable.open_in_browser),
-                                            null
-                                        )
-                                    },
-                                    items = 1,
-                                    index = 0
-                                ) { uriHandler.openUri("https://gist.github.com/nsh07/3b42969aef017d98f72b097f1eca8911") }
-                            }
-                        }
-
-                        item { Spacer(Modifier.height(12.dp)) }
-
-                        item {
-                            Box(
-                                modifier = Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
-
-                                TextButton(
-                                    onClick = { onAction(SettingsAction.AskEraseData) },
-                                ) {
-                                    Text(stringResource(R.string.reset_data))
-                                }
-                            }
-                        }
-                    }
-                }
+            entry<Screen.Settings.Main>(
+                metadata = listPane(detailPlaceholder = { DetailPlaceholder(R.drawable.settings_filled) })
+            ) {
+                SettingsMainScreen(
+                    settingsState = settingsState,
+                    contentPadding = contentPadding,
+                    currentScreen = backStack.last(),
+                    isPlus = isPlus,
+                    onAction = viewModel::onAction,
+                    onNavigate = backStack::onTopLevelNavigate,
+                    setShowPaywall = setShowPaywall,
+                    modifier = modifier,
+                )
             }
 
-            entry<Screen.Settings.About> {
+            entry<Screen.Settings.About>(
+                metadata = detailPane()
+            ) {
                 AboutScreen(
                     contentPadding = contentPadding,
                     isPlus = isPlus,
@@ -392,31 +136,37 @@ private fun SettingsScreen(
                 )
             }
 
-            entry<Screen.Settings.Alarm> {
+            entry<Screen.Settings.Alarm>(
+                metadata = detailPane()
+            ) {
                 AlarmSettings(
                     settingsState = settingsState,
                     isPlus = isPlus,
                     contentPadding = contentPadding,
-                    onAction = onAction,
+                    onAction = viewModel::onAction,
                     setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,
-                    modifier = modifier,
+                    modifier = modifier
                 )
             }
 
-            entry<Screen.Settings.Appearance> {
+            entry<Screen.Settings.Appearance>(
+                metadata = detailPane()
+            ) {
                 AppearanceSettings(
                     settingsState = settingsState,
                     contentPadding = contentPadding,
                     isPlus = isPlus,
-                    onAction = onAction,
+                    onAction = viewModel::onAction,
                     setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,
                     modifier = modifier,
                 )
             }
 
-            entry<Screen.Settings.Backup> {
+            entry<Screen.Settings.Backup>(
+                metadata = detailPane()
+            ) {
                 BackupRestoreScreen(
                     contentPadding = contentPadding,
                     onBack = backStack::onBack,
@@ -424,7 +174,9 @@ private fun SettingsScreen(
                 )
             }
 
-            entry<Screen.Settings.Timer> {
+            entry<Screen.Settings.Timer>(
+                metadata = detailPane()
+            ) {
                 TimerSettings(
                     isPlus = isPlus,
                     serviceRunning = serviceRunning,
@@ -434,12 +186,13 @@ private fun SettingsScreen(
                     shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                     longBreakTimeInputFieldState = longBreakTimeInputFieldState,
                     sessionsSliderState = sessionsSliderState,
-                    onAction = onAction,
+                    onAction = viewModel::onAction,
                     setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,
                     modifier = modifier,
                 )
             }
-        }
+        },
+        modifier = Modifier.background(topBarColors.containerColor)
     )
 }

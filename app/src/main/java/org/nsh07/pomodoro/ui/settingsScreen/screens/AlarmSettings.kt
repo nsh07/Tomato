@@ -37,12 +37,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ButtonGroup
@@ -60,6 +62,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -67,6 +70,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -77,6 +81,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.nsh07.pomodoro.R
@@ -87,9 +92,11 @@ import org.nsh07.pomodoro.ui.settingsScreen.components.SliderListItem
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
@@ -111,6 +118,10 @@ fun AlarmSettings(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
+
+    val widthExpanded = currentWindowAdaptiveInfo()
+        .windowSizeClass
+        .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
 
     var alarmName by remember { mutableStateOf("...") }
     var vibrationPlaying by remember { mutableStateOf(false) }
@@ -208,260 +219,287 @@ fun AlarmSettings(
         )
     }
 
-    Scaffold(
-        topBar = {
-            LargeFlexibleTopAppBar(
-                title = {
-                    Text(stringResource(R.string.alarm), fontFamily = robotoFlexTopBar)
-                },
-                subtitle = {
-                    Text(stringResource(R.string.settings))
-                },
-                navigationIcon = {
-                    FilledTonalIconButton(
-                        onClick = onBack,
-                        shapes = IconButtonDefaults.shapes(),
-                        colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = listItemColors.containerColor)
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.arrow_back),
-                            stringResource(R.string.back)
-                        )
-                    }
-                },
-                colors = topBarColors,
-                scrollBehavior = scrollBehavior
-            )
-        },
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-    ) { innerPadding ->
-        val insets = mergePaddingValues(innerPadding, contentPadding)
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(2.dp),
-            contentPadding = insets,
-            modifier = Modifier
-                .background(topBarColors.containerColor)
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-        ) {
-            item {
-                Spacer(Modifier.height(14.dp))
-            }
+    val barColors = if (widthExpanded) detailPaneTopBarColors
+    else topBarColors
 
-            item {
-                ListItem(
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.alarm), null)
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(barColors.containerColor)
+    ) {
+        Scaffold(
+            topBar = {
+                LargeFlexibleTopAppBar(
+                    title = {
+                        Text(stringResource(R.string.alarm), fontFamily = robotoFlexTopBar)
                     },
-                    headlineContent = { Text(stringResource(R.string.alarm_sound)) },
-                    supportingContent = { Text(alarmName) },
-                    trailingContent = { Icon(painterResource(R.drawable.arrow_forward_big), null) },
-                    colors = listItemColors,
-                    modifier = Modifier
-                        .clip(topListItemShape)
-                        .clickable(onClick = { ringtonePickerLauncher.launch(ringtonePickerIntent) })
+                    subtitle = {
+                        Text(stringResource(R.string.settings))
+                    },
+                    navigationIcon = {
+                        if (!widthExpanded)
+                            FilledTonalIconButton(
+                                onClick = onBack,
+                                shapes = IconButtonDefaults.shapes(),
+                                colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                    containerColor = listItemColors.containerColor
+                                )
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.arrow_back),
+                                    stringResource(R.string.back)
+                                )
+                            }
+                    },
+                    colors = barColors,
+                    scrollBehavior = scrollBehavior
                 )
-            }
-            switchItems.fastForEachIndexed { baseIndex, items ->
-                itemsIndexed(items) { index, item ->
+            },
+            containerColor = barColors.containerColor,
+            modifier = modifier
+                .widthIn(max = PANE_MAX_WIDTH)
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+        ) { innerPadding ->
+            val insets = mergePaddingValues(innerPadding, contentPadding)
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+                contentPadding = insets,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+            ) {
+                item {
+                    Spacer(Modifier.height(14.dp))
+                }
+
+                item {
                     ListItem(
                         leadingContent = {
-                            Icon(painterResource(item.icon), contentDescription = null)
+                            Icon(painterResource(R.drawable.alarm), null)
                         },
-                        headlineContent = { Text(stringResource(item.label)) },
-                        supportingContent = {
-                            if (item.collapsible) {
-                                var expanded by remember { mutableStateOf(false) }
-                                Text(
-                                    stringResource(item.description),
-                                    maxLines = if (expanded) Int.MAX_VALUE else 2,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier
-                                        .clickable { expanded = !expanded }
-                                        .animateContentSize(motionScheme.defaultSpatialSpec())
-                                )
-                            } else {
-                                Text(stringResource(item.description))
-                            }
-                        },
+                        headlineContent = { Text(stringResource(R.string.alarm_sound)) },
+                        supportingContent = { Text(alarmName) },
                         trailingContent = {
-                            Switch(
-                                checked = item.checked,
-                                onCheckedChange = { item.onClick(it) },
-                                thumbContent = {
-                                    if (item.checked) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.check),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                        )
-                                    } else {
-                                        Icon(
-                                            painter = painterResource(R.drawable.clear),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                        )
-                                    }
-                                },
-                                colors = switchColors
+                            Icon(
+                                painterResource(R.drawable.arrow_forward_big),
+                                null
                             )
                         },
                         colors = listItemColors,
                         modifier = Modifier
-                            .clip(
-                                when {
-                                    items.size == 1 -> cardShape
-                                    index == items.lastIndex -> bottomListItemShape
-                                    else -> middleListItemShape
+                            .clip(topListItemShape)
+                            .clickable(onClick = {
+                                ringtonePickerLauncher.launch(
+                                    ringtonePickerIntent
+                                )
+                            })
+                    )
+                }
+                switchItems.fastForEachIndexed { baseIndex, items ->
+                    itemsIndexed(items) { index, item ->
+                        ListItem(
+                            leadingContent = {
+                                Icon(painterResource(item.icon), contentDescription = null)
+                            },
+                            headlineContent = { Text(stringResource(item.label)) },
+                            supportingContent = {
+                                if (item.collapsible) {
+                                    var expanded by remember { mutableStateOf(false) }
+                                    Text(
+                                        stringResource(item.description),
+                                        maxLines = if (expanded) Int.MAX_VALUE else 2,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier
+                                            .clickable { expanded = !expanded }
+                                            .animateContentSize(motionScheme.defaultSpatialSpec())
+                                    )
+                                } else {
+                                    Text(stringResource(item.description))
                                 }
-                            )
-                    )
-                }
-
-                if (baseIndex != switchItems.lastIndex)
-                    item {
-                        Spacer(Modifier.height(12.dp))
+                            },
+                            trailingContent = {
+                                Switch(
+                                    checked = item.checked,
+                                    onCheckedChange = { item.onClick(it) },
+                                    thumbContent = {
+                                        if (item.checked) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.check),
+                                                contentDescription = null,
+                                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                                            )
+                                        } else {
+                                            Icon(
+                                                painter = painterResource(R.drawable.clear),
+                                                contentDescription = null,
+                                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                                            )
+                                        }
+                                    },
+                                    colors = switchColors
+                                )
+                            },
+                            colors = listItemColors,
+                            modifier = Modifier
+                                .clip(
+                                    when {
+                                        items.size == 1 -> cardShape
+                                        index == items.lastIndex -> bottomListItemShape
+                                        else -> middleListItemShape
+                                    }
+                                )
+                        )
                     }
+
+                    if (baseIndex != switchItems.lastIndex)
+                        item {
+                            Spacer(Modifier.height(12.dp))
+                        }
+                }
+
+                if (hasVibrator) {
+                    if (!isPlus) item { PlusDivider(setShowPaywall) }
+                    else item { Spacer(Modifier.height(12.dp)) }
+
+                    item {
+                        val interactionSources = remember { List(2) { MutableInteractionSource() } }
+
+                        ListItem(
+                            headlineContent = { Text("Vibration pattern") },
+                            trailingContent = {
+                                ButtonGroup(
+                                    overflowIndicator = {},
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    customItem(
+                                        buttonGroupContent = {
+                                            FilledIconToggleButton(
+                                                checked = vibrationPlaying,
+                                                onCheckedChange = {
+                                                    vibrationPlaying = it
+                                                    if (it && vibrator.hasVibrator()) {
+                                                        val timings = longArrayOf(
+                                                            0,
+                                                            settingsState.vibrationOnDuration,
+                                                            settingsState.vibrationOffDuration,
+                                                            settingsState.vibrationOnDuration
+                                                        )
+                                                        val amplitudes = intArrayOf(
+                                                            0,
+                                                            settingsState.vibrationAmplitude,
+                                                            0,
+                                                            settingsState.vibrationAmplitude
+                                                        )
+                                                        val repeat = 2
+                                                        val effect = VibrationEffect.createWaveform(
+                                                            timings,
+                                                            amplitudes,
+                                                            repeat
+                                                        )
+                                                        vibrator.vibrate(effect)
+                                                    } else {
+                                                        vibrator.cancel()
+                                                    }
+                                                },
+                                                interactionSource = interactionSources[0],
+                                                modifier = Modifier
+                                                    .size(52.dp, 40.dp)
+                                                    .animateWidth(interactionSources[0])
+                                            ) {
+                                                if (vibrationPlaying)
+                                                    Icon(painterResource(R.drawable.stop), null)
+                                                else
+                                                    Icon(painterResource(R.drawable.play), null)
+                                            }
+                                        },
+                                        menuContent = {}
+                                    )
+                                    customItem(
+                                        buttonGroupContent = {
+                                            FilledTonalIconButton(
+                                                onClick = {
+                                                    onAction(
+                                                        SettingsAction.SaveVibrationOnDuration(
+                                                            1000L
+                                                        )
+                                                    )
+                                                    onAction(
+                                                        SettingsAction.SaveVibrationOffDuration(
+                                                            1000L
+                                                        )
+                                                    )
+                                                    onAction(
+                                                        SettingsAction.SaveVibrationAmplitude(
+                                                            DEFAULT_AMPLITUDE
+                                                        )
+                                                    )
+                                                },
+                                                enabled = isPlus,
+                                                shapes = IconButtonDefaults.shapes(),
+                                                interactionSource = interactionSources[1],
+                                                modifier = Modifier
+                                                    .size(40.dp)
+                                                    .animateWidth(interactionSources[1])
+                                            ) {
+                                                Icon(
+                                                    painterResource(R.drawable.restore_default),
+                                                    null
+                                                )
+                                            }
+                                        },
+                                        menuContent = {}
+                                    )
+                                }
+                            },
+                            colors = listItemColors,
+                            modifier = Modifier.clip(topListItemShape)
+                        )
+                    }
+                    item {
+                        SliderListItem(
+                            value = settingsState.vibrationOnDuration.toFloat(),
+                            valueRange = 10f..5000f,
+                            enabled = isPlus,
+                            label = stringResource(R.string.duration),
+                            trailingLabel = { String.format(msFormat, it.roundToInt()) },
+                            trailingIcon = { Icon(painterResource(R.drawable.airwave), null) },
+                            shape = middleListItemShape
+                        ) { onAction(SettingsAction.SaveVibrationOnDuration(it.roundToLong())) }
+                    }
+                    item {
+                        SliderListItem(
+                            value = settingsState.vibrationOffDuration.toFloat(),
+                            valueRange = 10f..5000f,
+                            enabled = isPlus,
+                            label = stringResource(R.string.gap),
+                            trailingLabel = { String.format(msFormat, it.roundToInt()) },
+                            trailingIcon = { Icon(painterResource(R.drawable.menu), null) },
+                            shape = if (hasAmplitudeControl) middleListItemShape else bottomListItemShape
+                        ) { onAction(SettingsAction.SaveVibrationOffDuration(it.roundToLong())) }
+                    }
+
+                    if (hasAmplitudeControl) item {
+                        SliderListItem(
+                            value = if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE) 127f
+                            else settingsState.vibrationAmplitude.toFloat(),
+                            valueRange = 2f..255f,
+                            enabled = isPlus,
+                            label = stringResource(R.string.vibration_strength),
+                            trailingLabel = {
+                                if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE)
+                                    @SuppressLint("LocalContextGetResourceValueCall")
+                                    context.getString(R.string.system_default)
+                                else "${((it * 100) / 255f).roundToInt()}%"
+                            },
+                            trailingIcon = { Icon(painterResource(R.drawable.bolt), null) },
+                            shape = bottomListItemShape
+                        ) { onAction(SettingsAction.SaveVibrationAmplitude(it.roundToInt())) }
+                    }
+                }
+
+                item { Spacer(Modifier.height(14.dp)) }
             }
-
-            if (hasVibrator) {
-                if (!isPlus) item { PlusDivider(setShowPaywall) }
-                else item { Spacer(Modifier.height(12.dp)) }
-
-                item {
-                    val interactionSources = remember { List(2) { MutableInteractionSource() } }
-
-                    ListItem(
-                        headlineContent = { Text("Vibration pattern") },
-                        trailingContent = {
-                            ButtonGroup(
-                                overflowIndicator = {},
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                customItem(
-                                    buttonGroupContent = {
-                                        FilledIconToggleButton(
-                                            checked = vibrationPlaying,
-                                            onCheckedChange = {
-                                                vibrationPlaying = it
-                                                if (it && vibrator.hasVibrator()) {
-                                                    val timings = longArrayOf(
-                                                        0,
-                                                        settingsState.vibrationOnDuration,
-                                                        settingsState.vibrationOffDuration,
-                                                        settingsState.vibrationOnDuration
-                                                    )
-                                                    val amplitudes = intArrayOf(
-                                                        0,
-                                                        settingsState.vibrationAmplitude,
-                                                        0,
-                                                        settingsState.vibrationAmplitude
-                                                    )
-                                                    val repeat = 2
-                                                    val effect = VibrationEffect.createWaveform(
-                                                        timings,
-                                                        amplitudes,
-                                                        repeat
-                                                    )
-                                                    vibrator.vibrate(effect)
-                                                } else {
-                                                    vibrator.cancel()
-                                                }
-                                            },
-                                            interactionSource = interactionSources[0],
-                                            modifier = Modifier
-                                                .size(52.dp, 40.dp)
-                                                .animateWidth(interactionSources[0])
-                                        ) {
-                                            if (vibrationPlaying)
-                                                Icon(painterResource(R.drawable.stop), null)
-                                            else
-                                                Icon(painterResource(R.drawable.play), null)
-                                        }
-                                    },
-                                    menuContent = {}
-                                )
-                                customItem(
-                                    buttonGroupContent = {
-                                        FilledTonalIconButton(
-                                            onClick = {
-                                                onAction(
-                                                    SettingsAction.SaveVibrationOnDuration(
-                                                        1000L
-                                                    )
-                                                )
-                                                onAction(
-                                                    SettingsAction.SaveVibrationOffDuration(
-                                                        1000L
-                                                    )
-                                                )
-                                                onAction(
-                                                    SettingsAction.SaveVibrationAmplitude(
-                                                        DEFAULT_AMPLITUDE
-                                                    )
-                                                )
-                                            },
-                                            enabled = isPlus,
-                                            shapes = IconButtonDefaults.shapes(),
-                                            interactionSource = interactionSources[1],
-                                            modifier = Modifier
-                                                .size(40.dp)
-                                                .animateWidth(interactionSources[1])
-                                        ) {
-                                            Icon(painterResource(R.drawable.restore_default), null)
-                                        }
-                                    },
-                                    menuContent = {}
-                                )
-                            }
-                        },
-                        colors = listItemColors,
-                        modifier = Modifier.clip(topListItemShape)
-                    )
-                }
-                item {
-                    SliderListItem(
-                        value = settingsState.vibrationOnDuration.toFloat(),
-                        valueRange = 10f..5000f,
-                        enabled = isPlus,
-                        label = stringResource(R.string.duration),
-                        trailingLabel = { String.format(msFormat, it.roundToInt()) },
-                        trailingIcon = { Icon(painterResource(R.drawable.airwave), null) },
-                        shape = middleListItemShape
-                    ) { onAction(SettingsAction.SaveVibrationOnDuration(it.roundToLong())) }
-                }
-                item {
-                    SliderListItem(
-                        value = settingsState.vibrationOffDuration.toFloat(),
-                        valueRange = 10f..5000f,
-                        enabled = isPlus,
-                        label = stringResource(R.string.gap),
-                        trailingLabel = { String.format(msFormat, it.roundToInt()) },
-                        trailingIcon = { Icon(painterResource(R.drawable.menu), null) },
-                        shape = if (hasAmplitudeControl) middleListItemShape else bottomListItemShape
-                    ) { onAction(SettingsAction.SaveVibrationOffDuration(it.roundToLong())) }
-                }
-
-                if (hasAmplitudeControl) item {
-                    SliderListItem(
-                        value = if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE) 127f
-                        else settingsState.vibrationAmplitude.toFloat(),
-                        valueRange = 2f..255f,
-                        enabled = isPlus,
-                        label = stringResource(R.string.vibration_strength),
-                        trailingLabel = {
-                            if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE)
-                                @SuppressLint("LocalContextGetResourceValueCall")
-                                context.getString(R.string.system_default)
-                            else "${((it * 100) / 255f).roundToInt()}%"
-                        },
-                        trailingIcon = { Icon(painterResource(R.drawable.bolt), null) },
-                        shape = bottomListItemShape
-                    ) { onAction(SettingsAction.SaveVibrationAmplitude(it.roundToInt())) }
-                }
-            }
-
-            item { Spacer(Modifier.height(14.dp)) }
         }
     }
 }

@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.ui
 
 import android.app.Activity
+import android.os.Build
 import android.view.WindowManager
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.SharedTransitionLayout
@@ -106,7 +107,9 @@ fun SharedTransitionScope.AlwaysOnDisplay(
                         WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
             } else WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         )
-        activity?.setShowWhenLocked(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            activity?.setShowWhenLocked(true)
+        }
         insetsController.apply {
             hide(WindowInsetsCompat.Type.statusBars())
             hide(WindowInsetsCompat.Type.navigationBars())
@@ -120,7 +123,9 @@ fun SharedTransitionScope.AlwaysOnDisplay(
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
                         WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
             )
-            activity?.setShowWhenLocked(false)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                activity?.setShowWhenLocked(false)
+            }
             insetsController.apply {
                 show(WindowInsetsCompat.Type.statusBars())
                 show(WindowInsetsCompat.Type.navigationBars())

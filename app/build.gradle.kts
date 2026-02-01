@@ -40,7 +40,7 @@ android {
 
     defaultConfig {
         applicationId = "org.nsh07.pomodoro"
-        minSdk = 27
+        minSdk = 26
         targetSdk = 36
         versionCode = 27
         versionName = "1.8.3"

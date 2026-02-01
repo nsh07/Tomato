@@ -38,4 +38,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Tomato"
 include(":app")
-include(":baselineprofile")

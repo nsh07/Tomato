@@ -24,7 +24,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.baselineprofile)
 }
 
 tasks.withType(Test::class) {
@@ -103,17 +102,6 @@ kotlin {
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
-baselineProfile {
-    variants {
-        create("fossRelease") {
-            saveInSrc = true
-        }
-        create("playRelease") {
-            automaticGenerationDuringBuild = true
-            saveInSrc = false
-        }
-    }
-}
 
 dependencies {
     implementation(libs.androidx.core.ktx)
@@ -141,9 +129,6 @@ dependencies {
 
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
-
-    implementation(libs.androidx.profileinstaller)
-    "baselineProfile"(project(":baselineprofile"))
 
     "playImplementation"(libs.revenuecat.purchases)
     "playImplementation"(libs.revenuecat.purchases.ui)

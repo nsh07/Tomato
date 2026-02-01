@@ -1,8 +1,8 @@
 [versions]
-activityCompose = "1.12.2"
+activityCompose = "1.12.3"
 adaptive = "1.2.0"
 agp = "9.0.0"
-composeBom = "2026.01.00"
+composeBom = "2026.01.01"
 coreKtx = "1.17.0"
 espressoCore = "3.7.0"
 glance = "1.2.0-rc01"
@@ -15,11 +15,7 @@ materialKolor = "4.1.0"
 navigation3 = "1.0.0"
 revenuecat = "9.19.2"
 room = "2.8.4"
-vico = "2.4.1"
-uiautomator = "2.4.0-alpha07"
-benchmarkMacroJunit4 = "1.5.0-alpha01"
-baselineprofile = "1.5.0-alpha01"
-profileinstaller = "1.4.1"
+vico = "2.4.3"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -51,9 +47,6 @@ material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "m
 revenuecat-purchases = { module = "com.revenuecat.purchases:purchases", version.ref = "revenuecat" }
 revenuecat-purchases-ui = { module = "com.revenuecat.purchases:purchases-ui", version.ref = "revenuecat" }
 vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
-androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
-androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
-androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -61,4 +54,3 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
-baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }

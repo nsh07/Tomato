@@ -111,7 +111,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -639,7 +638,8 @@ fun SharedTransitionScope.TimerScreen(
                             title = {
                                 Text(
                                     text = stringResource(R.string.up_next),
-                                    fontFamily = robotoFlexTopBar
+                                    fontFamily = robotoFlexTopBar,
+                                    maxLines = 1
                                 )
                             },
                             subtitle = {},
@@ -684,15 +684,13 @@ fun SharedTransitionScope.TimerScreen(
                                 supportingContent = {
                                     Text(
                                         millisecondsToStr(settingsState.focusTime),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
+                                        maxLines = 1
                                     )
                                 }
                             ) {
                                 Text(
                                     stringResource(R.string.focus),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    maxLines = 1
                                 )
                             }
 
@@ -732,16 +730,14 @@ fun SharedTransitionScope.TimerScreen(
                                             settingsState.shortBreakTime
                                         )
                                         else millisecondsToStr(settingsState.longBreakTime),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
+                                        maxLines = 1
                                     )
                                 }
                             ) {
                                 Text(
                                     if (it != timerState.totalFocusCount - 1) stringResource(R.string.short_break)
                                     else stringResource(R.string.long_break),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    maxLines = 1
                                 )
                             }
                         }

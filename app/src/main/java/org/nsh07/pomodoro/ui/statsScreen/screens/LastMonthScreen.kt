@@ -22,6 +22,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -31,6 +32,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,6 +47,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TonalToggleButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -61,6 +64,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -77,6 +81,7 @@ import org.nsh07.pomodoro.ui.statsScreen.components.HorizontalStackedBar
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeColumnChart
 import org.nsh07.pomodoro.ui.statsScreen.components.sharedBoundsReveal
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.utils.millisecondsToMinutes
@@ -120,6 +125,10 @@ fun SharedTransitionScope.LastMonthScreen(
         focusBreakdownValues.first.sum()
     }
 
+    val widthExpanded = currentWindowAdaptiveInfo()
+        .windowSizeClass
+        .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -138,16 +147,20 @@ fun SharedTransitionScope.LastMonthScreen(
                     Text(stringResource(R.string.stats))
                 },
                 navigationIcon = {
-                    FilledTonalIconButton(
-                        onClick = onBack,
-                        shapes = IconButtonDefaults.shapes()
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.arrow_back),
-                            stringResource(R.string.back)
-                        )
-                    }
+                    if (!widthExpanded)
+                        FilledTonalIconButton(
+                            onClick = onBack,
+                            shapes = IconButtonDefaults.shapes()
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.arrow_back),
+                                stringResource(R.string.back)
+                            )
+                        }
                 },
+                colors = if (widthExpanded)
+                    TopAppBarDefaults.topAppBarColors(scrolledContainerColor = colorScheme.surfaceContainerLow)
+                else TopAppBarDefaults.topAppBarColors(),
                 scrollBehavior = scrollBehavior
             )
         },
@@ -163,167 +176,173 @@ fun SharedTransitionScope.LastMonthScreen(
             )
     ) { innerPadding ->
         val insets = mergePaddingValues(innerPadding, contentPadding)
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = insets,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
         ) {
-            item {
-                Spacer(Modifier.height(16.dp))
-                Row(
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        millisecondsToHoursMinutes(
-                            focusDuration,
-                            hoursMinutesFormat
-                        ),
-                        style = typography.displaySmall,
-                        modifier = Modifier
-                            .sharedElement(
-                                sharedContentState = this@LastMonthScreen
-                                    .rememberSharedContentState("last month average focus timer"),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                            )
-                    )
-                    Text(
-                        stringResource(R.string.focus_per_day_avg),
-                        style = typography.titleSmall,
-                        modifier = Modifier
-                            .padding(bottom = 5.2.dp)
-                            .sharedElement(
-                                sharedContentState = this@LastMonthScreen
-                                    .rememberSharedContentState("focus per day average (month)"),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                            )
-                    )
-                }
-            }
-            item {
-                TimeColumnChart(
-                    modelProducer = mainChartData.first,
-                    hoursFormat = hoursFormat,
-                    hoursMinutesFormat = hoursMinutesFormat,
-                    minutesFormat = minutesFormat,
-                    axisTypeface = axisTypeface,
-                    markerTypeface = markerTypeface,
-                    thickness = 8.dp,
-                    xValueFormatter = CartesianValueFormatter { context, x, _ ->
-                        context.model.extraStore[mainChartData.second][x.toInt()]
-                    },
-                    goal = goal,
-                    zoomState = zoomState,
-                    scrollState = scrollState,
-                    modifier = Modifier
-                        .sharedBounds(
-                            sharedContentState = this@LastMonthScreen
-                                .rememberSharedContentState("last month chart"),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                        )
-                )
-            }
-
-            item { Spacer(Modifier.height(8.dp)) }
-
-            item {
-                Text(
-                    stringResource(R.string.focus_breakdown),
-                    style = typography.headlineSmall
-                )
-                Text(
-                    stringResource(R.string.focus_breakdown_desc),
-                    style = typography.bodySmall,
-                    color = colorScheme.onSurfaceVariant
-                )
-            }
-
-            item { HorizontalStackedBar(focusBreakdownValues.first, rankList = rankList) }
-            item {
-                Row {
-                    focusBreakdownValues.first.fastForEach {
-                        Text(
-                            if (it <= 60 * 60 * 1000)
-                                millisecondsToMinutes(it, minutesFormat)
-                            else millisecondsToHoursMinutes(it, hoursMinutesFormat),
-                            style = typography.bodyLarge,
-                            textAlign = TextAlign.Center,
-                            color = colorScheme.onSurfaceVariant,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                }
-            }
-
-            item {
-                val iconRotation by animateFloatAsState(
-                    if (breakdownChartExpanded) 180f else 0f
-                )
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    TonalToggleButton(
-                        checked = breakdownChartExpanded,
-                        onCheckedChange = { breakdownChartExpanded = it },
-                        modifier = Modifier.align(Alignment.End)
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = insets,
+                modifier = Modifier
+                    .widthIn(max = PANE_MAX_WIDTH)
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+            ) {
+                item {
+                    Spacer(Modifier.height(16.dp))
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(
-                            painterResource(R.drawable.arrow_down),
-                            stringResource(R.string.more_info),
-                            modifier = Modifier.rotate(iconRotation)
+                        Text(
+                            millisecondsToHoursMinutes(
+                                focusDuration,
+                                hoursMinutesFormat
+                            ),
+                            style = typography.displaySmall,
+                            modifier = Modifier
+                                .sharedElement(
+                                    sharedContentState = this@LastMonthScreen
+                                        .rememberSharedContentState("last month average focus timer"),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
                         )
-                        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                        Text(stringResource(R.string.show_chart))
+                        Text(
+                            stringResource(R.string.focus_per_day_avg),
+                            style = typography.titleSmall,
+                            modifier = Modifier
+                                .padding(bottom = 5.2.dp)
+                                .sharedElement(
+                                    sharedContentState = this@LastMonthScreen
+                                        .rememberSharedContentState("focus per day average (month)"),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
+                        )
                     }
+                }
+                item {
+                    TimeColumnChart(
+                        modelProducer = mainChartData.first,
+                        hoursFormat = hoursFormat,
+                        hoursMinutesFormat = hoursMinutesFormat,
+                        minutesFormat = minutesFormat,
+                        axisTypeface = axisTypeface,
+                        markerTypeface = markerTypeface,
+                        thickness = 8.dp,
+                        xValueFormatter = CartesianValueFormatter { context, x, _ ->
+                            context.model.extraStore[mainChartData.second][x.toInt()]
+                        },
+                        goal = goal,
+                        zoomState = zoomState,
+                        scrollState = scrollState,
+                        modifier = Modifier
+                            .sharedBounds(
+                                sharedContentState = this@LastMonthScreen
+                                    .rememberSharedContentState("last month chart"),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
+                    )
+                }
 
-                    AnimatedVisibility(breakdownChartExpanded) {
-                        LaunchedEffect(focusBreakdownValues.first) {
-                            lastMonthSummaryAnalysisModelProducer.runTransaction {
-                                columnSeries {
-                                    series(focusBreakdownValues.first)
-                                }
-                            }
+                item { Spacer(Modifier.height(8.dp)) }
+
+                item {
+                    Text(
+                        stringResource(R.string.focus_breakdown),
+                        style = typography.headlineSmall
+                    )
+                    Text(
+                        stringResource(R.string.focus_breakdown_desc),
+                        style = typography.bodySmall,
+                        color = colorScheme.onSurfaceVariant
+                    )
+                }
+
+                item { HorizontalStackedBar(focusBreakdownValues.first, rankList = rankList) }
+                item {
+                    Row {
+                        focusBreakdownValues.first.fastForEach {
+                            Text(
+                                if (it <= 60 * 60 * 1000)
+                                    millisecondsToMinutes(it, minutesFormat)
+                                else millisecondsToHoursMinutes(it, hoursMinutesFormat),
+                                style = typography.bodyLarge,
+                                textAlign = TextAlign.Center,
+                                color = colorScheme.onSurfaceVariant,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+
+                item {
+                    val iconRotation by animateFloatAsState(
+                        if (breakdownChartExpanded) 180f else 0f
+                    )
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        TonalToggleButton(
+                            checked = breakdownChartExpanded,
+                            onCheckedChange = { breakdownChartExpanded = it },
+                            modifier = Modifier.align(Alignment.End)
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.arrow_down),
+                                stringResource(R.string.more_info),
+                                modifier = Modifier.rotate(iconRotation)
+                            )
+                            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                            Text(stringResource(R.string.show_chart))
                         }
 
-                        FocusBreakdownChart(
-                            modelProducer = lastMonthSummaryAnalysisModelProducer,
-                            modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
-                        )
+                        AnimatedVisibility(breakdownChartExpanded) {
+                            LaunchedEffect(focusBreakdownValues.first) {
+                                lastMonthSummaryAnalysisModelProducer.runTransaction {
+                                    columnSeries {
+                                        series(focusBreakdownValues.first)
+                                    }
+                                }
+                            }
+
+                            FocusBreakdownChart(
+                                modelProducer = lastMonthSummaryAnalysisModelProducer,
+                                modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
+                            )
+                        }
                     }
                 }
-            }
 
-            item {
-                Text(
-                    stringResource(R.string.focus_break_ratio),
-                    style = typography.headlineSmall
-                )
-            }
-            item {
-                FocusBreakRatioVisualization(
-                    focusDuration = focusDuration,
-                    breakDuration = focusBreakdownValues.second
-                )
-            }
+                item {
+                    Text(
+                        stringResource(R.string.focus_break_ratio),
+                        style = typography.headlineSmall
+                    )
+                }
+                item {
+                    FocusBreakRatioVisualization(
+                        focusDuration = focusDuration,
+                        breakDuration = focusBreakdownValues.second
+                    )
+                }
 
-            item { Spacer(Modifier.height(8.dp)) }
+                item { Spacer(Modifier.height(8.dp)) }
 
-            item {
-                Text(
-                    stringResource(R.string.focus_history_calendar),
-                    style = typography.headlineSmall
-                )
-                Text(
-                    stringResource(R.string.focus_history_calendar_desc),
-                    style = typography.bodySmall,
-                    color = colorScheme.onSurfaceVariant
-                )
-            }
-            item {
-                FocusHistoryCalendar(
-                    data = calendarData,
-                    averageRankList = rankList
-                )
+                item {
+                    Text(
+                        stringResource(R.string.focus_history_calendar),
+                        style = typography.headlineSmall
+                    )
+                    Text(
+                        stringResource(R.string.focus_history_calendar_desc),
+                        style = typography.bodySmall,
+                        color = colorScheme.onSurfaceVariant
+                    )
+                }
+                item {
+                    FocusHistoryCalendar(
+                        data = calendarData,
+                        averageRankList = rankList
+                    )
+                }
             }
         }
     }

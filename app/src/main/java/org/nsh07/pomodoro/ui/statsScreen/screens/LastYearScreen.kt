@@ -23,6 +23,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,6 +50,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TonalToggleButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -65,6 +68,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -83,6 +87,7 @@ import org.nsh07.pomodoro.ui.statsScreen.components.HorizontalStackedBar
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeLineChart
 import org.nsh07.pomodoro.ui.statsScreen.components.sharedBoundsReveal
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.utils.millisecondsToMinutes
@@ -127,6 +132,10 @@ fun SharedTransitionScope.LastYearScreen(
         focusBreakdownValues.first.sum()
     }
 
+    val widthExpanded = currentWindowAdaptiveInfo()
+        .windowSizeClass
+        .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -145,16 +154,20 @@ fun SharedTransitionScope.LastYearScreen(
                     Text(stringResource(R.string.stats))
                 },
                 navigationIcon = {
-                    FilledTonalIconButton(
-                        onClick = onBack,
-                        shapes = IconButtonDefaults.shapes()
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.arrow_back),
-                            stringResource(R.string.back)
-                        )
-                    }
+                    if (!widthExpanded)
+                        FilledTonalIconButton(
+                            onClick = onBack,
+                            shapes = IconButtonDefaults.shapes()
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.arrow_back),
+                                stringResource(R.string.back)
+                            )
+                        }
                 },
+                colors = if (widthExpanded)
+                    TopAppBarDefaults.topAppBarColors(scrolledContainerColor = colorScheme.surfaceContainerLow)
+                else TopAppBarDefaults.topAppBarColors(),
                 scrollBehavior = scrollBehavior
             )
         },
@@ -170,224 +183,231 @@ fun SharedTransitionScope.LastYearScreen(
             )
     ) { innerPadding ->
         val insets = mergePaddingValues(innerPadding, contentPadding)
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = insets,
-            modifier = Modifier.fillMaxSize() // we don't add padding here to allow charts to extend to the edge
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
         ) {
-            item {
-                Spacer(Modifier.height(16.dp))
-                Row(
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                ) {
-                    Text(
-                        millisecondsToHoursMinutes(
-                            focusDuration,
-                            hoursMinutesFormat
-                        ),
-                        style = typography.displaySmall,
-                        modifier = Modifier
-                            .sharedElement(
-                                sharedContentState = this@LastYearScreen
-                                    .rememberSharedContentState("last year average focus timer"),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                            )
-                    )
-                    Text(
-                        stringResource(R.string.focus_per_day_avg),
-                        style = typography.titleSmall,
-                        modifier = Modifier
-                            .padding(bottom = 5.2.dp)
-                            .sharedElement(
-                                sharedContentState = this@LastYearScreen
-                                    .rememberSharedContentState("focus per day average (year)"),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                            )
-                    )
-                }
-            }
-            item {
-                TimeLineChart(
-                    modelProducer = mainChartData.first,
-                    hoursFormat = hoursFormat,
-                    hoursMinutesFormat = hoursMinutesFormat,
-                    minutesFormat = minutesFormat,
-                    axisTypeface = axisTypeface,
-                    markerTypeface = markerTypeface,
-                    xValueFormatter = CartesianValueFormatter { context, x, _ ->
-                        context.model.extraStore[mainChartData.second][x.toInt()]
-                    },
-                    goal = goal,
-                    zoomState = zoomState,
-                    scrollState = scrollState,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .sharedBounds(
-                            sharedContentState = this@LastYearScreen
-                                .rememberSharedContentState("last year chart"),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                        )
-                )
-            }
-
-            item { Spacer(Modifier.height(8.dp)) }
-
-            item {
-                Text(
-                    stringResource(R.string.focus_breakdown),
-                    style = typography.headlineSmall,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                Text(
-                    stringResource(R.string.focus_breakdown_desc),
-                    style = typography.bodySmall,
-                    color = colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-
-            item {
-                HorizontalStackedBar(
-                    focusBreakdownValues.first,
-                    rankList = rankList,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-            item {
-                Row(Modifier.padding(horizontal = 16.dp)) {
-                    focusBreakdownValues.first.fastForEach {
-                        Text(
-                            if (it <= 60 * 60 * 1000)
-                                millisecondsToMinutes(it, minutesFormat)
-                            else millisecondsToHoursMinutes(it, hoursMinutesFormat),
-                            style = typography.bodyLarge,
-                            textAlign = TextAlign.Center,
-                            color = colorScheme.onSurfaceVariant,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                }
-            }
-
-            item {
-                val iconRotation by animateFloatAsState(
-                    if (breakdownChartExpanded) 180f else 0f
-                )
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth()
-                ) {
-                    TonalToggleButton(
-                        checked = breakdownChartExpanded,
-                        onCheckedChange = { breakdownChartExpanded = it },
-                        modifier = Modifier.align(Alignment.End)
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = insets,
+                modifier = Modifier
+                    .widthIn(max = PANE_MAX_WIDTH)
+                    .fillMaxSize() // we don't add padding here to allow charts to extend to the edge
+            ) {
+                item {
+                    Spacer(Modifier.height(16.dp))
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     ) {
-                        Icon(
-                            painterResource(R.drawable.arrow_down),
-                            stringResource(R.string.more_info),
-                            modifier = Modifier.rotate(iconRotation)
+                        Text(
+                            millisecondsToHoursMinutes(
+                                focusDuration,
+                                hoursMinutesFormat
+                            ),
+                            style = typography.displaySmall,
+                            modifier = Modifier
+                                .sharedElement(
+                                    sharedContentState = this@LastYearScreen
+                                        .rememberSharedContentState("last year average focus timer"),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
                         )
-                        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                        Text(stringResource(R.string.show_chart))
+                        Text(
+                            stringResource(R.string.focus_per_day_avg),
+                            style = typography.titleSmall,
+                            modifier = Modifier
+                                .padding(bottom = 5.2.dp)
+                                .sharedElement(
+                                    sharedContentState = this@LastYearScreen
+                                        .rememberSharedContentState("focus per day average (year)"),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
+                        )
                     }
+                }
+                item {
+                    TimeLineChart(
+                        modelProducer = mainChartData.first,
+                        hoursFormat = hoursFormat,
+                        hoursMinutesFormat = hoursMinutesFormat,
+                        minutesFormat = minutesFormat,
+                        axisTypeface = axisTypeface,
+                        markerTypeface = markerTypeface,
+                        xValueFormatter = CartesianValueFormatter { context, x, _ ->
+                            context.model.extraStore[mainChartData.second][x.toInt()]
+                        },
+                        goal = goal,
+                        zoomState = zoomState,
+                        scrollState = scrollState,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .sharedBounds(
+                                sharedContentState = this@LastYearScreen
+                                    .rememberSharedContentState("last year chart"),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
+                    )
+                }
 
-                    AnimatedVisibility(breakdownChartExpanded) {
-                        LaunchedEffect(focusBreakdownValues.first) {
-                            lastYearSummaryAnalysisModelProducer.runTransaction {
-                                columnSeries {
-                                    series(focusBreakdownValues.first)
-                                }
-                            }
+                item { Spacer(Modifier.height(8.dp)) }
+
+                item {
+                    Text(
+                        stringResource(R.string.focus_breakdown),
+                        style = typography.headlineSmall,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    Text(
+                        stringResource(R.string.focus_breakdown_desc),
+                        style = typography.bodySmall,
+                        color = colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+
+                item {
+                    HorizontalStackedBar(
+                        focusBreakdownValues.first,
+                        rankList = rankList,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+                item {
+                    Row(Modifier.padding(horizontal = 16.dp)) {
+                        focusBreakdownValues.first.fastForEach {
+                            Text(
+                                if (it <= 60 * 60 * 1000)
+                                    millisecondsToMinutes(it, minutesFormat)
+                                else millisecondsToHoursMinutes(it, hoursMinutesFormat),
+                                style = typography.bodyLarge,
+                                textAlign = TextAlign.Center,
+                                color = colorScheme.onSurfaceVariant,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+
+                item {
+                    val iconRotation by animateFloatAsState(
+                        if (breakdownChartExpanded) 180f else 0f
+                    )
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .fillMaxWidth()
+                    ) {
+                        TonalToggleButton(
+                            checked = breakdownChartExpanded,
+                            onCheckedChange = { breakdownChartExpanded = it },
+                            modifier = Modifier.align(Alignment.End)
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.arrow_down),
+                                stringResource(R.string.more_info),
+                                modifier = Modifier.rotate(iconRotation)
+                            )
+                            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                            Text(stringResource(R.string.show_chart))
                         }
 
-                        FocusBreakdownChart(
-                            modelProducer = lastYearSummaryAnalysisModelProducer,
-                            modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
-                        )
+                        AnimatedVisibility(breakdownChartExpanded) {
+                            LaunchedEffect(focusBreakdownValues.first) {
+                                lastYearSummaryAnalysisModelProducer.runTransaction {
+                                    columnSeries {
+                                        series(focusBreakdownValues.first)
+                                    }
+                                }
+                            }
+
+                            FocusBreakdownChart(
+                                modelProducer = lastYearSummaryAnalysisModelProducer,
+                                modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
+                            )
+                        }
                     }
                 }
-            }
 
-            item {
-                Text(
-                    stringResource(R.string.focus_break_ratio),
-                    style = typography.headlineSmall,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-            item {
-                FocusBreakRatioVisualization(
-                    focusDuration = focusDuration,
-                    breakDuration = focusBreakdownValues.second,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-
-            item { Spacer(Modifier.height(8.dp)) }
-
-            item {
-                Text(
-                    stringResource(R.string.focus_history_heatmap),
-                    style = typography.headlineSmall,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                Text(
-                    stringResource(R.string.focus_history_heatmap_desc),
-                    style = typography.bodySmall,
-                    color = colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-            item {
-                HeatmapWithWeekLabels(
-                    data = focusHeatmapData,
-                    averageRankList = rankList,
-                    maxValue = heatmapMaxValue,
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
-            item { // Heatmap guide
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                item {
                     Text(
-                        stringResource(R.string.less),
-                        color = colorScheme.onSurfaceVariant,
-                        style = typography.labelMedium
+                        stringResource(R.string.focus_break_ratio),
+                        style = typography.headlineSmall,
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
-                    Spacer(Modifier.width(8.dp))
+                }
+                item {
+                    FocusBreakRatioVisualization(
+                        focusDuration = focusDuration,
+                        breakDuration = focusBreakdownValues.second,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+
+                item { Spacer(Modifier.height(8.dp)) }
+
+                item {
+                    Text(
+                        stringResource(R.string.focus_history_heatmap),
+                        style = typography.headlineSmall,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    Text(
+                        stringResource(R.string.focus_history_heatmap_desc),
+                        style = typography.bodySmall,
+                        color = colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+                item {
+                    HeatmapWithWeekLabels(
+                        data = focusHeatmapData,
+                        averageRankList = rankList,
+                        maxValue = heatmapMaxValue,
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
+                item { // Heatmap guide
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(HEATMAP_CELL_GAP),
-                        modifier = Modifier.clip(shapes.small)
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Spacer(
-                            Modifier
-                                .size(HEATMAP_CELL_SIZE)
-                                .background(colorScheme.surfaceVariant, shapes.extraSmall)
+                        Text(
+                            stringResource(R.string.less),
+                            color = colorScheme.onSurfaceVariant,
+                            style = typography.labelMedium
                         )
-                        (4..10 step 3).forEach {
+                        Spacer(Modifier.width(8.dp))
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(HEATMAP_CELL_GAP),
+                            modifier = Modifier.clip(shapes.small)
+                        ) {
                             Spacer(
                                 Modifier
                                     .size(HEATMAP_CELL_SIZE)
-                                    .background(
-                                        colorScheme.primary.copy(it.toFloat() / 10f),
-                                        shapes.extraSmall
-                                    )
+                                    .background(colorScheme.surfaceVariant, shapes.extraSmall)
                             )
+                            (4..10 step 3).forEach {
+                                Spacer(
+                                    Modifier
+                                        .size(HEATMAP_CELL_SIZE)
+                                        .background(
+                                            colorScheme.primary.copy(it.toFloat() / 10f),
+                                            shapes.extraSmall
+                                        )
+                                )
+                            }
                         }
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            stringResource(R.string.more),
+                            color = colorScheme.onSurfaceVariant,
+                            style = typography.labelMedium
+                        )
                     }
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        stringResource(R.string.more),
-                        color = colorScheme.onSurfaceVariant,
-                        style = typography.labelMedium
-                    )
                 }
             }
         }

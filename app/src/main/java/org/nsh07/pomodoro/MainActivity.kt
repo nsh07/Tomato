@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -45,8 +46,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         appContainer.activityTurnScreenOn = {
-            setShowWhenLocked(it)
-            setTurnScreenOn(it)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                setShowWhenLocked(it)
+                setTurnScreenOn(it)
+            }
         }
 
         setContent {

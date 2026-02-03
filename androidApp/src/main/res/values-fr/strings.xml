@@ -124,4 +124,5 @@
     <string name="choose_folder">Choisir un dossier</string>
     <string name="choose_file">Choisir un fichier</string>
     <string name="restart_app">Redémarrer l\'application</string>
+    <string name="milliseconds_format">%1$dms</string>
 </resources>

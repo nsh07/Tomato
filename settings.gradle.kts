@@ -37,4 +37,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Tomato"
-include(":app")
+include(":androidApp")
+include(":composeApp")

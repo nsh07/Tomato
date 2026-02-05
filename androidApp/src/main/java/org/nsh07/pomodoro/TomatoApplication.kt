@@ -20,15 +20,17 @@ package org.nsh07.pomodoro
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import androidx.core.app.NotificationManagerCompat
+import org.koin.android.ext.android.get
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 import org.nsh07.pomodoro.billing.initializePurchases
-import org.nsh07.pomodoro.data.AppContainer
-import org.nsh07.pomodoro.data.DefaultAppContainer
 
 class TomatoApplication : Application() {
-    lateinit var container: AppContainer
     override fun onCreate() {
         super.onCreate()
-        container = DefaultAppContainer(this)
 
         initializePurchases(this)
 
@@ -38,6 +40,14 @@ class TomatoApplication : Application() {
             NotificationManager.IMPORTANCE_DEFAULT
         )
 
-        container.notificationManager.createNotificationChannel(notificationChannel)
+
+        startKoin {
+            androidLogger(Level.INFO)
+
+            androidContext(this@TomatoApplication)
+            modules(dbModule, servicesModule , viewModels)
+        }
+
+        get<NotificationManagerCompat>().createNotificationChannel(notificationChannel)
     }
 }

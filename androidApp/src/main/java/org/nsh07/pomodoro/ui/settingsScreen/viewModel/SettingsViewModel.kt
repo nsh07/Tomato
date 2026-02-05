@@ -28,11 +28,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.graphics.Color
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -45,7 +41,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.nsh07.pomodoro.TomatoApplication
+import org.nsh07.pomodoro.TimerStateHolder
 import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.StatRepository
@@ -63,8 +59,10 @@ class SettingsViewModel(
     private val stateRepository: StateRepository,
     private val statRepository: StatRepository,
     private val serviceHelper: ServiceHelper,
-    private val time: MutableStateFlow<Long>
+    private val timerStateHolder: TimerStateHolder
 ) : ViewModel() {
+    private val time: MutableStateFlow<Long> = timerStateHolder.time
+
     val backStack = mutableStateListOf<Screen.Settings>(Screen.Settings.Main)
 
     val isPlus = billingManager.isPlus
@@ -566,29 +564,6 @@ class SettingsViewModel(
                     nextTimeStr = millisecondsToStr(if (settingsState.sessionLength > 1) settingsState.shortBreakTime else settingsState.longBreakTime),
                     currentFocusCount = 1,
                     totalFocusCount = settingsState.sessionLength
-                )
-            }
-        }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as TomatoApplication)
-                val appBillingManager = application.container.billingManager
-                val appPreferenceRepository = application.container.appPreferenceRepository
-                val serviceHelper = application.container.serviceHelper
-                val stateRepository = application.container.stateRepository
-                val statRepository = application.container.appStatRepository
-                val time = application.container.time
-
-                SettingsViewModel(
-                    billingManager = appBillingManager,
-                    preferenceRepository = appPreferenceRepository,
-                    serviceHelper = serviceHelper,
-                    stateRepository = stateRepository,
-                    statRepository = statRepository,
-                    time = time,
                 )
             }
         }

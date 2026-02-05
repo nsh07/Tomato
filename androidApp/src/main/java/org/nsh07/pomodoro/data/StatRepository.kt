@@ -22,6 +22,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.qualifier.named
+import org.koin.java.KoinJavaComponent.inject
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -55,7 +58,7 @@ interface StatRepository {
  */
 class AppStatRepository(
     private val statDao: StatDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher
 ) : StatRepository {
     override suspend fun insertStat(stat: Stat) = statDao.insertStat(stat)
 
@@ -128,9 +131,4 @@ class AppStatRepository(
     override suspend fun getLastDate(): LocalDate? = statDao.getLastDate()
 
     override suspend fun deleteAllStats() = statDao.clearAll()
-
-    companion object {
-        fun get(context: Context) =
-            AppStatRepository(AppDatabase.getDatabase(context).statDao())
-    }
 }

@@ -21,14 +21,9 @@ import android.content.Context
 import android.net.Uri
 import android.provider.DocumentsContract
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.sqlite.db.SimpleSQLiteQuery
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.nsh07.pomodoro.TomatoApplication
 import org.nsh07.pomodoro.data.AppDatabase
 import org.nsh07.pomodoro.data.SystemDao
 import java.io.File
@@ -38,7 +33,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
 class BackupRestoreViewModel(
-    val systemDao: SystemDao
+    val systemDao: SystemDao,
+    val database: AppDatabase
 ) : ViewModel() {
     suspend fun performBackup(context: Context, uri: Uri) {
         withContext(Dispatchers.IO) {
@@ -69,7 +65,8 @@ class BackupRestoreViewModel(
 
     suspend fun performRestore(context: Context, backupUri: Uri) {
         withContext(Dispatchers.IO) {
-            AppDatabase.getDatabase(context).close()
+            database.close()
+//            AppDatabase.getDatabase(context).close()
 
             val dbName = "app_database"
             val dbFile = context.getDatabasePath(dbName)
@@ -87,13 +84,13 @@ class BackupRestoreViewModel(
         }
     }
 
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as TomatoApplication)
-
-                BackupRestoreViewModel(application.container.systemDao)
-            }
-        }
-    }
+//    companion object {
+//        val Factory: ViewModelProvider.Factory = viewModelFactory {
+//            initializer {
+//                val application = (this[APPLICATION_KEY] as TomatoApplication)
+//
+//                BackupRestoreViewModel(application.container.systemDao)
+//            }
+//        }
+//    }
 }

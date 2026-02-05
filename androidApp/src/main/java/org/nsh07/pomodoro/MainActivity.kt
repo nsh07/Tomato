@@ -22,12 +22,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.android.ext.android.inject
+import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.ui.AppScreen
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
@@ -35,17 +36,15 @@ import org.nsh07.pomodoro.utils.toColor
 
 class MainActivity : ComponentActivity() {
 
-    private val settingsViewModel: SettingsViewModel by viewModels(factoryProducer = { SettingsViewModel.Factory })
-
-    private val appContainer by lazy {
-        (application as TomatoApplication).container
-    }
+    private val settingsViewModel: SettingsViewModel by inject()
+    private val stateRepository: StateRepository by inject()
+    private val activityCallbacks: ActivityCallbacks by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        appContainer.activityTurnScreenOn = {
+        activityCallbacks.activityTurnScreenOn = {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
                 setShowWhenLocked(it)
                 setTurnScreenOn(it)
@@ -72,14 +71,14 @@ class MainActivity : ComponentActivity() {
             ) {
                 val colorScheme = colorScheme
                 LaunchedEffect(colorScheme) {
-                    appContainer.stateRepository.colorScheme = colorScheme
+                    stateRepository.colorScheme = colorScheme
                 }
 
                 AppScreen(
                     isPlus = isPlus,
                     isAODEnabled = settingsState.aodEnabled,
                     setTimerFrequency = {
-                        appContainer.stateRepository.timerFrequency = it
+                        stateRepository.timerFrequency = it
                     }
                 )
             }
@@ -90,12 +89,12 @@ class MainActivity : ComponentActivity() {
     override fun onStop() {
         super.onStop()
         // Reduce the timer loop frequency when not visible to save battery
-        appContainer.stateRepository.timerFrequency = 1f
+        stateRepository.timerFrequency = 1f
     }
 
     override fun onStart() {
         super.onStart()
         // Increase the timer loop frequency again when visible to make the progress smoother
-        appContainer.stateRepository.timerFrequency = 60f
+        stateRepository.timerFrequency = 60f
     }
 }

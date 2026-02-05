@@ -85,6 +85,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass
+import org.koin.compose.koinInject
 import org.nsh07.pomodoro.billing.TomatoPlusPaywallDialog
 import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
@@ -103,8 +104,8 @@ fun AppScreen(
     isPlus: Boolean,
     setTimerFrequency: (Float) -> Unit,
     modifier: Modifier = Modifier,
-    timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory),
-    settingsViewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
+    timerViewModel: TimerViewModel = koinInject(),
+    settingsViewModel: SettingsViewModel = koinInject()
 ) {
     val context = LocalContext.current
 

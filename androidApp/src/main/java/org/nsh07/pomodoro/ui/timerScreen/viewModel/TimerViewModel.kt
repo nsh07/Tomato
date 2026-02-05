@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.nsh07.pomodoro.TomatoApplication
+import org.nsh07.pomodoro.TimerStateHolder
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
@@ -47,8 +47,10 @@ class TimerViewModel(
     private val serviceHelper: ServiceHelper,
     private val stateRepository: StateRepository,
     private val statRepository: StatRepository,
-    private val _time: MutableStateFlow<Long>
+    private val timerStateHolder: TimerStateHolder,
 ) : ViewModel() {
+
+    private val _time: MutableStateFlow<Long> = timerStateHolder.time
     val timerState: StateFlow<TimerState> = stateRepository.timerState.asStateFlow()
 
     val time: StateFlow<Long> = _time.asStateFlow()
@@ -82,24 +84,5 @@ class TimerViewModel(
 
     fun onAction(action: TimerAction) {
         serviceHelper.startService(action)
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as TomatoApplication)
-                val appStatRepository = application.container.appStatRepository
-                val stateRepository = application.container.stateRepository
-                val serviceHelper = application.container.serviceHelper
-                val time = application.container.time
-
-                TimerViewModel(
-                    serviceHelper = serviceHelper,
-                    stateRepository = stateRepository,
-                    statRepository = appStatRepository,
-                    _time = time
-                )
-            }
-        }
     }
 }

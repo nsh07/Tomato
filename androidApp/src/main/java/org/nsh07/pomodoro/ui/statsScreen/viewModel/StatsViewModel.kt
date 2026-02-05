@@ -46,8 +46,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.inject
 import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.TomatoApplication
+import org.nsh07.pomodoro.data.AppStatRepository
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.ui.Screen
@@ -334,7 +336,7 @@ class StatsViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as TomatoApplication)
-                val appStatRepository = application.container.appStatRepository
+                val appStatRepository: AppStatRepository by inject(AppStatRepository::class.java)
 
                 StatsViewModel(appStatRepository)
             }

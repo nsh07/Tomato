@@ -70,7 +70,7 @@ interface PreferenceRepository {
  */
 class AppPreferenceRepository(
     private val preferenceDao: PreferenceDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher
 ) : PreferenceRepository {
     override suspend fun saveIntPreference(key: String, value: Int): Int =
         withContext(ioDispatcher) {

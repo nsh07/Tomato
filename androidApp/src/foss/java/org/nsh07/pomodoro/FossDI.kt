@@ -21,14 +21,13 @@ import org.koin.dsl.module
 import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.billing.FossBillingManager
 import org.nsh07.pomodoro.billing.TomatoPlusPaywallDialog
+import org.nsh07.pomodoro.di.FlavorUI
 import org.nsh07.pomodoro.ui.settingsScreen.components.BottomButton
 import org.nsh07.pomodoro.ui.settingsScreen.components.TopButton
 
-private val fossModule = module {
+val flavorModule = module {
     single<BillingManager> { FossBillingManager() }
 }
-
-val flavorModule = fossModule
 
 val flavorUiModule = module {
     single {

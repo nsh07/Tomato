@@ -30,10 +30,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.nsh07.pomodoro.TimerStateHolder
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
+import org.nsh07.pomodoro.di.TimerStateHolder
 import org.nsh07.pomodoro.service.ServiceHelper
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit

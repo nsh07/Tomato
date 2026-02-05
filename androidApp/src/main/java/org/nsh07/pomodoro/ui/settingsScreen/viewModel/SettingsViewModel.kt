@@ -41,11 +41,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.nsh07.pomodoro.TimerStateHolder
 import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
+import org.nsh07.pomodoro.di.TimerStateHolder
 import org.nsh07.pomodoro.service.ServiceHelper
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction

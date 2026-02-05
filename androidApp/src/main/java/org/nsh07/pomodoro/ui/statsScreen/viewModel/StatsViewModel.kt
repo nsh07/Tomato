@@ -42,9 +42,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.nsh07.pomodoro.AppInfo
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
+import org.nsh07.pomodoro.di.AppInfo
 import org.nsh07.pomodoro.ui.Screen
 import java.time.DayOfWeek
 import java.time.LocalDate

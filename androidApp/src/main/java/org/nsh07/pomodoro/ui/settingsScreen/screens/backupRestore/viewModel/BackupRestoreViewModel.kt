@@ -66,7 +66,6 @@ class BackupRestoreViewModel(
     suspend fun performRestore(context: Context, backupUri: Uri) {
         withContext(Dispatchers.IO) {
             database.close()
-//            AppDatabase.getDatabase(context).close()
 
             val dbName = "app_database"
             val dbFile = context.getDatabasePath(dbName)

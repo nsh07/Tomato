@@ -45,11 +45,11 @@ import kotlinx.coroutines.sync.withLock
 import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.nsh07.pomodoro.ActivityCallbacks
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.TimerStateHolder
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
+import org.nsh07.pomodoro.di.ActivityCallbacks
+import org.nsh07.pomodoro.di.TimerStateHolder
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import kotlin.text.Typography.middleDot

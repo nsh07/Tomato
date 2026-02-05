@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.android.ext.android.inject
 import org.nsh07.pomodoro.data.StateRepository
+import org.nsh07.pomodoro.di.ActivityCallbacks
 import org.nsh07.pomodoro.ui.AppScreen
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.TomatoTheme

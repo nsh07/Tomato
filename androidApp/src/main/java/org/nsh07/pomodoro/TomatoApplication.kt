@@ -27,6 +27,9 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import org.nsh07.pomodoro.billing.initializePurchases
+import org.nsh07.pomodoro.di.dbModule
+import org.nsh07.pomodoro.di.servicesModule
+import org.nsh07.pomodoro.di.viewModels
 
 class TomatoApplication : Application() {
     override fun onCreate() {

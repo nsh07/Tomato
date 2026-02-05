@@ -85,7 +85,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass
 import org.koin.compose.koinInject
-import org.nsh07.pomodoro.FlavorUI
+import org.nsh07.pomodoro.di.FlavorUI
 import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
@@ -320,6 +320,5 @@ fun AppScreen(
         exit = slideOutVertically { it }
     ) {
         flavorUI.tomatoPlusPaywallDialog(isPlus) { showPaywall = false }
-//        TomatoPlusPaywallDialog(isPlus = isPlus) { showPaywall = false }
     }
 }

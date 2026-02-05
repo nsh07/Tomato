@@ -66,9 +66,9 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import org.koin.compose.koinInject
-import org.nsh07.pomodoro.AppInfo
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
+import org.nsh07.pomodoro.di.AppInfo
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeColumnChart

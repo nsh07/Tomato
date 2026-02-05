@@ -60,8 +60,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import org.koin.compose.koinInject
-import org.nsh07.pomodoro.AppInfo
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.di.AppInfo
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.SettingsNavItem
 import org.nsh07.pomodoro.ui.mergePaddingValues

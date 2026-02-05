@@ -65,10 +65,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import org.koin.compose.koinInject
-import org.nsh07.pomodoro.AppInfo
-import org.nsh07.pomodoro.BuildConfig
-import org.nsh07.pomodoro.FlavorUI
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.di.AppInfo
+import org.nsh07.pomodoro.di.FlavorUI
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.LicenseBottomSheet

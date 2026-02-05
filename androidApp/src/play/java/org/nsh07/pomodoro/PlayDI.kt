@@ -25,11 +25,9 @@ import org.nsh07.pomodoro.ui.settingsScreen.components.BottomButton
 import org.nsh07.pomodoro.ui.settingsScreen.components.TopButton
 
 
-private val playModule = module {
+val flavorModule = module {
     single<BillingManager> { PlayBillingManager() }
 }
-
-val flavorModule = playModule
 
 val flavorUiModule = module {
     single {

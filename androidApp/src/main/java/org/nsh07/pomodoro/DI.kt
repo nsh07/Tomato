@@ -4,6 +4,8 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
@@ -18,8 +20,6 @@ import org.koin.dsl.module
 import org.koin.plugin.module.dsl.create
 import org.koin.plugin.module.dsl.single
 import org.koin.plugin.module.dsl.viewModel
-import org.nsh07.pomodoro.billing.BillingManager
-import org.nsh07.pomodoro.billing.BillingManagerProvider
 import org.nsh07.pomodoro.data.AppDatabase
 import org.nsh07.pomodoro.data.AppPreferenceRepository
 import org.nsh07.pomodoro.data.AppStatRepository
@@ -44,6 +44,12 @@ class ActivityCallbacks {
     var activityTurnScreenOn: (Boolean) -> Unit = {}
 }
 
+data class FlavorUI(
+    val tomatoPlusPaywallDialog: @Composable (Boolean, () -> Unit) -> Unit,
+    val topButton: @Composable (Modifier) -> Unit,
+    val bottomButton: @Composable (Modifier) -> Unit
+)
+
 val dbModule = module {
     single<AppDatabase> { create(::createDatabase) }
     single { get<AppDatabase>().preferenceDao() }
@@ -57,7 +63,6 @@ val servicesModule = module {
     single<AppStatRepository>() bind StatRepository::class
     single<AppPreferenceRepository>() bind PreferenceRepository::class
     single<StateRepository>()
-    single<BillingManager> { BillingManagerProvider.manager }
     single<ServiceHelper>()
 
     single { NotificationManagerCompat.from(get()) }

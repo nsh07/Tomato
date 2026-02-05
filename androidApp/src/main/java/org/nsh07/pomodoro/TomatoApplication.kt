@@ -45,7 +45,7 @@ class TomatoApplication : Application() {
             androidLogger(Level.INFO)
 
             androidContext(this@TomatoApplication)
-            modules(dbModule, servicesModule , viewModels)
+            modules(dbModule, flavorModule, flavorUiModule, servicesModule , viewModels)
         }
 
         get<NotificationManagerCompat>().createNotificationChannel(notificationChannel)

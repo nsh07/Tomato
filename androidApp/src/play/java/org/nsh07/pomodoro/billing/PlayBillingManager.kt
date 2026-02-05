@@ -52,7 +52,3 @@ class PlayBillingManager : BillingManager {
         )
     }
 }
-
-object BillingManagerProvider {
-    val manager: BillingManager = PlayBillingManager()
-}

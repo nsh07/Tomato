@@ -65,7 +65,8 @@ import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
-import org.nsh07.pomodoro.BuildConfig
+import org.koin.compose.koinInject
+import org.nsh07.pomodoro.AppInfo
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.Screen
@@ -103,6 +104,7 @@ fun SharedTransitionScope.StatsMainScreen(
     markerTypeface: Typeface,
     zoomStates: List<VicoZoomState>,
     scrollStates: List<VicoScrollState>,
+    appInfo: AppInfo = koinInject(),
     onNavigate: (Screen.Stats) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -128,7 +130,7 @@ fun SharedTransitionScope.StatsMainScreen(
                             .padding(vertical = 14.dp)
                     )
                 },
-                actions = if (BuildConfig.DEBUG) {
+                actions = if (appInfo.debug) {
                     {
                         IconButton(
                             onClick = generateSampleData

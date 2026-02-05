@@ -76,7 +76,7 @@ fun BackupRestoreScreen(
     contentPadding: PaddingValues,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: BackupRestoreViewModel = koinInject() //viewModel(factory = BackupRestoreViewModel.Factory)
+    viewModel: BackupRestoreViewModel = koinInject()
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

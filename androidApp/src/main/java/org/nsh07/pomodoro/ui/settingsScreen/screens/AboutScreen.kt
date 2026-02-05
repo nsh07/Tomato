@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import org.koin.compose.koinInject
+import org.nsh07.pomodoro.AppInfo
 import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.FlavorUI
 import org.nsh07.pomodoro.R
@@ -88,6 +89,7 @@ fun AboutScreen(
     isPlus: Boolean,
     onBack: () -> Unit,
     flavorUI: FlavorUI = koinInject(),
+    appInfo: AppInfo = koinInject(),
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -185,7 +187,7 @@ fun AboutScreen(
                                     fontFamily = googleFlex600
                                 )
                                 Text(
-                                    text = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
+                                    text = "${appInfo.versionName} (${appInfo.versionCode})",
                                     style = typography.labelLarge,
                                     color = colorScheme.primary
                                 )

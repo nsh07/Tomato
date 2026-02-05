@@ -21,11 +21,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.util.fastMaxBy
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
@@ -46,10 +42,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.java.KoinJavaComponent.inject
-import org.nsh07.pomodoro.BuildConfig
-import org.nsh07.pomodoro.TomatoApplication
-import org.nsh07.pomodoro.data.AppStatRepository
+import org.nsh07.pomodoro.AppInfo
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.ui.Screen
@@ -60,7 +53,8 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 class StatsViewModel(
-    private val statRepository: StatRepository
+    private val statRepository: StatRepository,
+    private val appInfo: AppInfo,
 ) : ViewModel() {
     val backStack = mutableStateListOf<Screen.Stats>(Screen.Stats.Main)
 
@@ -310,7 +304,7 @@ class StatsViewModel(
             )
 
     fun generateSampleData() {
-        if (BuildConfig.DEBUG) {
+        if (appInfo.debug) {
             viewModelScope.launch {
                 val today = LocalDate.now().plusDays(1)
                 var it = today.minusDays(365)
@@ -328,17 +322,6 @@ class StatsViewModel(
                     )
                     it = it.plusDays(1)
                 }
-            }
-        }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as TomatoApplication)
-                val appStatRepository: AppStatRepository by inject(AppStatRepository::class.java)
-
-                StatsViewModel(appStatRepository)
             }
         }
     }

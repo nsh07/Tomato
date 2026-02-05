@@ -59,7 +59,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
-import org.nsh07.pomodoro.BuildConfig
+import org.koin.compose.koinInject
+import org.nsh07.pomodoro.AppInfo
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.SettingsNavItem
@@ -82,6 +83,7 @@ fun SettingsMainScreen(
     contentPadding: PaddingValues,
     currentScreen: Screen.Settings,
     isPlus: Boolean,
+    appInfo: AppInfo = koinInject(),
     onAction: (SettingsAction) -> Unit,
     onNavigate: (Screen.Settings) -> Unit,
     setShowPaywall: (Boolean) -> Unit,
@@ -224,7 +226,7 @@ fun SettingsMainScreen(
                         Icon(painterResource(R.drawable.info), null)
                     },
                     supportingContent = {
-                        Text(stringResource(R.string.app_name) + " ${BuildConfig.VERSION_NAME}")
+                        Text(stringResource(R.string.app_name) + " ${appInfo.versionName}")
                     },
                     trailingContent = if (!widthExpanded) {
                         { Icon(painterResource(R.drawable.arrow_forward_big), null) }

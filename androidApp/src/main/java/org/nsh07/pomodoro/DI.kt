@@ -50,6 +50,12 @@ data class FlavorUI(
     val bottomButton: @Composable (Modifier) -> Unit
 )
 
+data class AppInfo(
+    val debug: Boolean,
+    val versionName: String,
+    val versionCode: Long
+)
+
 val dbModule = module {
     single<AppDatabase> { create(::createDatabase) }
     single { get<AppDatabase>().preferenceDao() }
@@ -60,6 +66,7 @@ val dbModule = module {
 val servicesModule = module {
     single<CoroutineDispatcher> { Dispatchers.IO }
 
+    single<AppInfo> { create(::createAppInfo) }
     single<AppStatRepository>() bind StatRepository::class
     single<AppPreferenceRepository>() bind PreferenceRepository::class
     single<StateRepository>()
@@ -86,6 +93,16 @@ private fun createDatabase(context: Context): AppDatabase {
         AppDatabase::class.java,
         "app_database"
     ).build()
+}
+
+private fun createAppInfo(context: Context): AppInfo {
+    val debug = context.packageName.endsWith(".debug")
+
+    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+    val versionName = packageInfo.versionName ?: "-"
+    val versionCode = packageInfo.longVersionCode
+
+    return AppInfo(debug, versionName, versionCode)
 }
 
 private fun createNotificationManager(context: Context): NotificationManager {

@@ -83,14 +83,4 @@ class BackupRestoreViewModel(
             }
         }
     }
-
-//    companion object {
-//        val Factory: ViewModelProvider.Factory = viewModelFactory {
-//            initializer {
-//                val application = (this[APPLICATION_KEY] as TomatoApplication)
-//
-//                BackupRestoreViewModel(application.container.systemDao)
-//            }
-//        }
-//    }
 }

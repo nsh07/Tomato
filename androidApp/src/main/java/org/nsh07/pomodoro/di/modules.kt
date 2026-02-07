@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
+import android.os.Build
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
@@ -75,7 +76,11 @@ private fun createAppInfo(context: Context): AppInfo {
 
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     val versionName = packageInfo.versionName ?: "-"
-    val versionCode = packageInfo.longVersionCode
+    val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        packageInfo.longVersionCode
+    } else {
+        0L
+    }
 
     return AppInfo(debug, versionName, versionCode)
 }
@@ -102,4 +107,5 @@ private fun createNotificationCompatBuilder(context: Context): NotificationCompa
         .setOngoing(true)
         .setRequestPromotedOngoing(true)
         .setVisibility(VISIBILITY_PUBLIC)
+        .setCategory(NotificationCompat.CATEGORY_STOPWATCH)
 }

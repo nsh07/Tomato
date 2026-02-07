@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2025 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  --><resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="alarm">Ξυπνητήρι</string>
+    <string name="alarm_desc">Κουδούνισμα όταν ένα χρονόμετρο τελειώνει</string>
+    <string name="alarm_sound">Ήχος κουδουνίσματος</string>
+    <string name="always_on_display">Πάντα Ενεργή Οθόνη</string>
+    <string name="always_on_display_desc">Πάτα οπουδήποτε κατά την προβολή του χρονομέτρου για να μεταβεί σε λειτουργία AOD</string>
+    <string name="appearance">Εμφάνιση</string>
+    <string name="black_theme">Μαύρο θέμα</string>
+    <string name="black_theme_desc">Χρήση καθαρού μαύρου θέματος</string>
+    <string name="break_">Διάλειμμα</string>
+    <string name="choose_color_scheme">Επέλεξε χρωματική παλέτα</string>
+    <string name="choose_language">Επέλεξε γλώσσα</string>
+    <string name="choose_theme">Επέλεξε θέμα</string>
+    <string name="color">Χρώμα</string>
+    <string name="color_scheme">Χρωματική παλέτα</string>
+    <string name="completed">Ολοκληρώθηκε</string>
+    <string name="dark">Σκοτεινό</string>
+    <string name="dnd">Μην Ενοχλείτε</string>
+    <string name="dnd_desc">Ενεργοποίηση του ΜΕ όταν τρέχει ένα χρονόμετρο Εστίασης</string>
+    <string name="durations">Διάρκειες</string>
+    <string name="dynamic">Δυναμικό</string>
+    <string name="dynamic_color">Δυναμικό χρώμα</string>
+    <string name="dynamic_color_desc">Προσαρμογή των χρωμάτων από την ταπετσαρία σου</string>
+    <string name="exit">Έξοδος</string>
+    <string name="focus">Εστίαση</string>
+    <string name="focus_per_day_avg">εστίαση ανά ημέρα (μο)</string>
+    <string name="get_plus">Απόκτησε το Tomato+</string>
+    <string name="help_with_translation">Βοήθησε στη μετάφραση του Tomato</string>
+    <string name="hours_and_minutes_format">%1$dώ %2$dλ</string>
+    <string name="hours_format">%1$dώ</string>
+    <string name="language">Γλώσσα</string>
+    <string name="last_month">Τρέχων μήνας</string>
+    <string name="last_week">Τρέχων εβδομάδα</string>
+    <string name="last_year">Τρέχων έτος</string>
+    <string name="light">Φωτεινό</string>
+    <string name="long_break">Μεγάλο διάλειμμα</string>
+    <string name="min_remaining_notification">%1$s λεπτά ακόμη</string>
+    <string name="minutes_format">%1$dλ</string>
+    <string name="more">Περισσότερα</string>
+    <string name="more_info">Περισσότερες πληροφορίες</string>
+    <string name="ok">ΟΚ</string>
+    <string name="pause">Παύση</string>
+    <string name="paused">Σε παύση</string>
+    <string name="play">Αναπαραγωγή</string>
+    <string name="pomodoro_info">Μια «συνεδρία» είναι μια σειρά από διαστήματα pοmodoro που περιέχουν διαστήματα εστίασης, σύντομα διαστήματα διαλείμματα και ένα μακρύ διάλειμμα. Το τελευταίο διάλειμμα μιας συνεδρίας είναι πάντα ένα μεγάλο διάλειμμα.</string>
+    <string name="rate_on_google_play">Αξιολόγηση στο Google Play</string>
+    <string name="restart">Επανεκκίνηση</string>
+    <string name="selected" tools:override="true">Επιλέχθηκε</string>
+    <string name="session_length">Διάρκεια συνεδρίας</string>
+    <string name="session_length_desc">Διαστήματα εστίασης σε μία συνεδρία: %1$d</string>
+    <string name="settings">Ρυθμίσεις</string>
+    <string name="short_break">Μικρό διάλειμμα</string>
+    <string name="skip">Παράλειψη</string>
+    <string name="skip_to_next">Άλμα στο επόμενο</string>
+    <string name="sound">Ήχος</string>
+    <string name="start">Έναρξη</string>
+    <string name="start_next">Έναρξη επομένου</string>
+    <string name="stats">Στατιστικά</string>
+    <string name="stop">Διακοπή</string>
+    <string name="stop_alarm">Διακοπή κουδουνίσματος</string>
+    <string name="stop_alarm_dialog_text">Το τρέχον χρονόμετρο ολοκληρώθηκε. Πάτα κάπου για να σταματήσει το κουδούνισμα.</string>
+    <string name="stop_alarm_question">Διακοπή Κουδουνίσματος;</string>
+    <string name="system_default">Σύστημα</string>
+    <string name="theme">Θέμα</string>
+    <string name="timer">Χρονόμετρο</string>
+    <string name="timer_progress">Πρόοδος χρονομέτρου</string>
+    <string name="timer_session_count">%1$d από %2$d</string>
+    <string name="timer_settings_reset_info">Επανέφερε το χρονόμετρο για να αλλάξεις τις ρυθμίσεις</string>
+    <string name="today">Σήμερα</string>
+    <string name="tomato_foss_desc">Όλα τα χαρακτηριστικά ξεκλειδώνονται σε αυτή την έκδοση. Εάν η εφαρμογή μου έκανε τη διαφορά στη ζωή σου, παρακαλώ σκέψου να με υποστηρίξεις, δωρίζοντας στο %1$s.</string>
+    <string name="up_next">Επόμενο</string>
+    <string name="up_next_notification">Επόμενο: %1$s (%2$s)</string>
+    <string name="vibrate">Δόνηση</string>
+    <string name="vibrate_desc">Δόνηση όταν ένα χρονόμετρο ολοκληρώνεται</string>
+    <string name="about">Σχετικά</string>
+    <string name="help_with_translation_desc">Μετέφρασε το Tomato στη γλώσσα σου</string>
+    <string name="rate_on_google_play_desc">Σου αρέσει η εφαρμογή; Αξιολόγησε!</string>
+    <string name="bmc_desc">Υποστήριξέ με, με μια μικρή δωρεά</string>
+    <string name="tomato_plus_desc">Προσάρμοσε περαιτέρω με το Tomato+</string>
+    <string name="license">Άδεια</string>
+    <string name="media_volume_for_alarm">Λειτουργία ακουστικών</string>
+    <string name="media_volume_for_alarm_desc">Παίζει μόνο σε ακουστικά. Εάν τα ακουστικά αποσυνδεθούν, το κουδούνισμα παίζει μέσω του ηχείου σε ένταση πολυμέσου.</string>
+    <string name="session_only_progress">Απλοποιημένη πρόοδος</string>
+    <string name="session_only_progress_desc">Εμφανίζει τη πρόοδο μόνο για το τρέχον χρονόμετρο στις ειδοποιήσεις, αντί για ολόκληρη τη συνεδρία</string>
+    <string name="auto_start_next_timer_desc">Ξεκίνα το επόμενο χρονόμετρο μετά την διακοπή ενός κουδουνίσματος</string>
+    <string name="auto_start_next_timer">Αυτόματη έναρξη του επόμενου χρονομέτρου</string>
+    <string name="secure_aod">Ασφαλής AOD</string>
+    <string name="secure_aod_desc">Αυτόματο κλείδωμα της συσκευή σου μετά από μια λήξη χρόνου, διατηρώντας παράλληλα το AOD ορατό</string>
+    <string name="timer_reset_message">Χρονόμετρο επανήλθε</string>
+    <string name="undo">Αναίρεση</string>
+    <string name="focus_break_ratio">Αναλογία εστίασης-διαλείμματος</string>
+    <string name="focus_breakdown">Ανάλυση εστίασης</string>
+    <string name="focus_breakdown_desc">Μέση διάρκεια εστίασης σε διαφορετικές ώρες της ημέρας</string>
+    <string name="focus_history">Ιστορικό εστίασης</string>
+    <string name="focus_history_desc">Ανάλυση εστίασης κάθε μέρα της προηγούμενης εβδομάδας. Πάτα στο γράφημα μιας ημέρας για περισσότερες πληροφορίες.</string>
+    <string name="less">Λιγότερο</string>
+    <string name="show_chart">Εμφάνιση γραφήματος</string>
+    <string name="focus_history_heatmap">Heatmap ιστορικού εστίασης</string>
+    <string name="focus_history_heatmap_desc">Ιστορικό εστίασης του περασμένου έτος. Τα βαθύτερα χρώματα αναπαριστούν μεγαλύτερη διάρκεια. Οι μέρες ομαδοποιούνται ανά μήνα. Πάτα σε μια μέρα για περισσότερες πληροφορίες.</string>
+    <string name="focus_history_calendar">Ημερολόγιο ιστορικού εστίασης</string>
+    <string name="focus_history_calendar_desc">Ιστορικό εστίασης του περασμένου μήνα. Οι μέρες του προηγούμενου μήνα επισημαίνονται με διαφορετικό χρώμα. Πάτα μια ημερομηνία για περισσότερες πληροφορίες.</string>
+    <string name="reset_data">Επαναφορά στατιστικών</string>
+    <string name="reset_data_dialog_title">Επαναφορά όλων των στατιστικών;</string>
+    <string name="reset_data_dialog_text">Όλα τα αποθηκευμένα στατιστικά θα διαγραφούν μόνιμα. Δεν μπορεί να αναιρεθεί.</string>
+    <string name="back">Πίσω</string>
+    <string name="dnd_permission_message">Ενεργοποίηση άδειας για \"%1$s\"</string>
+    <string name="duration">Διάρκεια</string>
+    <string name="gap">Κενό</string>
+    <string name="history_widget_desc">Δείτε ένα διάγραμμα για τις περιόδους συγκέντρωσης των τελευταίων ημερών. Ο αριθμός των ημερών που εμφανίζεται εξαρτάται από το μέγεθος του γουίτζετ.</string>
+    <string name="lifetime">Συνολικά</string>
+    <string name="today_widget_desc">Στατιστικά συγκέντρωσης της ημέρας</string>
+    <string name="total">συνολικά</string>
+    <string name="vibration_strength">Δύναμη</string>
+    <string name="daily_focus_goal">Καθημερινός στόχος συγκέντρωσης</string>
+    <string name="milliseconds_format">%1$dms</string>
+    <string name="backup_and_restore">Αντίγραφα ασφαλείας και επαναφορά</string>
+    <string name="backup">Αντίγραφα ασφαλείας</string>
+    <string name="backup_desc">Δημιουργία αντιγράφων ασφαλείας όλων των στατιστικών και ρυθμίσεων</string>
+    <string name="restore">Επαναφορά</string>
+    <string name="restore_desc">Επαναφορά στατιστικών και ρυθμίσεων</string>
+    <string name="backup_dialog_desc">Τα στατιστικά και οι ρυθμίσεις σας θα αποθηκευτούν σε ένα αρχείο στον φάκελο της επιλογής σας. Μπορείτε να επαναφέρετε αυτά τα δεδομένα αργότερα σε %1$s.</string>
+    <string name="restore_dialog_desc">Τα στατιστικά και οι ρυθμίσεις σας θα επαναφερθούν από το αρχείο της επιλογής σας. Η εφαρμογή θα χρειαστεί επαννεκίνηση όταν η επαναφορά ολοκληρωθεί. <b>\'Ολα τα υπάρχοντα δεδομένα θα διαγραφούν, και αυτό δε μπορεί να αναιρεθεί.</b></string>
+    <string name="choose_folder">Επιλέξτε φάκελο</string>
+    <string name="choose_file">Επιλέξτε αρχείο</string>
+    <string name="restart_app">Επανεκκίνηση εφαρμογής</string>
+</resources>

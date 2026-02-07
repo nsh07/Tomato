@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Nishant Mishra
+ * Copyright (c) 2025 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -15,15 +15,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-plugins {
-    alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.android.kotlin.multiplatform.library) apply false
-    alias(libs.plugins.compose.multiplatform) apply false
-    alias(libs.plugins.compose.compiler) apply false
-    alias(libs.plugins.kotlin.serialization) apply false
-    alias(libs.plugins.ksp) apply false
-    alias(libs.plugins.android.test) apply false
-    alias(libs.plugins.kotlin.multiplatform) apply false
-    alias(libs.plugins.koin.compiler) apply false
+package org.nsh07.pomodoro.billing
+
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
+/**
+ * Google Play implementation of BillingManager
+ */
+class FossBillingManager : BillingManager {
+    override val isPlus = MutableStateFlow(true).asStateFlow()
 }

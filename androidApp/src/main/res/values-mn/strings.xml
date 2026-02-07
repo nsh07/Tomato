@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alarm">хонх</string>
+    <string name="alarm_desc">Цаг хэмжигч дуусахад хонх дуугаргах</string>
+    <string name="alarm_sound">Хонхны дуу</string>
+    <string name="always_on_display">Үргэлж дэлгэц дээр</string>
+    <string name="appearance">гадаад төрх</string>
+    <string name="black_theme">Хар загвар</string>
+    <string name="break_">Завсарлага</string>
+    <string name="choose_color_scheme">Өнгөний схемийг сонгоно уу</string>
+    <string name="choose_language">Хэл сонгох</string>
+    <string name="choose_theme">загвар сонгох</string>
+    <string name="color">өнгө</string>
+    <string name="color_scheme">Өнгөний схем</string>
+    <string name="completed">Дууссан</string>
+    <string name="dark">Харанхуй</string>
+    <string name="dnd">Бүү саад бол горим</string>
+    <string name="durations">хугацаа</string>
+    <string name="dynamic">Динамик</string>
+    <string name="dynamic_color">Динамик өнгө</string>
+    <string name="exit">Гарах</string>
+    <string name="focus">анхаарлаа төвлөрүүлэх</string>
+    <string name="about">тухай</string>
+    <string name="always_on_display_desc">Таймерийг харж байх үед дэлгэцийн аль ч хэсгийг товшвол AOD горимд шилжинэ</string>
+    <string name="back">Буцах</string>
+    <string name="black_theme_desc">Цэвэр хар (pure black) харанхуй сэдэв ашиглах</string>
+    <string name="bmc_desc">Надад бага хэмжээний хандив өгч дэмжээрэй</string>
+    <string name="dnd_desc">Төвлөрөх таймер ажиллаж байх үед DND горимыг асаах</string>
+    <string name="dnd_permission_message">“%1$s”-д зориулсан зөвшөөрлийг идэвхжүүлэх</string>
+    <string name="duration">Үргэлжлэх хугацаа</string>
+    <string name="dynamic_color_desc">Дэлгэцийн ханын зургаас сэдвийн өнгийг автоматаар тохируулах</string>
+    <string name="focus_break_ratio">Төвлөрөл–амралтын харьцаа</string>
+    <string name="focus_breakdown">Төвлөрлийн задаргаа</string>
+    <string name="focus_breakdown_desc">Өдрийн өөр өөр цагуудад дундаж төвлөрөх хугацаа</string>
+</resources>

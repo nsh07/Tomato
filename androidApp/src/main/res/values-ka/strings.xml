@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about">შესახებ</string>
+    <string name="alarm">მაღვიძარა</string>
+    <string name="alarm_desc">ტაიმერის დასრულებისას მაღვიძარის დარეკვა</string>
+    <string name="alarm_sound">მაღვიძარის ხმა</string>
+    <string name="always_on_display">მუდვივად ჩართული ეკრანი</string>
+    <string name="always_on_display_desc">ნებისმიერ ადგილას შეეხეთ AOD რეჟიმზე გადასართავად</string>
+    <string name="appearance">გარეგნობა</string>
+    <string name="auto_start_next_timer">შემდეგი ტაიმერის ავტომატურად დაწყება</string>
+    <string name="auto_start_next_timer_desc">შემდეგი ტაიმერის დაწყება მაღვიძარის გათიშვის შემდეგ</string>
+    <string name="back">უკან</string>
+    <string name="black_theme">შავი თემა</string>
+    <string name="black_theme_desc">გამოიყენე სრულად შავი თემა</string>
+    <string name="bmc_desc">მხარი დამიჭირე პატარა დონაციით</string>
+    <string name="break_">შესვენება</string>
+    <string name="choose_color_scheme">აირჩიე ფერთა სქემა</string>
+    <string name="choose_language">აირჩიე ენა</string>
+    <string name="choose_theme">აირჩიე თემა</string>
+    <string name="color">ფერი</string>
+    <string name="color_scheme">ფერთა პალიტრა</string>
+    <string name="completed">დასრულდა</string>
+    <string name="dark">მუქი</string>
+    <string name="dnd">არ შემაწუხოთ</string>
+    <string name="dnd_desc">ჩართე DND როდესაც ფოკუსის ტაიმერი მუშაობს</string>
+    <string name="dnd_permission_message">\"%1$s\" სთვის უფლების დართვა</string>
+    <string name="duration">ხანგრძლივობა</string>
+    <string name="durations">ხანგრძლივობები</string>
+    <string name="dynamic">დინამიური</string>
+    <string name="dynamic_color">დინამიური ფერი</string>
+    <string name="dynamic_color_desc">თემის ფერების ადაპტირება თქვენი ფონიდან</string>
+    <string name="exit">გასვლა</string>
+    <string name="focus">ფოკუსი</string>
+    <string name="focus_break_ratio">ფოკუსი-დასვენების თანაფარდობა</string>
+    <string name="focus_breakdown">ფოკუსის დაშლა</string>
+</resources>

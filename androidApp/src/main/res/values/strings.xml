@@ -1,0 +1,149 @@
+<!--
+  ~ Copyright (c) 2025-2026 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="about">About</string>
+    <string name="alarm">Alarm</string>
+    <string name="alarm_desc">Ring alarm when a timer completes</string>
+    <string name="alarm_sound">Alarm sound</string>
+    <string name="always_on_display">Always On Display</string>
+    <string name="always_on_display_desc">Tap anywhere when viewing the timer to switch to AOD mode</string>
+    <string name="app_name">Tomato</string>
+    <string name="app_name_plus">Tomato+</string>
+    <string name="appearance">Appearance</string>
+    <string name="auto_start_next_timer">Auto start next timer</string>
+    <string name="auto_start_next_timer_desc">Start next timer after stopping an alarm</string>
+    <string name="back">Back</string>
+    <string name="black_theme">Black theme</string>
+    <string name="black_theme_desc">Use a pure black dark theme</string>
+    <string name="bmc">BuyMeACoffee</string>
+    <string name="bmc_desc">Support me with a small donation</string>
+    <string name="break_">Break</string>
+    <string name="choose_color_scheme">Choose color scheme</string>
+    <string name="choose_language">Choose language</string>
+    <string name="choose_theme">Choose theme</string>
+    <string name="color">Color</string>
+    <string name="color_scheme">Color scheme</string>
+    <string name="completed">Completed</string>
+    <string name="dark">Dark</string>
+    <string name="dnd">Do Not Disturb</string>
+    <string name="dnd_desc">Turn on DND when running a Focus timer</string>
+    <string name="dnd_permission_message">Enable permission for \"%1$s\"</string>
+    <string name="duration">Duration</string>
+    <string name="durations">Durations</string>
+    <string name="dynamic">Dynamic</string>
+    <string name="dynamic_color">Dynamic color</string>
+    <string name="dynamic_color_desc">Adapt theme colors from your wallpaper</string>
+    <string name="exit">Exit</string>
+    <string name="focus">Focus</string>
+    <string name="focus_break_ratio">Focus-break ratio</string>
+    <string name="focus_breakdown">Focus breakdown</string>
+    <string name="focus_breakdown_desc">Average focus durations at different times of the day</string>
+    <string name="focus_history">Focus history</string>
+    <string name="focus_history_calendar">Focus history calendar</string>
+    <string name="focus_history_calendar_desc">Focus history of the past month. Days of the previous month are marked with a different color. Tap on a date for more info.</string>
+    <string name="focus_history_desc">Focus breakdown of each day of the past week. Tap on a day\'s chart for more info.</string>
+    <string name="focus_history_heatmap">Focus history heatmap</string>
+    <string name="focus_history_heatmap_desc">Focus history of the past year. Deeper colors represent a longer duration. Days are grouped by month. Tap on a day for more info.</string>
+    <string name="focus_per_day_avg">focus per day (avg)</string>
+    <string name="gap">Gap</string>
+    <string name="get_plus">Get Tomato+</string>
+    <string name="help_with_translation">Help translate Tomato</string>
+    <string name="help_with_translation_desc">Translate Tomato into your language</string>
+    <string name="history_widget_desc">See a chart of the focus durations of the past few days. The number of days displayed depends on the size of the widget.</string>
+    <string name="hours_and_minutes_format">%1$dh %2$dm</string>
+    <string name="hours_format">%1$dh</string>
+    <string name="language">Language</string>
+    <string name="last_month">This month</string>
+    <string name="last_week">This week</string>
+    <string name="last_year">This year</string>
+    <string name="less">Less</string>
+    <string name="license">License</string>
+    <string name="lifetime">Lifetime</string>
+    <string name="light">Light</string>
+    <string name="long_break">Long break</string>
+    <string name="media_volume_for_alarm">Headphone mode</string>
+    <string name="media_volume_for_alarm_desc">Plays on headphones only. If headphones are disconnected, alarm plays through speaker at media volume.</string>
+    <string name="min_remaining_notification">%1$s min remaining</string>
+    <string name="minutes_format">%1$dm</string>
+    <string name="more">More</string>
+    <string name="more_info">More info</string>
+    <string name="now_bar">Now Bar</string>
+    <string name="ok">OK</string>
+    <string name="pause">Pause</string>
+    <string name="paused">Paused</string>
+    <string name="play">Play</string>
+    <string name="pomodoro_info">A \"session\" is a sequence of pomodoro intervals that contain focus intervals, short break intervals, and a long break interval. The last break of a session is always a long break.</string>
+    <string name="rate_on_google_play">Rate on Google Play</string>
+    <string name="rate_on_google_play_desc">Liked the app? Write a review!</string>
+    <string name="reset_data">Reset stats</string>
+    <string name="reset_data_dialog_text">All saved stats will be deleted permanently. This cannot be undone.</string>
+    <string name="reset_data_dialog_title">Reset all stats?</string>
+    <string name="restart">Restart</string>
+    <string name="secure_aod">Secure AOD</string>
+    <string name="secure_aod_desc">Automatically lock your device after a timeout, while keeping the AOD visible</string>
+    <string name="selected" tools:override="true">Selected</string>
+    <string name="session_length">Session length</string>
+    <string name="session_length_desc">Focus intervals in one session: %1$d</string>
+    <string name="session_only_progress">Simplified progress</string>
+    <string name="session_only_progress_desc">Show progress for the current timer only in notifications, rather than the entire session</string>
+    <string name="settings">Settings</string>
+    <string name="short_break">Short break</string>
+    <string name="show_chart">Show chart</string>
+    <string name="skip">Skip</string>
+    <string name="skip_to_next">Skip to next</string>
+    <string name="sound">Sound</string>
+    <string name="start">Start</string>
+    <string name="start_next">Start next</string>
+    <string name="stats">Stats</string>
+    <string name="stop">Stop</string>
+    <string name="stop_alarm">Stop alarm</string>
+    <string name="stop_alarm_dialog_text">Current timer is complete. Tap anywhere to stop the alarm.</string>
+    <string name="stop_alarm_question">Stop Alarm?</string>
+    <string name="system_default">System</string>
+    <string name="theme">Theme</string>
+    <string name="timer">Timer</string>
+    <string name="timer_progress">Timer progress</string>
+    <string name="timer_reset_message">Timer reset</string>
+    <string name="timer_session_count">%1$d of %2$d</string>
+    <string name="timer_settings_reset_info">Reset the timer to change settings</string>
+    <string name="today">Today</string>
+    <string name="today_widget_desc">Today\'s focus stats</string>
+    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss_desc">All features are unlocked in this version. If my app made a difference in your life, please consider supporting me by donating on %1$s.</string>
+    <string name="tomato_plus_desc">Customize further with Tomato+</string>
+    <string name="total">total</string>
+    <string name="undo">Undo</string>
+    <string name="up_next">Up next</string>
+    <string name="up_next_notification">Up next: %1$s (%2$s)</string>
+    <string name="vibrate">Vibration</string>
+    <string name="vibrate_desc">Vibrate when a timer completes</string>
+    <string name="vibration_strength">Strength</string>
+    <string name="daily_focus_goal">Daily focus goal</string>
+    <string name="milliseconds_format">%1$dms</string>
+    <string name="backup_and_restore">Backup and restore</string>
+    <string name="backup">Backup</string>
+    <string name="backup_desc">Backup all stats and settings</string>
+    <string name="restore">Restore</string>
+    <string name="restore_desc">Restore stats and settings</string>
+    <string name="backup_dialog_desc">Your stats and settings will be saved to a file in your chosen folder. You can restore this data later in %1$s.</string>
+    <string name="restore_dialog_desc">Your stats and settings will be restored from the chosen backup file. The app will need to be restarted when the restore is complete. &lt;b>All existing data will be erased, and this cannot be undone.&lt;/b></string>
+    <string name="choose_folder">Choose folder</string>
+    <string name="choose_file">Choose file</string>
+    <string name="restart_app">Restart app</string>
+    <string name="vibration_pattern">Vibration pattern</string>
+</resources>

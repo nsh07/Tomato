@@ -15,27 +15,26 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-pluginManagement {
-    repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
+package org.nsh07.pomodoro
+
+import org.koin.dsl.module
+import org.nsh07.pomodoro.billing.BillingManager
+import org.nsh07.pomodoro.billing.FossBillingManager
+import org.nsh07.pomodoro.billing.TomatoPlusPaywallDialog
+import org.nsh07.pomodoro.di.FlavorUI
+import org.nsh07.pomodoro.ui.settingsScreen.components.BottomButton
+import org.nsh07.pomodoro.ui.settingsScreen.components.TopButton
+
+val flavorModule = module {
+    single<BillingManager> { FossBillingManager() }
 }
 
-rootProject.name = "Tomato"
-include(":androidApp")
-include(":shared")
+val flavorUiModule = module {
+    single {
+        FlavorUI(
+            tomatoPlusPaywallDialog = ::TomatoPlusPaywallDialog,
+            topButton = ::TopButton,
+            bottomButton = ::BottomButton
+        )
+    }
+}

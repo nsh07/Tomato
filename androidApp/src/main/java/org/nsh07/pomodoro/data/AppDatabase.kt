@@ -15,15 +15,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-plugins {
-    alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.android.kotlin.multiplatform.library) apply false
-    alias(libs.plugins.compose.multiplatform) apply false
-    alias(libs.plugins.compose.compiler) apply false
-    alias(libs.plugins.kotlin.serialization) apply false
-    alias(libs.plugins.ksp) apply false
-    alias(libs.plugins.android.test) apply false
-    alias(libs.plugins.kotlin.multiplatform) apply false
-    alias(libs.plugins.koin.compiler) apply false
+package org.nsh07.pomodoro.data
+
+import androidx.room.AutoMigration
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+
+@Database(
+    entities = [IntPreference::class, BooleanPreference::class, StringPreference::class, Stat::class],
+    version = 2,
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2)
+    ]
+)
+@TypeConverters(Converters::class)
+abstract class AppDatabase : RoomDatabase() {
+
+    abstract fun preferenceDao(): PreferenceDao
+    abstract fun statDao(): StatDao
+    abstract fun systemDao(): SystemDao
 }

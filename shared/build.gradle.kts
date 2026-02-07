@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.koin.compiler)
 }
 
 kotlin {
@@ -33,6 +34,11 @@ kotlin {
             implementation(libs.androidx.material3)
             implementation(libs.androidx.adaptive)
             implementation(libs.androidx.compose.adaptive.navigation3)
+
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
         }
 
         androidMain.dependencies {
@@ -56,6 +62,8 @@ kotlin {
             // Glance widgets
             implementation(libs.androidx.glance.appwidget)
             implementation(libs.androidx.glance.material3)
+
+            implementation(libs.koin.android)
         }
 
         androidUnitTest.dependencies {

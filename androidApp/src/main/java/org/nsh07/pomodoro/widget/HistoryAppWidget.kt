@@ -59,21 +59,27 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.koin.java.KoinJavaComponent.inject
 import org.nsh07.pomodoro.MainActivity
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.AppStatRepository
 import org.nsh07.pomodoro.data.Stat
+import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.widget.TomatoWidgetSize.Width4
+import kotlin.getValue
 
-class HistoryAppWidget : GlanceAppWidget() {
+class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
     override val sizeMode: SizeMode = SizeMode.Exact
 
     override suspend fun provideGlance(
         context: Context,
         id: GlanceId
     ) {
-        val statRepository = AppStatRepository.get(context)
+        val statRepository: StatRepository = get()
         val history = statRepository.getLastNDaysStats(30).first().reversed()
 
         provideContent {

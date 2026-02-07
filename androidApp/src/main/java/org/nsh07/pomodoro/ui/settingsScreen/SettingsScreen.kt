@@ -41,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import org.koin.compose.koinInject
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.calculatePaneScaffoldDirective
@@ -65,7 +66,7 @@ fun SettingsScreenRoot(
     setShowPaywall: (Boolean) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
-    viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
+    viewModel: SettingsViewModel = koinInject()
 ) {
     val backStack = viewModel.backStack
 

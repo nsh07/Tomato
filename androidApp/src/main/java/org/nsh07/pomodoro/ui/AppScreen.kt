@@ -80,12 +80,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass
-import org.nsh07.pomodoro.billing.TomatoPlusPaywallDialog
+import org.koin.compose.koinInject
+import org.nsh07.pomodoro.di.FlavorUI
 import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
@@ -103,8 +103,9 @@ fun AppScreen(
     isPlus: Boolean,
     setTimerFrequency: (Float) -> Unit,
     modifier: Modifier = Modifier,
-    timerViewModel: TimerViewModel = viewModel(factory = TimerViewModel.Factory),
-    settingsViewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory)
+    flavorUI: FlavorUI = koinInject(),
+    timerViewModel: TimerViewModel = koinInject(),
+    settingsViewModel: SettingsViewModel = koinInject()
 ) {
     val context = LocalContext.current
 
@@ -318,6 +319,6 @@ fun AppScreen(
         enter = slideInVertically { it },
         exit = slideOutVertically { it }
     ) {
-        TomatoPlusPaywallDialog(isPlus = isPlus) { showPaywall = false }
+        flavorUI.tomatoPlusPaywallDialog(isPlus) { showPaywall = false }
     }
 }

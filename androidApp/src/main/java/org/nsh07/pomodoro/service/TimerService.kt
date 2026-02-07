@@ -31,6 +31,7 @@ import android.os.Vibrator
 import android.os.VibratorManager
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -41,25 +42,29 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.koin.android.ext.android.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.TomatoApplication
+import org.nsh07.pomodoro.data.StatRepository
+import org.nsh07.pomodoro.data.StateRepository
+import org.nsh07.pomodoro.di.ActivityCallbacks
+import org.nsh07.pomodoro.di.TimerStateHolder
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import kotlin.text.Typography.middleDot
 
-class TimerService : Service() {
-    private val appContainer by lazy {
-        (application as TomatoApplication).container
-    }
+class TimerService : Service(), KoinComponent {
 
-    private val stateRepository by lazy { appContainer.stateRepository }
-    private val statRepository by lazy { appContainer.appStatRepository }
-    private val notificationManager by lazy { appContainer.notificationManager }
-    private val notificationManagerService by lazy { appContainer.notificationManagerService }
-    private val notificationBuilder by lazy { appContainer.notificationBuilder }
+    private val stateRepository: StateRepository by inject()
+    private val statRepository: StatRepository by inject()
+    private val notificationManager: NotificationManagerCompat by inject()
+    private val notificationManagerService: NotificationManager by inject()
+    private val notificationBuilder: NotificationCompat.Builder by inject()
+    private val activityCallbacks: ActivityCallbacks by inject()
     private val _timerState by lazy { stateRepository.timerState }
     private val _settingsState by lazy { stateRepository.settingsState }
-    private val _time by lazy { appContainer.time }
+    private val _time = get<TimerStateHolder>().time
 
     /**
      * Remaining time
@@ -426,7 +431,7 @@ class TimerService : Service() {
         val settingsState = _settingsState.value
         if (settingsState.alarmEnabled) alarm?.start()
 
-        appContainer.activityTurnScreenOn(true)
+        activityCallbacks.activityTurnScreenOn(true)
 
         autoAlarmStopScope = CoroutineScope(Dispatchers.IO).launch {
             delay(1 * 60 * 1000)
@@ -476,7 +481,7 @@ class TimerService : Service() {
             vibrator.cancel()
         }
 
-        appContainer.activityTurnScreenOn(false)
+        activityCallbacks.activityTurnScreenOn(false)
 
         _timerState.update { currentState ->
             currentState.copy(alarmRinging = false)

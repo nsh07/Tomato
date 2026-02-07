@@ -15,14 +15,26 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.billing
+package org.nsh07.pomodoro
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import org.koin.dsl.module
+import org.nsh07.pomodoro.billing.BillingManager
+import org.nsh07.pomodoro.billing.FossBillingManager
+import org.nsh07.pomodoro.billing.TomatoPlusPaywallDialog
+import org.nsh07.pomodoro.di.FlavorUI
+import org.nsh07.pomodoro.ui.settingsScreen.components.BottomButton
+import org.nsh07.pomodoro.ui.settingsScreen.components.TopButton
 
-/**
- * Google Play implementation of BillingManager
- */
-class FossBillingManager : BillingManager {
-    override val isPlus = MutableStateFlow(true).asStateFlow()
+val flavorModule = module {
+    single<BillingManager> { FossBillingManager() }
+}
+
+val flavorUiModule = module {
+    single {
+        FlavorUI(
+            tomatoPlusPaywallDialog = ::TomatoPlusPaywallDialog,
+            topButton = ::TopButton,
+            bottomButton = ::BottomButton
+        )
+    }
 }

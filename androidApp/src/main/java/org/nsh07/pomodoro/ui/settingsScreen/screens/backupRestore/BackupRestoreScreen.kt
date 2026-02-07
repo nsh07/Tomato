@@ -34,6 +34,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -56,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
@@ -74,7 +76,7 @@ fun BackupRestoreScreen(
     contentPadding: PaddingValues,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: BackupRestoreViewModel = viewModel(factory = BackupRestoreViewModel.Factory)
+    viewModel: BackupRestoreViewModel = koinInject()
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

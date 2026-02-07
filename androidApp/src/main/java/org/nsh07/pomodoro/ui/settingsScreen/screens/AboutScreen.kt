@@ -64,13 +64,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
-import org.nsh07.pomodoro.BuildConfig
+import org.koin.compose.koinInject
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.di.AppInfo
+import org.nsh07.pomodoro.di.FlavorUI
 import org.nsh07.pomodoro.ui.mergePaddingValues
-import org.nsh07.pomodoro.ui.settingsScreen.components.BottomButton
 import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.LicenseBottomSheet
-import org.nsh07.pomodoro.ui.settingsScreen.components.TopButton
 import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
@@ -87,6 +87,8 @@ fun AboutScreen(
     contentPadding: PaddingValues,
     isPlus: Boolean,
     onBack: () -> Unit,
+    flavorUI: FlavorUI = koinInject(),
+    appInfo: AppInfo = koinInject(),
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -184,7 +186,7 @@ fun AboutScreen(
                                     fontFamily = googleFlex600
                                 )
                                 Text(
-                                    text = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
+                                    text = "${appInfo.versionName} (${appInfo.versionCode})",
                                     style = typography.labelLarge,
                                     color = colorScheme.primary
                                 )
@@ -274,8 +276,8 @@ fun AboutScreen(
                 }
                 item { Spacer(Modifier.height(12.dp)) }
 
-                item { TopButton() }
-                item { BottomButton() }
+                item { flavorUI.topButton(Modifier) }
+                item { flavorUI.bottomButton(Modifier) }
 
                 item { Spacer(Modifier.height(12.dp)) }
 

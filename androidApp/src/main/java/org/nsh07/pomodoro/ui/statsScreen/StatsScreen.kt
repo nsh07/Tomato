@@ -42,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import org.koin.compose.koinInject
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.calculatePaneScaffoldDirective
@@ -61,7 +62,7 @@ fun StatsScreenRoot(
     contentPadding: PaddingValues,
     focusGoal: Long,
     modifier: Modifier = Modifier,
-    viewModel: StatsViewModel = viewModel(factory = StatsViewModel.Factory)
+    viewModel: StatsViewModel = koinInject()
 ) {
     val backStack = viewModel.backStack
 

@@ -366,7 +366,7 @@ fun AlarmSettings(
                         val interactionSources = remember { List(2) { MutableInteractionSource() } }
 
                         ListItem(
-                            headlineContent = { Text("Vibration pattern") },
+                            headlineContent = { Text(stringResource(R.string.vibration_pattern)) },
                             trailingContent = {
                                 ButtonGroup(
                                     overflowIndicator = {},

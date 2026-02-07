@@ -145,4 +145,5 @@
     <string name="choose_folder">Choose folder</string>
     <string name="choose_file">Choose file</string>
     <string name="restart_app">Restart app</string>
+    <string name="vibration_pattern">Vibration pattern</string>
 </resources>

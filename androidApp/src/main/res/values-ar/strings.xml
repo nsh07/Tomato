@@ -125,4 +125,5 @@
     <string name="choose_file">اختر ملف</string>
     <string name="restart_app">إعادة تشغيل التطبيق</string>
     <string name="milliseconds_format">%1$dملي ثانية</string>
+    <string name="vibration_pattern">نمط الاهتزاز</string>
 </resources>

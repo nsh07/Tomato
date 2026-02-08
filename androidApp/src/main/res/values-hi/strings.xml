@@ -120,8 +120,9 @@
     <string name="restore">रिस्टोर</string>
     <string name="restore_desc">आंकड़ों और सेटिंग्स को रीस्टोर करें</string>
     <string name="backup_dialog_desc">आपके आंकड़े और सेटिंग्स आपके चुने हुए फ़ोल्डर में एक फ़ाइल में सेव हो जाएँगे। आप बाद में %1$s से इस डेटा को रिस्टोर कर सकते हैं।</string>
-    <string name="restore_dialog_desc">आपके आंकड़े और सेटिंग्स चुनी हुई बैकअप फ़ाइल से रिस्टोर हो जाएँगे। रिस्टोर पूरा होने पर ऐप को रीस्टार्ट करना होगा। &lt;b>सारा मौजूदा डेटा मिट जाएगा, और इसे वापस नहीं किया जा सकता।&lt;/b></string>
+    <string name="restore_dialog_desc">आपके आंकड़े और सेटिंग्स चुनी हुई बैकअप फ़ाइल से रिस्टोर हो जाएँगे। रिस्टोर पूरा होने पर ऐप को रीस्टार्ट करना होगा। &lt;b&gt;सारा मौजूदा डेटा मिट जाएगा, और इसे वापस नहीं किया जा सकता।&lt;/b&gt;</string>
     <string name="choose_folder">फ़ोल्डर चुनें</string>
     <string name="choose_file">फ़ाइल चुनें</string>
     <string name="restart_app">ऐप रीस्टार्ट करें</string>
+    <string name="vibration_pattern">वाइब्रेशन पैटर्न</string>
 </resources>

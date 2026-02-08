@@ -124,4 +124,5 @@
     <string name="restart_app">Restartovat aplikaci</string>
     <string name="daily_focus_goal">Cíl denního soustředění</string>
     <string name="milliseconds_format">%1$d ms</string>
+    <string name="vibration_pattern">Vzor vibrací</string>
 </resources>

@@ -67,16 +67,16 @@
     <string name="help_with_translation">Tomato の翻訳を手伝う</string>
     <string name="timer_settings_reset_info">設定を変更するにはタイマーをリセットしてください</string>
     <string name="selected">選択中</string>
-    <string name="always_on_display_desc">タイマー表示中に常時表示ディスプレイに切り替えるには任意の場所をタップしてください</string>
+    <string name="always_on_display_desc">タイマー表示中に任意の場所をタップすると常時表示ディスプレイに切り替わります</string>
     <string name="dnd_desc">タイマーの実行時にサイレントモードをオンにします</string>
-    <string name="tomato_foss_desc">全機能がこのバージョンでは解放されています。私のアプリが生活に変化をもたらしたのであれば、%1$s で寄付することで私を支援することをご検討ください。</string>
+    <string name="tomato_foss_desc">全機能がこのバージョンでは解放されています。私のアプリが生活に変化をもたらしたならば、%1$s での寄付によるご支援をご検討ください。</string>
     <string name="hours_and_minutes_format">%1$d時間%2$d分</string>
     <string name="hours_format">%1$d時間</string>
     <string name="minutes_format">%1$d分</string>
     <string name="about">このアプリについて</string>
     <string name="help_with_translation_desc">Tomato をあなたの言語に翻訳してください</string>
     <string name="rate_on_google_play_desc">アプリが気に入りましたか？レビューを書いてください！</string>
-    <string name="bmc_desc">小さな寄付でご支援してもよろしいでしょうか</string>
+    <string name="bmc_desc">少額の寄付でご支援ください</string>
     <string name="tomato_plus_desc">Tomato+ を使用してさらにカスタマイズする</string>
     <string name="license">ライセンス</string>
     <string name="media_volume_for_alarm">ヘッドホンモード</string>
@@ -114,7 +114,7 @@
     <string name="restore_desc">統計と設定を復元します</string>
     <string name="backup_dialog_desc">統計と設定は、選択されたフォルダにあるファイルに保存されます。後でこのデータを %1$s で復元できます。</string>
     <string name="daily_focus_goal">日毎の集中時間の目標</string>
-    <string name="restore_dialog_desc">統計と設定は選択されたバックアップファイルから復元されます。復元完了時にアプリの再起動が必要となります。&lt;b>既存の全てのデータが削除され、元に戻すことはできません。&lt;/b></string>
+    <string name="restore_dialog_desc">統計と設定は選択されたバックアップファイルから復元されます。復元完了時にアプリの再起動が必要となります。&lt;b&gt;既存の全てのデータが削除され、元に戻すことはできません。&lt;/b&gt;</string>
     <string name="choose_folder">フォルダ選択</string>
     <string name="choose_file">ファイル選択</string>
     <string name="restart_app">アプリを再起動</string>
@@ -124,4 +124,5 @@
     <string name="focus_history_desc">過去1週間分の各日の集中時間の内訳です。各日のチャートをタップすると詳細を表示します。</string>
     <string name="less">短い</string>
     <string name="dnd_permission_message">\"%1$s\" の権限を有効にしてください</string>
+    <string name="vibration_pattern">振動パターン</string>
 </resources>

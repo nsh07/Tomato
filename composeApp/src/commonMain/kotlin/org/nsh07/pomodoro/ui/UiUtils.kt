@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -59,7 +59,7 @@ fun mergePaddingValues(
  * (https://m3.material.io/foundations/layout/applying-layout/window-size-classes).
  *
  * @param windowAdaptiveInfo [WindowAdaptiveInfo] that collects useful information in making layout
- *   adaptation decisions like [androidx.window.core.layout.WindowSizeClass].
+ *   adaptation decisions like [WindowSizeClass].
  * @param verticalHingePolicy [HingePolicy] that decides how layouts are supposed to address
  *   vertical hinges.
  * @return an [PaneScaffoldDirective] to be used to decide adaptive layout states.

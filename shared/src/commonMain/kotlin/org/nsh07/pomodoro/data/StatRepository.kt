@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -17,14 +17,9 @@
 
 package org.nsh07.pomodoro.data
 
-import android.content.Context
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import org.koin.core.component.KoinComponent
-import org.koin.core.qualifier.named
-import org.koin.java.KoinJavaComponent.inject
 import java.time.LocalDate
 import java.time.LocalTime
 

@@ -17,22 +17,35 @@
 
 package org.nsh07.pomodoro.data
 
-import androidx.room.AutoMigration
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Database(
-    entities = [IntPreference::class, BooleanPreference::class, StringPreference::class, Stat::class],
-    version = 2,
-    autoMigrations = [
-        AutoMigration(from = 1, to = 2)
-    ]
+/**
+ * Class for storing boolean preferences in the app's database
+ */
+@Entity(tableName = "boolean_preference")
+data class BooleanPreference(
+    @PrimaryKey
+    val key: String,
+    val value: Boolean
 )
-@TypeConverters(Converters::class)
-abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun preferenceDao(): PreferenceDao
-    abstract fun statDao(): StatDao
-    abstract fun systemDao(): SystemDao
-}
+/**
+ * Class for storing integer preferences in the app's database
+ */
+@Entity(tableName = "int_preference")
+data class IntPreference(
+    @PrimaryKey
+    val key: String,
+    val value: Int
+)
+
+/**
+ * Class for storing string preferences in the app's database
+ */
+@Entity(tableName = "string_preference")
+data class StringPreference(
+    @PrimaryKey
+    val key: String,
+    val value: String
+)

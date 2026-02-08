@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -60,9 +60,9 @@ fun millisecondsToHoursMinutes(t: Long, format: String = $$"%1$dh %2$dm"): Strin
 }
 
 /**
- * Extension function for [String] to convert it to a [androidx.compose.ui.graphics.Color]
+ * Extension function for [String] to convert it to a [Color]
  *
- * The base string MUST be of the format produced by [androidx.compose.ui.graphics.Color.toString],
+ * The base string MUST be of the format produced by [Color.toString],
  * i.e, the color black with 100% opacity in sRGB would be represented by:
  *
  *      Color(0.0, 0.0, 0.0, 1.0, sRGB IEC61966-2.1)

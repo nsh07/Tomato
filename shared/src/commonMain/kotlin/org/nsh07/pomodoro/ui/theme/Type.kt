@@ -24,10 +24,10 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import org.jetbrains.compose.resources.Font
-import tomato.composeapp.generated.resources.Res
-import tomato.composeapp.generated.resources.google_sans_flex_400
-import tomato.composeapp.generated.resources.google_sans_flex_600
-import tomato.composeapp.generated.resources.roboto_flex_logo
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.google_sans_flex_400
+import tomato.shared.generated.resources.google_sans_flex_600
+import tomato.shared.generated.resources.roboto_flex_logo
 
 val TYPOGRAPHY = Typography()
 

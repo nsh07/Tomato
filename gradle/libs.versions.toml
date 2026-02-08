@@ -16,7 +16,7 @@ navigation3 = "1.0.0"
 revenuecat = "9.20.2"
 room = "2.8.4"
 vico = "2.4.3"
-composeMultiplatform = "1.10.0"
+composeMultiplatform = "1.11.0-alpha02"
 koinBom = "4.2.0-RC1"
 koinCompilerPlugin = "0.3.0"
 
@@ -45,6 +45,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 revenuecat-purchases = { module = "com.revenuecat.purchases:purchases", version.ref = "revenuecat" }

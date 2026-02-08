@@ -71,9 +71,9 @@ import org.nsh07.pomodoro.ui.settingsScreen.components.PlusPromo
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.settingsScreens
-import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
+import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.singleItemListItemShapes
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -83,11 +83,11 @@ fun SettingsMainScreen(
     contentPadding: PaddingValues,
     currentScreen: Screen.Settings,
     isPlus: Boolean,
-    appInfo: AppInfo = koinInject(),
     onAction: (SettingsAction) -> Unit,
     onNavigate: (Screen.Settings) -> Unit,
     setShowPaywall: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    appInfo: AppInfo = koinInject()
 ) {
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -126,7 +126,7 @@ fun SettingsMainScreen(
                     Text(
                         stringResource(R.string.settings),
                         style = LocalTextStyle.current.copy(
-                            fontFamily = robotoFlexTopBar,
+                            fontFamily = LocalAppFonts.current.topBarTitle,
                             fontSize = 32.sp,
                             lineHeight = 32.sp
                         )

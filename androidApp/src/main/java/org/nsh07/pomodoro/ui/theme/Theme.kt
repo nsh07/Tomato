@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -28,6 +28,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -154,10 +155,12 @@ fun TomatoTheme(
         if (seedColor == Color.White && !(blackTheme && darkTheme)) colorScheme
         else dynamicColorScheme
 
-    MaterialExpressiveTheme(
-        colorScheme = scheme,
-        typography = Typography,
-        motionScheme = MotionScheme.expressive(),
-        content = content
-    )
+    CompositionLocalProvider(LocalAppFonts provides getAppFonts()) {
+        MaterialExpressiveTheme(
+            colorScheme = scheme,
+            typography = typography(),
+            motionScheme = MotionScheme.expressive(),
+            content = content
+        )
+    }
 }

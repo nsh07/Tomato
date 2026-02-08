@@ -27,6 +27,7 @@ import androidx.compose.animation.unveilIn
 import androidx.compose.animation.veilOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.detailPane
@@ -51,8 +52,6 @@ import org.nsh07.pomodoro.ui.statsScreen.screens.LastWeekScreen
 import org.nsh07.pomodoro.ui.statsScreen.screens.LastYearScreen
 import org.nsh07.pomodoro.ui.statsScreen.screens.StatsMainScreen
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
-import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex400
-import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
 import org.nsh07.pomodoro.utils.onBack
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3AdaptiveApi::class)
@@ -63,6 +62,7 @@ fun StatsScreenRoot(
     modifier: Modifier = Modifier,
     viewModel: StatsViewModel = koinInject()
 ) {
+    val typography = typography
     val backStack = viewModel.backStack
 
     val todayStat by viewModel.todayStat.collectAsStateWithLifecycle(null)
@@ -88,8 +88,10 @@ fun StatsScreenRoot(
     val minutesFormat = stringResource(R.string.minutes_format)
 
     val resolver = LocalFontFamilyResolver.current
-    val axisTypeface = remember { resolver.resolve(googleFlex400).value as Typeface }
-    val markerTypeface = remember { resolver.resolve(googleFlex600).value as Typeface }
+    val axisTypeface =
+        remember { resolver.resolve(typography.bodyMedium.fontFamily).value as Typeface }
+    val markerTypeface =
+        remember { resolver.resolve(typography.bodyLarge.fontFamily).value as Typeface }
 
     SharedTransitionLayout {
         NavDisplay(

@@ -80,7 +80,7 @@ import org.nsh07.pomodoro.ui.statsScreen.components.FocusHistoryCalendar
 import org.nsh07.pomodoro.ui.statsScreen.components.HorizontalStackedBar
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeColumnChart
 import org.nsh07.pomodoro.ui.statsScreen.components.sharedBoundsReveal
-import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
@@ -135,7 +135,7 @@ fun SharedTransitionScope.LastMonthScreen(
                 title = {
                     Text(
                         text = stringResource(R.string.last_month),
-                        fontFamily = robotoFlexTopBar,
+                        fontFamily = LocalAppFonts.current.topBarTitle,
                         modifier = Modifier.sharedBounds(
                             sharedContentState = this@LastMonthScreen
                                 .rememberSharedContentState("last month heading"),

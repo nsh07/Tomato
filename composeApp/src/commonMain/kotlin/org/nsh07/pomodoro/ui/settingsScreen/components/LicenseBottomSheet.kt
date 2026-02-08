@@ -56,7 +56,7 @@ fun LicenseBottomSheet(
 
     val headingStyle = SpanStyle(
         fontSize = typography.titleLarge.fontSize,
-        fontFamily = typography.titleLarge.fontFamily
+        fontFamily = typography.bodyLarge.fontFamily
     )
 
     val paragraphs = remember {

@@ -124,4 +124,5 @@
     <string name="restart_app">Reiniciar app</string>
     <string name="daily_focus_goal">Objetivo de concentración diario</string>
     <string name="milliseconds_format">%1$dms</string>
+    <string name="vibration_pattern">Patrón de vibración</string>
 </resources>

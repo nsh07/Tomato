@@ -79,7 +79,7 @@ import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakdownChart
 import org.nsh07.pomodoro.ui.statsScreen.components.HorizontalStackedBar
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeColumnChart
 import org.nsh07.pomodoro.ui.statsScreen.components.sharedBoundsReveal
-import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
@@ -134,7 +134,7 @@ fun SharedTransitionScope.LastWeekScreen(
                 title = {
                     Text(
                         text = stringResource(R.string.last_week),
-                        fontFamily = robotoFlexTopBar,
+                        fontFamily = LocalAppFonts.current.topBarTitle,
                         modifier = Modifier.sharedBounds(
                             sharedContentState = this@LastWeekScreen
                                 .rememberSharedContentState("last week heading"),

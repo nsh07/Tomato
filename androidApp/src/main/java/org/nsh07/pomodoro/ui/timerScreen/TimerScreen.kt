@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -120,10 +120,9 @@ import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_L
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
-import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
-import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
+import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -213,7 +212,7 @@ fun SharedTransitionScope.TimerScreen(
                                                 if (!isPlus) stringResource(R.string.app_name)
                                                 else stringResource(R.string.app_name_plus),
                                                 style = TextStyle(
-                                                    fontFamily = robotoFlexTopBar,
+                                                    fontFamily = LocalAppFonts.current.topBarTitle,
                                                     fontSize = 32.sp,
                                                     lineHeight = 32.sp,
                                                     color = colorScheme.error
@@ -225,7 +224,7 @@ fun SharedTransitionScope.TimerScreen(
                                             Text(
                                                 stringResource(R.string.focus),
                                                 style = TextStyle(
-                                                    fontFamily = robotoFlexTopBar,
+                                                    fontFamily = LocalAppFonts.current.topBarTitle,
                                                     fontSize = 32.sp,
                                                     lineHeight = 32.sp,
                                                     color = colorScheme.primary
@@ -236,7 +235,7 @@ fun SharedTransitionScope.TimerScreen(
                                         TimerMode.SHORT_BREAK -> Text(
                                             stringResource(R.string.short_break),
                                             style = TextStyle(
-                                                fontFamily = robotoFlexTopBar,
+                                                fontFamily = LocalAppFonts.current.topBarTitle,
                                                 fontSize = 32.sp,
                                                 lineHeight = 32.sp,
                                                 color = colorScheme.tertiary
@@ -247,7 +246,7 @@ fun SharedTransitionScope.TimerScreen(
                                         TimerMode.LONG_BREAK -> Text(
                                             stringResource(R.string.long_break),
                                             style = TextStyle(
-                                                fontFamily = robotoFlexTopBar,
+                                                fontFamily = LocalAppFonts.current.topBarTitle,
                                                 fontSize = 32.sp,
                                                 lineHeight = 32.sp,
                                                 color = colorScheme.tertiary
@@ -337,7 +336,7 @@ fun SharedTransitionScope.TimerScreen(
                                         Text(
                                             text = timerState.timeStr,
                                             style = TextStyle(
-                                                fontFamily = googleFlex600,
+                                                fontFamily = typography.bodyLarge.fontFamily,
                                                 fontSize = if (timerState.timeStr.length < 6) 72.sp else 64.sp,
                                                 letterSpacing = (-2.6).sp,
                                                 fontFeatureSettings = "tnum"
@@ -364,7 +363,7 @@ fun SharedTransitionScope.TimerScreen(
                                                     timerState.currentFocusCount,
                                                     timerState.totalFocusCount
                                                 ),
-                                                fontFamily = googleFlex600,
+                                                fontFamily = typography.bodyLarge.fontFamily,
                                                 style = typography.titleLarge,
                                                 color = colorScheme.outline
                                             )
@@ -580,7 +579,7 @@ fun SharedTransitionScope.TimerScreen(
                                         Text(
                                             it,
                                             style = TextStyle(
-                                                fontFamily = googleFlex600,
+                                                fontFamily = typography.bodyLarge.fontFamily,
                                                 fontSize = 22.sp,
                                                 lineHeight = 28.sp,
                                                 color = if (timerState.nextTimerMode == TimerMode.FOCUS) colorScheme.primary else colorScheme.tertiary,
@@ -638,7 +637,7 @@ fun SharedTransitionScope.TimerScreen(
                             title = {
                                 Text(
                                     text = stringResource(R.string.up_next),
-                                    fontFamily = robotoFlexTopBar,
+                                    fontFamily = LocalAppFonts.current.topBarTitle,
                                     maxLines = 1
                                 )
                             },

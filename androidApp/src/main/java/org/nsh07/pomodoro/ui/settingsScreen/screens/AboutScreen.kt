@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -71,11 +71,10 @@ import org.nsh07.pomodoro.di.FlavorUI
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.LicenseBottomSheet
-import org.nsh07.pomodoro.ui.theme.AppFonts.googleFlex600
-import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
+import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
@@ -87,9 +86,9 @@ fun AboutScreen(
     contentPadding: PaddingValues,
     isPlus: Boolean,
     onBack: () -> Unit,
+    modifier: Modifier = Modifier,
     flavorUI: FlavorUI = koinInject(),
-    appInfo: AppInfo = koinInject(),
-    modifier: Modifier = Modifier
+    appInfo: AppInfo = koinInject()
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val uriHandler = LocalUriHandler.current
@@ -122,7 +121,10 @@ fun AboutScreen(
             topBar = {
                 LargeFlexibleTopAppBar(
                     title = {
-                        Text(stringResource(R.string.about), fontFamily = robotoFlexTopBar)
+                        Text(
+                            stringResource(R.string.about),
+                            fontFamily = LocalAppFonts.current.topBarTitle
+                        )
                     },
                     subtitle = {
                         Text(stringResource(R.string.app_name))
@@ -183,7 +185,7 @@ fun AboutScreen(
                                     else stringResource(R.string.app_name_plus),
                                     color = colorScheme.onSurface,
                                     style = typography.titleLarge,
-                                    fontFamily = googleFlex600
+                                    fontFamily = typography.bodyLarge.fontFamily
                                 )
                                 Text(
                                     text = "${appInfo.versionName} (${appInfo.versionCode})",
@@ -242,7 +244,7 @@ fun AboutScreen(
                                         "Nishant Mishra",
                                         style = typography.titleLarge,
                                         color = colorScheme.onSurface,
-                                        fontFamily = googleFlex600
+                                        fontFamily = typography.bodyLarge.fontFamily
                                     )
                                     Text(
                                         "Developer",

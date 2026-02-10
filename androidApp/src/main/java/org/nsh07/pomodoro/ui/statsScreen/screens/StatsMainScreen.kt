@@ -74,9 +74,9 @@ import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeColumnChart
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeLineChart
 import org.nsh07.pomodoro.ui.statsScreen.components.sharedBoundsReveal
-import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
+import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
@@ -104,9 +104,9 @@ fun SharedTransitionScope.StatsMainScreen(
     markerTypeface: Typeface,
     zoomStates: List<VicoZoomState>,
     scrollStates: List<VicoScrollState>,
-    appInfo: AppInfo = koinInject(),
     onNavigate: (Screen.Stats) -> Unit,
     modifier: Modifier = Modifier,
+    appInfo: AppInfo = koinInject(),
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -121,7 +121,7 @@ fun SharedTransitionScope.StatsMainScreen(
                     Text(
                         stringResource(R.string.stats),
                         style = LocalTextStyle.current.copy(
-                            fontFamily = robotoFlexTopBar,
+                            fontFamily = LocalAppFonts.current.topBarTitle,
                             fontSize = 32.sp,
                             lineHeight = 32.sp
                         ),

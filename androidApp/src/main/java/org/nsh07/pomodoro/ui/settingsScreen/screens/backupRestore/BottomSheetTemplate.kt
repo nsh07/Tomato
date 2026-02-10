@@ -57,7 +57,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
-import org.nsh07.pomodoro.ui.theme.AppFonts.annotatedStringFontFamily
+import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -110,7 +110,7 @@ fun BackupBottomSheetTemplate(
             Text(
                 labelText,
                 style = typography.bodyMedium,
-                fontFamily = annotatedStringFontFamily,
+                fontFamily = LocalAppFonts.current.annotatedString,
                 color = colorScheme.onSurfaceVariant
             )
             Row(

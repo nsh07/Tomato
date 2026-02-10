@@ -86,7 +86,7 @@ import org.nsh07.pomodoro.ui.statsScreen.components.HeatmapWithWeekLabels
 import org.nsh07.pomodoro.ui.statsScreen.components.HorizontalStackedBar
 import org.nsh07.pomodoro.ui.statsScreen.components.TimeLineChart
 import org.nsh07.pomodoro.ui.statsScreen.components.sharedBoundsReveal
-import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
@@ -142,7 +142,7 @@ fun SharedTransitionScope.LastYearScreen(
                 title = {
                     Text(
                         text = stringResource(R.string.last_year),
-                        fontFamily = robotoFlexTopBar,
+                        fontFamily = LocalAppFonts.current.topBarTitle,
                         modifier = Modifier.sharedBounds(
                             sharedContentState = this@LastYearScreen
                                 .rememberSharedContentState("last year heading"),

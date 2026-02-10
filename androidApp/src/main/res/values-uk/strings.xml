@@ -126,4 +126,5 @@
     <string name="restart_app">Перезапустити додаток</string>
     <string name="daily_focus_goal">Щоденна ціль фокусу</string>
     <string name="milliseconds_format">%1$dмс</string>
+    <string name="vibration_pattern">Шаблон вібрації</string>
 </resources>

@@ -124,4 +124,5 @@
     <string name="restart_app">பயன்பாட்டை மீண்டும் தொடங்கு</string>
     <string name="daily_focus_goal">தினசரி கவன இலக்கு</string>
     <string name="milliseconds_format">%1$dms</string>
+    <string name="vibration_pattern">அதிர்வு முறை</string>
 </resources>

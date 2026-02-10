@@ -117,4 +117,13 @@
     <string name="backup_and_restore">备份和恢复</string>
     <string name="backup">备份</string>
     <string name="backup_desc">备份所有统计数据和设置</string>
+    <string name="milliseconds_format">%1$d 毫秒</string>
+    <string name="restore">还原</string>
+    <string name="restore_desc">恢复统计数据和设置</string>
+    <string name="backup_dialog_desc">您的统计数据和设置将被作为文件保存到您选择的文件夹中。您可以在 %1$s 中稍后恢复这些数据。</string>
+    <string name="restore_dialog_desc">您的统计数据和设置将从所选的备份文件中恢复。恢复完成后，应用程序需要重新启动。 <b>所有现有数据将被删除，且无法撤销。</b></string>
+    <string name="choose_folder">选择文件夹</string>
+    <string name="choose_file">选择文件</string>
+    <string name="restart_app">重启应用</string>
+    <string name="vibration_pattern">振动模式</string>
 </resources>

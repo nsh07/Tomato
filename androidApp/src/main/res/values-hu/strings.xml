@@ -52,4 +52,25 @@
     <string name="up_next">Következik</string>
     <string name="timer">Időzítő</string>
     <string name="timer_progress">Időzítő állása</string>
+    <string name="about">Névjegy</string>
+    <string name="always_on_display">Mindig bekapcsolt kijelző</string>
+    <string name="always_on_display_desc">Az időzítő megtekintése közben bárhol megérintve átválthat AOD módra</string>
+    <string name="appearance">Megjelenítés</string>
+    <string name="auto_start_next_timer">Következő időzítő automatikus indítása</string>
+    <string name="auto_start_next_timer_desc">Elindítja a következő időzítőt az ébresztés leállítása után</string>
+    <string name="back">Vissza</string>
+    <string name="bmc_desc">Támogasson egy kis adománnyal</string>
+    <string name="choose_language">Nyelv kiválasztása</string>
+    <string name="dnd">Ne zavarjanak</string>
+    <string name="dnd_desc">Ne zavarjanak mód bekapcsolása a Fókusz időzítő futása alatt</string>
+    <string name="dnd_permission_message">Engedélyek megadása a \"%1$s\"-nak</string>
+    <string name="duration">Időtartam</string>
+    <string name="durations">Időtartamok</string>
+    <string name="dynamic_color">Dinamikus szín</string>
+    <string name="dynamic_color_desc">A háttérkép színeinek használata az alkalmazás témájához</string>
+    <string name="focus_break_ratio">Fókusz-szünet arány</string>
+    <string name="focus_breakdown">Fókuszanalízis</string>
+    <string name="focus_breakdown_desc">Az átlagos fókuszidő a nap különböző részében</string>
+    <string name="focus_history">Fókuszelőzmények</string>
+    <string name="focus_history_calendar">Fókuszelőzmény naptár</string>
 </resources>

@@ -46,8 +46,8 @@
     <string name="hours_format">%1$dώ</string>
     <string name="language">Γλώσσα</string>
     <string name="last_month">Τρέχων μήνας</string>
-    <string name="last_week">Τρέχων εβδομάδα</string>
-    <string name="last_year">Τρέχων έτος</string>
+    <string name="last_week">Τρέχουσα εβδομάδα</string>
+    <string name="last_year">Τρέχον έτος</string>
     <string name="light">Φωτεινό</string>
     <string name="long_break">Μεγάλο διάλειμμα</string>
     <string name="min_remaining_notification">%1$s λεπτά ακόμη</string>
@@ -139,4 +139,5 @@
     <string name="choose_folder">Επιλέξτε φάκελο</string>
     <string name="choose_file">Επιλέξτε αρχείο</string>
     <string name="restart_app">Επανεκκίνηση εφαρμογής</string>
+    <string name="vibration_pattern">Μοτίβο δόνησης</string>
 </resources>

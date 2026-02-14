@@ -25,23 +25,6 @@ Tomato is a minimalist Pomodoro timer for Android based on Material 3 Expressive
   <img src=https://img.shields.io/discord/1455603400254292196?logo=discord&label=Discord&labelColor=1a1a1a&color=5865F2>
 </a>
 
-<p>
-  <a href="https://play.google.com/store/apps/details?id=org.nsh07.pomodoro">
-    <img src=".github/repo_photos/googleplay.png" width="200">
-  </a>
-  <a href="https://f-droid.org/packages/org.nsh07.pomodoro">
-      <img src="https://f-droid.org/badge/get-it-on.png" width="200">
-  </a>
-  <a href="https://apt.izzysoft.de/fdroid/index/apk/org.nsh07.pomodoro">
-    <img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="200">
-  </a>
-</p>
-<p>
-  <a href="https://hosted.weblate.org/engage/tomato/">
-    <img src="https://hosted.weblate.org/widget/tomato/287x66-black.png" alt="Translation status" />
-  </a>
-</p>
-
 <br/>
 
 > *"It just might be the best looking timer app that I've ever seen"*
@@ -56,15 +39,17 @@ is Tomato."*
 \- [*Android
 Authority*](https://www.androidauthority.com/best-new-android-apps-october-2025-3602966/)
 
-<br/>
-
 </div>
+
+<br/>
 
 ## Screenshots
 
 <p align="center" width="100%">
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/7.png" width="25%"><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8.png" width="25%">
 </p>
+
+<br/>
 
 ### Features
 
@@ -82,6 +67,12 @@ Authority*](https://www.androidauthority.com/best-new-android-apps-october-2025-
 This project is [available on Hosted Weblate](https://hosted.weblate.org/engage/tomato/) for
 translation.
 
+<p>
+  <a href="https://hosted.weblate.org/engage/tomato/">
+    <img src="https://hosted.weblate.org/widget/tomato/287x66-black.png" alt="Translation status" />
+  </a>
+</p>
+
 You can contribute to this project even if you are not a developer by helping in
 translating this project into languages you know.
 
@@ -90,6 +81,18 @@ translating this project into languages you know.
 </a>
 
 ## Download
+
+<p>
+  <a href="https://play.google.com/store/apps/details?id=org.nsh07.pomodoro">
+    <img src=".github/repo_photos/googleplay.png" width="200">
+  </a>
+  <a href="https://f-droid.org/packages/org.nsh07.pomodoro">
+      <img src="https://f-droid.org/badge/get-it-on.png" width="200">
+  </a>
+  <a href="https://apt.izzysoft.de/fdroid/index/apk/org.nsh07.pomodoro">
+    <img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="200">
+  </a>
+</p>
 
 - **Google Play Store** (recommended): Tomato is available on the Google Play Store.
   [You can download it through this link](https://play.google.com/store/apps/details?id=org.nsh07.pomodoro).
@@ -153,3 +156,4 @@ This app was made possible by the following libraries:
 Please give this repo a star if you liked my work
 
 [![Star History Chart](https://app.repohistory.com/api/svg?repo=nsh07/Tomato&type=Date&background=F9FAEF&color=4C662B)](https://app.repohistory.com/star-history)
+

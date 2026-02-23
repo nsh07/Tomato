@@ -28,6 +28,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -165,6 +166,14 @@ fun SharedTransitionScope.TimerScreen(
         animationSpec = motionScheme.slowEffectsSpec()
     )
 
+    val clockFontSize by animateFloatAsState(
+        if (!timerState.infiniteFocus) {
+            if (timerState.timeStr.length < 6) 72f else 64f
+        } else {
+            if (timerState.timeStr.length < 6) 100f else 76f
+        }
+    )
+
     val widthExpanded = currentWindowAdaptiveInfo()
         .windowSizeClass
         .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
@@ -278,54 +287,65 @@ fun SharedTransitionScope.TimerScreen(
                         item {
                             Column(horizontalAlignment = CenterHorizontally) {
                                 Box(contentAlignment = Alignment.Center) {
-                                    if (timerState.timerMode == TimerMode.FOCUS) {
-                                        CircularProgressIndicator(
-                                            progress = progress,
-                                            modifier = Modifier
-                                                .sharedBounds(
-                                                    sharedContentState = this@TimerScreen.rememberSharedContentState(
-                                                        "focus progress"
-                                                    ),
-                                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                    AnimatedContent(timerState.infiniteFocus) {
+                                        if (!it) {
+                                            if (timerState.timerMode == TimerMode.FOCUS) {
+                                                CircularProgressIndicator(
+                                                    progress = progress,
+                                                    modifier = Modifier
+                                                        .sharedBounds(
+                                                            sharedContentState = this@TimerScreen.rememberSharedContentState(
+                                                                "focus progress"
+                                                            ),
+                                                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                                        )
+                                                        .widthIn(max = 350.dp)
+                                                        .fillMaxWidth(0.9f)
+                                                        .aspectRatio(1f),
+                                                    color = color,
+                                                    trackColor = colorContainer,
+                                                    strokeWidth = 16.dp,
+                                                    gapSize = 8.dp
                                                 )
-                                                .widthIn(max = 350.dp)
-                                                .fillMaxWidth(0.9f)
-                                                .aspectRatio(1f),
-                                            color = color,
-                                            trackColor = colorContainer,
-                                            strokeWidth = 16.dp,
-                                            gapSize = 8.dp
-                                        )
-                                    } else {
-                                        CircularWavyProgressIndicator(
-                                            progress = progress,
-                                            modifier = Modifier
-                                                .sharedBounds(
-                                                    sharedContentState = this@TimerScreen.rememberSharedContentState(
-                                                        "break progress"
+                                            } else {
+                                                CircularWavyProgressIndicator(
+                                                    progress = progress,
+                                                    modifier = Modifier
+                                                        .sharedBounds(
+                                                            sharedContentState = this@TimerScreen.rememberSharedContentState(
+                                                                "break progress"
+                                                            ),
+                                                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                                        )
+                                                        .widthIn(max = 350.dp)
+                                                        .fillMaxWidth(0.9f)
+                                                        .aspectRatio(1f),
+                                                    color = color,
+                                                    trackColor = colorContainer,
+                                                    stroke = Stroke(
+                                                        width = with(LocalDensity.current) {
+                                                            16.dp.toPx()
+                                                        },
+                                                        cap = StrokeCap.Round,
                                                     ),
-                                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                                    trackStroke = Stroke(
+                                                        width = with(LocalDensity.current) {
+                                                            16.dp.toPx()
+                                                        },
+                                                        cap = StrokeCap.Round,
+                                                    ),
+                                                    wavelength = 60.dp,
+                                                    gapSize = 8.dp
                                                 )
-                                                .widthIn(max = 350.dp)
-                                                .fillMaxWidth(0.9f)
-                                                .aspectRatio(1f),
-                                            color = color,
-                                            trackColor = colorContainer,
-                                            stroke = Stroke(
-                                                width = with(LocalDensity.current) {
-                                                    16.dp.toPx()
-                                                },
-                                                cap = StrokeCap.Round,
-                                            ),
-                                            trackStroke = Stroke(
-                                                width = with(LocalDensity.current) {
-                                                    16.dp.toPx()
-                                                },
-                                                cap = StrokeCap.Round,
-                                            ),
-                                            wavelength = 60.dp,
-                                            gapSize = 8.dp
-                                        )
+                                            }
+                                        } else {
+                                            Box(
+                                                Modifier
+                                                    .widthIn(max = 350.dp)
+                                                    .fillMaxWidth(0.9f)
+                                                    .aspectRatio(1f)
+                                            )
+                                        }
                                     }
                                     var expanded by remember { mutableStateOf(timerState.showBrandTitle) }
                                     Column(
@@ -356,7 +376,7 @@ fun SharedTransitionScope.TimerScreen(
                                             text = timerState.timeStr,
                                             style = TextStyle(
                                                 fontFamily = typography.bodyLarge.fontFamily,
-                                                fontSize = if (timerState.timeStr.length < 6) 72.sp else 64.sp,
+                                                fontSize = clockFontSize.sp,
                                                 letterSpacing = (-2.6).sp,
                                                 fontFeatureSettings = "tnum"
                                             ),

@@ -208,7 +208,8 @@ class TimerService : Service(), KoinComponent {
                     } else {
                         _timerState.update { currentState ->
                             currentState.copy(
-                                timeStr = if (!currentState.infiniteFocus) millisecondsToStr(time)
+                                timeStr = if (!currentState.infiniteFocus || currentState.timerMode != TimerMode.FOCUS)
+                                    millisecondsToStr(time)
                                 else millisecondsToStr(currentState.totalTime - time) // elapsed time
                             )
                         }

@@ -209,46 +209,54 @@ fun SharedTransitionScope.AlwaysOnDisplay(
                 IntOffset(x, y)
             }
         ) {
-            if (timerState.timerMode == TimerMode.FOCUS) {
-                CircularProgressIndicator(
-                    progress = progress,
-                    modifier = Modifier
-                        .sharedBounds(
-                            sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("focus progress"),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                        )
-                        .size(250.dp),
-                    color = primary,
-                    trackColor = secondaryContainer,
-                    strokeWidth = 12.dp,
-                    gapSize = 8.dp,
-                )
+            if (!timerState.infiniteFocus) {
+                if (timerState.timerMode == TimerMode.FOCUS) {
+                    CircularProgressIndicator(
+                        progress = progress,
+                        modifier = Modifier
+                            .sharedBounds(
+                                sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState(
+                                    "focus progress"
+                                ),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
+                            .size(250.dp),
+                        color = primary,
+                        trackColor = secondaryContainer,
+                        strokeWidth = 12.dp,
+                        gapSize = 8.dp,
+                    )
+                } else {
+                    CircularWavyProgressIndicator(
+                        progress = progress,
+                        modifier = Modifier
+                            .sharedBounds(
+                                sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState(
+                                    "break progress"
+                                ),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
+                            .size(250.dp),
+                        color = primary,
+                        trackColor = secondaryContainer,
+                        stroke = Stroke(
+                            width = with(LocalDensity.current) {
+                                12.dp.toPx()
+                            },
+                            cap = StrokeCap.Round,
+                        ),
+                        trackStroke = Stroke(
+                            width = with(LocalDensity.current) {
+                                12.dp.toPx()
+                            },
+                            cap = StrokeCap.Round,
+                        ),
+                        wavelength = 42.dp,
+                        gapSize = 8.dp
+                    )
+                }
             } else {
-                CircularWavyProgressIndicator(
-                    progress = progress,
-                    modifier = Modifier
-                        .sharedBounds(
-                            sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("break progress"),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                        )
-                        .size(250.dp),
-                    color = primary,
-                    trackColor = secondaryContainer,
-                    stroke = Stroke(
-                        width = with(LocalDensity.current) {
-                            12.dp.toPx()
-                        },
-                        cap = StrokeCap.Round,
-                    ),
-                    trackStroke = Stroke(
-                        width = with(LocalDensity.current) {
-                            12.dp.toPx()
-                        },
-                        cap = StrokeCap.Round,
-                    ),
-                    wavelength = 42.dp,
-                    gapSize = 8.dp
-                )
+                Box(modifier = Modifier.size(250.dp))
             }
 
             Text(

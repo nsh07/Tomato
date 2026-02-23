@@ -85,6 +85,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import org.nsh07.pomodoro.di.FlavorUI
 import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
@@ -104,8 +105,8 @@ fun AppScreen(
     setTimerFrequency: (Float) -> Unit,
     modifier: Modifier = Modifier,
     flavorUI: FlavorUI = koinInject(),
-    timerViewModel: TimerViewModel = koinInject(),
-    settingsViewModel: SettingsViewModel = koinInject()
+    timerViewModel: TimerViewModel = koinViewModel(),
+    settingsViewModel: SettingsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
 

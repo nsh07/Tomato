@@ -55,7 +55,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
@@ -74,7 +74,7 @@ fun BackupRestoreScreen(
     contentPadding: PaddingValues,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: BackupRestoreViewModel = koinInject()
+    viewModel: BackupRestoreViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

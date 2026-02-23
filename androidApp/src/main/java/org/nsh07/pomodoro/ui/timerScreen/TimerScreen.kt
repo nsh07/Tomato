@@ -20,6 +20,7 @@ package org.nsh07.pomodoro.ui.timerScreen
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -35,7 +36,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -221,16 +222,19 @@ fun SharedTransitionScope.TimerScreen(
                                             )
 
                                         TimerMode.FOCUS ->
-                                            Text(
-                                                stringResource(R.string.focus),
-                                                style = TextStyle(
-                                                    fontFamily = LocalAppFonts.current.topBarTitle,
-                                                    fontSize = 32.sp,
-                                                    lineHeight = 32.sp,
-                                                    color = colorScheme.primary
-                                                ),
-                                                textAlign = TextAlign.Center
-                                            )
+                                            AnimatedContent(timerState.infiniteFocus) { inf ->
+                                                Text(
+                                                    if (inf) stringResource(R.string.infinite_focus)
+                                                    else stringResource(R.string.focus),
+                                                    style = TextStyle(
+                                                        fontFamily = LocalAppFonts.current.topBarTitle,
+                                                        fontSize = 32.sp,
+                                                        lineHeight = 32.sp,
+                                                        color = colorScheme.primary
+                                                    ),
+                                                    textAlign = TextAlign.Center
+                                                )
+                                            }
 
                                         TimerMode.SHORT_BREAK -> Text(
                                             stringResource(R.string.short_break),
@@ -328,7 +332,22 @@ fun SharedTransitionScope.TimerScreen(
                                         horizontalAlignment = CenterHorizontally,
                                         modifier = Modifier
                                             .clip(shapes.largeIncreased)
-                                            .clickable(onClick = { expanded = !expanded })
+                                            .combinedClickable(
+                                                onClick = { expanded = !expanded },
+                                                onLongClick = {
+                                                    @SuppressLint("LocalContextGetResourceValueCall")
+                                                    if (!timerState.timerRunning) onAction(
+                                                        TimerAction.SetInfiniteFocus(
+                                                            !timerState.infiniteFocus
+                                                        )
+                                                    )
+                                                    else Toast.makeText(
+                                                        context,
+                                                        context.getString(R.string.timer_settings_reset_info),
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                            )
                                     ) {
                                         LaunchedEffect(timerState.showBrandTitle) {
                                             expanded = timerState.showBrandTitle

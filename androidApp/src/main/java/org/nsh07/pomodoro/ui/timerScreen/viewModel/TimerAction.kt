@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -19,6 +19,7 @@ package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
 sealed interface TimerAction {
     data class SkipTimer(val fromButton: Boolean) : TimerAction
+    data class SetInfiniteFocus(val value: Boolean) : TimerAction
 
     data object ResetTimer : TimerAction
     data object UndoReset : TimerAction

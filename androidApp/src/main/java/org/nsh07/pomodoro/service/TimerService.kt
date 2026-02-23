@@ -182,8 +182,12 @@ class TimerService : Service(), KoinComponent {
                     if (startTime == 0L) startTime = SystemClock.elapsedRealtime()
 
                     val settingsState = _settingsState.value
+                    val timerState = _timerState.value
+
+                    val focusTime =
+                        if (!timerState.infiniteFocus) settingsState.focusTime else Long.MAX_VALUE
                     time = when (_timerState.value.timerMode) {
-                        TimerMode.FOCUS -> settingsState.focusTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration)
+                        TimerMode.FOCUS -> focusTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration)
 
                         TimerMode.SHORT_BREAK -> settingsState.shortBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration)
 
@@ -204,7 +208,8 @@ class TimerService : Service(), KoinComponent {
                     } else {
                         _timerState.update { currentState ->
                             currentState.copy(
-                                timeStr = millisecondsToStr(time)
+                                timeStr = if (!currentState.infiniteFocus) millisecondsToStr(time)
+                                else millisecondsToStr(currentState.totalTime - time) // elapsed time
                             )
                         }
                         val totalTime = _timerState.value.totalTime
@@ -334,6 +339,7 @@ class TimerService : Service(), KoinComponent {
 
     private suspend fun resetTimer() {
         val settingsState = _settingsState.value
+        val timerState = _timerState.value
 
         timerStateSnapshot.save(
             lastSavedDuration,
@@ -342,21 +348,23 @@ class TimerService : Service(), KoinComponent {
             startTime,
             pauseTime,
             pauseDuration,
-            _timerState.value
+            timerState
         )
 
         saveTimeToDb()
         lastSavedDuration = 0
-        time = settingsState.focusTime
         cycles = 0
         startTime = 0L
         pauseTime = 0L
         pauseDuration = 0L
 
+        time = if (!timerState.infiniteFocus) settingsState.focusTime else Long.MAX_VALUE
+
         _timerState.update { currentState ->
             currentState.copy(
                 timerMode = TimerMode.FOCUS,
-                timeStr = millisecondsToStr(time),
+                timeStr = if (!currentState.infiniteFocus) millisecondsToStr(time)
+                else millisecondsToStr(0),
                 totalTime = time,
                 nextTimerMode = if (settingsState.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
                 nextTimeStr = millisecondsToStr(if (settingsState.sessionLength > 1) settingsState.shortBreakTime else settingsState.longBreakTime),
@@ -391,12 +399,14 @@ class TimerService : Service(), KoinComponent {
         cycles = (cycles + 1) % (settingsState.sessionLength * 2)
 
         if (cycles % 2 == 0) {
-            if (_timerState.value.timerRunning) setDoNotDisturb(true)
-            time = settingsState.focusTime
             _timerState.update { currentState ->
+                if (currentState.timerRunning) setDoNotDisturb(true)
+                time = if (!currentState.infiniteFocus) settingsState.focusTime else Long.MAX_VALUE
+
                 currentState.copy(
                     timerMode = TimerMode.FOCUS,
-                    timeStr = millisecondsToStr(time),
+                    timeStr = if (!currentState.infiniteFocus) millisecondsToStr(time)
+                    else millisecondsToStr(0),
                     totalTime = time,
                     nextTimerMode = if (cycles == (settingsState.sessionLength - 1) * 2) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
                     nextTimeStr = if (cycles == (settingsState.sessionLength - 1) * 2) millisecondsToStr(
@@ -409,17 +419,20 @@ class TimerService : Service(), KoinComponent {
                 )
             }
         } else {
-            if (_timerState.value.timerRunning) setDoNotDisturb(false)
             val long = cycles == (settingsState.sessionLength * 2) - 1
             time = if (long) settingsState.longBreakTime else settingsState.shortBreakTime
 
             _timerState.update { currentState ->
+                if (currentState.timerRunning) setDoNotDisturb(false)
+
                 currentState.copy(
                     timerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
                     timeStr = millisecondsToStr(time),
                     totalTime = time,
                     nextTimerMode = TimerMode.FOCUS,
-                    nextTimeStr = millisecondsToStr(settingsState.focusTime)
+                    nextTimeStr = if (!currentState.infiniteFocus)
+                        millisecondsToStr(settingsState.focusTime)
+                    else getString(R.string.infinite)
                 )
             }
         }

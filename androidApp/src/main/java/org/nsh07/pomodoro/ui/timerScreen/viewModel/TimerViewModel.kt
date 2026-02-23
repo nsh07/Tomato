@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -43,7 +43,7 @@ class TimerViewModel(
     private val serviceHelper: ServiceHelper,
     private val stateRepository: StateRepository,
     private val statRepository: StatRepository,
-    private val timerStateHolder: TimerStateHolder,
+    timerStateHolder: TimerStateHolder,
 ) : ViewModel() {
 
     private val _time: MutableStateFlow<Long> = timerStateHolder.time
@@ -79,6 +79,14 @@ class TimerViewModel(
     }
 
     fun onAction(action: TimerAction) {
-        serviceHelper.startService(action)
+        if (action !is TimerAction.SetInfiniteFocus) serviceHelper.startService(action)
+        else {
+            stateRepository.timerState.update {
+                it.copy(
+                    infiniteFocus = action.value
+                )
+            }
+            onAction(TimerAction.ResetTimer)
+        }
     }
 }

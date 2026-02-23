@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -19,6 +19,7 @@ package org.nsh07.pomodoro.service
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 
 /**
@@ -59,6 +60,10 @@ class ServiceHelper(private val context: Context) {
                     it.action = TimerService.Actions.TOGGLE.toString()
                     context.startService(it)
                 }
+
+            is TimerAction.SetInfiniteFocus -> {
+                Log.e("StartService", "Invalid action: $action")
+            }
         }
     }
 }

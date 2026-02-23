@@ -146,4 +146,6 @@
     <string name="choose_file">Choose file</string>
     <string name="restart_app">Restart app</string>
     <string name="vibration_pattern">Vibration pattern</string>
+    <string name="infinite">Infinite</string>
+    <string name="infinite_focus">Infinite focus</string>
 </resources>

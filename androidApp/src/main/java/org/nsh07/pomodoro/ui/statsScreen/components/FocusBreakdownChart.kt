@@ -17,28 +17,23 @@
 
 package org.nsh07.pomodoro.ui.statsScreen.components
 
-import android.graphics.Typeface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import org.nsh07.pomodoro.R
 
 @Composable
 fun FocusBreakdownChart(
     modelProducer: CartesianChartModelProducer,
-    modifier: Modifier = Modifier,
-    axisTypeface: Typeface = Typeface.DEFAULT,
-    markerTypeface: Typeface = Typeface.DEFAULT
+    modifier: Modifier = Modifier
 ) {
     TimeColumnChart(
         modelProducer,
         hoursFormat = stringResource(R.string.hours_format),
         hoursMinutesFormat = stringResource(R.string.hours_and_minutes_format),
         minutesFormat = stringResource(R.string.minutes_format),
-        axisTypeface = axisTypeface,
-        markerTypeface = markerTypeface,
         xValueFormatter = CartesianValueFormatter { _, value, _ ->
             when (value) {
                 0.0 -> "0 - 6"

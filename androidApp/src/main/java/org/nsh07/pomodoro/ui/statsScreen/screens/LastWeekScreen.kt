@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.statsScreen.screens
 
-import android.graphics.Typeface
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
@@ -68,10 +67,10 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakRatioVisualization
@@ -97,8 +96,6 @@ fun SharedTransitionScope.LastWeekScreen(
     hoursMinutesFormat: String,
     hoursFormat: String,
     minutesFormat: String,
-    axisTypeface: Typeface,
-    markerTypeface: Typeface,
     zoomState: VicoZoomState,
     scrollState: VicoScrollState,
     goal: Long
@@ -225,8 +222,6 @@ fun SharedTransitionScope.LastWeekScreen(
                         hoursFormat = hoursFormat,
                         hoursMinutesFormat = hoursMinutesFormat,
                         minutesFormat = minutesFormat,
-                        axisTypeface = axisTypeface,
-                        markerTypeface = markerTypeface,
                         xValueFormatter = CartesianValueFormatter { context, x, _ ->
                             context.model.extraStore[mainChartData.second][x.toInt()]
                         },

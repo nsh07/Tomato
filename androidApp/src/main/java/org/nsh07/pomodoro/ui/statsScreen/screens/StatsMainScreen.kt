@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.statsScreen.screens
 
-import android.graphics.Typeface
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -62,9 +61,9 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import org.koin.compose.koinInject
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
@@ -100,8 +99,6 @@ fun SharedTransitionScope.StatsMainScreen(
     hoursMinutesFormat: String,
     hoursFormat: String,
     minutesFormat: String,
-    axisTypeface: Typeface,
-    markerTypeface: Typeface,
     zoomStates: List<VicoZoomState>,
     scrollStates: List<VicoScrollState>,
     onNavigate: (Screen.Stats) -> Unit,
@@ -321,8 +318,6 @@ fun SharedTransitionScope.StatsMainScreen(
                         hoursFormat = hoursFormat,
                         hoursMinutesFormat = hoursMinutesFormat,
                         minutesFormat = minutesFormat,
-                        axisTypeface = axisTypeface,
-                        markerTypeface = markerTypeface,
                         xValueFormatter = CartesianValueFormatter { context, x, _ ->
                             context.model.extraStore[lastWeekSummaryChartData.second][x.toInt()]
                         },
@@ -430,8 +425,6 @@ fun SharedTransitionScope.StatsMainScreen(
                         hoursFormat = hoursFormat,
                         hoursMinutesFormat = hoursMinutesFormat,
                         minutesFormat = minutesFormat,
-                        axisTypeface = axisTypeface,
-                        markerTypeface = markerTypeface,
                         thickness = 8.dp,
                         xValueFormatter = CartesianValueFormatter { context, x, _ ->
                             context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
@@ -542,8 +535,6 @@ fun SharedTransitionScope.StatsMainScreen(
                         hoursFormat = hoursFormat,
                         hoursMinutesFormat = hoursMinutesFormat,
                         minutesFormat = minutesFormat,
-                        axisTypeface = axisTypeface,
-                        markerTypeface = markerTypeface,
                         xValueFormatter = CartesianValueFormatter { context, x, _ ->
                             context.model.extraStore[lastYearSummaryChartData.second][x.toInt()]
                         },

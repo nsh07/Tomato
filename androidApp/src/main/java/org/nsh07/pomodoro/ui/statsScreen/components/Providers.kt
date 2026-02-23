@@ -17,10 +17,10 @@
 
 package org.nsh07.pomodoro.ui.statsScreen.components
 
-import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer.ColumnProvider
-import com.patrykandpatrick.vico.core.common.component.LineComponent
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.compose.cartesian.data.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.common.component.LineComponent
+import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 
 class Providers {
     companion object {
@@ -28,7 +28,7 @@ class Providers {
             private val limit: Double,
             private val belowLimitComponent: LineComponent,
             private val aboveLimitComponent: LineComponent
-        ) : ColumnProvider {
+        ) : ColumnCartesianLayer.ColumnProvider {
             override fun getColumn(
                 entry: ColumnCartesianLayerModel.Entry,
                 seriesIndex: Int,
@@ -42,7 +42,7 @@ class Providers {
                 seriesIndex: Int,
                 extraStore: ExtraStore
             ): LineComponent {
-                return if (belowLimitComponent.thicknessDp > aboveLimitComponent.thicknessDp) belowLimitComponent
+                return if (belowLimitComponent.thickness > aboveLimitComponent.thickness) belowLimitComponent
                 else aboveLimitComponent
             }
         }
@@ -51,7 +51,7 @@ class Providers {
             limit: Number,
             belowLimitComponent: LineComponent,
             aboveLimitComponent: LineComponent
-        ): ColumnProvider =
+        ): ColumnCartesianLayer.ColumnProvider =
             ColumnProviderWithLimit(limit.toDouble(), belowLimitComponent, aboveLimitComponent)
     }
 }

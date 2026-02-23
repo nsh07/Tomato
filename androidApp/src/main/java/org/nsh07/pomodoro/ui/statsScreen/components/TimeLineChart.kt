@@ -17,61 +17,58 @@
 
 package org.nsh07.pomodoro.ui.statsScreen.components
 
-import android.graphics.Paint
-import android.graphics.Typeface
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
+import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush.Companion.verticalGradient
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.cartesian.AutoScrollCondition
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.Scroll
 import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.Zoom
+import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.compose.cartesian.decoration.HorizontalLine
+import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.compose.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.DashedShape
+import com.patrykandpatrick.vico.compose.common.Fill
+import com.patrykandpatrick.vico.compose.common.Insets
+import com.patrykandpatrick.vico.compose.common.Position
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
+import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
-import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
-import com.patrykandpatrick.vico.core.cartesian.Scroll
-import com.patrykandpatrick.vico.core.cartesian.Zoom
-import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
-import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
-import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
-import com.patrykandpatrick.vico.core.common.Fill
-import com.patrykandpatrick.vico.core.common.Insets
-import com.patrykandpatrick.vico.core.common.Position
-import com.patrykandpatrick.vico.core.common.component.ShapeComponent
-import com.patrykandpatrick.vico.core.common.shader.ShaderProvider.Companion.verticalGradient
-import com.patrykandpatrick.vico.core.common.shape.CorneredShape
-import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.millisecondsToHours
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
@@ -86,11 +83,9 @@ fun TimeLineChart(
     hoursMinutesFormat: String,
     minutesFormat: String,
     modifier: Modifier = Modifier,
-    axisTypeface: Typeface = Typeface.DEFAULT,
-    markerTypeface: Typeface = Typeface.DEFAULT,
-    thickness: Float = 2f,
+    thickness: Dp = 2.dp,
     pointSpacing: Dp = 12.dp,
-    xValueFormatter: CartesianValueFormatter = CartesianValueFormatter.Default,
+    xValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
     yValueFormatter: CartesianValueFormatter = CartesianValueFormatter { _, value, _ ->
         if (value >= 60 * 60 * 1000) {
             millisecondsToHours(value.toLong(), hoursFormat)
@@ -131,24 +126,28 @@ fun TimeLineChart(
                         LineCartesianLayer.LineProvider.series(
                             LineCartesianLayer.rememberLine(
                                 fill = LineCartesianLayer.LineFill.double(
-                                    topFill = fill(colorScheme.primary),
-                                    bottomFill = fill(colorScheme.secondary),
+                                    topFill = Fill(colorScheme.primary),
+                                    bottomFill = Fill(colorScheme.secondary),
                                     splitY = { goal }
                                 ),
                                 stroke = LineCartesianLayer.LineStroke.Continuous(
-                                    thickness, Paint.Cap.ROUND
+                                    thickness, StrokeCap.Round
                                 ),
                                 areaFill = LineCartesianLayer.AreaFill.double(
-                                    topFill = fill(
+                                    topFill = Fill(
                                         verticalGradient(
-                                            colorScheme.primary.toArgb(),
-                                            Color.Transparent.toArgb()
+                                            listOf(
+                                                colorScheme.primary,
+                                                Color.Transparent
+                                            )
                                         )
                                     ),
-                                    bottomFill = fill(
+                                    bottomFill = Fill(
                                         verticalGradient(
-                                            Color.Transparent.toArgb(),
-                                            colorScheme.secondary.toArgb()
+                                            listOf(
+                                                Color.Transparent,
+                                                colorScheme.secondary
+                                            )
                                         )
                                     ),
                                     splitY = { goal }
@@ -160,7 +159,12 @@ fun TimeLineChart(
                     ),
                     startAxis = VerticalAxis.rememberStart(
                         line = rememberLineComponent(Fill.Transparent),
-                        label = rememberTextComponent(colorScheme.onSurface, axisTypeface),
+                        label = rememberTextComponent(
+                            TextStyle(
+                                fontFamily = typography.bodyMedium.fontFamily,
+                                color = colorScheme.onSurface
+                            )
+                        ),
                         tick = rememberLineComponent(Fill.Transparent),
                         guideline = rememberLineComponent(Fill.Transparent),
                         itemPlacer = VerticalAxis.ItemPlacer.count({ 4 }),
@@ -168,7 +172,12 @@ fun TimeLineChart(
                     ),
                     bottomAxis = HorizontalAxis.rememberBottom(
                         line = rememberLineComponent(Fill.Transparent),
-                        label = rememberTextComponent(colorScheme.onSurface, axisTypeface),
+                        label = rememberTextComponent(
+                            TextStyle(
+                                fontFamily = typography.bodyMedium.fontFamily,
+                                color = colorScheme.onSurface
+                            )
+                        ),
                         tick = rememberLineComponent(Fill.Transparent),
                         guideline = rememberLineComponent(Fill.Transparent),
                         valueFormatter = xValueFormatter
@@ -177,12 +186,12 @@ fun TimeLineChart(
                         HorizontalLine(
                             y = { goal.toDouble() },
                             line = rememberLineComponent(
-                                fill = fill(colorScheme.primary),
+                                fill = Fill(colorScheme.primary),
                                 thickness = 1.dp,
                                 shape = DashedShape(
-                                    shape = CorneredShape.Pill,
-                                    dashLengthDp = 2f,
-                                    gapLengthDp = 2f
+                                    shape = CircleShape,
+                                    dashLength = 2.dp,
+                                    gapLength = 2.dp
                                 )
                             ),
                             horizontalLabelPosition = Position.Horizontal.Start,
@@ -192,31 +201,33 @@ fun TimeLineChart(
                     else emptyList(),
                     marker = rememberDefaultCartesianMarker(
                         rememberTextComponent(
-                            color = colorScheme.inverseOnSurface,
-                            typeface = markerTypeface,
-                            background = rememberShapeComponent(
-                                fill = fill(colorScheme.inverseSurface),
-                                shape = CorneredShape.rounded(8f)
+                            TextStyle(
+                                fontFamily = typography.bodyLarge.fontFamily,
+                                color = colorScheme.onSurface,
+                                fontSize = typography.bodySmall.fontSize,
+                                lineHeight = typography.bodySmall.lineHeight
                             ),
-                            textSize = typography.bodySmall.fontSize,
-                            lineHeight = typography.bodySmall.lineHeight,
-                            padding = Insets(verticalDp = 4f, horizontalDp = 8f),
-                            margins = Insets(bottomDp = 2f)
+                            background = rememberShapeComponent(
+                                fill = Fill(colorScheme.inverseSurface),
+                                shape = shapes.small
+                            ),
+                            padding = Insets(vertical = 4.dp, horizontal = 8.dp),
+                            margins = Insets(bottom = 2.dp)
                         ),
                         valueFormatter = markerValueFormatter,
                         indicator = {
                             ShapeComponent(
-                                fill = fill(it),
-                                shape = CorneredShape.Pill,
-                                margins = Insets(3f)
+                                fill = Fill(it),
+                                shape = CircleShape,
+                                margins = Insets(3.dp)
                             )
                         },
                         guideline = rememberLineComponent(
-                            fill = fill(colorScheme.primary),
+                            fill = Fill(colorScheme.primary),
                             shape = DashedShape(
-                                shape = CorneredShape.Pill,
-                                dashLengthDp = 2f,
-                                gapLengthDp = 2f
+                                shape = CircleShape,
+                                dashLength = 2.dp,
+                                gapLength = 2.dp
                             )
                         )
                     ),

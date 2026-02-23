@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.statsScreen
 
-import android.graphics.Typeface
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.fadeIn
@@ -27,7 +26,6 @@ import androidx.compose.animation.unveilIn
 import androidx.compose.animation.veilOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.detailPane
@@ -35,9 +33,7 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.C
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
@@ -62,7 +58,6 @@ fun StatsScreenRoot(
     modifier: Modifier = Modifier,
     viewModel: StatsViewModel = koinInject()
 ) {
-    val typography = typography
     val backStack = viewModel.backStack
 
     val todayStat by viewModel.todayStat.collectAsStateWithLifecycle(null)
@@ -86,12 +81,6 @@ fun StatsScreenRoot(
     val hoursFormat = stringResource(R.string.hours_format)
     val hoursMinutesFormat = stringResource(R.string.hours_and_minutes_format)
     val minutesFormat = stringResource(R.string.minutes_format)
-
-    val resolver = LocalFontFamilyResolver.current
-    val axisTypeface =
-        remember { resolver.resolve(typography.bodyMedium.fontFamily).value as Typeface }
-    val markerTypeface =
-        remember { resolver.resolve(typography.bodyLarge.fontFamily).value as Typeface }
 
     SharedTransitionLayout {
         NavDisplay(
@@ -133,8 +122,6 @@ fun StatsScreenRoot(
                         hoursFormat = hoursFormat,
                         hoursMinutesFormat = hoursMinutesFormat,
                         minutesFormat = minutesFormat,
-                        axisTypeface = axisTypeface,
-                        markerTypeface = markerTypeface,
                         zoomStates = viewModel.chartZoomStates,
                         scrollStates = viewModel.chartScrollStates,
                         onNavigate = {
@@ -158,8 +145,6 @@ fun StatsScreenRoot(
                         hoursMinutesFormat = hoursMinutesFormat,
                         hoursFormat = hoursFormat,
                         minutesFormat = minutesFormat,
-                        axisTypeface = axisTypeface,
-                        markerTypeface = markerTypeface,
                         zoomState = viewModel.chartZoomStates[0],
                         scrollState = viewModel.chartScrollStates[0]
                     )
@@ -178,8 +163,6 @@ fun StatsScreenRoot(
                         hoursMinutesFormat = hoursMinutesFormat,
                         hoursFormat = hoursFormat,
                         minutesFormat = minutesFormat,
-                        axisTypeface = axisTypeface,
-                        markerTypeface = markerTypeface,
                         zoomState = viewModel.chartZoomStates[1],
                         scrollState = viewModel.chartScrollStates[1]
                     )
@@ -199,8 +182,6 @@ fun StatsScreenRoot(
                         hoursMinutesFormat = hoursMinutesFormat,
                         hoursFormat = hoursFormat,
                         minutesFormat = minutesFormat,
-                        axisTypeface = axisTypeface,
-                        markerTypeface = markerTypeface,
                         zoomState = viewModel.chartZoomStates[2],
                         scrollState = viewModel.chartScrollStates[2]
                     )

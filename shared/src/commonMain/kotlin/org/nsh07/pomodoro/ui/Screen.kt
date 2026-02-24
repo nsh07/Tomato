@@ -70,7 +70,8 @@ data class NavItem(
     val route: Screen,
     @param:DrawableRes val unselectedIcon: Int,
     @param:DrawableRes val selectedIcon: Int,
-    @param:StringRes val label: Int
+    @param:StringRes val label: Int,
+    val onNavigateHome: () -> Unit
 )
 
 data class SettingsNavItem(

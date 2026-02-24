@@ -32,6 +32,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -102,6 +104,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -167,11 +170,12 @@ fun SharedTransitionScope.TimerScreen(
     )
 
     val clockFontSize by animateFloatAsState(
-        if (!timerState.infiniteFocus) {
+        targetValue = if (!timerState.infiniteFocus) {
             if (timerState.timeStr.length < 6) 72f else 64f
         } else {
             if (timerState.timeStr.length < 6) 100f else 88f
-        }
+        },
+        animationSpec = motionScheme.defaultSpatialSpec()
     )
 
     val widthExpanded = currentWindowAdaptiveInfo()
@@ -271,6 +275,7 @@ fun SharedTransitionScope.TimerScreen(
                             },
                             subtitle = {},
                             titleHorizontalAlignment = CenterHorizontally,
+                            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                             scrollBehavior = scrollBehavior
                         )
                     },
@@ -286,64 +291,64 @@ fun SharedTransitionScope.TimerScreen(
                     ) {
                         item {
                             Column(horizontalAlignment = CenterHorizontally) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    AnimatedContent(timerState.infiniteFocus) {
-                                        if (!it) {
-                                            if (timerState.timerMode == TimerMode.FOCUS) {
-                                                CircularProgressIndicator(
-                                                    progress = progress,
-                                                    modifier = Modifier
-                                                        .sharedBounds(
-                                                            sharedContentState = this@TimerScreen.rememberSharedContentState(
-                                                                "focus progress"
-                                                            ),
-                                                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                                        )
-                                                        .widthIn(max = 350.dp)
-                                                        .fillMaxWidth(0.9f)
-                                                        .aspectRatio(1f),
-                                                    color = color,
-                                                    trackColor = colorContainer,
-                                                    strokeWidth = 16.dp,
-                                                    gapSize = 8.dp
-                                                )
-                                            } else {
-                                                CircularWavyProgressIndicator(
-                                                    progress = progress,
-                                                    modifier = Modifier
-                                                        .sharedBounds(
-                                                            sharedContentState = this@TimerScreen.rememberSharedContentState(
-                                                                "break progress"
-                                                            ),
-                                                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                                        )
-                                                        .widthIn(max = 350.dp)
-                                                        .fillMaxWidth(0.9f)
-                                                        .aspectRatio(1f),
-                                                    color = color,
-                                                    trackColor = colorContainer,
-                                                    stroke = Stroke(
-                                                        width = with(LocalDensity.current) {
-                                                            16.dp.toPx()
-                                                        },
-                                                        cap = StrokeCap.Round,
-                                                    ),
-                                                    trackStroke = Stroke(
-                                                        width = with(LocalDensity.current) {
-                                                            16.dp.toPx()
-                                                        },
-                                                        cap = StrokeCap.Round,
-                                                    ),
-                                                    wavelength = 60.dp,
-                                                    gapSize = 8.dp
-                                                )
-                                            }
-                                        } else {
-                                            Box(
-                                                Modifier
-                                                    .widthIn(max = 350.dp)
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .widthIn(max = 350.dp)
+                                        .aspectRatio(1f),
+                                ) {
+                                    this@Column.AnimatedVisibility(
+                                        !timerState.infiniteFocus,
+                                        enter = fadeIn(motionScheme.defaultEffectsSpec()) +
+                                                scaleIn(motionScheme.defaultSpatialSpec(), 4f),
+                                        exit = fadeOut(motionScheme.defaultEffectsSpec()) +
+                                                scaleOut(motionScheme.defaultSpatialSpec(), 4f)
+                                    ) {
+                                        if (timerState.timerMode == TimerMode.FOCUS) {
+                                            CircularProgressIndicator(
+                                                progress = progress,
+                                                modifier = Modifier
+                                                    .sharedBounds(
+                                                        sharedContentState = this@TimerScreen.rememberSharedContentState(
+                                                            "focus progress"
+                                                        ),
+                                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                                    )
                                                     .fillMaxWidth(0.9f)
-                                                    .aspectRatio(1f)
+                                                    .aspectRatio(1f),
+                                                color = color,
+                                                trackColor = colorContainer,
+                                                strokeWidth = 16.dp,
+                                                gapSize = 8.dp
+                                            )
+                                        } else {
+                                            CircularWavyProgressIndicator(
+                                                progress = progress,
+                                                modifier = Modifier
+                                                    .sharedBounds(
+                                                        sharedContentState = this@TimerScreen.rememberSharedContentState(
+                                                            "break progress"
+                                                        ),
+                                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                                    )
+                                                    .fillMaxWidth(0.9f)
+                                                    .aspectRatio(1f),
+                                                color = color,
+                                                trackColor = colorContainer,
+                                                stroke = Stroke(
+                                                    width = with(LocalDensity.current) {
+                                                        16.dp.toPx()
+                                                    },
+                                                    cap = StrokeCap.Round,
+                                                ),
+                                                trackStroke = Stroke(
+                                                    width = with(LocalDensity.current) {
+                                                        16.dp.toPx()
+                                                    },
+                                                    cap = StrokeCap.Round,
+                                                ),
+                                                wavelength = 60.dp,
+                                                gapSize = 8.dp
                                             )
                                         }
                                     }

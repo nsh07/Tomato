@@ -183,10 +183,10 @@ fun SharedTransitionScope.AlwaysOnDisplay(
         )
     }
 
-    var xIncrement by remember { mutableIntStateOf(1) }
-    var yIncrement by remember { mutableIntStateOf(1) }
+    var xIncrement = 2
+    var yIncrement = 2
 
-    LaunchedEffect(timerState.timeStr) { // Randomize position every minute
+    LaunchedEffect(timerState.timeStr[1]) { // Randomize position every minute
         if (sharedElementTransitionComplete) {
             val elementSize = 266.dp.toIntPx(density)
             if (windowInfo.containerSize.width - elementSize < x + xIncrement || x + xIncrement < 16)

@@ -24,6 +24,7 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -262,16 +263,28 @@ fun TimerSettings(
                     .padding(horizontal = 16.dp)
             ) {
                 item {
-                    CompositionLocalProvider(LocalContentColor provides colorScheme.error) {
-                        AnimatedVisibility(serviceRunning) {
-                            Column {
-                                Spacer(Modifier.height(8.dp))
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Icon(painterResource(R.drawable.info), null)
-                                    Text(stringResource(R.string.timer_settings_reset_info))
+                    Column {
+                        Spacer(Modifier.height(8.dp))
+                        AnimatedContent(serviceRunning) {
+                            if (it) {
+                                CompositionLocalProvider(LocalContentColor provides colorScheme.error) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Icon(painterResource(R.drawable.info), null)
+                                        Text(stringResource(R.string.timer_settings_reset_info))
+                                    }
+                                }
+                            } else {
+                                CompositionLocalProvider(LocalContentColor provides colorScheme.onSurfaceVariant) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Icon(painterResource(R.drawable.info), null)
+                                        Text(stringResource(R.string.settings_infinite_focus_tip))
+                                    }
                                 }
                             }
                         }

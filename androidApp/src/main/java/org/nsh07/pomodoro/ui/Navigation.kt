@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -18,27 +18,6 @@
 package org.nsh07.pomodoro.ui
 
 import org.nsh07.pomodoro.R
-
-val mainScreens = listOf(
-    NavItem(
-        Screen.Timer,
-        R.drawable.timer_outlined,
-        R.drawable.timer_filled,
-        R.string.timer
-    ),
-    NavItem(
-        Screen.Stats.Main,
-        R.drawable.monitoring,
-        R.drawable.monitoring_filled,
-        R.string.stats
-    ),
-    NavItem(
-        Screen.Settings.Main,
-        R.drawable.settings,
-        R.drawable.settings_filled,
-        R.string.settings
-    )
-)
 
 val settingsScreens = listOf(
     SettingsNavItem(

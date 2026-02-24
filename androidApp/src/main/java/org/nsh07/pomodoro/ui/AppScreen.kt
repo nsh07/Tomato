@@ -86,11 +86,13 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.di.FlavorUI
 import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
+import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.timerScreen.AlarmDialog
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -106,7 +108,8 @@ fun AppScreen(
     modifier: Modifier = Modifier,
     flavorUI: FlavorUI = koinInject(),
     timerViewModel: TimerViewModel = koinViewModel(),
-    settingsViewModel: SettingsViewModel = koinViewModel()
+    settingsViewModel: SettingsViewModel = koinViewModel(),
+    statsViewModel: StatsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
 
@@ -124,6 +127,29 @@ fun AppScreen(
     val toolbarScrollBehavior = FloatingToolbarDefaults.exitAlwaysScrollBehavior(
         FloatingToolbarExitDirection.Bottom
     )
+
+    val mainScreens = remember {
+        listOf(
+            NavItem(
+                Screen.Timer,
+                R.drawable.timer_outlined,
+                R.drawable.timer_filled,
+                R.string.timer
+            ) {},
+            NavItem(
+                Screen.Stats.Main,
+                R.drawable.monitoring,
+                R.drawable.monitoring_filled,
+                R.string.stats
+            ) { statsViewModel.backStack.removeRange(1, statsViewModel.backStack.size) },
+            NavItem(
+                Screen.Settings.Main,
+                R.drawable.settings,
+                R.drawable.settings_filled,
+                R.string.settings
+            ) { settingsViewModel.backStack.removeRange(1, settingsViewModel.backStack.size) }
+        )
+    }
 
     if (uiState.alarmRinging)
         AlarmDialog {
@@ -193,17 +219,21 @@ fun AppScreen(
                                         TooltipAnchorPosition.Above
                                     ),
                                 tooltip = { PlainTooltip { Text(stringResource(item.label)) } },
-                                state = rememberTooltipState(),
+                                state = rememberTooltipState()
                             ) {
                                 ToggleButton(
                                     checked = selected,
-                                    onCheckedChange = if (item.route != Screen.Timer) { // Ensure the backstack does not accumulate screens
+                                    onCheckedChange = if (!selected) {
                                         {
-                                            if (backStack.size < 2) backStack.add(item.route)
-                                            else backStack[1] = item.route
+                                            if (item.route != Screen.Timer) { // Ensure the backstack does not accumulate screens
+                                                if (backStack.size < 2) backStack.add(item.route)
+                                                else backStack[1] = item.route
+                                            } else {
+                                                if (backStack.size > 1) backStack.removeAt(1)
+                                            }
                                         }
                                     } else {
-                                        { if (backStack.size > 1) backStack.removeAt(1) }
+                                        { item.onNavigateHome() }
                                     },
                                     colors = ToggleButtonDefaults.toggleButtonColors(
                                         containerColor = primaryContainer,

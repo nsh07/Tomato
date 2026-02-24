@@ -183,10 +183,10 @@ fun SharedTransitionScope.AlwaysOnDisplay(
         )
     }
 
-    var xIncrement by remember { mutableIntStateOf(1) }
-    var yIncrement by remember { mutableIntStateOf(1) }
+    var xIncrement = 2
+    var yIncrement = 2
 
-    LaunchedEffect(timerState.timeStr) { // Randomize position every minute
+    LaunchedEffect(timerState.timeStr[1]) { // Randomize position every minute
         if (sharedElementTransitionComplete) {
             val elementSize = 266.dp.toIntPx(density)
             if (windowInfo.containerSize.width - elementSize < x + xIncrement || x + xIncrement < 16)
@@ -209,53 +209,63 @@ fun SharedTransitionScope.AlwaysOnDisplay(
                 IntOffset(x, y)
             }
         ) {
-            if (timerState.timerMode == TimerMode.FOCUS) {
-                CircularProgressIndicator(
-                    progress = progress,
-                    modifier = Modifier
-                        .sharedBounds(
-                            sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("focus progress"),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                        )
-                        .size(250.dp),
-                    color = primary,
-                    trackColor = secondaryContainer,
-                    strokeWidth = 12.dp,
-                    gapSize = 8.dp,
-                )
+            if (!timerState.infiniteFocus) {
+                if (timerState.timerMode == TimerMode.FOCUS) {
+                    CircularProgressIndicator(
+                        progress = progress,
+                        modifier = Modifier
+                            .sharedBounds(
+                                sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState(
+                                    "focus progress"
+                                ),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
+                            .size(250.dp),
+                        color = primary,
+                        trackColor = secondaryContainer,
+                        strokeWidth = 12.dp,
+                        gapSize = 8.dp,
+                    )
+                } else {
+                    CircularWavyProgressIndicator(
+                        progress = progress,
+                        modifier = Modifier
+                            .sharedBounds(
+                                sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState(
+                                    "break progress"
+                                ),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
+                            .size(250.dp),
+                        color = primary,
+                        trackColor = secondaryContainer,
+                        stroke = Stroke(
+                            width = with(LocalDensity.current) {
+                                12.dp.toPx()
+                            },
+                            cap = StrokeCap.Round,
+                        ),
+                        trackStroke = Stroke(
+                            width = with(LocalDensity.current) {
+                                12.dp.toPx()
+                            },
+                            cap = StrokeCap.Round,
+                        ),
+                        wavelength = 42.dp,
+                        gapSize = 8.dp
+                    )
+                }
             } else {
-                CircularWavyProgressIndicator(
-                    progress = progress,
-                    modifier = Modifier
-                        .sharedBounds(
-                            sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("break progress"),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                        )
-                        .size(250.dp),
-                    color = primary,
-                    trackColor = secondaryContainer,
-                    stroke = Stroke(
-                        width = with(LocalDensity.current) {
-                            12.dp.toPx()
-                        },
-                        cap = StrokeCap.Round,
-                    ),
-                    trackStroke = Stroke(
-                        width = with(LocalDensity.current) {
-                            12.dp.toPx()
-                        },
-                        cap = StrokeCap.Round,
-                    ),
-                    wavelength = 42.dp,
-                    gapSize = 8.dp
-                )
+                Box(modifier = Modifier.size(250.dp))
             }
 
             Text(
                 text = timerState.timeStr,
                 style = TextStyle(
                     fontFamily = typography.bodyMedium.fontFamily,
-                    fontSize = if (timerState.timeStr.length < 6) 56.sp else 52.sp,
+                    fontSize = if (!timerState.infiniteFocus)
+                        if (timerState.timeStr.length < 6) 56.sp else 52.sp
+                    else 78.sp,
                     letterSpacing = (-2).sp,
                     fontFeatureSettings = "tnum"
                 ),

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -28,7 +28,8 @@ data class TimerState(
     val currentFocusCount: Int = 1,
     val totalFocusCount: Int = 4,
     val alarmRinging: Boolean = false,
-    val serviceRunning: Boolean = false
+    val serviceRunning: Boolean = false,
+    val infiniteFocus: Boolean = false
 )
 
 enum class TimerMode {

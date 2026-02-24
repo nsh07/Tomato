@@ -1,0 +1,5 @@
+New features:
+- You can now run a flow state timer using the new Infinite Focus mode. Press and hold the timer clock to get started.
+
+Enhancements:
+- AOD mode can now only be enabled if the timer is running

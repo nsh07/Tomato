@@ -309,9 +309,10 @@ fun AppScreen(
                             contentPadding = contentPadding,
                             progress = { progress },
                             onAction = timerViewModel::onAction,
-                            modifier = if (isAODEnabled) Modifier.clickable {
-                                if (backStack.size < 2) backStack.add(Screen.AOD)
-                            } else Modifier
+                            modifier = if (isAODEnabled && uiState.timerRunning) Modifier
+                                .clickable {
+                                    if (backStack.size < 2) backStack.add(Screen.AOD)
+                                } else Modifier
                         )
                     }
 

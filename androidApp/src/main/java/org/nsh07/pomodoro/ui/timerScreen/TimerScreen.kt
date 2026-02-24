@@ -170,7 +170,7 @@ fun SharedTransitionScope.TimerScreen(
         if (!timerState.infiniteFocus) {
             if (timerState.timeStr.length < 6) 72f else 64f
         } else {
-            if (timerState.timeStr.length < 6) 100f else 76f
+            if (timerState.timeStr.length < 6) 100f else 88f
         }
     )
 

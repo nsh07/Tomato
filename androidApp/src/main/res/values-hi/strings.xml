@@ -125,4 +125,7 @@
     <string name="choose_file">फ़ाइल चुनें</string>
     <string name="restart_app">ऐप रीस्टार्ट करें</string>
     <string name="vibration_pattern">वाइब्रेशन पैटर्न</string>
+    <string name="infinite">अनंत</string>
+    <string name="infinite_focus">अनंत फोकस</string>
+    <string name="settings_infinite_focus_tip">अनंत फोकस मोड चालू करने के लिए टाइमर क्लॉक को देर तक दबाएं</string>
 </resources>

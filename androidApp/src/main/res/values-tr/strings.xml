@@ -126,4 +126,7 @@
     <string name="daily_focus_goal">Günlük odaklanma hedefi</string>
     <string name="milliseconds_format">%1$dms</string>
     <string name="vibration_pattern">Titreşim</string>
+    <string name="infinite">Sonsuz</string>
+    <string name="infinite_focus">Sonsuz odak</string>
+    <string name="settings_infinite_focus_tip">Sonsuz odak modunu açmak için zamanlayıcı saatine uzun basın</string>
 </resources>

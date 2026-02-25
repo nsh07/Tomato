@@ -54,12 +54,12 @@ import org.nsh07.pomodoro.utils.millisecondsToStr
 
 @OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
 class SettingsViewModel(
-    private val billingManager: BillingManager,
+    billingManager: BillingManager,
     private val preferenceRepository: PreferenceRepository,
     private val stateRepository: StateRepository,
     private val statRepository: StatRepository,
     private val serviceHelper: ServiceHelper,
-    private val timerStateHolder: TimerStateHolder
+    timerStateHolder: TimerStateHolder
 ) : ViewModel() {
     private val time: MutableStateFlow<Long> = timerStateHolder.time
 
@@ -552,10 +552,11 @@ class SettingsViewModel(
     private fun refreshTimer() {
         if (!serviceRunning.value) {
             val settingsState = _settingsState.value
+            val infFocus = stateRepository.timerState.value.infiniteFocus
 
-            time.update { settingsState.focusTime }
+            if (!infFocus) time.update { settingsState.focusTime }
 
-            stateRepository.timerState.update { currentState ->
+            if (!infFocus) stateRepository.timerState.update { currentState ->
                 currentState.copy(
                     timerMode = TimerMode.FOCUS,
                     timeStr = millisecondsToStr(time.value),

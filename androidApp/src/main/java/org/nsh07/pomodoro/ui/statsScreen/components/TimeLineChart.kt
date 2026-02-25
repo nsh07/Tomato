@@ -158,28 +158,18 @@ fun TimeLineChart(
                         pointSpacing = pointSpacing
                     ),
                     startAxis = VerticalAxis.rememberStart(
-                        line = rememberLineComponent(Fill.Transparent),
-                        label = rememberTextComponent(
-                            TextStyle(
-                                fontFamily = typography.bodyMedium.fontFamily,
-                                color = colorScheme.onSurface
-                            )
-                        ),
-                        tick = rememberLineComponent(Fill.Transparent),
-                        guideline = rememberLineComponent(Fill.Transparent),
+                        line = rememberLineComponent(Fill.Transparent, 8.dp),
+                        label = rememberTextComponent(typography.bodySmall.copy(colorScheme.onSurface)),
+                        tick = null,
+                        guideline = null,
                         itemPlacer = VerticalAxis.ItemPlacer.count({ 4 }),
                         valueFormatter = yValueFormatter
                     ),
                     bottomAxis = HorizontalAxis.rememberBottom(
-                        line = rememberLineComponent(Fill.Transparent),
-                        label = rememberTextComponent(
-                            TextStyle(
-                                fontFamily = typography.bodyMedium.fontFamily,
-                                color = colorScheme.onSurface
-                            )
-                        ),
-                        tick = rememberLineComponent(Fill.Transparent),
-                        guideline = rememberLineComponent(Fill.Transparent),
+                        line = rememberLineComponent(Fill.Transparent, 8.dp),
+                        label = rememberTextComponent(typography.bodySmall.copy(colorScheme.onSurface)),
+                        tick = null,
+                        guideline = null,
                         valueFormatter = xValueFormatter
                     ),
                     decorations = if (goal > 0) listOf(
@@ -203,7 +193,7 @@ fun TimeLineChart(
                         rememberTextComponent(
                             TextStyle(
                                 fontFamily = typography.bodyLarge.fontFamily,
-                                color = colorScheme.onSurface,
+                                color = colorScheme.inverseOnSurface,
                                 fontSize = typography.bodySmall.fontSize,
                                 lineHeight = typography.bodySmall.lineHeight
                             ),

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -13,9 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License along with Tomato.
  * If not, see <https://www.gnu.org/licenses/>.
- */
-
-package org.nsh07.pomodoro.ui.statsScreen.components
+ */package org.nsh07.pomodoro.ui.statsScreen.components
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.BoundsTransform

@@ -112,7 +112,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -123,6 +122,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
@@ -133,6 +133,18 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import org.nsh07.pomodoro.utils.millisecondsToStr
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.check_circle_40dp
+import tomato.shared.generated.resources.in_progress_40dp
+import tomato.shared.generated.resources.not_started_40dp
+import tomato.shared.generated.resources.pause
+import tomato.shared.generated.resources.pause_large
+import tomato.shared.generated.resources.play
+import tomato.shared.generated.resources.play_large
+import tomato.shared.generated.resources.restart
+import tomato.shared.generated.resources.restart_large
+import tomato.shared.generated.resources.skip_next
+import tomato.shared.generated.resources.skip_next_large
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
@@ -456,13 +468,13 @@ fun SharedTransitionScope.TimerScreen(
                                             ) {
                                                 if (timerState.timerRunning) {
                                                     Icon(
-                                                        painterResource(R.drawable.pause_large),
+                                                        painterResource(Res.drawable.pause_large),
                                                         contentDescription = stringResource(R.string.pause),
                                                         modifier = Modifier.size(32.dp)
                                                     )
                                                 } else {
                                                     Icon(
-                                                        painterResource(R.drawable.play_large),
+                                                        painterResource(Res.drawable.play_large),
                                                         contentDescription = stringResource(R.string.play),
                                                         modifier = Modifier.size(32.dp)
                                                     )
@@ -474,12 +486,12 @@ fun SharedTransitionScope.TimerScreen(
                                                 leadingIcon = {
                                                     if (timerState.timerRunning) {
                                                         Icon(
-                                                            painterResource(R.drawable.pause),
+                                                            painterResource(Res.drawable.pause),
                                                             contentDescription = stringResource(R.string.pause)
                                                         )
                                                     } else {
                                                         Icon(
-                                                            painterResource(R.drawable.play),
+                                                            painterResource(Res.drawable.play),
                                                             contentDescription = stringResource(R.string.play)
                                                         )
                                                     }
@@ -531,7 +543,7 @@ fun SharedTransitionScope.TimerScreen(
                                                     .animateWidth(interactionSources[1])
                                             ) {
                                                 Icon(
-                                                    painterResource(R.drawable.restart_large),
+                                                    painterResource(Res.drawable.restart_large),
                                                     contentDescription = stringResource(R.string.restart),
                                                     modifier = Modifier.size(32.dp)
                                                 )
@@ -541,7 +553,7 @@ fun SharedTransitionScope.TimerScreen(
                                             DropdownMenuItem(
                                                 leadingIcon = {
                                                     Icon(
-                                                        painterResource(R.drawable.restart),
+                                                        painterResource(Res.drawable.restart),
                                                         stringResource(R.string.restart)
                                                     )
                                                 },
@@ -571,7 +583,7 @@ fun SharedTransitionScope.TimerScreen(
                                                     .animateWidth(interactionSources[2])
                                             ) {
                                                 Icon(
-                                                    painterResource(R.drawable.skip_next_large),
+                                                    painterResource(Res.drawable.skip_next_large),
                                                     contentDescription = stringResource(R.string.skip_to_next),
                                                     modifier = Modifier.size(32.dp)
                                                 )
@@ -581,7 +593,7 @@ fun SharedTransitionScope.TimerScreen(
                                             DropdownMenuItem(
                                                 leadingIcon = {
                                                     Icon(
-                                                        painterResource(R.drawable.skip_next),
+                                                        painterResource(Res.drawable.skip_next),
                                                         stringResource(R.string.skip_to_next)
                                                     )
                                                 },
@@ -708,17 +720,17 @@ fun SharedTransitionScope.TimerScreen(
                                     ) { show ->
                                         when (show) {
                                             1 -> Icon(
-                                                painterResource(R.drawable.in_progress_40dp),
+                                                painterResource(Res.drawable.in_progress_40dp),
                                                 null
                                             )
 
                                             2 -> Icon(
-                                                painterResource(R.drawable.check_circle_40dp),
+                                                painterResource(Res.drawable.check_circle_40dp),
                                                 null
                                             )
 
                                             else -> Icon(
-                                                painterResource(R.drawable.not_started_40dp),
+                                                painterResource(Res.drawable.not_started_40dp),
                                                 null
                                             )
                                         }
@@ -751,17 +763,17 @@ fun SharedTransitionScope.TimerScreen(
                                     ) { show ->
                                         when (show) {
                                             1 -> Icon(
-                                                painterResource(R.drawable.in_progress_40dp),
+                                                painterResource(Res.drawable.in_progress_40dp),
                                                 null
                                             )
 
                                             2 -> Icon(
-                                                painterResource(R.drawable.check_circle_40dp),
+                                                painterResource(Res.drawable.check_circle_40dp),
                                                 null
                                             )
 
                                             else -> Icon(
-                                                painterResource(R.drawable.not_started_40dp),
+                                                painterResource(Res.drawable.not_started_40dp),
                                                 null
                                             )
                                         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -43,13 +43,15 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.restart
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -72,7 +74,7 @@ fun ResetDataDialog(
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
                 Icon(
-                    painter = painterResource(R.drawable.restart),
+                    painter = painterResource(Res.drawable.restart),
                     contentDescription = null,
                     tint = colorScheme.secondary,
                     modifier = Modifier

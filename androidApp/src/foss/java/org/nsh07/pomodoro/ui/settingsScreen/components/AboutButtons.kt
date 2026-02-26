@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -25,10 +25,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.bmc
+import tomato.shared.generated.resources.open_in_browser
+import tomato.shared.generated.resources.weblate
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -37,7 +41,7 @@ fun TopButton(modifier: Modifier = Modifier) {
     ClickableListItem(
         leadingContent = {
             Icon(
-                painterResource(R.drawable.bmc),
+                painterResource(Res.drawable.bmc),
                 tint = colorScheme.primary,
                 contentDescription = null,
                 modifier = Modifier.size(24.dp)
@@ -45,7 +49,7 @@ fun TopButton(modifier: Modifier = Modifier) {
         },
         headlineContent = { Text(stringResource(R.string.bmc)) },
         supportingContent = { Text(stringResource(R.string.bmc_desc)) },
-        trailingContent = { Icon(painterResource(R.drawable.open_in_browser), null) },
+        trailingContent = { Icon(painterResource(Res.drawable.open_in_browser), null) },
         items = 2,
         index = 0,
         modifier = modifier
@@ -59,7 +63,7 @@ fun BottomButton(modifier: Modifier = Modifier) {
     ClickableListItem(
         leadingContent = {
             Icon(
-                painterResource(R.drawable.weblate),
+                painterResource(Res.drawable.weblate),
                 tint = colorScheme.secondary,
                 contentDescription = null,
                 modifier = Modifier.size(24.dp)
@@ -67,7 +71,7 @@ fun BottomButton(modifier: Modifier = Modifier) {
         },
         headlineContent = { Text(stringResource(R.string.help_with_translation)) },
         supportingContent = { Text(stringResource(R.string.help_with_translation_desc)) },
-        trailingContent = { Icon(painterResource(R.drawable.open_in_browser), null) },
+        trailingContent = { Icon(painterResource(Res.drawable.open_in_browser), null) },
         items = 2,
         index = 1,
         modifier = modifier

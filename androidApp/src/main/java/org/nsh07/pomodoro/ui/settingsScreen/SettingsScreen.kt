@@ -41,7 +41,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import org.koin.compose.viewmodel.koinViewModel
-import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.calculatePaneScaffoldDirective
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AboutScreen
@@ -54,6 +53,8 @@ import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.utils.onBack
 import org.nsh07.pomodoro.utils.onTopLevelNavigate
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.settings_filled
 
 
 @OptIn(
@@ -112,7 +113,7 @@ fun SettingsScreenRoot(
         ),
         entryProvider = entryProvider {
             entry<Screen.Settings.Main>(
-                metadata = listPane(detailPlaceholder = { DetailPlaceholder(R.drawable.settings_filled) })
+                metadata = listPane(detailPlaceholder = { DetailPlaceholder(Res.drawable.settings_filled) })
             ) {
                 SettingsMainScreen(
                     settingsState = settingsState,

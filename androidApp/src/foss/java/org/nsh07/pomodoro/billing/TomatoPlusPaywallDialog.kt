@@ -36,12 +36,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.bmc
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -61,7 +63,7 @@ fun TomatoPlusPaywallDialog(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
-                painterResource(R.drawable.bmc),
+                painterResource(Res.drawable.bmc),
                 null,
                 tint = colorScheme.onSurface
             )

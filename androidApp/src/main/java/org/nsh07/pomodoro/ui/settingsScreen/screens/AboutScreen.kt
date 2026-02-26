@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -58,12 +57,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.di.AppInfo
@@ -79,6 +79,16 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.arrow_back
+import tomato.shared.generated.resources.discord
+import tomato.shared.generated.resources.email
+import tomato.shared.generated.resources.gavel
+import tomato.shared.generated.resources.github
+import tomato.shared.generated.resources.globe
+import tomato.shared.generated.resources.ic_launcher_monochrome
+import tomato.shared.generated.resources.pfp
+import tomato.shared.generated.resources.x
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -99,10 +109,10 @@ fun AboutScreen(
 
     val socialLinks = remember {
         listOf(
-            SocialLink(R.drawable.github, "https://github.com/nsh07"),
-            SocialLink(R.drawable.x, "https://x.com/nsh_zero7"),
-            SocialLink(R.drawable.globe, "https://nsh07.github.io"),
-            SocialLink(R.drawable.email, "mailto:nishant.28@outlook.com")
+            SocialLink(Res.drawable.github, "https://github.com/nsh07"),
+            SocialLink(Res.drawable.x, "https://x.com/nsh_zero7"),
+            SocialLink(Res.drawable.globe, "https://nsh07.github.io"),
+            SocialLink(Res.drawable.email, "mailto:nishant.28@outlook.com")
         )
     }
 
@@ -139,7 +149,7 @@ fun AboutScreen(
                                 )
                             ) {
                                 Icon(
-                                    painterResource(R.drawable.arrow_back),
+                                    painterResource(Res.drawable.arrow_back),
                                     stringResource(R.string.back)
                                 )
                             }
@@ -168,7 +178,7 @@ fun AboutScreen(
                             modifier = Modifier.padding(16.dp)
                         ) {
                             Icon(
-                                painterResource(R.drawable.ic_launcher_monochrome),
+                                painterResource(Res.drawable.ic_launcher_monochrome),
                                 tint = colorScheme.onPrimaryContainer,
                                 contentDescription = null,
                                 modifier = Modifier
@@ -202,7 +212,7 @@ fun AboutScreen(
                                     shapes = IconButtonDefaults.shapes()
                                 ) {
                                     Icon(
-                                        painterResource(R.drawable.discord),
+                                        painterResource(Res.drawable.discord),
                                         contentDescription = "Discord",
                                         modifier = Modifier.size(24.dp)
                                     )
@@ -213,7 +223,7 @@ fun AboutScreen(
                                     shapes = IconButtonDefaults.shapes()
                                 ) {
                                     Icon(
-                                        painterResource(R.drawable.github),
+                                        painterResource(Res.drawable.github),
                                         contentDescription = "GitHub",
                                         modifier = Modifier.size(24.dp)
                                     )
@@ -227,7 +237,7 @@ fun AboutScreen(
                         Column(modifier = Modifier.padding(16.dp)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
-                                    painterResource(R.drawable.pfp),
+                                    painterResource(Res.drawable.pfp),
                                     tint = colorScheme.onSecondaryContainer,
                                     contentDescription = null,
                                     modifier = Modifier
@@ -285,7 +295,7 @@ fun AboutScreen(
 
                 item {
                     ClickableListItem(
-                        leadingContent = { Icon(painterResource(R.drawable.gavel), null) },
+                        leadingContent = { Icon(painterResource(Res.drawable.gavel), null) },
                         headlineContent = { Text(stringResource(R.string.license)) },
                         supportingContent = { Text("GNU General Public License Version 3") },
                         items = 1,
@@ -314,6 +324,6 @@ private fun AboutScreenPreview() {
 }
 
 data class SocialLink(
-    @param:DrawableRes val icon: Int,
+    val icon: DrawableResource,
     val url: String
 )

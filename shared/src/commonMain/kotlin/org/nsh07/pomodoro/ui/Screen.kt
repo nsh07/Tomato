@@ -17,10 +17,10 @@
 
 package org.nsh07.pomodoro.ui
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.DrawableResource
 
 sealed class Screen : NavKey {
     @Serializable
@@ -68,15 +68,15 @@ sealed class Screen : NavKey {
 
 data class NavItem(
     val route: Screen,
-    @param:DrawableRes val unselectedIcon: Int,
-    @param:DrawableRes val selectedIcon: Int,
+    val unselectedIcon: DrawableResource,
+    val selectedIcon: DrawableResource,
     @param:StringRes val label: Int,
     val onNavigateHome: () -> Unit
 )
 
 data class SettingsNavItem(
     val route: Screen.Settings,
-    @param:DrawableRes val icon: Int,
+    val icon: DrawableResource,
     @param:StringRes val label: Int,
     val innerSettings: List<Int>
 )

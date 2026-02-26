@@ -94,6 +94,16 @@ android {
         includeInApk = false
         includeInBundle = false
     }
+    sourceSets {
+        getByName("main") {
+            res.directories.addAll(
+                listOf(
+                    "src/main/res",
+                    "${project(":shared").projectDir}/src/commonMain/composeResources"
+                )
+            )
+        }
+    }
 }
 
 kotlin {
@@ -124,6 +134,9 @@ dependencies {
 
     implementation(libs.vico.compose.m3)
     implementation(libs.material.kolor)
+
+    // TODO: remove this when CMP migration is done
+    implementation(libs.components.resources)
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

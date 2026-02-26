@@ -82,13 +82,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
+import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
@@ -109,6 +109,18 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.aod
+import tomato.shared.generated.resources.arrow_back
+import tomato.shared.generated.resources.autoplay
+import tomato.shared.generated.resources.check
+import tomato.shared.generated.resources.clear
+import tomato.shared.generated.resources.clocks
+import tomato.shared.generated.resources.dnd
+import tomato.shared.generated.resources.flag
+import tomato.shared.generated.resources.info
+import tomato.shared.generated.resources.mobile_lock_portrait
+import tomato.shared.generated.resources.view_day
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -152,7 +164,7 @@ fun TimerSettings(
             listOf(
                 SettingsSwitchItem(
                     checked = settingsState.autostartNextSession,
-                    icon = R.drawable.autoplay,
+                    icon = Res.drawable.autoplay,
                     label = R.string.auto_start_next_timer,
                     description = R.string.auto_start_next_timer_desc,
                     onClick = { onAction(SettingsAction.SaveAutostartNextSession(it)) }
@@ -160,7 +172,7 @@ fun TimerSettings(
                 SettingsSwitchItem(
                     checked = settingsState.dndEnabled,
                     enabled = !serviceRunning,
-                    icon = R.drawable.dnd,
+                    icon = Res.drawable.dnd,
                     label = R.string.dnd,
                     description = R.string.dnd_desc,
                     onClick = {
@@ -191,7 +203,7 @@ fun TimerSettings(
                 SettingsSwitchItem(
                     checked = settingsState.aodEnabled,
                     enabled = isPlus,
-                    icon = R.drawable.aod,
+                    icon = Res.drawable.aod,
                     label = R.string.always_on_display,
                     description = R.string.always_on_display_desc,
                     onClick = { onAction(SettingsAction.SaveAodEnabled(it)) }
@@ -199,7 +211,7 @@ fun TimerSettings(
                 SettingsSwitchItem(
                     checked = settingsState.secureAod && isPlus,
                     enabled = isPlus && settingsState.aodEnabled,
-                    icon = R.drawable.mobile_lock_portrait,
+                    icon = Res.drawable.mobile_lock_portrait,
                     label = R.string.secure_aod,
                     description = R.string.secure_aod_desc,
                     onClick = { onAction(SettingsAction.SaveSecureAod(it)) }
@@ -239,7 +251,7 @@ fun TimerSettings(
                                 )
                             ) {
                                 Icon(
-                                    painterResource(R.drawable.arrow_back),
+                                    painterResource(Res.drawable.arrow_back),
                                     stringResource(R.string.back)
 
                                 )
@@ -272,7 +284,7 @@ fun TimerSettings(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
-                                        Icon(painterResource(R.drawable.info), null)
+                                        Icon(painterResource(Res.drawable.info), null)
                                         Text(stringResource(R.string.timer_settings_reset_info))
                                     }
                                 }
@@ -282,7 +294,7 @@ fun TimerSettings(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
-                                        Icon(painterResource(R.drawable.info), null)
+                                        Icon(painterResource(Res.drawable.info), null)
                                         Text(stringResource(R.string.settings_infinite_focus_tip))
                                     }
                                 }
@@ -365,7 +377,7 @@ fun TimerSettings(
                     Column(Modifier.background(listItemColors.containerColor, topListItemShape)) {
                         ListItem(
                             leadingContent = {
-                                Icon(painterResource(R.drawable.clocks), null)
+                                Icon(painterResource(Res.drawable.clocks), null)
                             },
                             headlineContent = {
                                 Text(stringResource(R.string.session_length))
@@ -397,7 +409,7 @@ fun TimerSettings(
                         enabled = true,
                         label = stringResource(R.string.daily_focus_goal),
                         trailingLabel = { millisecondsToHoursMinutes(it.toLong(), hmf) },
-                        icon = { Icon(painterResource(R.drawable.flag), null) },
+                        icon = { Icon(painterResource(Res.drawable.flag), null) },
                         shape = bottomListItemShape
                     ) {
                         with(it.toLong()) {
@@ -426,13 +438,13 @@ fun TimerSettings(
                                 thumbContent = {
                                     if (item.checked) {
                                         Icon(
-                                            painter = painterResource(R.drawable.check),
+                                            painter = painterResource(Res.drawable.check),
                                             contentDescription = null,
                                             modifier = Modifier.size(SwitchDefaults.IconSize),
                                         )
                                     } else {
                                         Icon(
-                                            painter = painterResource(R.drawable.clear),
+                                            painter = painterResource(Res.drawable.clear),
                                             contentDescription = null,
                                             modifier = Modifier.size(SwitchDefaults.IconSize),
                                         )
@@ -473,13 +485,13 @@ fun TimerSettings(
                                     thumbContent = {
                                         if (item.checked) {
                                             Icon(
-                                                painter = painterResource(R.drawable.check),
+                                                painter = painterResource(Res.drawable.check),
                                                 contentDescription = null,
                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
                                             )
                                         } else {
                                             Icon(
-                                                painter = painterResource(R.drawable.clear),
+                                                painter = painterResource(Res.drawable.clear),
                                                 contentDescription = null,
                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
                                             )
@@ -505,7 +517,7 @@ fun TimerSettings(
                     item {
                         ListItem(
                             leadingContent = {
-                                Icon(painterResource(R.drawable.view_day), null)
+                                Icon(painterResource(Res.drawable.view_day), null)
                             },
                             headlineContent = { Text(stringResource(R.string.session_only_progress)) },
                             supportingContent = {
@@ -533,13 +545,13 @@ fun TimerSettings(
                                     thumbContent = {
                                         if (settingsState.singleProgressBar) {
                                             Icon(
-                                                painter = painterResource(R.drawable.check),
+                                                painter = painterResource(Res.drawable.check),
                                                 contentDescription = null,
                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
                                             )
                                         } else {
                                             Icon(
-                                                painter = painterResource(R.drawable.clear),
+                                                painter = painterResource(Res.drawable.clear),
                                                 contentDescription = null,
                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
                                             )
@@ -577,13 +589,13 @@ fun TimerSettings(
                                     thumbContent = {
                                         if (item.checked) {
                                             Icon(
-                                                painter = painterResource(R.drawable.check),
+                                                painter = painterResource(Res.drawable.check),
                                                 contentDescription = null,
                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
                                             )
                                         } else {
                                             Icon(
-                                                painter = painterResource(R.drawable.clear),
+                                                painter = painterResource(Res.drawable.clear),
                                                 contentDescription = null,
                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
                                             )
@@ -619,7 +631,7 @@ fun TimerSettings(
                             modifier = Modifier.width(52.dp)
                         ) {
                             Icon(
-                                painterResource(R.drawable.info),
+                                painterResource(Res.drawable.info),
                                 null
                             )
                         }

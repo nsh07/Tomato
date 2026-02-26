@@ -50,14 +50,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.nsh07.pomodoro.R
+import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.check
+import tomato.shared.generated.resources.folder
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -135,7 +137,7 @@ fun BackupBottomSheetTemplate(
                                     .size(48.dp)
                             ) {
                                 Icon(
-                                    painterResource(R.drawable.folder),
+                                    painterResource(Res.drawable.folder),
                                     null,
                                     tint = colorScheme.surfaceVariant,
                                     modifier = Modifier.size(28.dp)
@@ -153,7 +155,7 @@ fun BackupBottomSheetTemplate(
                                     .size(48.dp)
                             ) {
                                 Icon(
-                                    painterResource(R.drawable.check),
+                                    painterResource(Res.drawable.check),
                                     null,
                                     tint = colorScheme.surfaceVariant,
                                     modifier = Modifier.size(28.dp)

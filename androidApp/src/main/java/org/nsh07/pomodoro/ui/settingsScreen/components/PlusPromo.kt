@@ -24,11 +24,14 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.arrow_forward_big
+import tomato.shared.generated.resources.tomato_logo_notification
 
 @Composable
 fun PlusPromo(
@@ -39,7 +42,7 @@ fun PlusPromo(
     ClickableListItem(
         leadingContent = {
             Icon(
-                painterResource(R.drawable.tomato_logo_notification),
+                painterResource(Res.drawable.tomato_logo_notification),
                 null,
                 modifier = Modifier.size(24.dp)
             )
@@ -52,7 +55,7 @@ fun PlusPromo(
         },
         trailingContent = {
             Icon(
-                painterResource(R.drawable.arrow_forward_big),
+                painterResource(Res.drawable.arrow_forward_big),
                 null
             )
         },

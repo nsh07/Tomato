@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -48,7 +48,7 @@ class TomatoApplication : Application() {
             androidLogger(Level.INFO)
 
             androidContext(this@TomatoApplication)
-            modules(dbModule, flavorModule, flavorUiModule, servicesModule , viewModels)
+            modules(dbModule, flavorModule, flavorUiModule, servicesModule, viewModels)
         }
 
         get<NotificationManagerCompat>().createNotificationChannel(notificationChannel)

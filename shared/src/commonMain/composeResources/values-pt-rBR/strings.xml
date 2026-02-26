@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2026 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="start">Começar</string>
+    <string name="stop">Parar</string>
+    <string name="focus">Focar</string>
+    <string name="short_break">Pausa curta</string>
+    <string name="long_break">Pausa longa</string>
+    <string name="exit">Sair</string>
+    <string name="skip">Pular</string>
+    <string name="stop_alarm">Parar alarme</string>
+    <string name="min_remaining_notification">%1$s minutos restantes</string>
+    <string name="paused">Pausado</string>
+    <string name="completed">Concluído</string>
+    <string name="up_next_notification">A seguir: %1$s (%2$s)</string>
+    <string name="start_next">Começar o próximo</string>
+    <string name="choose_color_scheme">Escolha o esquema de cores</string>
+    <string name="ok">OK</string>
+    <string name="color_scheme">Esquema de cores</string>
+    <string name="dynamic">Dinâmico</string>
+    <string name="color">Cor</string>
+    <string name="system_default">Sistema</string>
+    <string name="alarm">Alarme</string>
+    <string name="light">Claro</string>
+    <string name="dark">Escuro</string>
+    <string name="choose_theme">Escolher tema</string>
+    <string name="alarm_sound">Som de alarme</string>
+    <string name="black_theme">Tema escuro</string>
+    <string name="black_theme_desc">Use um tema preto escuro puro</string>
+    <string name="alarm_desc">Tocar o alarme quando um timer for concluído</string>
+    <string name="vibrate">Vibração</string>
+    <string name="vibrate_desc">Vibrar quanto um timer for concluído</string>
+    <string name="theme">Tema</string>
+    <string name="settings">Configurações</string>
+    <string name="session_length">Duração da sessão</string>
+    <string name="session_length_desc">Intervalos de foco em uma sessão: %1$d</string>
+    <string name="pomodoro_info">Uma \"sessão\" é uma sequência de intervalos Pomodoro que contém intervalos de foco, intervalos de pausa curta e um intervalo de pausa longa. A última pausa de uma sessão é sempre uma pausa longa.</string>
+    <string name="stats">Estatísticas</string>
+    <string name="today">Hoje</string>
+    <string name="break_">Pausa</string>
+    <string name="last_week">Última semana</string>
+    <string name="focus_per_day_avg">foco por dia (média)</string>
+    <string name="more_info">Mais informações</string>
+    <string name="last_month">Último mês</string>
+    <string name="stop_alarm_question">Parar Alarme?</string>
+    <string name="stop_alarm_dialog_text">A sessão atual do timer foi concluída. Toque em qualquer lugar para interromper o alarme.</string>
+    <string name="timer_session_count">%1$d de %2$d</string>
+    <string name="more">Mais</string>
+    <string name="pause">Pausar</string>
+    <string name="play">Começar</string>
+    <string name="restart">Reiniciar</string>
+    <string name="skip_to_next">Pular para o próximo</string>
+    <string name="up_next">Próximo</string>
+    <string name="timer">Timer</string>
+    <string name="timer_progress">Progresso do timer</string>
+    <string name="always_on_display">Always On Display</string>
+    <string name="always_on_display_desc">Toque em qualquer lugar da tela enquanto visualiza o cronômetro para alternar para o modo Always On Display</string>
+    <string name="last_year">Último ano</string>
+    <string name="appearance">Aparência</string>
+    <string name="durations">Durações</string>
+    <string name="sound">Som</string>
+    <string name="dnd">Não perturbar</string>
+    <string name="dnd_desc">Ative o modo Não Perturbe ao usar o cronômetro de foco</string>
+    <string name="get_plus">Obtenha o Tomato+</string>
+    <string name="dynamic_color">Cor dinâmica</string>
+    <string name="dynamic_color_desc">Adapte as cores do tema à partir do seu papel de parede</string>
+    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss_desc">Todos os recursos estão desbloqueados nesta versão. Se meu app fez a diferença na sua vida, considere me apoiar fazendo uma doação em %1$s.</string>
+    <string name="language">Idioma</string>
+    <string name="choose_language">Escolher idioma</string>
+    <string name="rate_on_google_play">Avalie no Google Play</string>
+    <string name="selected">Selecionado</string>
+</resources>

@@ -18,17 +18,21 @@
 package org.nsh07.pomodoro.ui
 
 import org.nsh07.pomodoro.R
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.alarm
+import tomato.shared.generated.resources.palette
+import tomato.shared.generated.resources.timer_filled
 
 val settingsScreens = listOf(
     SettingsNavItem(
         Screen.Settings.Timer,
-        R.drawable.timer_filled,
+        Res.drawable.timer_filled,
         R.string.timer,
         listOf(R.string.durations, R.string.dnd, R.string.always_on_display)
     ),
     SettingsNavItem(
         Screen.Settings.Alarm,
-        R.drawable.alarm,
+        Res.drawable.alarm,
         R.string.alarm,
         listOf(
             R.string.alarm_sound,
@@ -39,7 +43,7 @@ val settingsScreens = listOf(
     ),
     SettingsNavItem(
         Screen.Settings.Appearance,
-        R.drawable.palette,
+        Res.drawable.palette,
         R.string.appearance,
         listOf(R.string.theme, R.string.color_scheme, R.string.black_theme)
     )

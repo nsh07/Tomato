@@ -114,7 +114,7 @@ fun TimeColumnChart(
         autoScrollCondition = AutoScrollCondition.OnModelGrowth,
         autoScrollAnimationSpec = motionScheme.defaultSpatialSpec()
     ),
-    animationSpec: AnimationSpec<Float>? = motionScheme.defaultEffectsSpec()
+    animationSpec: AnimationSpec<Float>? = null
 ) {
     ProvideVicoTheme(rememberM3VicoTheme()) {
         CartesianChartHost(

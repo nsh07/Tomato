@@ -53,7 +53,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
@@ -64,8 +63,8 @@ import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProdu
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.di.AppInfo
 import org.nsh07.pomodoro.ui.Screen
@@ -82,7 +81,17 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.break_
+import tomato.shared.generated.resources.focus
+import tomato.shared.generated.resources.focus_per_day_avg
+import tomato.shared.generated.resources.last_month
+import tomato.shared.generated.resources.last_week
+import tomato.shared.generated.resources.last_year
+import tomato.shared.generated.resources.lifetime
 import tomato.shared.generated.resources.query_stats
+import tomato.shared.generated.resources.stats
+import tomato.shared.generated.resources.today
+import tomato.shared.generated.resources.total
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -118,7 +127,7 @@ fun SharedTransitionScope.StatsMainScreen(
             TopAppBar(
                 title = {
                     Text(
-                        stringResource(R.string.stats),
+                        stringResource(Res.string.stats),
                         style = LocalTextStyle.current.copy(
                             fontFamily = LocalAppFonts.current.topBarTitle,
                             fontSize = 32.sp,
@@ -161,7 +170,7 @@ fun SharedTransitionScope.StatsMainScreen(
 
             item {
                 Text(
-                    stringResource(R.string.today),
+                    stringResource(Res.string.today),
                     style = typography.headlineSmall,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
@@ -181,7 +190,7 @@ fun SharedTransitionScope.StatsMainScreen(
                     ) {
                         Column(Modifier.padding(16.dp)) {
                             Text(
-                                stringResource(R.string.focus),
+                                stringResource(Res.string.focus),
                                 style = typography.titleMedium,
                                 color = colorScheme.onPrimaryContainer
                             )
@@ -210,7 +219,7 @@ fun SharedTransitionScope.StatsMainScreen(
                     ) {
                         Column(Modifier.padding(16.dp)) {
                             Text(
-                                stringResource(R.string.break_),
+                                stringResource(Res.string.break_),
                                 style = typography.titleMedium,
                                 color = colorScheme.onTertiaryContainer
                             )
@@ -260,7 +269,7 @@ fun SharedTransitionScope.StatsMainScreen(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            stringResource(R.string.last_week),
+                            stringResource(Res.string.last_week),
                             style = typography.headlineSmall,
                             modifier = if (!widthExpanded) Modifier.sharedBounds(
                                 sharedContentState = this@StatsMainScreen
@@ -299,7 +308,7 @@ fun SharedTransitionScope.StatsMainScreen(
                             } else Modifier
                         )
                         Text(
-                            stringResource(R.string.focus_per_day_avg),
+                            stringResource(Res.string.focus_per_day_avg),
                             style = typography.titleSmall,
                             modifier = Modifier
                                 .padding(bottom = 5.2.dp)
@@ -365,7 +374,7 @@ fun SharedTransitionScope.StatsMainScreen(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            stringResource(R.string.last_month),
+                            stringResource(Res.string.last_month),
                             style = typography.headlineSmall,
                             modifier = if (!widthExpanded) {
                                 Modifier.sharedBounds(
@@ -406,7 +415,7 @@ fun SharedTransitionScope.StatsMainScreen(
                             } else Modifier
                         )
                         Text(
-                            text = stringResource(R.string.focus_per_day_avg),
+                            text = stringResource(Res.string.focus_per_day_avg),
                             style = typography.titleSmall,
                             modifier = Modifier
                                 .padding(bottom = 5.2.dp)
@@ -473,7 +482,7 @@ fun SharedTransitionScope.StatsMainScreen(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            stringResource(R.string.last_year),
+                            stringResource(Res.string.last_year),
                             style = typography.headlineSmall,
                             modifier = if (!widthExpanded) {
                                 Modifier.sharedBounds(
@@ -516,7 +525,7 @@ fun SharedTransitionScope.StatsMainScreen(
                                 )
                         )
                         Text(
-                            text = stringResource(R.string.focus_per_day_avg),
+                            text = stringResource(Res.string.focus_per_day_avg),
                             style = typography.titleSmall,
                             modifier = Modifier
                                 .padding(bottom = 5.2.dp)
@@ -569,7 +578,7 @@ fun SharedTransitionScope.StatsMainScreen(
                         .padding(20.dp)
                 ) {
                     Text(
-                        stringResource(R.string.lifetime),
+                        stringResource(Res.string.lifetime),
                         style = typography.headlineSmall,
                     )
 
@@ -585,7 +594,7 @@ fun SharedTransitionScope.StatsMainScreen(
                             style = typography.displaySmall
                         )
                         Text(
-                            stringResource(R.string.total),
+                            stringResource(Res.string.total),
                             style = typography.titleSmall,
                             modifier = Modifier.padding(bottom = 5.2.dp)
                         )

@@ -58,7 +58,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
@@ -71,7 +70,7 @@ import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import org.jetbrains.compose.resources.painterResource
-import org.nsh07.pomodoro.R
+import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakRatioVisualization
 import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakdownChart
@@ -86,6 +85,17 @@ import org.nsh07.pomodoro.utils.millisecondsToMinutes
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.arrow_back
 import tomato.shared.generated.resources.arrow_down
+import tomato.shared.generated.resources.back
+import tomato.shared.generated.resources.focus_break_ratio
+import tomato.shared.generated.resources.focus_breakdown
+import tomato.shared.generated.resources.focus_breakdown_desc
+import tomato.shared.generated.resources.focus_history
+import tomato.shared.generated.resources.focus_history_desc
+import tomato.shared.generated.resources.focus_per_day_avg
+import tomato.shared.generated.resources.last_week
+import tomato.shared.generated.resources.more_info
+import tomato.shared.generated.resources.show_chart
+import tomato.shared.generated.resources.stats
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -133,7 +143,7 @@ fun SharedTransitionScope.LastWeekScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = stringResource(R.string.last_week),
+                        text = stringResource(Res.string.last_week),
                         fontFamily = LocalAppFonts.current.topBarTitle,
                         modifier = Modifier.sharedBounds(
                             sharedContentState = this@LastWeekScreen
@@ -143,7 +153,7 @@ fun SharedTransitionScope.LastWeekScreen(
                     )
                 },
                 subtitle = {
-                    Text(stringResource(R.string.stats))
+                    Text(stringResource(Res.string.stats))
                 },
                 navigationIcon = {
                     if (!widthExpanded)
@@ -153,7 +163,7 @@ fun SharedTransitionScope.LastWeekScreen(
                         ) {
                             Icon(
                                 painterResource(Res.drawable.arrow_back),
-                                stringResource(R.string.back)
+                                stringResource(Res.string.back)
                             )
                         }
                 },
@@ -207,7 +217,7 @@ fun SharedTransitionScope.LastWeekScreen(
                                 )
                         )
                         Text(
-                            stringResource(R.string.focus_per_day_avg),
+                            stringResource(Res.string.focus_per_day_avg),
                             style = typography.titleSmall,
                             modifier = Modifier
                                 .padding(bottom = 5.2.dp)
@@ -244,11 +254,11 @@ fun SharedTransitionScope.LastWeekScreen(
 
                 item {
                     Text(
-                        stringResource(R.string.focus_breakdown),
+                        stringResource(Res.string.focus_breakdown),
                         style = typography.headlineSmall
                     )
                     Text(
-                        stringResource(R.string.focus_breakdown_desc),
+                        stringResource(Res.string.focus_breakdown_desc),
                         style = typography.bodySmall,
                         color = colorScheme.onSurfaceVariant
                     )
@@ -290,11 +300,11 @@ fun SharedTransitionScope.LastWeekScreen(
                         ) {
                             Icon(
                                 painterResource(Res.drawable.arrow_down),
-                                stringResource(R.string.more_info),
+                                stringResource(Res.string.more_info),
                                 modifier = Modifier.rotate(iconRotation)
                             )
                             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                            Text(stringResource(R.string.show_chart))
+                            Text(stringResource(Res.string.show_chart))
                         }
 
                         AnimatedVisibility(breakdownChartExpanded) {
@@ -319,7 +329,7 @@ fun SharedTransitionScope.LastWeekScreen(
 
                 item {
                     Text(
-                        stringResource(R.string.focus_break_ratio),
+                        stringResource(Res.string.focus_break_ratio),
                         style = typography.headlineSmall
                     )
                 }
@@ -334,11 +344,11 @@ fun SharedTransitionScope.LastWeekScreen(
 
                 item {
                     Text(
-                        stringResource(R.string.focus_history),
+                        stringResource(Res.string.focus_history),
                         style = typography.headlineSmall
                     )
                     Text(
-                        stringResource(R.string.focus_history_desc),
+                        stringResource(Res.string.focus_history_desc),
                         style = typography.bodySmall,
                         color = colorScheme.onSurfaceVariant
                     )

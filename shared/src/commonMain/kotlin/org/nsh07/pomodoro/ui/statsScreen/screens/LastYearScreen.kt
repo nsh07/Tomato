@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2025-2026 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra 
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
- * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU 
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
@@ -61,7 +61,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
@@ -74,7 +73,7 @@ import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import org.jetbrains.compose.resources.painterResource
-import org.nsh07.pomodoro.R
+import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.statsScreen.components.FocusBreakRatioVisualization
@@ -93,6 +92,19 @@ import org.nsh07.pomodoro.utils.millisecondsToMinutes
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.arrow_back
 import tomato.shared.generated.resources.arrow_down
+import tomato.shared.generated.resources.back
+import tomato.shared.generated.resources.focus_break_ratio
+import tomato.shared.generated.resources.focus_breakdown
+import tomato.shared.generated.resources.focus_breakdown_desc
+import tomato.shared.generated.resources.focus_history_heatmap
+import tomato.shared.generated.resources.focus_history_heatmap_desc
+import tomato.shared.generated.resources.focus_per_day_avg
+import tomato.shared.generated.resources.last_year
+import tomato.shared.generated.resources.less
+import tomato.shared.generated.resources.more
+import tomato.shared.generated.resources.more_info
+import tomato.shared.generated.resources.show_chart
+import tomato.shared.generated.resources.stats
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -141,7 +153,7 @@ fun SharedTransitionScope.LastYearScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = stringResource(R.string.last_year),
+                        text = stringResource(Res.string.last_year),
                         fontFamily = LocalAppFonts.current.topBarTitle,
                         modifier = Modifier.sharedBounds(
                             sharedContentState = this@LastYearScreen
@@ -151,7 +163,7 @@ fun SharedTransitionScope.LastYearScreen(
                     )
                 },
                 subtitle = {
-                    Text(stringResource(R.string.stats))
+                    Text(stringResource(Res.string.stats))
                 },
                 navigationIcon = {
                     if (!widthExpanded)
@@ -161,7 +173,7 @@ fun SharedTransitionScope.LastYearScreen(
                         ) {
                             Icon(
                                 painterResource(Res.drawable.arrow_back),
-                                stringResource(R.string.back)
+                                stringResource(Res.string.back)
                             )
                         }
                 },
@@ -215,7 +227,7 @@ fun SharedTransitionScope.LastYearScreen(
                                 )
                         )
                         Text(
-                            stringResource(R.string.focus_per_day_avg),
+                            stringResource(Res.string.focus_per_day_avg),
                             style = typography.titleSmall,
                             modifier = Modifier
                                 .padding(bottom = 5.2.dp)
@@ -253,12 +265,12 @@ fun SharedTransitionScope.LastYearScreen(
 
                 item {
                     Text(
-                        stringResource(R.string.focus_breakdown),
+                        stringResource(Res.string.focus_breakdown),
                         style = typography.headlineSmall,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                     Text(
-                        stringResource(R.string.focus_breakdown_desc),
+                        stringResource(Res.string.focus_breakdown_desc),
                         style = typography.bodySmall,
                         color = colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = 16.dp)
@@ -306,11 +318,11 @@ fun SharedTransitionScope.LastYearScreen(
                         ) {
                             Icon(
                                 painterResource(Res.drawable.arrow_down),
-                                stringResource(R.string.more_info),
+                                stringResource(Res.string.more_info),
                                 modifier = Modifier.rotate(iconRotation)
                             )
                             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                            Text(stringResource(R.string.show_chart))
+                            Text(stringResource(Res.string.show_chart))
                         }
 
                         AnimatedVisibility(breakdownChartExpanded) {
@@ -335,7 +347,7 @@ fun SharedTransitionScope.LastYearScreen(
 
                 item {
                     Text(
-                        stringResource(R.string.focus_break_ratio),
+                        stringResource(Res.string.focus_break_ratio),
                         style = typography.headlineSmall,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
@@ -352,12 +364,12 @@ fun SharedTransitionScope.LastYearScreen(
 
                 item {
                     Text(
-                        stringResource(R.string.focus_history_heatmap),
+                        stringResource(Res.string.focus_history_heatmap),
                         style = typography.headlineSmall,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                     Text(
-                        stringResource(R.string.focus_history_heatmap_desc),
+                        stringResource(Res.string.focus_history_heatmap_desc),
                         style = typography.bodySmall,
                         color = colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = 16.dp)
@@ -381,7 +393,7 @@ fun SharedTransitionScope.LastYearScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            stringResource(R.string.less),
+                            stringResource(Res.string.less),
                             color = colorScheme.onSurfaceVariant,
                             style = typography.labelMedium
                         )
@@ -408,7 +420,7 @@ fun SharedTransitionScope.LastYearScreen(
                         }
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            stringResource(R.string.more),
+                            stringResource(Res.string.more),
                             color = colorScheme.onSurfaceVariant,
                             style = typography.labelMedium
                         )

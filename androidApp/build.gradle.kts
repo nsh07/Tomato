@@ -94,6 +94,16 @@ android {
         includeInApk = false
         includeInBundle = false
     }
+    sourceSets {
+        getByName("main") {
+            res.directories.addAll(
+                listOf(
+                    "src/main/res",
+                    "${project(":shared").projectDir}/src/commonMain/composeResources"
+                )
+            )
+        }
+    }
 }
 
 kotlin {

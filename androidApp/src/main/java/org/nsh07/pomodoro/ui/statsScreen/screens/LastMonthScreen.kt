@@ -253,7 +253,14 @@ fun SharedTransitionScope.LastMonthScreen(
                     )
                 }
 
-                item { HorizontalStackedBar(focusBreakdownValues.first, rankList = rankList) }
+                item {
+                    HorizontalStackedBar(
+                        focusBreakdownValues.first,
+                        minutesFormat,
+                        hoursMinutesFormat,
+                        rankList = rankList
+                    )
+                }
                 item {
                     Row {
                         focusBreakdownValues.first.fastForEach {
@@ -300,6 +307,9 @@ fun SharedTransitionScope.LastMonthScreen(
 
                             FocusBreakdownChart(
                                 modelProducer = lastMonthSummaryAnalysisModelProducer,
+                                hoursFormat = hoursFormat,
+                                minutesFormat = minutesFormat,
+                                hoursMinutesFormat = hoursMinutesFormat,
                                 modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
                             )
                         }
@@ -335,7 +345,9 @@ fun SharedTransitionScope.LastMonthScreen(
                 item {
                     FocusHistoryCalendar(
                         data = calendarData,
-                        averageRankList = rankList
+                        averageRankList = rankList,
+                        minutesFormat = minutesFormat,
+                        hoursMinutesFormat = hoursMinutesFormat
                     )
                 }
             }

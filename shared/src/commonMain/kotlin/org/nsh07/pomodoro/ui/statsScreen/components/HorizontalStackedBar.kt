@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -42,7 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -50,7 +49,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.window.Popup
-import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.utils.millisecondsToMinutes
@@ -74,6 +72,8 @@ val HORIZONTAL_STACKED_BAR_HEIGHT = 40.dp
 @Composable
 fun HorizontalStackedBar(
     values: List<Long>,
+    minutesFormat: String,
+    hoursMinutesFormat: String,
     modifier: Modifier = Modifier,
     rankList: List<Int> = remember(values) {
         val sortedIndices = values.indices.sortedByDescending { values[it] }
@@ -96,19 +96,9 @@ fun HorizontalStackedBar(
                 }
             )
             if (value < 60 * 60 * 1000)
-                append(
-                    millisecondsToMinutes(
-                        value,
-                        stringResource(R.string.minutes_format)
-                    )
-                )
+                append(millisecondsToMinutes(value, minutesFormat))
             else
-                append(
-                    millisecondsToHoursMinutes(
-                        value,
-                        stringResource(R.string.hours_and_minutes_format)
-                    )
-                )
+                append(millisecondsToHoursMinutes(value, hoursMinutesFormat))
             append(" (%.2f".format((value.toFloat() / total) * 100) + "%)")
         }
     },
@@ -284,6 +274,8 @@ fun HorizontalStackedBarPreview() {
                     HorizontalStackedBar(
                         values = it,
                         rankList = rankList,
+                        minutesFormat = "%1dm",
+                        hoursMinutesFormat = "%1dh %2dm",
                         modifier = Modifier.padding(16.dp),
                         height = HORIZONTAL_STACKED_BAR_HEIGHT,
                         gap = 2.dp,

@@ -251,7 +251,14 @@ fun SharedTransitionScope.LastWeekScreen(
                     )
                 }
 
-                item { HorizontalStackedBar(focusBreakdownValues.first, rankList = rankList) }
+                item {
+                    HorizontalStackedBar(
+                        focusBreakdownValues.first,
+                        minutesFormat,
+                        hoursMinutesFormat,
+                        rankList = rankList
+                    )
+                }
                 item {
                     Row {
                         focusBreakdownValues.first.fastForEach {
@@ -298,6 +305,9 @@ fun SharedTransitionScope.LastWeekScreen(
 
                             FocusBreakdownChart(
                                 modelProducer = lastWeekSummaryAnalysisModelProducer,
+                                hoursFormat = hoursFormat,
+                                minutesFormat = minutesFormat,
+                                hoursMinutesFormat = hoursMinutesFormat,
                                 modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
                             )
                         }
@@ -350,7 +360,12 @@ fun SharedTransitionScope.LastWeekScreen(
                                     style = typography.labelSmall,
                                     modifier = Modifier.size(18.dp)
                                 )
-                                HorizontalStackedBar(it.second, rankList = rankList)
+                                HorizontalStackedBar(
+                                    it.second,
+                                    minutesFormat,
+                                    hoursMinutesFormat,
+                                    rankList = rankList
+                                )
                             }
                         }
                     }

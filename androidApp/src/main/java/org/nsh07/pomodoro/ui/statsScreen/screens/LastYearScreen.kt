@@ -265,6 +265,8 @@ fun SharedTransitionScope.LastYearScreen(
                 item {
                     HorizontalStackedBar(
                         focusBreakdownValues.first,
+                        minutesFormat,
+                        hoursMinutesFormat,
                         rankList = rankList,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
@@ -319,6 +321,9 @@ fun SharedTransitionScope.LastYearScreen(
 
                             FocusBreakdownChart(
                                 modelProducer = lastYearSummaryAnalysisModelProducer,
+                                hoursFormat = hoursFormat,
+                                minutesFormat = minutesFormat,
+                                hoursMinutesFormat = hoursMinutesFormat,
                                 modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
                             )
                         }
@@ -359,6 +364,8 @@ fun SharedTransitionScope.LastYearScreen(
                     HeatmapWithWeekLabels(
                         data = focusHeatmapData,
                         averageRankList = rankList,
+                        minutesFormat = minutesFormat,
+                        hoursMinutesFormat = hoursMinutesFormat,
                         maxValue = heatmapMaxValue,
                         contentPadding = PaddingValues(horizontal = 16.dp),
                         modifier = Modifier.padding(start = 16.dp)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -30,11 +30,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import java.time.format.DateTimeFormatter
@@ -45,6 +43,8 @@ fun FocusBreakdownTooltip(
     item: Stat,
     rankList: List<Int>,
     dateFormat: DateTimeFormatter,
+    minutesFormat: String,
+    hoursMinutesFormat: String,
     onDismissRequest: (() -> Unit)
 ) {
     val tooltipOffset = with(LocalDensity.current) {
@@ -82,14 +82,16 @@ fun FocusBreakdownTooltip(
                 Text(
                     text = millisecondsToHoursMinutes(
                         item.totalFocusTime(),
-                        stringResource(R.string.hours_and_minutes_format)
+                        hoursMinutesFormat
                     ),
                     style = typography.bodyMedium
                 )
                 Spacer(Modifier.height(8.dp))
                 HorizontalStackedBar(
                     values = values,
-                    rankList = rankList
+                    rankList = rankList,
+                    minutesFormat = minutesFormat,
+                    hoursMinutesFormat = hoursMinutesFormat
                 )
             }
         }

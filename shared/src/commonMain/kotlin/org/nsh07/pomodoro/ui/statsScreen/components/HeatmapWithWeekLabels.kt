@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -49,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -61,7 +62,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.time.format.TextStyle
-import java.util.Locale
 
 val HEATMAP_CELL_SIZE = 28.dp
 val HEATMAP_CELL_GAP = 2.dp
@@ -84,6 +84,8 @@ val HEATMAP_CELL_GAP = 2.dp
 fun HeatmapWithWeekLabels(
     data: List<Stat?>,
     averageRankList: List<Int>,
+    minutesFormat: String,
+    hoursMinutesFormat: String,
     modifier: Modifier = Modifier,
     state: LazyGridState = rememberLazyGridState(Int.MAX_VALUE),
     size: Dp = HEATMAP_CELL_SIZE,
@@ -93,7 +95,7 @@ fun HeatmapWithWeekLabels(
         data.fastMaxBy { it?.totalFocusTime() ?: 0 }?.totalFocusTime() ?: 0
     }
 ) {
-    val locale = Locale.getDefault()
+    val locale = LocalLocale.current.platformLocale
     val shapes = shapes
 
     val daysOfWeek = remember(locale) {
@@ -178,7 +180,9 @@ fun HeatmapWithWeekLabels(
                             FocusBreakdownTooltip(
                                 it,
                                 averageRankList,
-                                dateFormat
+                                dateFormat,
+                                minutesFormat,
+                                hoursMinutesFormat
                             ) { activeTooltipIndex = -1 }
                         }
                     }
@@ -210,6 +214,8 @@ fun HeatmapWithWeekLabelsPreview() {
             HeatmapWithWeekLabels(
                 data = sampleData,
                 averageRankList = listOf(3, 0, 1, 2),
+                minutesFormat = "%1dm",
+                hoursMinutesFormat = "$1dh $2dm",
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 modifier = Modifier
                     .padding(vertical = 16.dp)

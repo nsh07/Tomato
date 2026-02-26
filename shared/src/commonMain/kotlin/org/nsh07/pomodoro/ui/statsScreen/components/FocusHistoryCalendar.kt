@@ -92,6 +92,8 @@ val CALENDAR_INTERNAL_PADDING = 20.dp
 fun FocusHistoryCalendar(
     data: List<Stat?>,
     averageRankList: List<Int>,
+    minutesFormat: String,
+    hoursMinutesFormat: String,
     modifier: Modifier = Modifier,
     size: Dp = CALENDAR_CELL_SIZE,
     horizontalGap: Dp = CALENDAR_CELL_HORIZONTAL_GAP,
@@ -208,7 +210,9 @@ fun FocusHistoryCalendar(
                                 FocusBreakdownTooltip(
                                     it,
                                     averageRankList,
-                                    dateFormat
+                                    dateFormat,
+                                    minutesFormat,
+                                    hoursMinutesFormat
                                 ) { selectedItemIndex = -1 }
                             }
                         }
@@ -254,6 +258,8 @@ private fun FocusHistoryCalendarPreview() {
             FocusHistoryCalendar(
                 data = data,
                 averageRankList = averageRankList,
+                minutesFormat = "%1dm",
+                hoursMinutesFormat = "$1dh $2dm",
                 modifier = Modifier.padding(16.dp)
             )
         }

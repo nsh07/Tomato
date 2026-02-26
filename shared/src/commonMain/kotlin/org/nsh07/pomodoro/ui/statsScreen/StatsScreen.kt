@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2025-2026 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra 
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
- * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU 
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
@@ -34,12 +34,11 @@ import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneSt
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.calculatePaneScaffoldDirective
 import org.nsh07.pomodoro.ui.settingsScreen.DetailPlaceholder
@@ -50,6 +49,9 @@ import org.nsh07.pomodoro.ui.statsScreen.screens.StatsMainScreen
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.utils.onBack
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.hours_and_minutes_format
+import tomato.shared.generated.resources.hours_format
+import tomato.shared.generated.resources.minutes_format
 import tomato.shared.generated.resources.query_stats
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3AdaptiveApi::class)
@@ -80,9 +82,9 @@ fun StatsScreenRoot(
 
     val colorScheme = colorScheme
 
-    val hoursFormat = stringResource(R.string.hours_format)
-    val hoursMinutesFormat = stringResource(R.string.hours_and_minutes_format)
-    val minutesFormat = stringResource(R.string.minutes_format)
+    val hoursFormat = stringResource(Res.string.hours_format)
+    val hoursMinutesFormat = stringResource(Res.string.hours_and_minutes_format)
+    val minutesFormat = stringResource(Res.string.minutes_format)
 
     SharedTransitionLayout {
         NavDisplay(

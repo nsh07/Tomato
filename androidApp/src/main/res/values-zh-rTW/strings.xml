@@ -128,4 +128,7 @@
     <string name="daily_focus_goal">每日專注目標</string>
     <string name="milliseconds_format">%1$d 毫秒</string>
     <string name="vibration_pattern">震動模式</string>
+    <string name="infinite">無限</string>
+    <string name="infinite_focus">無限專注</string>
+    <string name="settings_infinite_focus_tip">長按計時器時鐘即可啟用無限專注模式</string>
 </resources>

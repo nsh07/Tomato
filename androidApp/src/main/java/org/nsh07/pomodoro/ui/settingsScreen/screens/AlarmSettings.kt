@@ -75,7 +75,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -84,6 +83,7 @@ import androidx.compose.ui.util.fastForEachIndexed
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
@@ -102,6 +102,21 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.airwave
+import tomato.shared.generated.resources.alarm
+import tomato.shared.generated.resources.alarm_on
+import tomato.shared.generated.resources.arrow_back
+import tomato.shared.generated.resources.arrow_forward_big
+import tomato.shared.generated.resources.bolt
+import tomato.shared.generated.resources.check
+import tomato.shared.generated.resources.clear
+import tomato.shared.generated.resources.menu
+import tomato.shared.generated.resources.mobile_vibrate
+import tomato.shared.generated.resources.music_note
+import tomato.shared.generated.resources.play
+import tomato.shared.generated.resources.restore_default
+import tomato.shared.generated.resources.stop
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
@@ -193,14 +208,14 @@ fun AlarmSettings(
             listOf(
                 SettingsSwitchItem(
                     checked = settingsState.alarmEnabled,
-                    icon = R.drawable.alarm_on,
+                    icon = Res.drawable.alarm_on,
                     label = R.string.sound,
                     description = R.string.alarm_desc,
                     onClick = { onAction(SettingsAction.SaveAlarmEnabled(it)) }
                 ),
                 SettingsSwitchItem(
                     checked = settingsState.vibrateEnabled,
-                    icon = R.drawable.mobile_vibrate,
+                    icon = Res.drawable.mobile_vibrate,
                     label = R.string.vibrate,
                     description = R.string.vibrate_desc,
                     onClick = { onAction(SettingsAction.SaveVibrateEnabled(it)) }
@@ -210,7 +225,7 @@ fun AlarmSettings(
                 SettingsSwitchItem(
                     checked = settingsState.mediaVolumeForAlarm,
                     collapsible = true,
-                    icon = R.drawable.music_note,
+                    icon = Res.drawable.music_note,
                     label = R.string.media_volume_for_alarm,
                     description = R.string.media_volume_for_alarm_desc,
                     onClick = { onAction(SettingsAction.SaveMediaVolumeForAlarm(it)) }
@@ -250,7 +265,7 @@ fun AlarmSettings(
                                 )
                             ) {
                                 Icon(
-                                    painterResource(R.drawable.arrow_back),
+                                    painterResource(Res.drawable.arrow_back),
                                     stringResource(R.string.back)
                                 )
                             }
@@ -279,13 +294,13 @@ fun AlarmSettings(
                 item {
                     ListItem(
                         leadingContent = {
-                            Icon(painterResource(R.drawable.alarm), null)
+                            Icon(painterResource(Res.drawable.alarm), null)
                         },
                         headlineContent = { Text(stringResource(R.string.alarm_sound)) },
                         supportingContent = { Text(alarmName) },
                         trailingContent = {
                             Icon(
-                                painterResource(R.drawable.arrow_forward_big),
+                                painterResource(Res.drawable.arrow_forward_big),
                                 null
                             )
                         },
@@ -328,13 +343,13 @@ fun AlarmSettings(
                                     thumbContent = {
                                         if (item.checked) {
                                             Icon(
-                                                painter = painterResource(R.drawable.check),
+                                                painter = painterResource(Res.drawable.check),
                                                 contentDescription = null,
                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
                                             )
                                         } else {
                                             Icon(
-                                                painter = painterResource(R.drawable.clear),
+                                                painter = painterResource(Res.drawable.clear),
                                                 contentDescription = null,
                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
                                             )
@@ -411,9 +426,9 @@ fun AlarmSettings(
                                                     .animateWidth(interactionSources[0])
                                             ) {
                                                 if (vibrationPlaying)
-                                                    Icon(painterResource(R.drawable.stop), null)
+                                                    Icon(painterResource(Res.drawable.stop), null)
                                                 else
-                                                    Icon(painterResource(R.drawable.play), null)
+                                                    Icon(painterResource(Res.drawable.play), null)
                                             }
                                         },
                                         menuContent = {}
@@ -446,7 +461,7 @@ fun AlarmSettings(
                                                     .animateWidth(interactionSources[1])
                                             ) {
                                                 Icon(
-                                                    painterResource(R.drawable.restore_default),
+                                                    painterResource(Res.drawable.restore_default),
                                                     null
                                                 )
                                             }
@@ -466,7 +481,7 @@ fun AlarmSettings(
                             enabled = isPlus,
                             label = stringResource(R.string.duration),
                             trailingLabel = { String.format(msFormat, it.roundToInt()) },
-                            trailingIcon = { Icon(painterResource(R.drawable.airwave), null) },
+                            trailingIcon = { Icon(painterResource(Res.drawable.airwave), null) },
                             shape = middleListItemShape
                         ) { onAction(SettingsAction.SaveVibrationOnDuration(it.roundToLong())) }
                     }
@@ -477,7 +492,7 @@ fun AlarmSettings(
                             enabled = isPlus,
                             label = stringResource(R.string.gap),
                             trailingLabel = { String.format(msFormat, it.roundToInt()) },
-                            trailingIcon = { Icon(painterResource(R.drawable.menu), null) },
+                            trailingIcon = { Icon(painterResource(Res.drawable.menu), null) },
                             shape = if (hasAmplitudeControl) middleListItemShape else bottomListItemShape
                         ) { onAction(SettingsAction.SaveVibrationOffDuration(it.roundToLong())) }
                     }
@@ -495,7 +510,7 @@ fun AlarmSettings(
                                     context.getString(R.string.system_default)
                                 else "${((it * 100) / 255f).roundToInt()}%"
                             },
-                            trailingIcon = { Icon(painterResource(R.drawable.bolt), null) },
+                            trailingIcon = { Icon(painterResource(Res.drawable.bolt), null) },
                             shape = bottomListItemShape
                         ) { onAction(SettingsAction.SaveVibrationAmplitude(it.roundToInt())) }
                     }

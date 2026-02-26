@@ -53,7 +53,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,6 +63,7 @@ import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
@@ -81,6 +81,8 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.query_stats
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -268,7 +270,7 @@ fun SharedTransitionScope.StatsMainScreen(
                         )
                         Spacer(Modifier.weight(1f))
                         Icon(
-                            painter = painterResource(R.drawable.query_stats),
+                            painter = painterResource(Res.drawable.query_stats),
                             contentDescription = null,
                             tint = colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(end = 20.dp)
@@ -375,7 +377,7 @@ fun SharedTransitionScope.StatsMainScreen(
                         )
                         Spacer(Modifier.weight(1f))
                         Icon(
-                            painter = painterResource(R.drawable.query_stats),
+                            painter = painterResource(Res.drawable.query_stats),
                             contentDescription = null,
                             tint = colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(end = 20.dp)
@@ -483,7 +485,7 @@ fun SharedTransitionScope.StatsMainScreen(
                         )
                         Spacer(Modifier.weight(1f))
                         Icon(
-                            painter = painterResource(R.drawable.query_stats),
+                            painter = painterResource(Res.drawable.query_stats),
                             contentDescription = null,
                             tint = colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(end = 20.dp)

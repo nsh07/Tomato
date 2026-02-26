@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -33,7 +33,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
@@ -41,12 +40,18 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.brightness_auto
+import tomato.shared.generated.resources.dark_mode
+import tomato.shared.generated.resources.light_mode
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -57,14 +62,14 @@ fun ThemePickerListItem(
     onThemeChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val themeMap: Map<String, Pair<Int, Int>> = remember {
+    val themeMap: Map<String, Pair<DrawableResource, Int>> = remember {
         mapOf(
             "auto" to Pair(
-                R.drawable.brightness_auto,
+                Res.drawable.brightness_auto,
                 R.string.system_default
             ),
-            "light" to Pair(R.drawable.light_mode, R.string.light),
-            "dark" to Pair(R.drawable.dark_mode, R.string.dark)
+            "light" to Pair(Res.drawable.light_mode, R.string.light),
+            "dark" to Pair(Res.drawable.dark_mode, R.string.dark)
         )
     }
 

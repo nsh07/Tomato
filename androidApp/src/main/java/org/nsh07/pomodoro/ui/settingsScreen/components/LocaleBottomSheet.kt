@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -49,15 +49,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.check
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -118,7 +120,7 @@ fun LocaleBottomSheet(
                             trailingContent = {
                                 if (currentLocales.isEmpty)
                                     Icon(
-                                        painterResource(R.drawable.check),
+                                        painterResource(Res.drawable.check),
                                         contentDescription = stringResource(R.string.selected)
                                     )
                             },
@@ -163,7 +165,7 @@ fun LocaleBottomSheet(
                             trailingContent = {
                                 if (!currentLocales.isEmpty && it.locale == currentLocales.get(0))
                                     Icon(
-                                        painterResource(R.drawable.check),
+                                        painterResource(Res.drawable.check),
                                         tint = colorScheme.primary,
                                         contentDescription = stringResource(R.string.selected)
                                     )

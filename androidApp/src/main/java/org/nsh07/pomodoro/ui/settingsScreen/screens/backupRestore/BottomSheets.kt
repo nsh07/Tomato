@@ -29,15 +29,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.delay
+import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.backup_40dp
+import tomato.shared.generated.resources.restore_40dp
 import kotlin.text.Typography.nbsp
 
 @Composable
@@ -65,7 +68,7 @@ fun BackupBottomSheet(
         openPicker = { chooseFolder.launch(null) },
         icon = {
             Icon(
-                painterResource(R.drawable.backup_40dp),
+                painterResource(Res.drawable.backup_40dp),
                 null,
                 tint = colorScheme.secondary
             )
@@ -112,7 +115,7 @@ fun RestoreBottomSheet(
         openPicker = { chooseFile.launch(arrayOf("application/octet-stream")) },
         icon = {
             Icon(
-                painterResource(R.drawable.restore_40dp),
+                painterResource(Res.drawable.restore_40dp),
                 null,
                 tint = colorScheme.secondary
             )

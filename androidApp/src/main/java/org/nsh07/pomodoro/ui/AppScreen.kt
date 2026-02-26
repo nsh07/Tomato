@@ -72,7 +72,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -84,6 +83,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.nsh07.pomodoro.R
@@ -98,6 +98,13 @@ import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 import org.nsh07.pomodoro.utils.onBack
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.monitoring
+import tomato.shared.generated.resources.monitoring_filled
+import tomato.shared.generated.resources.settings
+import tomato.shared.generated.resources.settings_filled
+import tomato.shared.generated.resources.timer_filled
+import tomato.shared.generated.resources.timer_outlined
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -132,20 +139,20 @@ fun AppScreen(
         listOf(
             NavItem(
                 Screen.Timer,
-                R.drawable.timer_outlined,
-                R.drawable.timer_filled,
+                Res.drawable.timer_outlined,
+                Res.drawable.timer_filled,
                 R.string.timer
             ) {},
             NavItem(
                 Screen.Stats.Main,
-                R.drawable.monitoring,
-                R.drawable.monitoring_filled,
+                Res.drawable.monitoring,
+                Res.drawable.monitoring_filled,
                 R.string.stats
             ) { statsViewModel.backStack.removeRange(1, statsViewModel.backStack.size) },
             NavItem(
                 Screen.Settings.Main,
-                R.drawable.settings,
-                R.drawable.settings_filled,
+                Res.drawable.settings,
+                Res.drawable.settings_filled,
                 R.string.settings
             ) { settingsViewModel.backStack.removeRange(1, settingsViewModel.backStack.size) }
         )

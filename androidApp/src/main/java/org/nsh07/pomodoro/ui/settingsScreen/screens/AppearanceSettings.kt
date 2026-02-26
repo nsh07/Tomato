@@ -46,11 +46,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
+import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
@@ -68,6 +68,11 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.toColor
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.arrow_back
+import tomato.shared.generated.resources.check
+import tomato.shared.generated.resources.clear
+import tomato.shared.generated.resources.contrast
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -117,7 +122,7 @@ fun AppearanceSettings(
                                 )
                             ) {
                                 Icon(
-                                    painterResource(R.drawable.arrow_back),
+                                    painterResource(Res.drawable.arrow_back),
                                     stringResource(R.string.back)
                                 )
                             }
@@ -167,7 +172,7 @@ fun AppearanceSettings(
                 item {
                     val item = SettingsSwitchItem(
                         checked = settingsState.blackTheme,
-                        icon = R.drawable.contrast,
+                        icon = Res.drawable.contrast,
                         label = R.string.black_theme,
                         description = R.string.black_theme_desc,
                         onClick = { onAction(SettingsAction.SaveBlackTheme(it)) }
@@ -186,13 +191,13 @@ fun AppearanceSettings(
                                 thumbContent = {
                                     if (item.checked) {
                                         Icon(
-                                            painter = painterResource(R.drawable.check),
+                                            painter = painterResource(Res.drawable.check),
                                             contentDescription = null,
                                             modifier = Modifier.size(SwitchDefaults.IconSize),
                                         )
                                     } else {
                                         Icon(
-                                            painter = painterResource(R.drawable.clear),
+                                            painter = painterResource(Res.drawable.clear),
                                             contentDescription = null,
                                             modifier = Modifier.size(SwitchDefaults.IconSize),
                                         )

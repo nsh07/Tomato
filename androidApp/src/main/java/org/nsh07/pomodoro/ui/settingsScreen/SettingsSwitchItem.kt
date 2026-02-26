@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -17,14 +17,14 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import org.jetbrains.compose.resources.DrawableResource
 
 data class SettingsSwitchItem(
     val checked: Boolean,
     val enabled: Boolean = true,
     val collapsible: Boolean = false,
-    @param:DrawableRes val icon: Int,
+    val icon: DrawableResource,
     @param:StringRes val label: Int,
     @param:StringRes val description: Int,
     val onClick: (Boolean) -> Unit

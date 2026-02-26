@@ -49,12 +49,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
@@ -67,6 +67,10 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.arrow_back
+import tomato.shared.generated.resources.backup
+import tomato.shared.generated.resources.restore
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -158,7 +162,7 @@ fun BackupRestoreScreen(
                                 )
                             ) {
                                 Icon(
-                                    painterResource(R.drawable.arrow_back),
+                                    painterResource(Res.drawable.arrow_back),
                                     stringResource(R.string.back)
                                 )
                             }
@@ -188,7 +192,7 @@ fun BackupRestoreScreen(
                     ClickableListItem(
                         headlineContent = { Text(stringResource(R.string.backup)) },
                         supportingContent = { Text(stringResource(R.string.backup_desc)) },
-                        leadingContent = { Icon(painterResource(R.drawable.backup), null) },
+                        leadingContent = { Icon(painterResource(Res.drawable.backup), null) },
                         items = 2,
                         index = 0
                     ) { showDialog = 1 }
@@ -197,7 +201,7 @@ fun BackupRestoreScreen(
                     ClickableListItem(
                         headlineContent = { Text(stringResource(R.string.restore)) },
                         supportingContent = { Text(stringResource(R.string.restore_desc)) },
-                        leadingContent = { Icon(painterResource(R.drawable.restore), null) },
+                        leadingContent = { Icon(painterResource(Res.drawable.restore), null) },
                         items = 2,
                         index = 1
                     ) { showDialog = 2 }

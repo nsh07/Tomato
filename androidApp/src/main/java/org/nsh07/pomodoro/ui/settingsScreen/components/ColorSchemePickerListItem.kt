@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -43,15 +43,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.check
+import tomato.shared.generated.resources.clear
+import tomato.shared.generated.resources.colors
+import tomato.shared.generated.resources.palette
 
 @Composable
 fun ColorSchemePickerListItem(
@@ -84,7 +89,7 @@ fun ColorSchemePickerListItem(
             ListItem(
                 leadingContent = {
                     Icon(
-                        painterResource(R.drawable.colors),
+                        painterResource(Res.drawable.colors),
                         null
                     )
                 },
@@ -102,13 +107,13 @@ fun ColorSchemePickerListItem(
                         thumbContent = {
                             if (checked) {
                                 Icon(
-                                    painter = painterResource(R.drawable.check),
+                                    painter = painterResource(Res.drawable.check),
                                     contentDescription = null,
                                     modifier = Modifier.size(SwitchDefaults.IconSize),
                                 )
                             } else {
                                 Icon(
-                                    painter = painterResource(R.drawable.clear),
+                                    painter = painterResource(Res.drawable.clear),
                                     contentDescription = null,
                                     modifier = Modifier.size(SwitchDefaults.IconSize),
                                 )
@@ -126,7 +131,7 @@ fun ColorSchemePickerListItem(
         ListItem(
             leadingContent = {
                 Icon(
-                    painter = painterResource(R.drawable.palette),
+                    painter = painterResource(Res.drawable.palette),
                     contentDescription = null
                 )
             },
@@ -191,14 +196,14 @@ fun ColorPickerButton(
         AnimatedContent(isSelected) { isSelected ->
             when (isSelected) {
                 true -> Icon(
-                    painterResource(R.drawable.check),
+                    painterResource(Res.drawable.check),
                     tint = Color.Black,
                     contentDescription = null
                 )
 
                 else ->
                     if (color == Color.White) Icon(
-                        painterResource(R.drawable.colors),
+                        painterResource(Res.drawable.colors),
                         tint = Color.Black,
                         contentDescription = null
                     )

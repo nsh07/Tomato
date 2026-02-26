@@ -49,6 +49,8 @@ import org.nsh07.pomodoro.ui.statsScreen.screens.LastYearScreen
 import org.nsh07.pomodoro.ui.statsScreen.screens.StatsMainScreen
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.utils.onBack
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.query_stats
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -102,7 +104,7 @@ fun StatsScreenRoot(
                 entry<Screen.Stats.Main>(
                     metadata = listPane(detailPlaceholder = {
                         DetailPlaceholder(
-                            icon = R.drawable.query_stats,
+                            icon = Res.drawable.query_stats,
                             background = colorScheme.surface
                         )
                     })

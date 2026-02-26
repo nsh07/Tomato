@@ -125,6 +125,9 @@ dependencies {
     implementation(libs.vico.compose.m3)
     implementation(libs.material.kolor)
 
+    // TODO: remove this when CMP migration is done
+    implementation(libs.components.resources)
+
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)

@@ -53,12 +53,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.di.AppInfo
@@ -75,6 +75,13 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.singleItemListItemShapes
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.arrow_forward_big
+import tomato.shared.generated.resources.backup
+import tomato.shared.generated.resources.info
+import tomato.shared.generated.resources.language
+import tomato.shared.generated.resources.mobile_text
+import tomato.shared.generated.resources.open_in_browser
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -175,7 +182,7 @@ fun SettingsMainScreen(
                         )
                     },
                     trailingContent = if (!widthExpanded) {
-                        { Icon(painterResource(R.drawable.arrow_forward_big), null) }
+                        { Icon(painterResource(Res.drawable.arrow_forward_big), null) }
                     } else null,
                     shapes = ListItemDefaults.segmentedShapes(index, settingsScreens.size),
                     colors = listItemColors,
@@ -190,7 +197,7 @@ fun SettingsMainScreen(
                 val item = remember {
                     SettingsNavItem(
                         Screen.Settings.Backup,
-                        R.drawable.backup,
+                        Res.drawable.backup,
                         R.string.backup_and_restore,
                         listOf(R.string.backup, R.string.restore, R.string.reset_data)
                     )
@@ -212,7 +219,7 @@ fun SettingsMainScreen(
                         )
                     },
                     trailingContent = if (!widthExpanded) {
-                        { Icon(painterResource(R.drawable.arrow_forward_big), null) }
+                        { Icon(painterResource(Res.drawable.arrow_forward_big), null) }
                     } else null,
                     selected = currentScreen == Screen.Settings.Backup,
                     shapes = ListItemDefaults.segmentedShapes(0, 2),
@@ -223,13 +230,13 @@ fun SettingsMainScreen(
             item {
                 SegmentedListItem(
                     leadingContent = {
-                        Icon(painterResource(R.drawable.info), null)
+                        Icon(painterResource(Res.drawable.info), null)
                     },
                     supportingContent = {
                         Text(stringResource(R.string.app_name) + " ${appInfo.versionName}")
                     },
                     trailingContent = if (!widthExpanded) {
-                        { Icon(painterResource(R.drawable.arrow_forward_big), null) }
+                        { Icon(painterResource(Res.drawable.arrow_forward_big), null) }
                     } else null,
                     selected = currentScreen == Screen.Settings.About,
                     shapes = ListItemDefaults.segmentedShapes(1, 2),
@@ -244,7 +251,7 @@ fun SettingsMainScreen(
                 item {
                     SegmentedListItem(
                         leadingContent = {
-                            Icon(painterResource(R.drawable.language), contentDescription = null)
+                            Icon(painterResource(Res.drawable.language), contentDescription = null)
                         },
                         supportingContent = {
                             Text(
@@ -265,10 +272,10 @@ fun SettingsMainScreen(
                     Spacer(Modifier.height(14.dp))
                     SegmentedListItem(
                         leadingContent = {
-                            Icon(painterResource(R.drawable.mobile_text), null)
+                            Icon(painterResource(Res.drawable.mobile_text), null)
                         },
                         trailingContent = {
-                            Icon(painterResource(R.drawable.open_in_browser), null)
+                            Icon(painterResource(Res.drawable.open_in_browser), null)
                         },
                         shapes = ListItemDefaults.segmentedShapes(0, 1, singleItemListItemShapes),
                         colors = listItemColors,

@@ -57,7 +57,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -70,6 +69,7 @@ import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProdu
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
+import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.ui.mergePaddingValues
@@ -84,6 +84,9 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.utils.millisecondsToMinutes
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.arrow_back
+import tomato.shared.generated.resources.arrow_down
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -150,7 +153,7 @@ fun SharedTransitionScope.LastMonthScreen(
                             shapes = IconButtonDefaults.shapes()
                         ) {
                             Icon(
-                                painterResource(R.drawable.arrow_back),
+                                painterResource(Res.drawable.arrow_back),
                                 stringResource(R.string.back)
                             )
                         }
@@ -288,7 +291,7 @@ fun SharedTransitionScope.LastMonthScreen(
                             modifier = Modifier.align(Alignment.End)
                         ) {
                             Icon(
-                                painterResource(R.drawable.arrow_down),
+                                painterResource(Res.drawable.arrow_down),
                                 stringResource(R.string.more_info),
                                 modifier = Modifier.rotate(iconRotation)
                             )

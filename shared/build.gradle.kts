@@ -27,6 +27,11 @@ plugins {
     alias(libs.plugins.koin.compiler)
 }
 
+// TODO: remove when CMP migration is done
+compose.resources {
+    publicResClass = true
+}
+
 kotlin {
     androidLibrary {
         namespace = "org.nsh07.pomodoro.shared"

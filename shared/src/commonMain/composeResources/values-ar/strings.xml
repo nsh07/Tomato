@@ -142,4 +142,7 @@
     <string name="restart_app">إعادة تشغيل التطبيق</string>
     <string name="milliseconds_format">%1$dملي ثانية</string>
     <string name="vibration_pattern">نمط الاهتزاز</string>
+    <string name="infinite_focus">التركيز اللامتناهي</string>
+    <string name="settings_infinite_focus_tip">اضغط مطول على ساعة المؤقت لتفعيل وضع التركيز اللامتناهي</string>
+    <string name="infinite">اللامتناهي</string>
 </resources>

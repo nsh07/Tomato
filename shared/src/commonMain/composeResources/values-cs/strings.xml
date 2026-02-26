@@ -141,4 +141,7 @@
     <string name="daily_focus_goal">Cíl denního soustředění</string>
     <string name="milliseconds_format">%1$d ms</string>
     <string name="vibration_pattern">Vzor vibrací</string>
+    <string name="infinite">Nekonečno</string>
+    <string name="infinite_focus">Nekonečné soutředění</string>
+    <string name="settings_infinite_focus_tip">Dlouze podržte prst na časovači pro zapnutí nekonečného režimu soustředění</string>
 </resources>

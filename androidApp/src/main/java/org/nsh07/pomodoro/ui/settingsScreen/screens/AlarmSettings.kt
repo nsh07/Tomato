@@ -80,6 +80,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import androidx.core.net.toUri
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -145,7 +146,7 @@ fun AlarmSettings(
     LaunchedEffect(settingsState.alarmSoundUri) {
         withContext(Dispatchers.IO) {
             alarmName = try {
-                RingtoneManager.getRingtone(context, settingsState.alarmSoundUri)
+                RingtoneManager.getRingtone(context, settingsState.alarmSoundUri?.toUri())
                     ?.getTitle(context) ?: ""
             } catch (e: Exception) {
                 Log.e("AlarmSettings", "Unable to get ringtone title: ${e.message}")

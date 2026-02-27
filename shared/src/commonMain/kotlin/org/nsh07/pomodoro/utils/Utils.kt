@@ -67,7 +67,7 @@ fun millisecondsToHoursMinutes(t: Long, format: String = $$"%1$dh %2$dm"): Strin
  *
  *      Color(0.0, 0.0, 0.0, 1.0, sRGB IEC61966-2.1)
  *
- * The behaviour of this function is undefined if the format is not followed
+ * The behavior of this function is undefined if the format is not followed
  */
 fun String.toColor(): Color {
     // Sample string: Color(0.0, 0.0, 0.0, 1.0, sRGB IEC61966-2.1)
@@ -93,9 +93,16 @@ fun <T> MutableList<T>.onTopLevelNavigate(screen: T) {
 }
 
 /**
- * Function to check system SDK version on Android
+ * Checks the system SDK version on Android
  *
  * @param version SDK version code
  * @return false if device is not running Android or SDK version is lower than [version], else true
  */
 expect fun androidSdkVersionAtLeast(version: Int): Boolean
+
+/**
+ * Returns the default alarm tone for the device
+ *
+ * @return string representation of the path (or URI) of the alarm tone, or null if none
+ */
+expect fun getDefaultAlarmTone(): String?

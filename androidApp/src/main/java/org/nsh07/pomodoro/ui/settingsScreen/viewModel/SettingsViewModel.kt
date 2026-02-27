@@ -18,7 +18,6 @@
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
 import android.net.Uri
-import android.provider.Settings
 import android.util.Log
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,7 +25,6 @@ import androidx.compose.material3.SliderState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.graphics.Color
-import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +48,7 @@ import org.nsh07.pomodoro.service.ServiceHelper
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
+import org.nsh07.pomodoro.utils.getDefaultAlarmTone
 import org.nsh07.pomodoro.utils.millisecondsToStr
 
 @OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
@@ -281,7 +280,7 @@ class SettingsViewModel(
     private fun saveAlarmSound(uri: Uri?) {
         viewModelScope.launch {
             _settingsState.update { currentState ->
-                currentState.copy(alarmSoundUri = uri)
+                currentState.copy(alarmSoundUri = uri.toString())
             }
             preferenceRepository.saveStringPreference("alarm_sound", uri.toString())
         }
@@ -442,10 +441,9 @@ class SettingsViewModel(
                 preferenceRepository.getStringPreference("alarm_sound")
                     ?: preferenceRepository.saveStringPreference(
                         "alarm_sound",
-                        (Settings.System.DEFAULT_ALARM_ALERT_URI
-                            ?: Settings.System.DEFAULT_RINGTONE_URI).toString()
+                        getDefaultAlarmTone().toString()
                     )
-                ).toUri()
+                )
 
         val theme = preferenceRepository.getStringPreference("theme")
             ?: preferenceRepository.saveStringPreference("theme", settingsState.theme)

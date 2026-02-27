@@ -18,9 +18,15 @@
 package org.nsh07.pomodoro.utils
 
 import android.os.Build
+import android.provider.Settings
 import androidx.annotation.ChecksSdkIntAtLeast
 
 @ChecksSdkIntAtLeast(parameter = 0)
 actual fun androidSdkVersionAtLeast(version: Int): Boolean {
     return Build.VERSION.SDK_INT >= version
+}
+
+actual fun getDefaultAlarmTone(): String? {
+    return (Settings.System.DEFAULT_ALARM_ALERT_URI
+        ?: Settings.System.DEFAULT_RINGTONE_URI)?.toString()
 }

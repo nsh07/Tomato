@@ -32,6 +32,7 @@ import android.os.VibratorManager
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -530,7 +531,7 @@ class TimerService : Service(), KoinComponent {
                         .build()
                 )
                 settingsState.alarmSoundUri?.let {
-                    setDataSource(applicationContext, it)
+                    setDataSource(applicationContext, it.toUri())
                     prepare()
                 }
             }

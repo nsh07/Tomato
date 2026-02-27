@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
-import android.net.Uri
 import android.os.VibrationEffect.DEFAULT_AMPLITUDE
 import android.provider.Settings
 import androidx.compose.runtime.Immutable
@@ -49,6 +48,7 @@ data class SettingsState(
 
     val sessionLength: Int = 4,
 
-    val alarmSoundUri: Uri? =
-        Settings.System.DEFAULT_ALARM_ALERT_URI ?: Settings.System.DEFAULT_RINGTONE_URI
+    val alarmSoundUri: String? =
+        Settings.System.DEFAULT_ALARM_ALERT_URI?.toString()
+            ?: Settings.System.DEFAULT_RINGTONE_URI?.toString()
 )

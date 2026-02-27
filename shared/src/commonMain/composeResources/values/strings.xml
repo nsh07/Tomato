@@ -149,4 +149,5 @@
     <string name="infinite">Infinite</string>
     <string name="infinite_focus">Infinite focus</string>
     <string name="settings_infinite_focus_tip">Long press the timer clock to enable infinite focus mode</string>
+    <string name="cancel">Cancel</string>
 </resources>

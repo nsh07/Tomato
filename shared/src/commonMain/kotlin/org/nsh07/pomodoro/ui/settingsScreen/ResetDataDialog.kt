@@ -43,14 +43,17 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
-import org.nsh07.pomodoro.R
+import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.cancel
+import tomato.shared.generated.resources.ok
+import tomato.shared.generated.resources.reset_data_dialog_text
+import tomato.shared.generated.resources.reset_data_dialog_title
 import tomato.shared.generated.resources.restart
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -83,7 +86,7 @@ fun ResetDataDialog(
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = stringResource(R.string.reset_data_dialog_title),
+                    text = stringResource(Res.string.reset_data_dialog_title),
                     textAlign = TextAlign.Center,
                     style = typography.headlineSmall,
                     color = colorScheme.onSurface,
@@ -91,7 +94,7 @@ fun ResetDataDialog(
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = stringResource(R.string.reset_data_dialog_text),
+                    text = stringResource(Res.string.reset_data_dialog_text),
                     style = typography.bodyMedium
                 )
 
@@ -104,9 +107,7 @@ fun ResetDataDialog(
                     TextButton(
                         onClick = onDismiss,
                         shapes = ButtonDefaults.shapes(),
-                    ) {
-                        Text(stringResource(android.R.string.cancel))
-                    }
+                    ) { Text(stringResource(Res.string.cancel)) }
 
                     Spacer(modifier = Modifier.width(8.dp))
 
@@ -114,7 +115,7 @@ fun ResetDataDialog(
                         onClick = resetData,
                         shapes = ButtonDefaults.shapes(),
                     ) {
-                        Text(stringResource(android.R.string.ok))
+                        Text(stringResource(Res.string.ok))
                     }
                 }
             }

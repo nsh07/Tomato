@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Nishant Mishra
+ * Copyright (c) 2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -49,28 +49,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
-import org.nsh07.pomodoro.R
+import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.check
-import java.util.Locale
+import tomato.shared.generated.resources.choose_language
+import tomato.shared.generated.resources.selected
+import tomato.shared.generated.resources.system_default
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun LocaleBottomSheet(
-    currentLocales: LocaleList,
+actual fun LocaleBottomSheet(
     setShowSheet: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
+    val currentLocales =
+        if (Build.VERSION.SDK_INT >= 33) {
+            context
+                .getSystemService(LocaleManager::class.java)
+                .applicationLocales
+        } else LocaleList.getEmptyLocaleList()
 
     val supportedLocales = remember {
         if (Build.VERSION.SDK_INT >= 33) {
@@ -100,7 +107,7 @@ fun LocaleBottomSheet(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = stringResource(R.string.choose_language),
+                text = stringResource(Res.string.choose_language),
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
@@ -115,13 +122,13 @@ fun LocaleBottomSheet(
                     item {
                         ListItem(
                             headlineContent = {
-                                Text(stringResource(R.string.system_default))
+                                Text(stringResource(Res.string.system_default))
                             },
                             trailingContent = {
                                 if (currentLocales.isEmpty)
                                     Icon(
                                         painterResource(Res.drawable.check),
-                                        contentDescription = stringResource(R.string.selected)
+                                        contentDescription = stringResource(Res.string.selected)
                                     )
                             },
                             colors =
@@ -167,7 +174,7 @@ fun LocaleBottomSheet(
                                     Icon(
                                         painterResource(Res.drawable.check),
                                         tint = colorScheme.primary,
-                                        contentDescription = stringResource(R.string.selected)
+                                        contentDescription = stringResource(Res.string.selected)
                                     )
                             },
                             colors =
@@ -210,8 +217,3 @@ fun LocaleBottomSheet(
         }
     }
 }
-
-data class AppLocale(
-    val locale: Locale,
-    val name: String
-)

@@ -24,13 +24,14 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
-import org.nsh07.pomodoro.R
+import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.app_name_plus
 import tomato.shared.generated.resources.arrow_forward_big
+import tomato.shared.generated.resources.get_plus
 import tomato.shared.generated.resources.tomato_logo_notification
 
 @Composable
@@ -49,8 +50,8 @@ fun PlusPromo(
         },
         headlineContent = {
             Text(
-                if (!isPlus) stringResource(R.string.get_plus)
-                else stringResource(R.string.app_name_plus)
+                if (!isPlus) stringResource(Res.string.get_plus)
+                else stringResource(Res.string.app_name_plus)
             )
         },
         trailingContent = {

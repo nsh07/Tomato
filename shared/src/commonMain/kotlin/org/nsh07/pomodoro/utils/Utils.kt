@@ -91,3 +91,11 @@ fun <T> MutableList<T>.onTopLevelNavigate(screen: T) {
     if (size < 2) add(screen)
     else set(1, screen)
 }
+
+/**
+ * Function to check system SDK version on Android
+ *
+ * @param version SDK version code
+ * @return false if device is not running Android or SDK version is lower than [version], else true
+ */
+expect fun androidSdkVersionAtLeast(version: Int): Boolean

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra 
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
- * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU 
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
@@ -32,9 +32,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.nsh07.pomodoro.R
+import org.jetbrains.compose.resources.stringResource
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.tomato_plus_desc
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -51,7 +52,7 @@ fun PlusDivider(
                 .background(colorScheme.surfaceContainer)
                 .padding(horizontal = 8.dp)
         ) {
-            Text(stringResource(R.string.tomato_plus_desc), style = typography.titleSmall)
+            Text(stringResource(Res.string.tomato_plus_desc), style = typography.titleSmall)
         }
     }
 }

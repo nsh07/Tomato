@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
-import android.os.Build
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -43,19 +42,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
-import org.nsh07.pomodoro.R
+import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.check
 import tomato.shared.generated.resources.clear
+import tomato.shared.generated.resources.color
+import tomato.shared.generated.resources.color_scheme
 import tomato.shared.generated.resources.colors
+import tomato.shared.generated.resources.dynamic
+import tomato.shared.generated.resources.dynamic_color
+import tomato.shared.generated.resources.dynamic_color_desc
 import tomato.shared.generated.resources.palette
 
 @Composable
@@ -85,7 +89,7 @@ fun ColorSchemePickerListItem(
                 }
             )
     ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (androidSdkVersionAtLeast(31)) {
             ListItem(
                 leadingContent = {
                     Icon(
@@ -93,8 +97,8 @@ fun ColorSchemePickerListItem(
                         null
                     )
                 },
-                headlineContent = { Text(stringResource(R.string.dynamic_color)) },
-                supportingContent = { Text(stringResource(R.string.dynamic_color_desc)) },
+                headlineContent = { Text(stringResource(Res.string.dynamic_color)) },
+                supportingContent = { Text(stringResource(Res.string.dynamic_color_desc)) },
                 trailingContent = {
                     val checked = color == colorSchemes.last()
                     Switch(
@@ -135,11 +139,11 @@ fun ColorSchemePickerListItem(
                     contentDescription = null
                 )
             },
-            headlineContent = { Text(stringResource(R.string.color_scheme)) },
+            headlineContent = { Text(stringResource(Res.string.color_scheme)) },
             supportingContent = {
                 Text(
-                    if (color == Color.White) stringResource(R.string.dynamic)
-                    else stringResource(R.string.color)
+                    if (color == Color.White) stringResource(Res.string.dynamic)
+                    else stringResource(Res.string.color)
                 )
             },
             colors = listItemColors,

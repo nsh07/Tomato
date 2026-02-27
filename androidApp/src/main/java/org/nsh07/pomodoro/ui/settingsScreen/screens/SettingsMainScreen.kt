@@ -113,11 +113,8 @@ fun SettingsMainScreen(
 
     var showLocaleSheet by remember { mutableStateOf(false) }
 
-    if (showLocaleSheet && currentLocales != null)
-        LocaleBottomSheet(
-            currentLocales = currentLocales,
-            setShowSheet = { showLocaleSheet = it }
-        )
+    if (showLocaleSheet)
+        LocaleBottomSheet({ showLocaleSheet = it })
 
     if (settingsState.isShowingEraseDataDialog) {
         ResetDataDialog(

@@ -15,25 +15,20 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.di
+package org.nsh07.pomodoro.data
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.lightColorScheme
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.nsh07.pomodoro.data.StateRepository
+import org.nsh07.pomodoro.service.TimerStateSnapshot
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 
-class TimerStateHolder(private val stateRepository: StateRepository) {
-    val time: MutableStateFlow<Long> by lazy {
-        MutableStateFlow(stateRepository.settingsState.value.focusTime)
-    }
+class StateRepository {
+    val timerState = MutableStateFlow(TimerState())
+    val settingsState = MutableStateFlow(SettingsState())
+    var timerFrequency: Float = 60f
+    var colorScheme: ColorScheme = lightColorScheme()
+    var timerStateSnapshot: TimerStateSnapshot =
+        TimerStateSnapshot(time = 0, timerState = TimerState())
 }
-
-class ActivityCallbacks {
-    var activityTurnScreenOn: (Boolean) -> Unit = {}
-}
-
-data class FlavorUI(
-    val tomatoPlusPaywallDialog: @Composable (Boolean, () -> Unit) -> Unit,
-    val topButton: @Composable (Modifier) -> Unit,
-    val bottomButton: @Composable (Modifier) -> Unit
-)

@@ -106,3 +106,11 @@ expect fun androidSdkVersionAtLeast(version: Int): Boolean
  * @return string representation of the path (or URI) of the alarm tone, or null if none
  */
 expect fun getDefaultAlarmTone(): String?
+
+/**
+ * Cross-platform function for using the system-provided logger
+ *
+ * @param tag tag for the log message. This is often used on Android to mark logs.
+ * @param message message to be logged
+ */
+expect fun logError(tag: String, message: String)

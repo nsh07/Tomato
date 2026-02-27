@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Nishant Mishra
+ * Copyright (c) 2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
-import android.util.Log
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
@@ -48,6 +47,7 @@ import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.utils.getDefaultAlarmTone
+import org.nsh07.pomodoro.utils.logError
 import org.nsh07.pomodoro.utils.millisecondsToStr
 
 @OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
@@ -229,7 +229,7 @@ class SettingsViewModel(
             try {
                 serviceHelper.startService(TimerAction.ResetTimer)
             } catch (e: Exception) {
-                Log.e(
+                logError(
                     "Service",
                     "Unable to start start service with action ResetTimer: ${e.message}"
                 )

@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
-import android.net.Uri
 import androidx.compose.ui.graphics.Color
 
 sealed interface SettingsAction {
@@ -30,7 +29,7 @@ sealed interface SettingsAction {
     data class SaveSingleProgressBar(val enabled: Boolean) : SettingsAction
     data class SaveAutostartNextSession(val enabled: Boolean) : SettingsAction
     data class SaveSecureAod(val enabled: Boolean) : SettingsAction
-    data class SaveAlarmSound(val uri: Uri?) : SettingsAction
+    data class SaveAlarmSound(val uri: String?) : SettingsAction
     data class SaveTheme(val theme: String) : SettingsAction
     data class SaveColorScheme(val color: Color) : SettingsAction
 

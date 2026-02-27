@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -277,10 +276,10 @@ class SettingsViewModel(
         }
     }
 
-    private fun saveAlarmSound(uri: Uri?) {
+    private fun saveAlarmSound(uri: String?) {
         viewModelScope.launch {
             _settingsState.update { currentState ->
-                currentState.copy(alarmSoundUri = uri.toString())
+                currentState.copy(alarmSoundUri = uri)
             }
             preferenceRepository.saveStringPreference("alarm_sound", uri.toString())
         }

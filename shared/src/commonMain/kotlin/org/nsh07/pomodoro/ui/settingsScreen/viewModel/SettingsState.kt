@@ -17,10 +17,9 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
-import android.os.VibrationEffect.DEFAULT_AMPLITUDE
-import android.provider.Settings
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import org.nsh07.pomodoro.utils.getDefaultAlarmTone
 
 @Immutable
 data class SettingsState(
@@ -39,7 +38,7 @@ data class SettingsState(
 
     val vibrationOnDuration: Long = 1000L,
     val vibrationOffDuration: Long = 1000L,
-    val vibrationAmplitude: Int = DEFAULT_AMPLITUDE,
+    val vibrationAmplitude: Int = -1,
 
     val focusTime: Long = 25 * 60 * 1000L,
     val shortBreakTime: Long = 5 * 60 * 1000L,
@@ -48,7 +47,5 @@ data class SettingsState(
 
     val sessionLength: Int = 4,
 
-    val alarmSoundUri: String? =
-        Settings.System.DEFAULT_ALARM_ALERT_URI?.toString()
-            ?: Settings.System.DEFAULT_RINGTONE_URI?.toString()
+    val alarmSoundUri: String? = getDefaultAlarmTone()
 )

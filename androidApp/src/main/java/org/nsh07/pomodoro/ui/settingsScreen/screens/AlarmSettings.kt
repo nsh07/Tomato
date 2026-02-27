@@ -170,7 +170,7 @@ fun AlarmSettings(
                     @Suppress("DEPRECATION")
                     result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
                 }
-            onAction(SettingsAction.SaveAlarmSound(uri))
+            onAction(SettingsAction.SaveAlarmSound(uri.toString()))
         }
     }
 

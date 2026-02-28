@@ -27,6 +27,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import org.nsh07.pomodoro.billing.initializePurchases
+import org.nsh07.pomodoro.di.androidModule
 import org.nsh07.pomodoro.di.dbModule
 import org.nsh07.pomodoro.di.servicesModule
 import org.nsh07.pomodoro.di.viewModels
@@ -48,7 +49,14 @@ class TomatoApplication : Application() {
             androidLogger(Level.INFO)
 
             androidContext(this@TomatoApplication)
-            modules(dbModule, flavorModule, flavorUiModule, servicesModule, viewModels)
+            modules(
+                dbModule,
+                flavorModule,
+                flavorUiModule,
+                servicesModule,
+                androidModule,
+                viewModels
+            )
         }
 
         get<NotificationManagerCompat>().createNotificationChannel(notificationChannel)

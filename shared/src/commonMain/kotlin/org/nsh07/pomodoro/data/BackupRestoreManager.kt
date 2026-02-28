@@ -15,18 +15,11 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel
+package org.nsh07.pomodoro.data
 
-import androidx.lifecycle.ViewModel
-import org.nsh07.pomodoro.data.BackupRestoreManager
-import org.nsh07.pomodoro.data.FileLocator
+expect class FileLocator
 
-class BackupRestoreViewModel(
-    val backupRestoreManager: BackupRestoreManager
-) : ViewModel() {
-    suspend fun performBackup(directoryLocator: FileLocator) =
-        backupRestoreManager.performBackup(directoryLocator)
-
-    suspend fun performRestore(fileLocator: FileLocator) =
-        backupRestoreManager.performRestore(fileLocator)
+interface BackupRestoreManager {
+    suspend fun performBackup(directoryLocator: FileLocator)
+    suspend fun performRestore(fileLocator: FileLocator)
 }

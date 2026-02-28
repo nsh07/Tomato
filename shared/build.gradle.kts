@@ -33,6 +33,8 @@ compose.resources {
 }
 
 kotlin {
+    compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
+
     androidLibrary {
         namespace = "org.nsh07.pomodoro.shared"
         compileSdk = 36

@@ -36,9 +36,11 @@ import org.koin.plugin.module.dsl.create
 import org.koin.plugin.module.dsl.single
 import org.koin.plugin.module.dsl.viewModel
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.data.AndroidBackupRestoreManager
 import org.nsh07.pomodoro.data.AppDatabase
 import org.nsh07.pomodoro.data.AppPreferenceRepository
 import org.nsh07.pomodoro.data.AppStatRepository
+import org.nsh07.pomodoro.data.BackupRestoreManager
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
@@ -79,6 +81,10 @@ val viewModels = module {
     viewModel<TimerViewModel>()
     viewModel<SettingsViewModel>()
     viewModel<StatsViewModel>()
+}
+
+val androidModule = module {
+    single<AndroidBackupRestoreManager>() bind BackupRestoreManager::class
 }
 
 private fun createDatabase(context: Context): AppDatabase {

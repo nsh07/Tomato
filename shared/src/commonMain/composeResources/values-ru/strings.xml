@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -13,9 +14,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  -->
-
-<resources>
+  --><resources>
     <string name="alarm">Сигнал</string>
     <string name="alarm_desc">Воспроизвести сигнал по окончании таймера</string>
     <string name="alarm_sound">Звук сигнала</string>
@@ -123,7 +122,7 @@
     <string name="focus_history_desc">Разбивка фокуса по каждому дню прошлой недели. Нажмите на график дня, чтобы узнать подробнее.</string>
     <string name="focus_breakdown">Разбивка фокуса</string>
     <string name="total">всего</string>
-    <string name="restore_dialog_desc">Ваша статистика и настройки будут восстановлены из выбранного файла бекапа. Приложение нужно будет перезагрузить после завершения восстановления. &lt;b>Все данные будут безвозвратно удалены, это действие нельзя отменить.&lt;/b></string>
+    <string name="restore_dialog_desc">Ваша статистика и настройки будут восстановлены из выбранного файла бекапа. Приложение нужно будет перезагрузить после завершения восстановления. &lt;b&gt;Все данные будут безвозвратно удалены, это действие нельзя отменить.&lt;/b&gt;</string>
     <string name="restore_desc">Восстановить статистики и настройки</string>
     <string name="backup_dialog_desc">Ваша статистика и настройки будут сохранены в файл в выбранной папке. Вы сможете восстановит эти данные через %1$ с</string>
     <string name="dnd_permission_message">Необходимо предоставить разрешение для \"%1$s\"</string>

@@ -82,14 +82,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import org.jetbrains.compose.resources.painterResource
-import org.nsh07.pomodoro.R
+import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputField
@@ -110,16 +109,40 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.always_on_display
+import tomato.shared.generated.resources.always_on_display_desc
 import tomato.shared.generated.resources.aod
+import tomato.shared.generated.resources.app_name
 import tomato.shared.generated.resources.arrow_back
+import tomato.shared.generated.resources.auto_start_next_timer
+import tomato.shared.generated.resources.auto_start_next_timer_desc
 import tomato.shared.generated.resources.autoplay
+import tomato.shared.generated.resources.back
 import tomato.shared.generated.resources.check
 import tomato.shared.generated.resources.clear
 import tomato.shared.generated.resources.clocks
+import tomato.shared.generated.resources.daily_focus_goal
 import tomato.shared.generated.resources.dnd
+import tomato.shared.generated.resources.dnd_desc
+import tomato.shared.generated.resources.dnd_permission_message
 import tomato.shared.generated.resources.flag
+import tomato.shared.generated.resources.focus
+import tomato.shared.generated.resources.hours_and_minutes_format
 import tomato.shared.generated.resources.info
+import tomato.shared.generated.resources.long_break
 import tomato.shared.generated.resources.mobile_lock_portrait
+import tomato.shared.generated.resources.pomodoro_info
+import tomato.shared.generated.resources.secure_aod
+import tomato.shared.generated.resources.secure_aod_desc
+import tomato.shared.generated.resources.session_length
+import tomato.shared.generated.resources.session_length_desc
+import tomato.shared.generated.resources.session_only_progress
+import tomato.shared.generated.resources.session_only_progress_desc
+import tomato.shared.generated.resources.settings
+import tomato.shared.generated.resources.settings_infinite_focus_tip
+import tomato.shared.generated.resources.short_break
+import tomato.shared.generated.resources.timer
+import tomato.shared.generated.resources.timer_settings_reset_info
 import tomato.shared.generated.resources.view_day
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -152,6 +175,9 @@ fun TimerSettings(
         .windowSizeClass
         .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
 
+    val permissionString =
+        stringResource(Res.string.dnd_permission_message, stringResource(Res.string.app_name))
+
     val switchItems = remember(
         settingsState.dndEnabled,
         settingsState.aodEnabled,
@@ -165,16 +191,16 @@ fun TimerSettings(
                 SettingsSwitchItem(
                     checked = settingsState.autostartNextSession,
                     icon = Res.drawable.autoplay,
-                    label = R.string.auto_start_next_timer,
-                    description = R.string.auto_start_next_timer_desc,
+                    label = Res.string.auto_start_next_timer,
+                    description = Res.string.auto_start_next_timer_desc,
                     onClick = { onAction(SettingsAction.SaveAutostartNextSession(it)) }
                 ),
                 SettingsSwitchItem(
                     checked = settingsState.dndEnabled,
                     enabled = !serviceRunning,
                     icon = Res.drawable.dnd,
-                    label = R.string.dnd,
-                    description = R.string.dnd_desc,
+                    label = Res.string.dnd,
+                    description = Res.string.dnd_desc,
                     onClick = {
                         if (it && notificationManagerService?.isNotificationPolicyAccessGranted() == false) {
                             val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
@@ -183,10 +209,7 @@ fun TimerSettings(
                             Toast
                                 .makeText(
                                     context,
-                                    context.getString(
-                                        R.string.dnd_permission_message,
-                                        context.getString(R.string.app_name)
-                                    ),
+                                    permissionString,
                                     Toast.LENGTH_LONG
                                 )
                                 .show()
@@ -204,16 +227,16 @@ fun TimerSettings(
                     checked = settingsState.aodEnabled,
                     enabled = isPlus,
                     icon = Res.drawable.aod,
-                    label = R.string.always_on_display,
-                    description = R.string.always_on_display_desc,
+                    label = Res.string.always_on_display,
+                    description = Res.string.always_on_display_desc,
                     onClick = { onAction(SettingsAction.SaveAodEnabled(it)) }
                 ),
                 SettingsSwitchItem(
                     checked = settingsState.secureAod && isPlus,
                     enabled = isPlus && settingsState.aodEnabled,
                     icon = Res.drawable.mobile_lock_portrait,
-                    label = R.string.secure_aod,
-                    description = R.string.secure_aod_desc,
+                    label = Res.string.secure_aod,
+                    description = Res.string.secure_aod_desc,
                     onClick = { onAction(SettingsAction.SaveSecureAod(it)) }
                 )
             )
@@ -234,12 +257,12 @@ fun TimerSettings(
                 LargeFlexibleTopAppBar(
                     title = {
                         Text(
-                            stringResource(R.string.timer),
+                            stringResource(Res.string.timer),
                             fontFamily = LocalAppFonts.current.topBarTitle
                         )
                     },
                     subtitle = {
-                        Text(stringResource(R.string.settings))
+                        Text(stringResource(Res.string.settings))
                     },
                     navigationIcon = {
                         if (!widthExpanded)
@@ -252,7 +275,7 @@ fun TimerSettings(
                             ) {
                                 Icon(
                                     painterResource(Res.drawable.arrow_back),
-                                    stringResource(R.string.back)
+                                    stringResource(Res.string.back)
 
                                 )
                             }
@@ -285,7 +308,7 @@ fun TimerSettings(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
                                         Icon(painterResource(Res.drawable.info), null)
-                                        Text(stringResource(R.string.timer_settings_reset_info))
+                                        Text(stringResource(Res.string.timer_settings_reset_info))
                                     }
                                 }
                             } else {
@@ -295,7 +318,7 @@ fun TimerSettings(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
                                         Icon(painterResource(Res.drawable.info), null)
-                                        Text(stringResource(R.string.settings_infinite_focus_tip))
+                                        Text(stringResource(Res.string.settings_infinite_focus_tip))
                                     }
                                 }
                             }
@@ -315,7 +338,7 @@ fun TimerSettings(
                             verticalArrangement = Arrangement.spacedBy(2.dp)
                         ) {
                             Text(
-                                stringResource(R.string.focus),
+                                stringResource(Res.string.focus),
                                 style = typography.titleSmallEmphasized
                             )
                             MinuteInputField(
@@ -337,7 +360,7 @@ fun TimerSettings(
                             verticalArrangement = Arrangement.spacedBy(2.dp)
                         ) {
                             Text(
-                                stringResource(R.string.short_break),
+                                stringResource(Res.string.short_break),
                                 style = typography.titleSmallEmphasized
                             )
                             MinuteInputField(
@@ -353,7 +376,7 @@ fun TimerSettings(
                             verticalArrangement = Arrangement.spacedBy(2.dp)
                         ) {
                             Text(
-                                stringResource(R.string.long_break),
+                                stringResource(Res.string.long_break),
                                 style = typography.titleSmallEmphasized
                             )
                             MinuteInputField(
@@ -380,12 +403,12 @@ fun TimerSettings(
                                 Icon(painterResource(Res.drawable.clocks), null)
                             },
                             headlineContent = {
-                                Text(stringResource(R.string.session_length))
+                                Text(stringResource(Res.string.session_length))
                             },
                             supportingContent = {
                                 Text(
                                     stringResource(
-                                        R.string.session_length_desc,
+                                        Res.string.session_length_desc,
                                         sessionsSliderState.value.toInt()
                                     )
                                 )
@@ -402,12 +425,12 @@ fun TimerSettings(
                     }
                 }
                 item {
-                    val hmf = stringResource(R.string.hours_and_minutes_format)
+                    val hmf = stringResource(Res.string.hours_and_minutes_format)
                     SliderListItem(
                         value = settingsState.focusGoal.toFloat(),
                         valueRange = 0f..16 * 60 * 60 * 1000f,
                         enabled = true,
-                        label = stringResource(R.string.daily_focus_goal),
+                        label = stringResource(Res.string.daily_focus_goal),
                         trailingLabel = { millisecondsToHoursMinutes(it.toLong(), hmf) },
                         icon = { Icon(painterResource(Res.drawable.flag), null) },
                         shape = bottomListItemShape
@@ -519,11 +542,11 @@ fun TimerSettings(
                             leadingContent = {
                                 Icon(painterResource(Res.drawable.view_day), null)
                             },
-                            headlineContent = { Text(stringResource(R.string.session_only_progress)) },
+                            headlineContent = { Text(stringResource(Res.string.session_only_progress)) },
                             supportingContent = {
                                 var expanded by remember { mutableStateOf(false) }
                                 Text(
-                                    stringResource(R.string.session_only_progress_desc),
+                                    stringResource(Res.string.session_only_progress_desc),
                                     maxLines = if (expanded) Int.MAX_VALUE else 2,
                                     overflow = TextOverflow.Ellipsis,
                                     modifier = Modifier
@@ -637,7 +660,7 @@ fun TimerSettings(
                         }
                         AnimatedVisibility(expanded) {
                             Text(
-                                stringResource(R.string.pomodoro_info),
+                                stringResource(Res.string.pomodoro_info),
                                 style = typography.bodyMedium,
                                 color = colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(8.dp)

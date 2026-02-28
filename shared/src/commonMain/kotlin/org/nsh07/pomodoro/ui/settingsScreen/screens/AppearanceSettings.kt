@@ -46,12 +46,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import org.jetbrains.compose.resources.painterResource
-import org.nsh07.pomodoro.R
+import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.ColorSchemePickerListItem
@@ -69,10 +68,15 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.toColor
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.appearance
 import tomato.shared.generated.resources.arrow_back
+import tomato.shared.generated.resources.back
+import tomato.shared.generated.resources.black_theme
+import tomato.shared.generated.resources.black_theme_desc
 import tomato.shared.generated.resources.check
 import tomato.shared.generated.resources.clear
 import tomato.shared.generated.resources.contrast
+import tomato.shared.generated.resources.settings
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -105,12 +109,12 @@ fun AppearanceSettings(
                 LargeFlexibleTopAppBar(
                     title = {
                         Text(
-                            stringResource(R.string.appearance),
+                            stringResource(Res.string.appearance),
                             fontFamily = LocalAppFonts.current.topBarTitle
                         )
                     },
                     subtitle = {
-                        Text(stringResource(R.string.settings))
+                        Text(stringResource(Res.string.settings))
                     },
                     navigationIcon = {
                         if (!widthExpanded)
@@ -123,7 +127,7 @@ fun AppearanceSettings(
                             ) {
                                 Icon(
                                     painterResource(Res.drawable.arrow_back),
-                                    stringResource(R.string.back)
+                                    stringResource(Res.string.back)
                                 )
                             }
                     },
@@ -173,8 +177,8 @@ fun AppearanceSettings(
                     val item = SettingsSwitchItem(
                         checked = settingsState.blackTheme,
                         icon = Res.drawable.contrast,
-                        label = R.string.black_theme,
-                        description = R.string.black_theme_desc,
+                        label = Res.string.black_theme,
+                        description = Res.string.black_theme_desc,
                         onClick = { onAction(SettingsAction.SaveBlackTheme(it)) }
                     )
                     ListItem(

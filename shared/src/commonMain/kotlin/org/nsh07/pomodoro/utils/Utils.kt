@@ -100,6 +100,8 @@ fun <T> MutableList<T>.onTopLevelNavigate(screen: T) {
  */
 expect fun androidSdkVersionAtLeast(version: Int): Boolean
 
+expect fun androidDeviceManufacturerIs(manufacturer: String): Boolean
+
 /**
  * Returns the default alarm tone for the device
  *
@@ -113,4 +115,4 @@ expect fun getDefaultAlarmTone(): String?
  * @param tag tag for the log message. This is often used on Android to mark logs.
  * @param message message to be logged
  */
-expect fun logError(tag: String, message: String)
+expect fun logError(tag: String, message: String): Int

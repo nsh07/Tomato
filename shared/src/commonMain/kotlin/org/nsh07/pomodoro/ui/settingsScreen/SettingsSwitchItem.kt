@@ -17,15 +17,15 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen
 
-import androidx.annotation.StringRes
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
 
 data class SettingsSwitchItem(
     val checked: Boolean,
     val enabled: Boolean = true,
     val collapsible: Boolean = false,
     val icon: DrawableResource,
-    @param:StringRes val label: Int,
-    @param:StringRes val description: Int,
+    val label: StringResource,
+    val description: StringResource,
     val onClick: (Boolean) -> Unit
 )

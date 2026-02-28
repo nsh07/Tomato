@@ -57,15 +57,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.di.AppInfo
 import org.nsh07.pomodoro.di.FlavorUI
 import org.nsh07.pomodoro.ui.mergePaddingValues
@@ -80,13 +79,18 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.about
+import tomato.shared.generated.resources.app_name
+import tomato.shared.generated.resources.app_name_plus
 import tomato.shared.generated.resources.arrow_back
+import tomato.shared.generated.resources.back
 import tomato.shared.generated.resources.discord
 import tomato.shared.generated.resources.email
 import tomato.shared.generated.resources.gavel
 import tomato.shared.generated.resources.github
 import tomato.shared.generated.resources.globe
 import tomato.shared.generated.resources.ic_launcher_monochrome
+import tomato.shared.generated.resources.license
 import tomato.shared.generated.resources.pfp
 import tomato.shared.generated.resources.x
 
@@ -132,12 +136,12 @@ fun AboutScreen(
                 LargeFlexibleTopAppBar(
                     title = {
                         Text(
-                            stringResource(R.string.about),
+                            stringResource(Res.string.about),
                             fontFamily = LocalAppFonts.current.topBarTitle
                         )
                     },
                     subtitle = {
-                        Text(stringResource(R.string.app_name))
+                        Text(stringResource(Res.string.app_name))
                     },
                     navigationIcon = {
                         if (!widthExpanded)
@@ -150,7 +154,7 @@ fun AboutScreen(
                             ) {
                                 Icon(
                                     painterResource(Res.drawable.arrow_back),
-                                    stringResource(R.string.back)
+                                    stringResource(Res.string.back)
                                 )
                             }
                     },
@@ -191,8 +195,8 @@ fun AboutScreen(
                             Spacer(Modifier.width(16.dp))
                             Column {
                                 Text(
-                                    if (!isPlus) stringResource(R.string.app_name)
-                                    else stringResource(R.string.app_name_plus),
+                                    if (!isPlus) stringResource(Res.string.app_name)
+                                    else stringResource(Res.string.app_name_plus),
                                     color = colorScheme.onSurface,
                                     style = typography.titleLarge,
                                     fontFamily = typography.bodyLarge.fontFamily
@@ -296,7 +300,7 @@ fun AboutScreen(
                 item {
                     ClickableListItem(
                         leadingContent = { Icon(painterResource(Res.drawable.gavel), null) },
-                        headlineContent = { Text(stringResource(R.string.license)) },
+                        headlineContent = { Text(stringResource(Res.string.license)) },
                         supportingContent = { Text("GNU General Public License Version 3") },
                         items = 1,
                         index = 0

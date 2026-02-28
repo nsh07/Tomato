@@ -75,7 +75,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -85,7 +84,7 @@ import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_L
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
-import org.nsh07.pomodoro.R
+import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
@@ -106,18 +105,33 @@ import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.airwave
 import tomato.shared.generated.resources.alarm
+import tomato.shared.generated.resources.alarm_desc
 import tomato.shared.generated.resources.alarm_on
+import tomato.shared.generated.resources.alarm_sound
 import tomato.shared.generated.resources.arrow_back
 import tomato.shared.generated.resources.arrow_forward_big
+import tomato.shared.generated.resources.back
 import tomato.shared.generated.resources.bolt
 import tomato.shared.generated.resources.check
 import tomato.shared.generated.resources.clear
+import tomato.shared.generated.resources.duration
+import tomato.shared.generated.resources.gap
+import tomato.shared.generated.resources.media_volume_for_alarm
+import tomato.shared.generated.resources.media_volume_for_alarm_desc
 import tomato.shared.generated.resources.menu
+import tomato.shared.generated.resources.milliseconds_format
 import tomato.shared.generated.resources.mobile_vibrate
 import tomato.shared.generated.resources.music_note
 import tomato.shared.generated.resources.play
 import tomato.shared.generated.resources.restore_default
+import tomato.shared.generated.resources.settings
+import tomato.shared.generated.resources.sound
 import tomato.shared.generated.resources.stop
+import tomato.shared.generated.resources.system_default
+import tomato.shared.generated.resources.vibrate
+import tomato.shared.generated.resources.vibrate_desc
+import tomato.shared.generated.resources.vibration_pattern
+import tomato.shared.generated.resources.vibration_strength
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
@@ -141,7 +155,7 @@ fun AlarmSettings(
 
     var alarmName by remember { mutableStateOf("...") }
     var vibrationPlaying by remember { mutableStateOf(false) }
-    val msFormat = stringResource(R.string.milliseconds_format)
+    val msFormat = stringResource(Res.string.milliseconds_format)
 
     LaunchedEffect(settingsState.alarmSoundUri) {
         withContext(Dispatchers.IO) {
@@ -191,11 +205,13 @@ fun AlarmSettings(
         onDispose { vibrator.cancel() }
     }
 
+    val alamSoundString = stringResource(Res.string.alarm_sound)
+
     @SuppressLint("LocalContextGetResourceValueCall")
     val ringtonePickerIntent = remember(settingsState.alarmSoundUri) {
         Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
             putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-            putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, context.getString(R.string.alarm_sound))
+            putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, alamSoundString)
             putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, settingsState.alarmSoundUri)
         }
     }
@@ -210,15 +226,15 @@ fun AlarmSettings(
                 SettingsSwitchItem(
                     checked = settingsState.alarmEnabled,
                     icon = Res.drawable.alarm_on,
-                    label = R.string.sound,
-                    description = R.string.alarm_desc,
+                    label = Res.string.sound,
+                    description = Res.string.alarm_desc,
                     onClick = { onAction(SettingsAction.SaveAlarmEnabled(it)) }
                 ),
                 SettingsSwitchItem(
                     checked = settingsState.vibrateEnabled,
                     icon = Res.drawable.mobile_vibrate,
-                    label = R.string.vibrate,
-                    description = R.string.vibrate_desc,
+                    label = Res.string.vibrate,
+                    description = Res.string.vibrate_desc,
                     onClick = { onAction(SettingsAction.SaveVibrateEnabled(it)) }
                 )
             ),
@@ -227,8 +243,8 @@ fun AlarmSettings(
                     checked = settingsState.mediaVolumeForAlarm,
                     collapsible = true,
                     icon = Res.drawable.music_note,
-                    label = R.string.media_volume_for_alarm,
-                    description = R.string.media_volume_for_alarm_desc,
+                    label = Res.string.media_volume_for_alarm,
+                    description = Res.string.media_volume_for_alarm_desc,
                     onClick = { onAction(SettingsAction.SaveMediaVolumeForAlarm(it)) }
                 )
             )
@@ -249,12 +265,12 @@ fun AlarmSettings(
                 LargeFlexibleTopAppBar(
                     title = {
                         Text(
-                            stringResource(R.string.alarm),
+                            stringResource(Res.string.alarm),
                             fontFamily = LocalAppFonts.current.topBarTitle
                         )
                     },
                     subtitle = {
-                        Text(stringResource(R.string.settings))
+                        Text(stringResource(Res.string.settings))
                     },
                     navigationIcon = {
                         if (!widthExpanded)
@@ -267,7 +283,7 @@ fun AlarmSettings(
                             ) {
                                 Icon(
                                     painterResource(Res.drawable.arrow_back),
-                                    stringResource(R.string.back)
+                                    stringResource(Res.string.back)
                                 )
                             }
                     },
@@ -297,7 +313,7 @@ fun AlarmSettings(
                         leadingContent = {
                             Icon(painterResource(Res.drawable.alarm), null)
                         },
-                        headlineContent = { Text(stringResource(R.string.alarm_sound)) },
+                        headlineContent = { Text(stringResource(Res.string.alarm_sound)) },
                         supportingContent = { Text(alarmName) },
                         trailingContent = {
                             Icon(
@@ -385,7 +401,7 @@ fun AlarmSettings(
                         val interactionSources = remember { List(2) { MutableInteractionSource() } }
 
                         ListItem(
-                            headlineContent = { Text(stringResource(R.string.vibration_pattern)) },
+                            headlineContent = { Text(stringResource(Res.string.vibration_pattern)) },
                             trailingContent = {
                                 ButtonGroup(
                                     overflowIndicator = {},
@@ -480,7 +496,7 @@ fun AlarmSettings(
                             value = settingsState.vibrationOnDuration.toFloat(),
                             valueRange = 10f..5000f,
                             enabled = isPlus,
-                            label = stringResource(R.string.duration),
+                            label = stringResource(Res.string.duration),
                             trailingLabel = { String.format(msFormat, it.roundToInt()) },
                             trailingIcon = { Icon(painterResource(Res.drawable.airwave), null) },
                             shape = middleListItemShape
@@ -491,7 +507,7 @@ fun AlarmSettings(
                             value = settingsState.vibrationOffDuration.toFloat(),
                             valueRange = 10f..5000f,
                             enabled = isPlus,
-                            label = stringResource(R.string.gap),
+                            label = stringResource(Res.string.gap),
                             trailingLabel = { String.format(msFormat, it.roundToInt()) },
                             trailingIcon = { Icon(painterResource(Res.drawable.menu), null) },
                             shape = if (hasAmplitudeControl) middleListItemShape else bottomListItemShape
@@ -499,16 +515,16 @@ fun AlarmSettings(
                     }
 
                     if (hasAmplitudeControl) item {
+                        val systemDefaultText = stringResource(Res.string.system_default)
                         SliderListItem(
                             value = if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE) 127f
                             else settingsState.vibrationAmplitude.toFloat(),
                             valueRange = 2f..255f,
                             enabled = isPlus,
-                            label = stringResource(R.string.vibration_strength),
+                            label = stringResource(Res.string.vibration_strength),
                             trailingLabel = {
                                 if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE)
-                                    @SuppressLint("LocalContextGetResourceValueCall")
-                                    context.getString(R.string.system_default)
+                                    systemDefaultText
                                 else "${((it * 100) / 255f).roundToInt()}%"
                             },
                             trailingIcon = { Icon(painterResource(Res.drawable.bolt), null) },

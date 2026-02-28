@@ -23,15 +23,15 @@ import android.util.Log
 import androidx.annotation.ChecksSdkIntAtLeast
 
 @ChecksSdkIntAtLeast(parameter = 0)
-actual fun androidSdkVersionAtLeast(version: Int): Boolean {
-    return Build.VERSION.SDK_INT >= version
-}
+actual fun androidSdkVersionAtLeast(version: Int): Boolean =
+    Build.VERSION.SDK_INT >= version
 
-actual fun getDefaultAlarmTone(): String? {
-    return (Settings.System.DEFAULT_ALARM_ALERT_URI
+actual fun getDefaultAlarmTone(): String? =
+    (Settings.System.DEFAULT_ALARM_ALERT_URI
         ?: Settings.System.DEFAULT_RINGTONE_URI)?.toString()
-}
 
-actual fun logError(tag: String, message: String) {
+actual fun logError(tag: String, message: String): Int =
     Log.e(tag, message)
-}
+
+actual fun androidDeviceManufacturerIs(manufacturer: String): Boolean =
+    Build.MANUFACTURER == manufacturer

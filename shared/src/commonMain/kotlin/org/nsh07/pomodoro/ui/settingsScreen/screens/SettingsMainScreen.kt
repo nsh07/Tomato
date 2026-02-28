@@ -17,9 +17,6 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens
 
-import android.annotation.SuppressLint
-import android.app.LocaleManager
-import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,17 +48,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.di.AppInfo
+import org.nsh07.pomodoro.settingsScreens
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.SettingsNavItem
 import org.nsh07.pomodoro.ui.mergePaddingValues
@@ -70,18 +67,27 @@ import org.nsh07.pomodoro.ui.settingsScreen.components.LocaleBottomSheet
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusPromo
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
-import org.nsh07.pomodoro.ui.settingsScreens
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.singleItemListItemShapes
+import org.nsh07.pomodoro.utils.androidDeviceManufacturerIs
+import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.about
+import tomato.shared.generated.resources.app_name
 import tomato.shared.generated.resources.arrow_forward_big
 import tomato.shared.generated.resources.backup
+import tomato.shared.generated.resources.backup_and_restore
 import tomato.shared.generated.resources.info
 import tomato.shared.generated.resources.language
 import tomato.shared.generated.resources.mobile_text
+import tomato.shared.generated.resources.now_bar
 import tomato.shared.generated.resources.open_in_browser
+import tomato.shared.generated.resources.reset_data
+import tomato.shared.generated.resources.restore
+import tomato.shared.generated.resources.settings
+import tomato.shared.generated.resources.system_default
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -96,7 +102,6 @@ fun SettingsMainScreen(
     modifier: Modifier = Modifier,
     appInfo: AppInfo = koinInject()
 ) {
-    val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     val widthExpanded = currentWindowAdaptiveInfo()
@@ -104,12 +109,10 @@ fun SettingsMainScreen(
         .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
 
     val currentLocales =
-        if (Build.VERSION.SDK_INT >= 33) {
-            context
-                .getSystemService(LocaleManager::class.java)
-                .applicationLocales
+        if (androidSdkVersionAtLeast(33)) {
+            LocaleList.current
         } else null
-    val currentLocalesSize = currentLocales?.size() ?: 0
+    val currentLocalesSize = currentLocales?.size ?: 0
 
     var showLocaleSheet by remember { mutableStateOf(false) }
 
@@ -128,7 +131,7 @@ fun SettingsMainScreen(
             TopAppBar(
                 title = {
                     Text(
-                        stringResource(R.string.settings),
+                        stringResource(Res.string.settings),
                         style = LocalTextStyle.current.copy(
                             fontFamily = LocalAppFonts.current.topBarTitle,
                             fontSize = 32.sp,
@@ -167,13 +170,10 @@ fun SettingsMainScreen(
                         Icon(painterResource(item.icon), null)
                     },
                     supportingContent = {
-                        @SuppressLint("LocalContextGetResourceValueCall")
+                        val innerStrings = item.innerSettings.map { stringResource(it) }
+                        val joinedText = remember(innerStrings) { innerStrings.joinToString(", ") }
                         Text(
-                            remember {
-                                item.innerSettings.joinToString(", ") {
-                                    context.getString(it)
-                                }
-                            },
+                            joinedText,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -195,8 +195,8 @@ fun SettingsMainScreen(
                     SettingsNavItem(
                         Screen.Settings.Backup,
                         Res.drawable.backup,
-                        R.string.backup_and_restore,
-                        listOf(R.string.backup, R.string.restore, R.string.reset_data)
+                        Res.string.backup_and_restore,
+                        listOf(Res.string.backup, Res.string.restore, Res.string.reset_data)
                     )
                 }
                 SegmentedListItem(
@@ -204,13 +204,10 @@ fun SettingsMainScreen(
                         Icon(painterResource(item.icon), null)
                     },
                     supportingContent = {
-                        @SuppressLint("LocalContextGetResourceValueCall")
+                        val innerStrings = item.innerSettings.map { stringResource(it) }
+                        val joinedText = remember(innerStrings) { innerStrings.joinToString(", ") }
                         Text(
-                            remember {
-                                item.innerSettings.joinToString(", ") {
-                                    context.getString(it)
-                                }
-                            },
+                            joinedText,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -230,7 +227,7 @@ fun SettingsMainScreen(
                         Icon(painterResource(Res.drawable.info), null)
                     },
                     supportingContent = {
-                        Text(stringResource(R.string.app_name) + " ${appInfo.versionName}")
+                        Text(stringResource(Res.string.app_name) + " ${appInfo.versionName}")
                     },
                     trailingContent = if (!widthExpanded) {
                         { Icon(painterResource(Res.drawable.arrow_forward_big), null) }
@@ -239,7 +236,7 @@ fun SettingsMainScreen(
                     shapes = ListItemDefaults.segmentedShapes(1, 2),
                     colors = listItemColors,
                     onClick = { onNavigate(Screen.Settings.About) }
-                ) { Text(stringResource(R.string.about)) }
+                ) { Text(stringResource(Res.string.about)) }
             }
 
             item { Spacer(Modifier.height(12.dp)) }
@@ -252,18 +249,18 @@ fun SettingsMainScreen(
                         },
                         supportingContent = {
                             Text(
-                                if (currentLocalesSize > 0) currentLocales.get(0).displayName
-                                else stringResource(R.string.system_default)
+                                if (currentLocalesSize > 0) currentLocales[0].language
+                                else stringResource(Res.string.system_default)
                             )
                         },
                         selected = showLocaleSheet,
                         shapes = ListItemDefaults.segmentedShapes(0, 1, singleItemListItemShapes),
                         colors = listItemColors,
                         onClick = { showLocaleSheet = true }
-                    ) { Text(stringResource(R.string.language)) }
+                    ) { Text(stringResource(Res.string.language)) }
                 }
 
-            if (Build.VERSION.SDK_INT >= 36 && Build.MANUFACTURER == "samsung") {
+            if (androidSdkVersionAtLeast(36) && androidDeviceManufacturerIs("samsung")) {
                 item {
                     val uriHandler = LocalUriHandler.current
                     Spacer(Modifier.height(14.dp))
@@ -277,7 +274,7 @@ fun SettingsMainScreen(
                         shapes = ListItemDefaults.segmentedShapes(0, 1, singleItemListItemShapes),
                         colors = listItemColors,
                         onClick = { uriHandler.openUri("https://gist.github.com/nsh07/3b42969aef017d98f72b097f1eca8911") }
-                    ) { Text(stringResource(R.string.now_bar)) }
+                    ) { Text(stringResource(Res.string.now_bar)) }
                 }
             }
 
@@ -292,7 +289,7 @@ fun SettingsMainScreen(
                     TextButton(
                         onClick = { onAction(SettingsAction.AskEraseData) },
                     ) {
-                        Text(stringResource(R.string.reset_data))
+                        Text(stringResource(Res.string.reset_data))
                     }
                 }
             }

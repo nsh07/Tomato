@@ -96,7 +96,7 @@
     <string name="bmc_desc">Поддержать меня небольшим донатом</string>
     <string name="tomato_plus_desc">Больше кастомизации с Tomato+</string>
     <string name="license">Лицензия</string>
-    <string name="media_volume_for_alarm">Режим \"В наушниках\"</string>
+    <string name="media_volume_for_alarm">Режим &quot;В наушниках&quot;</string>
     <string name="media_volume_for_alarm_desc">Воспроизведение только в наушниках. Если наушники не подключены, сигнал воспроизводится через основной динамик с громкостью медиа.</string>
     <string name="session_only_progress">Упрощённый прогресс</string>
     <string name="session_only_progress_desc">Отображать в уведомлении прогресс только текущего таймера, а не всей сессии целиком.</string>
@@ -126,7 +126,7 @@
     <string name="restore_dialog_desc">Ваша статистика и настройки будут восстановлены из выбранного файла бекапа. Приложение нужно будет перезагрузить после завершения восстановления. &lt;b>Все данные будут безвозвратно удалены, это действие нельзя отменить.&lt;/b></string>
     <string name="restore_desc">Восстановить статистики и настройки</string>
     <string name="backup_dialog_desc">Ваша статистика и настройки будут сохранены в файл в выбранной папке. Вы сможете восстановит эти данные через %1$ с</string>
-    <string name="dnd_permission_message">Необходимо предоставить разрешение для \"%1$s\"</string>
+    <string name="dnd_permission_message">Необходимо предоставить разрешение для &quot;%1$s&quot;</string>
     <string name="duration">Длительность</string>
     <string name="history_widget_desc">Просмотреть график длительности фокусировок за последние несколько дней. Количество отображаемых дней зависит от размера виджета.</string>
     <string name="milliseconds_format">%1$dмс</string>

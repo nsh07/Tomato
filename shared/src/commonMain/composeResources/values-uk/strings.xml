@@ -98,7 +98,7 @@
     <string name="tomato_plus_desc">Налаштуйте ще більше з Tomato+</string>
     <string name="license">Ліцензія</string>
     <string name="media_volume_for_alarm">Режим навушників</string>
-    <string name="media_volume_for_alarm_desc">Сигнал грає лише в навушниках. Якщо навушники від\'єднані, сигнал грає через динамік на гучності звуку медіа.</string>
+    <string name="media_volume_for_alarm_desc">Сигнал грає лише в навушниках. Якщо навушники від\u0027єднані, сигнал грає через динамік на гучності звуку медіа.</string>
     <string name="session_only_progress">Спрощений прогрес</string>
     <string name="session_only_progress_desc">Показувати прогрес у сповіщенні лише для поточного таймера, а не для усієї сесії.</string>
     <string name="auto_start_next_timer_desc">Почати наступний таймер після зупинки сигналу</string>
@@ -124,7 +124,7 @@
     <string name="back">Назад</string>
     <string name="today_widget_desc">Сьогоднішня статистика концентрації</string>
     <string name="history_widget_desc">Перегляньте діаграму тривалості концентрації за останні кілька днів. Кількість днів, що відображаються, залежить від розміру віджета.</string>
-    <string name="dnd_permission_message">Надати дозвіл для \"%1$s\"</string>
+    <string name="dnd_permission_message">Надати дозвіл для &quot;%1$s&quot;</string>
     <string name="lifetime">За увесь час</string>
     <string name="total">усього</string>
     <string name="duration">Тривалість</string>

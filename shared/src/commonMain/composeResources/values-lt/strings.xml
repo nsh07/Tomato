@@ -34,8 +34,8 @@
     <string name="color_scheme">Spalvų paletė</string>
     <string name="dark">Tamsi</string>
     <string name="dnd">Netrukdyti</string>
-    <string name="dnd_desc">Įjungti \"Netrukdyti\" kai paleistas susikaupimo laikmatis</string>
-    <string name="dnd_permission_message">Duokite leidimą \"%1$s\"</string>
+    <string name="dnd_desc">Įjungti &quot;Netrukdyti&quot; kai paleistas susikaupimo laikmatis</string>
+    <string name="dnd_permission_message">Duokite leidimą &quot;%1$s&quot;</string>
     <string name="duration">Trukmė</string>
     <string name="durations">Trukmės</string>
     <string name="dynamic">dinamiška</string>
@@ -50,7 +50,7 @@
     <string name="focus_history_calendar">Susikaupimo istorijos kalendorius</string>
     <string name="focus_history_calendar_desc">Šio mėnesio susikaupimo istorija. Praito mėnesio dienos pažymėtos kita spalva. Daugiau informacijos paspaudus ant datos.</string>
     <string name="focus_history_desc">Kiekvienos šios savaitės dienos susikaupimo analizė. Daugiau informacijos paspaudus ant datos.</string>
-    <string name="focus_history_heatmap">Susikaupimo istorijos \"heatmap\"</string>
+    <string name="focus_history_heatmap">Susikaupimo istorijos &quot;heatmap&quot;</string>
     <string name="focus_history_heatmap_desc">Šių metų susikaupimo istorija. Gilesnės spalvos reiškia ilgesnę trukmę. Dienos yra sugrupuotos pagal mėnesį.</string>
     <string name="focus_per_day_avg">Susikaupimas per dieną (vidurkis)</string>
     <string name="get_plus">Gauti Tomato+</string>

@@ -38,8 +38,8 @@
     <string name="completed">Завършено</string>
     <string name="dark">Тъмно</string>
     <string name="dnd">Не безпокой</string>
-    <string name="dnd_desc">Включи \"Не Безпокой\", когато е включен Фокус таймер</string>
-    <string name="dnd_permission_message">Вкоючи позволение за \"%1$s\"</string>
+    <string name="dnd_desc">Включи &quot;Не Безпокой&quot;, когато е включен Фокус таймер</string>
+    <string name="dnd_permission_message">Вкоючи позволение за &quot;%1$s&quot;</string>
     <string name="duration">Продължителност</string>
     <string name="durations">Продължителности</string>
     <string name="dynamic">Динамичност</string>

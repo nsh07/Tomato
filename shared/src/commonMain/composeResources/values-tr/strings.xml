@@ -48,7 +48,7 @@
     <string name="settings">Ayarlar</string>
     <string name="session_length">Oturum uzunluğu</string>
     <string name="session_length_desc">Bir oturumdaki odaklanma aralığı: %1$d</string>
-    <string name="pomodoro_info">\"Oturum\", odaklanma aralıkları, kısa mola aralıkları ve bir uzun mola aralığı içeren bir pomodoro aralıkları dizisidir. Bir oturumun son molası her zaman uzun moladır.</string>
+    <string name="pomodoro_info">&quot;Oturum&quot;, odaklanma aralıkları, kısa mola aralıkları ve bir uzun mola aralığı içeren bir pomodoro aralıkları dizisidir. Bir oturumun son molası her zaman uzun moladır.</string>
     <string name="stats">İstatistikler</string>
     <string name="today">Bugün</string>
     <string name="break_">Mola</string>
@@ -75,7 +75,7 @@
     <string name="durations">Süreler</string>
     <string name="sound">Ses</string>
     <string name="dnd">Rahatsız Etmeyin</string>
-    <string name="dnd_desc">Odaklanma sayacı çalışırken RE\'yi aç</string>
+    <string name="dnd_desc">Odaklanma sayacı çalışırken RE\u0027yi aç</string>
     <string name="get_plus">Tomato+ edin</string>
     <string name="dynamic_color">Dinamik renk</string>
     <string name="dynamic_color_desc">Tema renklerini duvar kağıdınızdan alın</string>
@@ -83,15 +83,15 @@
     <string name="tomato_foss_desc">Bu sürümde tüm özelliklerin kilidi açılmıştır. Uygulamam hayatınızda bir fark yarattıysa, lütfen %1$s üzerinden bağış yaparak beni desteklemeyi düşünün.</string>
     <string name="language">Dil</string>
     <string name="choose_language">Dil seç</string>
-    <string name="rate_on_google_play">Google Play\'de değerlendir</string>
+    <string name="rate_on_google_play">Google Play\u0027de değerlendir</string>
     <string name="selected">Seçilen</string>
-    <string name="help_with_translation">Tomato\'nun çevirisine yardım edin</string>
+    <string name="help_with_translation">Tomato\u0027nun çevirisine yardım edin</string>
     <string name="timer_settings_reset_info">Ayarları değiştirmek için zamanlayıcıyı sıfırlayın</string>
     <string name="hours_and_minutes_format">%1$dsa %2$ddk</string>
     <string name="hours_format">%1$dsa</string>
     <string name="minutes_format">%1$ddk</string>
     <string name="about">Hakkında</string>
-    <string name="help_with_translation_desc">Tomato\'yu kendi dilinize çevirin</string>
+    <string name="help_with_translation_desc">Tomato\u0027yu kendi dilinize çevirin</string>
     <string name="rate_on_google_play_desc">Uygulamayı beğendinizmi? Bir yorum bırakın!</string>
     <string name="bmc_desc">Beni küçük bir bağışla destekleyin</string>
     <string name="tomato_plus_desc">Tomato+ ile daha fazla özelleştirin</string>
@@ -103,7 +103,7 @@
     <string name="auto_start_next_timer_desc">Alarmı durdurduktan hemen sonra bir sonraki zamanlayıcıyı başlat</string>
     <string name="auto_start_next_timer">Sonraki zamanlayıcıyı otomatik başlat</string>
     <string name="secure_aod">Güvenli AOD</string>
-    <string name="secure_aod_desc">Belirli bir zamandan sonra cihazınızı otomatik olarak kilitler, AOD\'u halen görünür tutar</string>
+    <string name="secure_aod_desc">Belirli bir zamandan sonra cihazınızı otomatik olarak kilitler, AOD\u0027u halen görünür tutar</string>
     <string name="timer_reset_message">Zamanlayıcı sıfırlandı</string>
     <string name="undo">Geri al</string>
     <string name="reset_data">İstatistikleri sıfırla</string>
@@ -122,8 +122,8 @@
     <string name="reset_data_dialog_title">Tüm istatistikleri sıfırla?</string>
     <string name="back">Geri</string>
     <string name="today_widget_desc">Bugünün odaklanma istatistikleri</string>
-    <string name="history_widget_desc">Geçmiş birkaç günlerdeki odaklanma sürelerine dair bir grafik görün. Görüntülenen gün sayısı, widget\'ın boyutuna bağlıdır.</string>
-    <string name="dnd_permission_message">\"%1$s\" için yetkileri aktifleştirin</string>
+    <string name="history_widget_desc">Geçmiş birkaç günlerdeki odaklanma sürelerine dair bir grafik görün. Görüntülenen gün sayısı, widget\u0027ın boyutuna bağlıdır.</string>
+    <string name="dnd_permission_message">&quot;%1$s&quot; için yetkileri aktifleştirin</string>
     <string name="lifetime">Hayat boyu</string>
     <string name="total">toplam</string>
     <string name="duration">Süre</string>

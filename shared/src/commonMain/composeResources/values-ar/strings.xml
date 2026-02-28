@@ -49,7 +49,7 @@
     <string name="settings">الاعدادات</string>
     <string name="session_length">طول الجلسة</string>
     <string name="session_length_desc">فترات التركيز في الجلسة الواحدة: %1$d</string>
-    <string name="pomodoro_info">\"الجلسة\" هي تسلسل فترات بومودورو التي تحتوي علي فترات التركيز، فترة الاستراحة القصيرة و فترة الاستراحة الطويلة. آخر استراحة في الجلسة هي دائما استراحة كبيرة.</string>
+    <string name="pomodoro_info">&quot;الجلسة&quot; هي تسلسل فترات بومودورو التي تحتوي علي فترات التركيز، فترة الاستراحة القصيرة و فترة الاستراحة الطويلة. آخر استراحة في الجلسة هي دائما استراحة كبيرة.</string>
     <string name="stats">الإحصائيات</string>
     <string name="today">اليوم</string>
     <string name="break_">استراحة</string>
@@ -121,7 +121,7 @@
     <string name="reset_data_dialog_title">إعادة تعيين كل الإحصائيات؟</string>
     <string name="reset_data_dialog_text">سيتم حذف جميع الإحصائيات المحفوظة بشكل دائم. لا يمكن التراجع عن هذا.</string>
     <string name="back">خلف</string>
-    <string name="dnd_permission_message">تفعيل الإذن ل \"%1$s\"</string>
+    <string name="dnd_permission_message">تفعيل الإذن ل &quot;%1$s&quot;</string>
     <string name="duration">المدة</string>
     <string name="gap">الفجوة</string>
     <string name="history_widget_desc">شاهد مخططا لفترات التركيز في الأيام القليلة الماضية. عدد الأيام المعروضة يعتمد على حجم الأداة (widget).</string>

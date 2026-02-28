@@ -46,7 +46,7 @@
     <string name="pause">Pauzeer</string>
     <string name="paused">Gepauzeerd</string>
     <string name="play">Start</string>
-    <string name="pomodoro_info">Een \"sessie\" is een reeks pomodoro-intervallen die bestaan uit focusintervallen, korte pauzes en een lange pauze. De laatste pauze van een sessie is altijd een lange pauze.</string>
+    <string name="pomodoro_info">Een &quot;sessie&quot; is een reeks pomodoro-intervallen die bestaan uit focusintervallen, korte pauzes en een lange pauze. De laatste pauze van een sessie is altijd een lange pauze.</string>
     <string name="restart">Herstart</string>
     <string name="session_length">Sessielengte</string>
     <string name="session_length_desc">Focusintervallen in één sessie: %1$d</string>

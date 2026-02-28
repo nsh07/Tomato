@@ -38,7 +38,7 @@
     <string name="settings">Configuración</string>
     <string name="session_length">Duración de la sesión</string>
     <string name="session_length_desc">Intervalos de concentración en una sesión: %1$d</string>
-    <string name="pomodoro_info">Una \"sesión\" es una secuencia de intervalos Pomodoro que contiene intervalos de concentración, intervalos de descanso cortos y un intervalo de descanso largo. El último descanso de una sesión es siempre un descanso largo.</string>
+    <string name="pomodoro_info">Una &quot;sesión&quot; es una secuencia de intervalos Pomodoro que contiene intervalos de concentración, intervalos de descanso cortos y un intervalo de descanso largo. El último descanso de una sesión es siempre un descanso largo.</string>
     <string name="stats">Estadísticas</string>
     <string name="today">Hoy</string>
     <string name="break_">Descanso</string>
@@ -122,7 +122,7 @@
     <string name="back">Atrás</string>
     <string name="today_widget_desc">Estadísticas de concentración de hoy</string>
     <string name="history_widget_desc">Ver un gráfico con la duración de la concentración de los últimos días. El número de días que se muestra depende del tamaño del widget.</string>
-    <string name="dnd_permission_message">Habilitar permiso para \"%1$s\"</string>
+    <string name="dnd_permission_message">Habilitar permiso para &quot;%1$s&quot;</string>
     <string name="duration">Duración</string>
     <string name="lifetime">Total</string>
     <string name="total">en total</string>

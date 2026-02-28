@@ -48,8 +48,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -87,7 +87,6 @@ import tomato.shared.generated.resources.open_in_browser
 import tomato.shared.generated.resources.reset_data
 import tomato.shared.generated.resources.restore
 import tomato.shared.generated.resources.settings
-import tomato.shared.generated.resources.system_default
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -108,11 +107,10 @@ fun SettingsMainScreen(
         .windowSizeClass
         .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
 
-    val currentLocales =
+    val currentLocale =
         if (androidSdkVersionAtLeast(33)) {
-            LocaleList.current
+            LocalLocale.current
         } else null
-    val currentLocalesSize = currentLocales?.size ?: 0
 
     var showLocaleSheet by remember { mutableStateOf(false) }
 
@@ -241,17 +239,14 @@ fun SettingsMainScreen(
 
             item { Spacer(Modifier.height(12.dp)) }
 
-            if (currentLocales != null)
+            if (currentLocale != null)
                 item {
                     SegmentedListItem(
                         leadingContent = {
                             Icon(painterResource(Res.drawable.language), contentDescription = null)
                         },
                         supportingContent = {
-                            Text(
-                                if (currentLocalesSize > 0) currentLocales[0].language
-                                else stringResource(Res.string.system_default)
-                            )
+                            Text(currentLocale.platformLocale.displayLanguage)
                         },
                         selected = showLocaleSheet,
                         shapes = ListItemDefaults.segmentedShapes(0, 1, singleItemListItemShapes),

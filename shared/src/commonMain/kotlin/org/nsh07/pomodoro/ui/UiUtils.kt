@@ -48,6 +48,15 @@ fun mergePaddingValues(
 }
 
 /**
+ * Function that returns and [androidx.compose.runtime.remember]s a lambda that requests the system
+ * for the DND permission. This function returns an empty lambda on all platforms except Android,
+ * where it returns a lambda that launches a permission settings menu, and shows a Toast that
+ * instructs the user to grant the permission.
+ */
+@Composable
+expect fun rememberRequestDndPermissionCallback(): (Boolean) -> Unit
+
+/**
  * (Copied from [androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective] with
  * minor modifications, namely the reduction of horizontalPartitionSpacerSize to 0.dp)
  *

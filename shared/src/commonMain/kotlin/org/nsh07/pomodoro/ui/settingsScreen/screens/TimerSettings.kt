@@ -17,13 +17,6 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens
 
-import android.annotation.SuppressLint
-import android.app.NotificationManager
-import android.content.Context
-import android.content.Intent
-import android.os.Build
-import android.provider.Settings
-import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -80,8 +73,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -90,6 +81,7 @@ import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_L
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.mergePaddingValues
+import org.nsh07.pomodoro.ui.rememberRequestDndPermissionCallback
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputField
 import org.nsh07.pomodoro.ui.settingsScreen.components.MinutesInputTransformation3Digits
@@ -107,12 +99,12 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.always_on_display
 import tomato.shared.generated.resources.always_on_display_desc
 import tomato.shared.generated.resources.aod
-import tomato.shared.generated.resources.app_name
 import tomato.shared.generated.resources.arrow_back
 import tomato.shared.generated.resources.auto_start_next_timer
 import tomato.shared.generated.resources.auto_start_next_timer_desc
@@ -124,7 +116,6 @@ import tomato.shared.generated.resources.clocks
 import tomato.shared.generated.resources.daily_focus_goal
 import tomato.shared.generated.resources.dnd
 import tomato.shared.generated.resources.dnd_desc
-import tomato.shared.generated.resources.dnd_permission_message
 import tomato.shared.generated.resources.flag
 import tomato.shared.generated.resources.focus
 import tomato.shared.generated.resources.hours_and_minutes_format
@@ -162,21 +153,12 @@ fun TimerSettings(
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val context = LocalContext.current
-    val inspectionMode = LocalInspectionMode.current
-    val notificationManagerService = remember {
-        if (!inspectionMode)
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        else
-            null
-    }
 
     val widthExpanded = currentWindowAdaptiveInfo()
         .windowSizeClass
         .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
 
-    val permissionString =
-        stringResource(Res.string.dnd_permission_message, stringResource(Res.string.app_name))
+    val requestDndPermissionCallback = rememberRequestDndPermissionCallback()
 
     val switchItems = remember(
         settingsState.dndEnabled,
@@ -202,22 +184,7 @@ fun TimerSettings(
                     label = Res.string.dnd,
                     description = Res.string.dnd_desc,
                     onClick = {
-                        if (it && notificationManagerService?.isNotificationPolicyAccessGranted() == false) {
-                            val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-
-                            @SuppressLint("LocalContextGetResourceValueCall")
-                            Toast
-                                .makeText(
-                                    context,
-                                    permissionString,
-                                    Toast.LENGTH_LONG
-                                )
-                                .show()
-
-                            context.startActivity(intent)
-                        } else if (!it && notificationManagerService?.isNotificationPolicyAccessGranted() == true) {
-                            notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
-                        }
+                        requestDndPermissionCallback(it)
                         onAction(SettingsAction.SaveDndEnabled(it))
                     }
                 )
@@ -535,7 +502,7 @@ fun TimerSettings(
                     }
                 }
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                if (androidSdkVersionAtLeast(36)) {
                     item { Spacer(Modifier.height(12.dp)) }
                     item {
                         ListItem(

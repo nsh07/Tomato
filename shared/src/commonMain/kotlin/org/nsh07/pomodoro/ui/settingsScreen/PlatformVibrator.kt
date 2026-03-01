@@ -15,31 +15,19 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.di
+package org.nsh07.pomodoro.ui.settingsScreen
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import kotlinx.coroutines.flow.MutableStateFlow
-import org.nsh07.pomodoro.data.StateRepository
 
-data class AppInfo(
-    val debug: Boolean,
-    val versionName: String,
-    val versionCode: Long
-)
+const val SYSTEM_DEFAULT_AMPLITUDE = -1
 
-class TimerStateHolder(private val stateRepository: StateRepository) {
-    val time: MutableStateFlow<Long> by lazy {
-        MutableStateFlow(stateRepository.settingsState.value.focusTime)
-    }
+interface PlatformVibrator {
+    val hasVibrator: Boolean
+    val hasAmplitudeControl: Boolean
+
+    fun playWaveform(onDuration: Long, offDuration: Long, amplitude: Int)
+    fun cancel()
 }
 
-class ActivityCallbacks {
-    var activityTurnScreenOn: (Boolean) -> Unit = {}
-}
-
-data class FlavorUI(
-    val tomatoPlusPaywallDialog: @Composable (Boolean, () -> Unit) -> Unit,
-    val topButton: @Composable (Modifier) -> Unit,
-    val bottomButton: @Composable (Modifier) -> Unit
-)
+@Composable
+expect fun rememberPlatformVibrator(): PlatformVibrator

@@ -21,6 +21,7 @@ import androidx.annotation.StringRes
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
 
 sealed class Screen : NavKey {
     @Serializable
@@ -77,6 +78,6 @@ data class NavItem(
 data class SettingsNavItem(
     val route: Screen.Settings,
     val icon: DrawableResource,
-    @param:StringRes val label: Int,
-    val innerSettings: List<Int>
+    val label: StringResource,
+    val innerSettings: List<StringResource>
 )

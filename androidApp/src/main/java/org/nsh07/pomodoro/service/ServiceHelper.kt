@@ -27,8 +27,8 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
  * [androidx.lifecycle.ViewModel]s. This class must be managed by an [android.app.Application] class
  * to scope it to the Activity's lifecycle and prevent leaks.
  */
-class ServiceHelper(private val context: Context) {
-    fun startService(action: TimerAction) {
+class AppServiceHelper(private val context: Context) : ServiceHelper {
+    override fun startService(action: TimerAction) {
         when (action) {
             TimerAction.ResetTimer ->
                 Intent(context, TimerService::class.java).also {

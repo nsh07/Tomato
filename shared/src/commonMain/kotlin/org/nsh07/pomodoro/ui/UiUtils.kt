@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 
 @Composable
 fun mergePaddingValues(
@@ -46,6 +47,24 @@ fun mergePaddingValues(
         end = restSource.calculateEndPadding(layoutDirection)
     )
 }
+
+/**
+ * Returns and remembers a lambda that requests the system for the DND permission
+ *
+ * @return an empty lambda on all platforms except Android, where it returns a lambda that launches
+ * a permission settings menu, and shows a Toast that instructs the user to grant the permission.
+ */
+@Composable
+expect fun rememberRequestDndPermissionCallback(): (Boolean) -> Unit
+
+@Composable
+expect fun rememberRingtonePickerLauncherCallback(
+    alarmSoundFilePath: String?,
+    onResult: (SettingsAction) -> Unit
+): () -> Unit
+
+@Composable
+expect fun rememberRingtoneNameProviderCallback(): suspend (String?) -> String
 
 /**
  * (Copied from [androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective] with

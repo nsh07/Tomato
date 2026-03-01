@@ -30,8 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush.Companion.verticalGradient
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -132,25 +130,6 @@ fun TimeLineChart(
                                 ),
                                 stroke = LineCartesianLayer.LineStroke.Continuous(
                                     thickness, StrokeCap.Round
-                                ),
-                                areaFill = LineCartesianLayer.AreaFill.double(
-                                    topFill = Fill(
-                                        verticalGradient(
-                                            listOf(
-                                                colorScheme.primary,
-                                                Color.Transparent
-                                            )
-                                        )
-                                    ),
-                                    bottomFill = Fill(
-                                        verticalGradient(
-                                            listOf(
-                                                Color.Transparent,
-                                                colorScheme.secondary
-                                            )
-                                        )
-                                    ),
-                                    splitY = { goal }
                                 ),
                                 pointConnector = LineCartesianLayer.PointConnector.cubic(0.5f)
                             )

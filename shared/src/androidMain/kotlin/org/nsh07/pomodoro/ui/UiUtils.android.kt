@@ -24,6 +24,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,6 +32,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.FileLocator
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
@@ -107,4 +110,24 @@ actual fun rememberRingtonePickerLauncherCallback(
     }
 
     return { ringtonePickerLauncher.launch(ringtonePickerIntent) }
+}
+
+@Composable
+actual fun rememberRingtoneNameProviderCallback(): suspend (FileLocator) -> String {
+    val context = LocalContext.current
+
+    return remember {
+        { alarmSoundFileLocator ->
+            withContext(Dispatchers.IO) {
+                try {
+                    RingtoneManager.getRingtone(context, alarmSoundFileLocator.uri)
+                        ?.getTitle(context) ?: ""
+                } catch (e: Exception) {
+                    Log.e("AlarmSettings", "Unable to get ringtone title: ${e.message}")
+                    e.printStackTrace()
+                    ""
+                }
+            }
+        }
+    }
 }

@@ -19,13 +19,11 @@ package org.nsh07.pomodoro.ui.settingsScreen.screens
 
 import android.content.Context.VIBRATOR_MANAGER_SERVICE
 import android.content.Context.VIBRATOR_SERVICE
-import android.media.RingtoneManager
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.VibrationEffect.DEFAULT_AMPLITUDE
 import android.os.Vibrator
 import android.os.VibratorManager
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -75,12 +73,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.core.net.toUri
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.FileLocator
 import org.nsh07.pomodoro.ui.mergePaddingValues
+import org.nsh07.pomodoro.ui.rememberRingtoneNameProviderCallback
 import org.nsh07.pomodoro.ui.rememberRingtonePickerLauncherCallback
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
@@ -153,17 +150,14 @@ fun AlarmSettings(
     var vibrationPlaying by remember { mutableStateOf(false) }
     val msFormat = stringResource(Res.string.milliseconds_format)
 
+    val ringtoneNameProviderCallback = rememberRingtoneNameProviderCallback()
+    val ringtonePickerLauncherCallback = rememberRingtonePickerLauncherCallback(
+        alarmSoundFileLocator = remember { FileLocator(settingsState.alarmSoundUri?.toUri()) },
+        onResult = onAction
+    )
+
     LaunchedEffect(settingsState.alarmSoundUri) {
-        withContext(Dispatchers.IO) {
-            alarmName = try {
-                RingtoneManager.getRingtone(context, settingsState.alarmSoundUri?.toUri())
-                    ?.getTitle(context) ?: ""
-            } catch (e: Exception) {
-                Log.e("AlarmSettings", "Unable to get ringtone title: ${e.message}")
-                e.printStackTrace()
-                ""
-            }
-        }
+        alarmName = ringtoneNameProviderCallback(FileLocator(settingsState.alarmSoundUri?.toUri()))
     }
 
     val vibrator = remember {
@@ -182,11 +176,6 @@ fun AlarmSettings(
     DisposableEffect(Unit) {
         onDispose { vibrator.cancel() }
     }
-
-    val ringtonePickerLauncherCallback = rememberRingtonePickerLauncherCallback(
-        alarmSoundFileLocator = remember { FileLocator(settingsState.alarmSoundUri?.toUri()) },
-        onResult = onAction
-    )
 
     val switchItems = remember(
         settingsState.alarmEnabled,

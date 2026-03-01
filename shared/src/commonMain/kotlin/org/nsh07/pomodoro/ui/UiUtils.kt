@@ -64,6 +64,9 @@ expect fun rememberRingtonePickerLauncherCallback(
     onResult: (SettingsAction) -> Unit
 ): () -> Unit
 
+@Composable
+expect fun rememberRingtoneNameProviderCallback(): suspend (FileLocator) -> String
+
 /**
  * (Copied from [androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective] with
  * minor modifications, namely the reduction of horizontalPartitionSpacerSize to 0.dp)

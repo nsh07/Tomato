@@ -17,13 +17,6 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens
 
-import android.content.Context.VIBRATOR_MANAGER_SERVICE
-import android.content.Context.VIBRATOR_SERVICE
-import android.os.Build
-import android.os.VibrationEffect
-import android.os.VibrationEffect.DEFAULT_AMPLITUDE
-import android.os.Vibrator
-import android.os.VibratorManager
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -66,7 +59,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -79,9 +71,11 @@ import org.nsh07.pomodoro.data.FileLocator
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.rememberRingtoneNameProviderCallback
 import org.nsh07.pomodoro.ui.rememberRingtonePickerLauncherCallback
+import org.nsh07.pomodoro.ui.settingsScreen.SYSTEM_DEFAULT_AMPLITUDE
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
 import org.nsh07.pomodoro.ui.settingsScreen.components.SliderListItem
+import org.nsh07.pomodoro.ui.settingsScreen.rememberPlatformVibrator
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
@@ -140,7 +134,6 @@ fun AlarmSettings(
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val context = LocalContext.current
 
     val widthExpanded = currentWindowAdaptiveInfo()
         .windowSizeClass
@@ -160,18 +153,10 @@ fun AlarmSettings(
         alarmName = ringtoneNameProviderCallback(FileLocator(settingsState.alarmSoundUri?.toUri()))
     }
 
-    val vibrator = remember {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val vibratorManager =
-                context.getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
-            vibratorManager.defaultVibrator
-        } else {
-            @Suppress("DEPRECATION") context.getSystemService(VIBRATOR_SERVICE) as Vibrator
-        }
-    }
+    val vibrator = rememberPlatformVibrator()
 
-    val hasVibrator = vibrator.hasVibrator()
-    val hasAmplitudeControl = vibrator.hasAmplitudeControl()
+    val hasVibrator = vibrator.hasVibrator
+    val hasAmplitudeControl = vibrator.hasAmplitudeControl
 
     DisposableEffect(Unit) {
         onDispose { vibrator.cancel() }
@@ -370,26 +355,12 @@ fun AlarmSettings(
                                                 checked = vibrationPlaying,
                                                 onCheckedChange = {
                                                     vibrationPlaying = it
-                                                    if (it && vibrator.hasVibrator()) {
-                                                        val timings = longArrayOf(
-                                                            0,
+                                                    if (it) {
+                                                        vibrator.playWaveform(
                                                             settingsState.vibrationOnDuration,
                                                             settingsState.vibrationOffDuration,
-                                                            settingsState.vibrationOnDuration
-                                                        )
-                                                        val amplitudes = intArrayOf(
-                                                            0,
-                                                            settingsState.vibrationAmplitude,
-                                                            0,
                                                             settingsState.vibrationAmplitude
                                                         )
-                                                        val repeat = 2
-                                                        val effect = VibrationEffect.createWaveform(
-                                                            timings,
-                                                            amplitudes,
-                                                            repeat
-                                                        )
-                                                        vibrator.vibrate(effect)
                                                     } else {
                                                         vibrator.cancel()
                                                     }
@@ -423,7 +394,7 @@ fun AlarmSettings(
                                                     )
                                                     onAction(
                                                         SettingsAction.SaveVibrationAmplitude(
-                                                            DEFAULT_AMPLITUDE
+                                                            SYSTEM_DEFAULT_AMPLITUDE
                                                         )
                                                     )
                                                 },
@@ -474,13 +445,13 @@ fun AlarmSettings(
                     if (hasAmplitudeControl) item {
                         val systemDefaultText = stringResource(Res.string.system_default)
                         SliderListItem(
-                            value = if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE) 127f
+                            value = if (settingsState.vibrationAmplitude == SYSTEM_DEFAULT_AMPLITUDE) 127f
                             else settingsState.vibrationAmplitude.toFloat(),
                             valueRange = 2f..255f,
                             enabled = isPlus,
                             label = stringResource(Res.string.vibration_strength),
                             trailingLabel = {
-                                if (settingsState.vibrationAmplitude == DEFAULT_AMPLITUDE)
+                                if (settingsState.vibrationAmplitude == SYSTEM_DEFAULT_AMPLITUDE)
                                     systemDefaultText
                                 else "${((it * 100) / 255f).roundToInt()}%"
                             },

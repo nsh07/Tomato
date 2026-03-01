@@ -236,22 +236,23 @@ class TimerService : Service(), KoinComponent {
         remainingTime: Int, paused: Boolean = false, complete: Boolean = false
     ) {
         val settingsState = _settingsState.value
+        val timerState = _timerState.value
 
         if (complete) notificationBuilder.clearActions().addStopAlarmAction(this)
 
-        val totalTime = when (_timerState.value.timerMode) {
+        val totalTime = when (timerState.timerMode) {
             TimerMode.FOCUS -> settingsState.focusTime.toInt()
             TimerMode.SHORT_BREAK -> settingsState.shortBreakTime.toInt()
             else -> settingsState.longBreakTime.toInt()
         }
 
-        val currentTimer = when (_timerState.value.timerMode) {
+        val currentTimer = when (timerState.timerMode) {
             TimerMode.FOCUS -> getString(R.string.focus)
             TimerMode.SHORT_BREAK -> getString(R.string.short_break)
             else -> getString(R.string.long_break)
         }
 
-        val nextTimer = when (_timerState.value.nextTimerMode) {
+        val nextTimer = when (timerState.nextTimerMode) {
             TimerMode.FOCUS -> getString(R.string.focus)
             TimerMode.SHORT_BREAK -> getString(R.string.short_break)
             else -> getString(R.string.long_break)
@@ -266,7 +267,10 @@ class TimerService : Service(), KoinComponent {
                 .setContentTitle(
                     if (!complete) {
                         "$currentTimer  $middleDot  ${
-                            getString(R.string.min_remaining_notification, remainingTimeString)
+                            if (timerState.timerMode == TimerMode.FOCUS && timerState.infiniteFocus)
+                                getString(R.string.infinite)
+                            else
+                                getString(R.string.min_remaining_notification, remainingTimeString)
                         }" + if (paused) "  $middleDot  ${getString(R.string.paused)}" else ""
                     } else "$currentTimer $middleDot ${getString(R.string.completed)}"
                 )
@@ -280,13 +284,20 @@ class TimerService : Service(), KoinComponent {
                 .setStyle(
                     notificationStyle
                         .setProgress( // Set the current progress by filling the previous intervals and part of the current interval
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && !settingsState.singleProgressBar) {
+                            if (timerState.infiniteFocus) {
+                                if (timerState.timerMode == TimerMode.FOCUS) (Long.MAX_VALUE - remainingTime).toInt()
+                                else (totalTime - remainingTime)
+                            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && !settingsState.singleProgressBar) {
                                 (totalTime - remainingTime) + ((cycles + 1) / 2) * settingsState.focusTime.toInt() + (cycles / 2) * settingsState.shortBreakTime.toInt()
                             } else (totalTime - remainingTime)
                         )
                 )
                 .setWhen(System.currentTimeMillis() + remainingTime) // Sets the Live Activity/Now Bar chip time
-                .setShortCriticalText(millisecondsToStr(time.coerceAtLeast(0)))
+                .setShortCriticalText(
+                    if (timerState.timerMode == TimerMode.FOCUS && timerState.infiniteFocus)
+                        millisecondsToStr((Long.MAX_VALUE - time).coerceAtLeast(0))
+                    else millisecondsToStr(time.coerceAtLeast(0))
+                )
                 .build()
         )
 
@@ -303,7 +314,7 @@ class TimerService : Service(), KoinComponent {
         notificationStyle = NotificationCompat.ProgressStyle()
             .also {
                 // Add all the Focus, Short break and long break intervals in order
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && !settingsState.singleProgressBar) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && !settingsState.singleProgressBar && !_timerState.value.infiniteFocus) {
                     // Android 16 and later supports live updates
                     // Set progress bar sections if on Baklava or later
                     for (i in 0..<settingsState.sessionLength * 2) {

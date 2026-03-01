@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -13,8 +14,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  -->
-<resources xmlns:tools="http://schemas.android.com/tools">
+  --><resources xmlns:tools="http://schemas.android.com/tools">
     <string name="about">பற்றி</string>
     <string name="alarm">அலாரம்</string>
     <string name="alarm_desc">டைமர் முடிந்ததும் அலாரம் ஒலிக்கவும்</string>
@@ -38,7 +38,7 @@
     <string name="dark">இருள்</string>
     <string name="dnd">தொந்தரவு செய்ய வேண்டாம்</string>
     <string name="dnd_desc">ஃபோகஸ் டைமரை இயக்கும்போது DND-ஐ ஆன் செய்யவும்</string>
-    <string name="dnd_permission_message">&quot;%1$s&quot;க்கான அனுமதியை இயக்கவும்</string>
+    <string name="dnd_permission_message">"%1$s"க்கான அனுமதியை இயக்கவும்</string>
     <string name="duration">கால அளவு</string>
     <string name="durations">காலங்கள்</string>
     <string name="dynamic">டைனமிக்</string>

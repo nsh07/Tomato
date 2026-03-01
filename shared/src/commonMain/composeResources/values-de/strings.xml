@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -13,8 +14,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  -->
-<resources>
+  --><resources>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="focus">Fokus</string>
@@ -119,7 +119,7 @@
     <string name="focus_history_calendar_desc">Fokus-Verlauf des letzten Monats. Die Tage des Vormonats sind mit einer anderen Farbe markiert. Tippe auf ein Datum, um weitere Informationen zu erhalten.</string>
     <string name="reset_data_dialog_title">Alle Statistiken zurücksetzen?</string>
     <string name="back">Zurück</string>
-    <string name="dnd_permission_message">Erlaube Rechte für &quot;%1$s&quot;</string>
+    <string name="dnd_permission_message">Erlaube Rechte für "%1$s"</string>
     <string name="duration">Dauer</string>
     <string name="gap">Lücke</string>
     <string name="history_widget_desc">Sieh ein Diagramm der Fokus Dauern der letzten Tage. Die Anzahl an Tagen hängt von der Größe des Widget ab.</string>

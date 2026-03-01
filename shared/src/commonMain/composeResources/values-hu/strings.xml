@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -14,7 +13,8 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  --><resources>
+  -->
+<resources>
     <string name="start">Indít</string>
     <string name="stop">Leállít</string>
     <string name="focus">Fókuszálás</string>
@@ -78,7 +78,7 @@
     <string name="choose_language">Nyelv kiválasztása</string>
     <string name="dnd">Ne zavarjanak</string>
     <string name="dnd_desc">Ne zavarjanak mód bekapcsolása a Fókusz időzítő futása alatt</string>
-    <string name="dnd_permission_message">Engedélyek megadása a \"%1$s\"-nak</string>
+    <string name="dnd_permission_message">Engedélyek megadása a &quot;%1$s&quot;-nak</string>
     <string name="duration">Időtartam</string>
     <string name="durations">Időtartamok</string>
     <string name="dynamic_color">Dinamikus szín</string>

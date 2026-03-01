@@ -42,7 +42,7 @@
     <string name="dark">Dark</string>
     <string name="dnd">Do Not Disturb</string>
     <string name="dnd_desc">Turn on DND when running a Focus timer</string>
-    <string name="dnd_permission_message">Enable permission for \"%1$s\"</string>
+    <string name="dnd_permission_message">Enable permission for &quot;%1$s&quot;</string>
     <string name="duration">Duration</string>
     <string name="durations">Durations</string>
     <string name="dynamic">Dynamic</string>
@@ -56,7 +56,7 @@
     <string name="focus_history">Focus history</string>
     <string name="focus_history_calendar">Focus history calendar</string>
     <string name="focus_history_calendar_desc">Focus history of the past month. Days of the previous month are marked with a different color. Tap on a date for more info.</string>
-    <string name="focus_history_desc">Focus breakdown of each day of the past week. Tap on a day\'s chart for more info.</string>
+    <string name="focus_history_desc">Focus breakdown of each day of the past week. Tap on a day\u0027s chart for more info.</string>
     <string name="focus_history_heatmap">Focus history heatmap</string>
     <string name="focus_history_heatmap_desc">Focus history of the past year. Deeper colors represent a longer duration. Days are grouped by month. Tap on a day for more info.</string>
     <string name="focus_per_day_avg">focus per day (avg)</string>
@@ -87,7 +87,7 @@
     <string name="pause">Pause</string>
     <string name="paused">Paused</string>
     <string name="play">Play</string>
-    <string name="pomodoro_info">A \"session\" is a sequence of pomodoro intervals that contain focus intervals, short break intervals, and a long break interval. The last break of a session is always a long break.</string>
+    <string name="pomodoro_info">A &quot;session&quot; is a sequence of pomodoro intervals that contain focus intervals, short break intervals, and a long break interval. The last break of a session is always a long break.</string>
     <string name="rate_on_google_play">Rate on Google Play</string>
     <string name="rate_on_google_play_desc">Liked the app? Write a review!</string>
     <string name="reset_data">Reset stats</string>
@@ -122,7 +122,7 @@
     <string name="timer_session_count">%1$d of %2$d</string>
     <string name="timer_settings_reset_info">Reset the timer to change settings</string>
     <string name="today">Today</string>
-    <string name="today_widget_desc">Today\'s focus stats</string>
+    <string name="today_widget_desc">Today\u0027s focus stats</string>
     <string name="tomato_foss">Tomato FOSS</string>
     <string name="tomato_foss_desc">All features are unlocked in this version. If my app made a difference in your life, please consider supporting me by donating on %1$s.</string>
     <string name="tomato_plus_desc">Customize further with Tomato+</string>

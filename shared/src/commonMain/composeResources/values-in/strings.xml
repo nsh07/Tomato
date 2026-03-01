@@ -44,7 +44,7 @@
     <string name="pause">Jeda</string>
     <string name="paused">Dijeda</string>
     <string name="play">Mulai</string>
-    <string name="pomodoro_info">\"Sesi\" adalah rangkaian interval pomodoro yang berisi interval fokus, interval rehat pendek, dan interval rehat panjang. Rehat terakhir dalam suatu sesi selalu merupakan rehat panjang.</string>
+    <string name="pomodoro_info">&quot;Sesi&quot; adalah rangkaian interval pomodoro yang berisi interval fokus, interval rehat pendek, dan interval rehat panjang. Rehat terakhir dalam suatu sesi selalu merupakan rehat panjang.</string>
     <string name="restart">Mulai ulang</string>
     <string name="session_length">Lama sesi</string>
     <string name="session_length_desc">Interval fokus dalam satu sesi: %1$d</string>

@@ -39,7 +39,7 @@
     <string name="dark">მუქი</string>
     <string name="dnd">არ შემაწუხოთ</string>
     <string name="dnd_desc">ჩართე DND როდესაც ფოკუსის ტაიმერი მუშაობს</string>
-    <string name="dnd_permission_message">\"%1$s\" სთვის უფლების დართვა</string>
+    <string name="dnd_permission_message">&quot;%1$s&quot; სთვის უფლების დართვა</string>
     <string name="duration">ხანგრძლივობა</string>
     <string name="durations">ხანგრძლივობები</string>
     <string name="dynamic">დინამიური</string>

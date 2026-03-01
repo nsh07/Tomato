@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -14,7 +13,8 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  --><resources xmlns:tools="http://schemas.android.com/tools">
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="about">பற்றி</string>
     <string name="alarm">அலாரம்</string>
     <string name="alarm_desc">டைமர் முடிந்ததும் அலாரம் ஒலிக்கவும்</string>
@@ -38,7 +38,7 @@
     <string name="dark">இருள்</string>
     <string name="dnd">தொந்தரவு செய்ய வேண்டாம்</string>
     <string name="dnd_desc">ஃபோகஸ் டைமரை இயக்கும்போது DND-ஐ ஆன் செய்யவும்</string>
-    <string name="dnd_permission_message">\"%1$s\"க்கான அனுமதியை இயக்கவும்</string>
+    <string name="dnd_permission_message">&quot;%1$s&quot;க்கான அனுமதியை இயக்கவும்</string>
     <string name="duration">கால அளவு</string>
     <string name="durations">காலங்கள்</string>
     <string name="dynamic">டைனமிக்</string>
@@ -82,7 +82,7 @@
     <string name="pause">இடைநிறுத்தம்</string>
     <string name="paused">இடைநிறுத்து</string>
     <string name="play">இயக்கு</string>
-    <string name="pomodoro_info">ஒரு \'செஷன்\' என்பது கவனம் செலுத்தும் இடைவெளிகள், குறுகிய ஓய்வு இடைவெளிகள் மற்றும் ஒரு நீண்ட ஓய்வு இடைவெளி ஆகியவற்றைக் கொண்ட பொமொடோரோ இடைவெளிகளின் ஒரு தொடர் ஆகும். ஒரு செஷனின் கடைசி ஓய்வு எப்போதும் ஒரு நீண்ட ஓய்வாகவே இருக்கும்.</string>
+    <string name="pomodoro_info">ஒரு \u0027செஷன்\u0027 என்பது கவனம் செலுத்தும் இடைவெளிகள், குறுகிய ஓய்வு இடைவெளிகள் மற்றும் ஒரு நீண்ட ஓய்வு இடைவெளி ஆகியவற்றைக் கொண்ட பொமொடோரோ இடைவெளிகளின் ஒரு தொடர் ஆகும். ஒரு செஷனின் கடைசி ஓய்வு எப்போதும் ஒரு நீண்ட ஓய்வாகவே இருக்கும்.</string>
     <string name="rate_on_google_play">கூகிள் பிளேயில் மதிப்பிடுங்கள்</string>
     <string name="rate_on_google_play_desc">இந்த செயலி பிடித்திருக்கிறதா? ஒரு விமர்சனம் எழுதுங்கள்!</string>
     <string name="reset_data">புள்ளிவிவரங்களை மீட்டமைக்கவும்</string>

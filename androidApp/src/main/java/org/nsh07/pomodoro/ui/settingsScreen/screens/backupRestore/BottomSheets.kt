@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.data.FileLocator
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import tomato.shared.generated.resources.Res
@@ -47,7 +48,7 @@ import kotlin.text.Typography.nbsp
 fun BackupBottomSheet(
     backupState: BackupRestoreState,
     onDismissRequest: () -> Unit,
-    onStartBackup: (Uri) -> Unit,
+    onStartBackup: (FileLocator) -> Unit,
     resetBackupState: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -85,7 +86,7 @@ fun BackupBottomSheet(
         buttonText = if (backupState == BackupRestoreState.DONE) stringResource(R.string.exit)
         else if (selectedUri == null) stringResource(R.string.choose_folder)
         else stringResource(R.string.backup),
-        selectedUri = selectedUri,
+        selectedFileLocator = FileLocator(selectedUri),
         modifier = modifier
     )
 }
@@ -94,7 +95,7 @@ fun BackupBottomSheet(
 fun RestoreBottomSheet(
     restoreState: BackupRestoreState,
     onDismissRequest: () -> Unit,
-    onStartRestore: (Uri) -> Unit,
+    onStartRestore: (FileLocator) -> Unit,
     resetRestoreState: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -125,7 +126,7 @@ fun RestoreBottomSheet(
         buttonText = if (restoreState == BackupRestoreState.DONE) stringResource(R.string.restart_app)
         else if (selectedUri == null) stringResource(R.string.choose_file)
         else stringResource(R.string.restore),
-        selectedUri = selectedUri,
+        selectedFileLocator = FileLocator(selectedUri),
         modifier = modifier
     )
 }

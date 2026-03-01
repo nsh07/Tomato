@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore
 
-import android.net.Uri
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -55,6 +54,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.nsh07.pomodoro.data.FileLocator
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import tomato.shared.generated.resources.Res
@@ -66,14 +66,14 @@ import tomato.shared.generated.resources.folder
 fun BackupBottomSheetTemplate(
     backupState: BackupRestoreState,
     onDismissRequest: () -> Unit,
-    onStartAction: (Uri) -> Unit,
+    onStartAction: (FileLocator) -> Unit,
     resetBackupState: () -> Unit,
     openPicker: () -> Unit,
     icon: @Composable () -> Unit,
     titleText: String,
     labelText: AnnotatedString,
     buttonText: String,
-    selectedUri: Uri?,
+    selectedFileLocator: FileLocator,
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
@@ -165,7 +165,7 @@ fun BackupBottomSheetTemplate(
                 }
 
                 Text(
-                    selectedUri?.path?.substringAfter(':')
+                    selectedFileLocator.getPath()?.substringAfter(':')
                         ?: buttonText,
                     style = typography.bodyMedium,
                     color = colorScheme.onSurfaceVariant,
@@ -195,8 +195,8 @@ fun BackupBottomSheetTemplate(
                                 resetBackupState()
                                 onDismissRequest()
                             }
-                        } else if (selectedUri == null) openPicker()
-                        else onStartAction(selectedUri)
+                        } else if (selectedFileLocator.uri == null) openPicker()
+                        else onStartAction(selectedFileLocator)
                     },
                     enabled = backupState != BackupRestoreState.LOADING,
                     shapes = ButtonDefaults.shapes()

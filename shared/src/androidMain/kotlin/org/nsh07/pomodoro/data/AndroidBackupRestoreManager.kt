@@ -28,7 +28,11 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import kotlin.time.Clock
 
-actual data class FileLocator(val uri: Uri)
+actual data class FileLocator(val uri: Uri?) {
+    actual fun getPath(): String? {
+        return uri?.path
+    }
+}
 
 class AndroidBackupRestoreManager(
     private val database: AppDatabase,
@@ -64,6 +68,7 @@ class AndroidBackupRestoreManager(
     }
 
     override suspend fun performRestore(fileLocator: FileLocator) {
+        if (fileLocator.uri == null) return
         withContext(Dispatchers.IO) {
             database.close()
 

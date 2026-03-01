@@ -17,7 +17,9 @@
 
 package org.nsh07.pomodoro.data
 
-expect class FileLocator
+expect class FileLocator {
+    fun getPath(): String?
+}
 
 interface BackupRestoreManager {
     suspend fun performBackup(directoryLocator: FileLocator)

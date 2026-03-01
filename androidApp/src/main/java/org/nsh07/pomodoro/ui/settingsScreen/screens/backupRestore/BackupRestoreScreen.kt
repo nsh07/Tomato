@@ -57,7 +57,6 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.data.FileLocator
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
@@ -99,7 +98,7 @@ fun BackupRestoreScreen(
         onStartBackup = {
             scope.launch {
                 backupState = BackupRestoreState.LOADING
-                viewModel.performBackup(FileLocator(it))
+                viewModel.performBackup(it)
                 backupState = BackupRestoreState.DONE
             }
         },
@@ -125,7 +124,7 @@ fun BackupRestoreScreen(
         onStartRestore = {
             scope.launch {
                 backupState = BackupRestoreState.LOADING
-                viewModel.performRestore(FileLocator(it))
+                viewModel.performRestore(it)
                 backupState = BackupRestoreState.DONE
             }
         },

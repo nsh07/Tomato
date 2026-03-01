@@ -104,7 +104,7 @@ fun AboutScreen(
     flavorUI: FlavorUI = koinInject(),
     appInfo: AppInfo = koinInject()
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val uriHandler = LocalUriHandler.current
 
     val widthExpanded = currentWindowAdaptiveInfo()

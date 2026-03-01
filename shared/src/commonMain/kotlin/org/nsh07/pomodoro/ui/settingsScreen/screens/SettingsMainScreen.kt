@@ -101,7 +101,7 @@ fun SettingsMainScreen(
     modifier: Modifier = Modifier,
     appInfo: AppInfo = koinInject()
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     val widthExpanded = currentWindowAdaptiveInfo()
         .windowSizeClass
@@ -181,7 +181,7 @@ fun SettingsMainScreen(
                     } else null,
                     shapes = ListItemDefaults.segmentedShapes(index, settingsScreens.size),
                     colors = listItemColors,
-                    selected = widthExpanded && currentScreen == item.route,
+                    selected = currentScreen == item.route,
                     onClick = { onNavigate(item.route) }
                 ) { Text(stringResource(item.label)) }
             }

@@ -89,7 +89,7 @@ fun AppearanceSettings(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     val widthExpanded = currentWindowAdaptiveInfo()
         .windowSizeClass

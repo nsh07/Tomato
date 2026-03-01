@@ -161,7 +161,7 @@ fun TimerSettings(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val context = LocalContext.current
     val inspectionMode = LocalInspectionMode.current
     val notificationManagerService = remember {

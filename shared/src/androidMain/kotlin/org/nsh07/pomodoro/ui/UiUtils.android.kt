@@ -17,17 +17,26 @@
 
 package org.nsh07.pomodoro.ui
 
+import android.app.Activity
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.media.RingtoneManager
+import android.net.Uri
 import android.provider.Settings
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.data.FileLocator
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
+import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.alarm_sound
 import tomato.shared.generated.resources.app_name
 import tomato.shared.generated.resources.dnd_permission_message
 
@@ -62,4 +71,40 @@ actual fun rememberRequestDndPermissionCallback(): (Boolean) -> Unit {
             }
         }
     }
+}
+
+@Composable
+actual fun rememberRingtonePickerLauncherCallback(
+    alarmSoundFileLocator: FileLocator,
+    onResult: (SettingsAction) -> Unit
+): () -> Unit {
+    val alamSoundString = stringResource(Res.string.alarm_sound)
+
+    val ringtonePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri =
+                if (androidSdkVersionAtLeast(33)) {
+                    result.data?.getParcelableExtra(
+                        RingtoneManager.EXTRA_RINGTONE_PICKED_URI,
+                        Uri::class.java
+                    )
+                } else {
+                    @Suppress("DEPRECATION")
+                    result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                }
+            onResult(SettingsAction.SaveAlarmSound(uri.toString()))
+        }
+    }
+
+    val ringtonePickerIntent = remember(alarmSoundFileLocator.uri) {
+        Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, alamSoundString)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmSoundFileLocator.uri)
+        }
+    }
+
+    return { ringtonePickerLauncher.launch(ringtonePickerIntent) }
 }

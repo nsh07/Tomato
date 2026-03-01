@@ -17,21 +17,15 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens
 
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context.VIBRATOR_MANAGER_SERVICE
 import android.content.Context.VIBRATOR_SERVICE
-import android.content.Intent
 import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.VibrationEffect.DEFAULT_AMPLITUDE
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -85,7 +79,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.data.FileLocator
 import org.nsh07.pomodoro.ui.mergePaddingValues
+import org.nsh07.pomodoro.ui.rememberRingtonePickerLauncherCallback
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
 import org.nsh07.pomodoro.ui.settingsScreen.components.SliderListItem
@@ -170,24 +166,6 @@ fun AlarmSettings(
         }
     }
 
-    val ringtonePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val uri =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    result.data?.getParcelableExtra(
-                        RingtoneManager.EXTRA_RINGTONE_PICKED_URI,
-                        Uri::class.java
-                    )
-                } else {
-                    @Suppress("DEPRECATION")
-                    result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
-                }
-            onAction(SettingsAction.SaveAlarmSound(uri.toString()))
-        }
-    }
-
     val vibrator = remember {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val vibratorManager =
@@ -205,16 +183,10 @@ fun AlarmSettings(
         onDispose { vibrator.cancel() }
     }
 
-    val alamSoundString = stringResource(Res.string.alarm_sound)
-
-    @SuppressLint("LocalContextGetResourceValueCall")
-    val ringtonePickerIntent = remember(settingsState.alarmSoundUri) {
-        Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-            putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, alamSoundString)
-            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, settingsState.alarmSoundUri)
-        }
-    }
+    val ringtonePickerLauncherCallback = rememberRingtonePickerLauncherCallback(
+        alarmSoundFileLocator = remember { FileLocator(settingsState.alarmSoundUri?.toUri()) },
+        onResult = onAction
+    )
 
     val switchItems = remember(
         settingsState.alarmEnabled,
@@ -324,11 +296,7 @@ fun AlarmSettings(
                         colors = listItemColors,
                         modifier = Modifier
                             .clip(topListItemShape)
-                            .clickable(onClick = {
-                                ringtonePickerLauncher.launch(
-                                    ringtonePickerIntent
-                                )
-                            })
+                            .clickable(onClick = ringtonePickerLauncherCallback)
                     )
                 }
                 switchItems.fastForEachIndexed { baseIndex, items ->

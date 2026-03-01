@@ -79,7 +79,7 @@
     <string name="choose_language">Nyelv kiválasztása</string>
     <string name="dnd">Ne zavarjanak</string>
     <string name="dnd_desc">Ne zavarjanak mód bekapcsolása a Fókusz időzítő futása alatt</string>
-    <string name="dnd_permission_message">Engedélyek megadása a &quot;%1$s&quot;-nak</string>
+    <string name="dnd_permission_message">Engedélyek megadása a \"%1$s\"-nak</string>
     <string name="duration">Időtartam</string>
     <string name="durations">Időtartamok</string>
     <string name="dynamic_color">Dinamikus szín</string>

@@ -49,7 +49,7 @@
     <string name="settings">Configurações</string>
     <string name="session_length">Duração da sessão</string>
     <string name="session_length_desc">Intervalos de foco em uma sessão: %1$d</string>
-    <string name="pomodoro_info">Uma &quot;sessão&quot; é uma sequência de intervalos Pomodoro que contém intervalos de foco, intervalos de pausa curta e um intervalo de pausa longa. A última pausa de uma sessão é sempre uma pausa longa.</string>
+    <string name="pomodoro_info">Uma \"sessão\" é uma sequência de intervalos Pomodoro que contém intervalos de foco, intervalos de pausa curta e um intervalo de pausa longa. A última pausa de uma sessão é sempre uma pausa longa.</string>
     <string name="stats">Estatísticas</string>
     <string name="today">Hoje</string>
     <string name="break_">Pausa</string>

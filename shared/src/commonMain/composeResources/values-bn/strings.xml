@@ -56,7 +56,7 @@
     <string name="pause">থামুন</string>
     <string name="paused">স্থির</string>
     <string name="play">চালু</string>
-    <string name="pomodoro_info">&quot;সেশন&quot; হলো Pomodoro এর একটি ক্রম যার মধ্যে ফোকাস সময়, ছোট বিরতি এবং একটি দীর্ঘ বিরতি ব্থাকে। একটি সেশন এর শেষ বিরতি সর্বদা একটি দীর্ঘ বিরতি।</string>
+    <string name="pomodoro_info">\"সেশন\" হলো Pomodoro এর একটি ক্রম যার মধ্যে ফোকাস সময়, ছোট বিরতি এবং একটি দীর্ঘ বিরতি ব্থাকে। একটি সেশন এর শেষ বিরতি সর্বদা একটি দীর্ঘ বিরতি।</string>
     <string name="rate_on_google_play">গুগল প্লে তে রেট করুন</string>
     <string name="restart">পুনরায় শুরু করুন</string>
     <string name="selected" tools:override="true">নির্ধারিত</string>

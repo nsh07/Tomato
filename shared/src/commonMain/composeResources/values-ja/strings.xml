@@ -139,6 +139,6 @@
     <string name="focus_break_ratio">集中と休憩の比率</string>
     <string name="focus_history_desc">過去1週間分の各日の集中時間の内訳です。各日のチャートをタップすると詳細を表示します。</string>
     <string name="less">短い</string>
-    <string name="dnd_permission_message">&quot;%1$s&quot; の権限を有効にしてください</string>
+    <string name="dnd_permission_message">\"%1$s\" の権限を有効にしてください</string>
     <string name="vibration_pattern">振動パターン</string>
 </resources>

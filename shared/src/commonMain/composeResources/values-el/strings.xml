@@ -119,7 +119,7 @@
     <string name="reset_data_dialog_title">Επαναφορά όλων των στατιστικών;</string>
     <string name="reset_data_dialog_text">Όλα τα αποθηκευμένα στατιστικά θα διαγραφούν μόνιμα. Δεν μπορεί να αναιρεθεί.</string>
     <string name="back">Πίσω</string>
-    <string name="dnd_permission_message">Ενεργοποίηση άδειας για &quot;%1$s&quot;</string>
+    <string name="dnd_permission_message">Ενεργοποίηση άδειας για \"%1$s\"</string>
     <string name="duration">Διάρκεια</string>
     <string name="gap">Κενό</string>
     <string name="history_widget_desc">Δείτε ένα διάγραμμα για τις περιόδους συγκέντρωσης των τελευταίων ημερών. Ο αριθμός των ημερών που εμφανίζεται εξαρτάται από το μέγεθος του γουίτζετ.</string>
@@ -135,7 +135,7 @@
     <string name="restore">Επαναφορά</string>
     <string name="restore_desc">Επαναφορά στατιστικών και ρυθμίσεων</string>
     <string name="backup_dialog_desc">Τα στατιστικά και οι ρυθμίσεις σας θα αποθηκευτούν σε ένα αρχείο στον φάκελο της επιλογής σας. Μπορείτε να επαναφέρετε αυτά τα δεδομένα αργότερα σε %1$s.</string>
-    <string name="restore_dialog_desc">Τα στατιστικά και οι ρυθμίσεις σας θα επαναφερθούν από το αρχείο της επιλογής σας. Η εφαρμογή θα χρειαστεί επαννεκίνηση όταν η επαναφορά ολοκληρωθεί. <b>\u0027Ολα τα υπάρχοντα δεδομένα θα διαγραφούν, και αυτό δε μπορεί να αναιρεθεί.</b></string>
+    <string name="restore_dialog_desc">Τα στατιστικά και οι ρυθμίσεις σας θα επαναφερθούν από το αρχείο της επιλογής σας. Η εφαρμογή θα χρειαστεί επαννεκίνηση όταν η επαναφορά ολοκληρωθεί. <b>\'Ολα τα υπάρχοντα δεδομένα θα διαγραφούν, και αυτό δε μπορεί να αναιρεθεί.</b></string>
     <string name="choose_folder">Επιλέξτε φάκελο</string>
     <string name="choose_file">Επιλέξτε αρχείο</string>
     <string name="restart_app">Επανεκκίνηση εφαρμογής</string>

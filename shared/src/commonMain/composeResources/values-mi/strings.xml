@@ -46,7 +46,7 @@
     <string name="pause">Taihoa</string>
     <string name="paused">Kua tū</string>
     <string name="play">Whakakā</string>
-    <string name="pomodoro_info">Ko te &quot;huringa&quot; ko ētehi wā e takingia - he wāhanga arotahi, he wāhanga whakatā poto, ā, he wāhanga hoki o taua wā e whai whakatā nui ai te tangata. Ko te wā o te whakatā nui te wāhanga whakamutunga o te huringa.</string>
+    <string name="pomodoro_info">Ko te \"huringa\" ko ētehi wā e takingia - he wāhanga arotahi, he wāhanga whakatā poto, ā, he wāhanga hoki o taua wā e whai whakatā nui ai te tangata. Ko te wā o te whakatā nui te wāhanga whakamutunga o te huringa.</string>
     <string name="restart">Tīmata anō</string>
     <string name="session_length">Ko te roa o te huringa</string>
     <string name="session_length_desc">Wā arotahi i te huringa kotahi: %1$d</string>

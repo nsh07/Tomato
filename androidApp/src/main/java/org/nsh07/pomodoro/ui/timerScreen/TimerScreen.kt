@@ -68,7 +68,6 @@ import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
@@ -128,6 +127,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -710,7 +710,7 @@ fun SharedTransitionScope.TimerScreen(
                                 onClick = {},
                                 enabled = it + 1 >= timerState.currentFocusCount,
                                 selected = currentSession && isFocus,
-                                shapes = ListItemDefaults.segmentedShapes(0, 2),
+                                shapes = segmentedListItemShapes(0, 2),
                                 colors = listItemColors,
                                 leadingContent = {
                                     AnimatedContent(
@@ -753,7 +753,7 @@ fun SharedTransitionScope.TimerScreen(
                                 onClick = {},
                                 enabled = it + 1 >= timerState.currentFocusCount,
                                 selected = currentSession && !isFocus,
-                                shapes = ListItemDefaults.segmentedShapes(1, 2),
+                                shapes = segmentedListItemShapes(1, 2),
                                 colors = listItemColors,
                                 leadingContent = {
                                     AnimatedContent(

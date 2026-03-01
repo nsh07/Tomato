@@ -17,9 +17,11 @@
 
 package org.nsh07.pomodoro.ui.theme
 
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.runtime.Composable
@@ -54,14 +56,23 @@ object TomatoShapeDefaults {
         @Composable get() = shapes.largeIncreased
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-    val singleItemListItemShapes: ListItemShapes
-        @Composable get() = ListItemShapes(
-            shapes.large,
-            shapes.large,
-            shapes.large,
-            shapes.large,
-            shapes.large,
-            shapes.large
+    @Composable
+    fun segmentedListItemShapes(
+        index: Int,
+        count: Int,
+        singleElement: Boolean = false
+    ): ListItemShapes =
+        ListItemDefaults.segmentedShapes(
+            index,
+            count,
+            ListItemDefaults.shapes(
+                shape = if (singleElement) shapes.large else shapes.extraSmall,
+                selectedShape = CircleShape,
+                pressedShape = CircleShape,
+                focusedShape = shapes.large,
+                hoveredShape = shapes.extraLarge,
+                draggedShape = CircleShape
+            )
         )
 
     val PANE_MAX_WIDTH = 600.dp

@@ -31,7 +31,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedListItem
@@ -70,7 +69,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.singleItemListItemShapes
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.utils.androidDeviceManufacturerIs
 import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import tomato.shared.generated.resources.Res
@@ -179,7 +178,7 @@ fun SettingsMainScreen(
                     trailingContent = if (!widthExpanded) {
                         { Icon(painterResource(Res.drawable.arrow_forward_big), null) }
                     } else null,
-                    shapes = ListItemDefaults.segmentedShapes(index, settingsScreens.size),
+                    shapes = segmentedListItemShapes(index, settingsScreens.size),
                     colors = listItemColors,
                     selected = currentScreen == item.route,
                     onClick = { onNavigate(item.route) }
@@ -214,7 +213,7 @@ fun SettingsMainScreen(
                         { Icon(painterResource(Res.drawable.arrow_forward_big), null) }
                     } else null,
                     selected = currentScreen == Screen.Settings.Backup,
-                    shapes = ListItemDefaults.segmentedShapes(0, 2),
+                    shapes = segmentedListItemShapes(0, 2),
                     colors = listItemColors,
                     onClick = { onNavigate(item.route) }
                 ) { Text(stringResource(item.label)) }
@@ -231,7 +230,7 @@ fun SettingsMainScreen(
                         { Icon(painterResource(Res.drawable.arrow_forward_big), null) }
                     } else null,
                     selected = currentScreen == Screen.Settings.About,
-                    shapes = ListItemDefaults.segmentedShapes(1, 2),
+                    shapes = segmentedListItemShapes(1, 2),
                     colors = listItemColors,
                     onClick = { onNavigate(Screen.Settings.About) }
                 ) { Text(stringResource(Res.string.about)) }
@@ -249,7 +248,7 @@ fun SettingsMainScreen(
                             Text(currentLocale.platformLocale.displayLanguage)
                         },
                         selected = showLocaleSheet,
-                        shapes = ListItemDefaults.segmentedShapes(0, 1, singleItemListItemShapes),
+                        shapes = segmentedListItemShapes(0, 1, true),
                         colors = listItemColors,
                         onClick = { showLocaleSheet = true }
                     ) { Text(stringResource(Res.string.language)) }
@@ -266,7 +265,7 @@ fun SettingsMainScreen(
                         trailingContent = {
                             Icon(painterResource(Res.drawable.open_in_browser), null)
                         },
-                        shapes = ListItemDefaults.segmentedShapes(0, 1, singleItemListItemShapes),
+                        shapes = segmentedListItemShapes(0, 1, true),
                         colors = listItemColors,
                         onClick = { uriHandler.openUri("https://gist.github.com/nsh07/3b42969aef017d98f72b097f1eca8911") }
                     ) { Text(stringResource(Res.string.now_bar)) }

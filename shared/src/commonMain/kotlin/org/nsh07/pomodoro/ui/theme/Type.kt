@@ -22,12 +22,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import org.jetbrains.compose.resources.Font
 import tomato.shared.generated.resources.Res
-import tomato.shared.generated.resources.google_sans_flex_400
-import tomato.shared.generated.resources.google_sans_flex_600
-import tomato.shared.generated.resources.roboto_flex_logo
+import tomato.shared.generated.resources.google_sans_flex
 
 val TYPOGRAPHY = Typography()
 
@@ -38,8 +37,24 @@ data class AppFonts(
 
 @Composable
 fun typography(): Typography {
-    val googleFlex400 = FontFamily(Font(Res.font.google_sans_flex_400))
-    val googleFlex600 = FontFamily(Font(Res.font.google_sans_flex_600))
+    val googleFlex400 = FontFamily(
+        Font(
+            Res.font.google_sans_flex,
+            FontWeight.Normal,
+            variationSettings = FontVariation.Settings(FontVariation.weight(400))
+        )
+    )
+
+    val googleFlex600 = FontFamily(
+        Font(
+            Res.font.google_sans_flex,
+            FontWeight.Bold,
+            variationSettings = FontVariation.Settings(
+                FontVariation.weight(600),
+                FontVariation.Setting("ROND", 100f)
+            )
+        )
+    )
 
     return remember {
         Typography(
@@ -109,13 +124,30 @@ fun typography(): Typography {
 
 @Composable
 fun getAppFonts(): AppFonts {
-    val robotoFlexTopBar = FontFamily(Font(Res.font.roboto_flex_logo))
+    val robotoFlexTopBar = FontFamily(
+        Font(
+            Res.font.google_sans_flex,
+            variationSettings = FontVariation.Settings(
+                FontVariation.weight(900),
+                FontVariation.width(112.5f),
+                FontVariation.Setting("ROND", 35f)
+            )
+        )
+    )
 
     val annotatedStringFontFamily = FontFamily(
-        Font(resource = Res.font.google_sans_flex_400, weight = FontWeight.Normal),
         Font(
-            resource = Res.font.google_sans_flex_600,
-            weight = FontWeight.Bold
+            Res.font.google_sans_flex,
+            FontWeight.Normal,
+            variationSettings = FontVariation.Settings(FontVariation.weight(400))
+        ),
+        Font(
+            Res.font.google_sans_flex,
+            FontWeight.Bold,
+            variationSettings = FontVariation.Settings(
+                FontVariation.weight(600),
+                FontVariation.Setting("ROND", 100f)
+            )
         ) // Used for <b> tags
     )
 

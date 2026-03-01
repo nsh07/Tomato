@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
-import org.nsh07.pomodoro.data.FileLocator
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 
 @Composable
@@ -60,12 +59,12 @@ expect fun rememberRequestDndPermissionCallback(): (Boolean) -> Unit
 
 @Composable
 expect fun rememberRingtonePickerLauncherCallback(
-    alarmSoundFileLocator: FileLocator,
+    alarmSoundFilePath: String?,
     onResult: (SettingsAction) -> Unit
 ): () -> Unit
 
 @Composable
-expect fun rememberRingtoneNameProviderCallback(): suspend (FileLocator) -> String
+expect fun rememberRingtoneNameProviderCallback(): suspend (String?) -> String
 
 /**
  * (Copied from [androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective] with

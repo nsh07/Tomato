@@ -32,10 +32,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.core.net.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.stringResource
-import org.nsh07.pomodoro.data.FileLocator
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import tomato.shared.generated.resources.Res
@@ -78,7 +78,7 @@ actual fun rememberRequestDndPermissionCallback(): (Boolean) -> Unit {
 
 @Composable
 actual fun rememberRingtonePickerLauncherCallback(
-    alarmSoundFileLocator: FileLocator,
+    alarmSoundFilePath: String?,
     onResult: (SettingsAction) -> Unit
 ): () -> Unit {
     val alamSoundString = stringResource(Res.string.alarm_sound)
@@ -101,11 +101,11 @@ actual fun rememberRingtonePickerLauncherCallback(
         }
     }
 
-    val ringtonePickerIntent = remember(alarmSoundFileLocator.uri) {
+    val ringtonePickerIntent = remember(alarmSoundFilePath) {
         Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
             putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
             putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, alamSoundString)
-            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmSoundFileLocator.uri)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmSoundFilePath?.toUri())
         }
     }
 
@@ -113,14 +113,14 @@ actual fun rememberRingtonePickerLauncherCallback(
 }
 
 @Composable
-actual fun rememberRingtoneNameProviderCallback(): suspend (FileLocator) -> String {
+actual fun rememberRingtoneNameProviderCallback(): suspend (String?) -> String {
     val context = LocalContext.current
 
     return remember {
-        { alarmSoundFileLocator ->
+        { alarmSoundFilePath ->
             withContext(Dispatchers.IO) {
                 try {
-                    RingtoneManager.getRingtone(context, alarmSoundFileLocator.uri)
+                    RingtoneManager.getRingtone(context, alarmSoundFilePath?.toUri())
                         ?.getTitle(context) ?: ""
                 } catch (e: Exception) {
                     Log.e("AlarmSettings", "Unable to get ringtone title: ${e.message}")

@@ -63,11 +63,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
-import androidx.core.net.toUri
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.nsh07.pomodoro.data.FileLocator
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.rememberRingtoneNameProviderCallback
 import org.nsh07.pomodoro.ui.rememberRingtonePickerLauncherCallback
@@ -145,12 +143,12 @@ fun AlarmSettings(
 
     val ringtoneNameProviderCallback = rememberRingtoneNameProviderCallback()
     val ringtonePickerLauncherCallback = rememberRingtonePickerLauncherCallback(
-        alarmSoundFileLocator = remember { FileLocator(settingsState.alarmSoundUri?.toUri()) },
+        alarmSoundFilePath = settingsState.alarmSoundUri,
         onResult = onAction
     )
 
     LaunchedEffect(settingsState.alarmSoundUri) {
-        alarmName = ringtoneNameProviderCallback(FileLocator(settingsState.alarmSoundUri?.toUri()))
+        alarmName = ringtoneNameProviderCallback(settingsState.alarmSoundUri)
     }
 
     val vibrator = rememberPlatformVibrator()

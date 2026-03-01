@@ -15,29 +15,18 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.data
+package org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore
 
-/**
- * Class to handle platform-specific filesystem abstraction (e.g. Uri on Android). An empty
- * constructor is provided to initialize a null instance.
- */
-expect class FileLocator {
-    /**
-     * Initialize a [org.nsh07.pomodoro.data.FileLocator] with a null instance of whichever
-     * filesystem abstraction is being used
-     */
-    constructor()
+import androidx.compose.runtime.Composable
+import org.nsh07.pomodoro.data.FileLocator
 
-    /**
-     * File/directory path as string
-     */
-    val path: String?
-    val isNull: Boolean
-}
+@Composable
+expect fun rememberDirectoryPickerLauncher(
+    onResult: (FileLocator) -> Unit
+): () -> Unit
 
-interface BackupRestoreManager {
-    suspend fun performBackup(directoryLocator: FileLocator)
-    suspend fun performRestore(fileLocator: FileLocator)
-
-    fun restartApp()
-}
+@Composable
+expect fun rememberFilePickerLauncher(
+    mimeType: String,
+    onResult: (FileLocator) -> Unit
+): () -> Unit

@@ -49,15 +49,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.FileLocator
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.cancel
 import tomato.shared.generated.resources.check
 import tomato.shared.generated.resources.folder
 
@@ -165,7 +166,7 @@ fun BackupBottomSheetTemplate(
                 }
 
                 Text(
-                    selectedFileLocator.getPath()?.substringAfter(':')
+                    selectedFileLocator.path?.substringAfter(':')
                         ?: buttonText,
                     style = typography.bodyMedium,
                     color = colorScheme.onSurfaceVariant,
@@ -186,7 +187,7 @@ fun BackupBottomSheetTemplate(
                         }
                     },
                     shapes = ButtonDefaults.shapes()
-                ) { Text(stringResource(android.R.string.cancel)) }
+                ) { Text(stringResource(Res.string.cancel)) }
                 Button(
                     onClick = {
                         if (backupState == BackupRestoreState.DONE) {
@@ -195,7 +196,7 @@ fun BackupBottomSheetTemplate(
                                 resetBackupState()
                                 onDismissRequest()
                             }
-                        } else if (selectedFileLocator.uri == null) openPicker()
+                        } else if (selectedFileLocator.isNull) openPicker()
                         else onStartAction(selectedFileLocator)
                     },
                     enabled = backupState != BackupRestoreState.LOADING,

@@ -17,9 +17,6 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore
 
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
@@ -29,19 +26,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
-import org.nsh07.pomodoro.R
+import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.FileLocator
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.backup
 import tomato.shared.generated.resources.backup_40dp
+import tomato.shared.generated.resources.backup_and_restore
+import tomato.shared.generated.resources.backup_dialog_desc
+import tomato.shared.generated.resources.choose_file
+import tomato.shared.generated.resources.choose_folder
+import tomato.shared.generated.resources.exit
+import tomato.shared.generated.resources.restart_app
+import tomato.shared.generated.resources.restore
 import tomato.shared.generated.resources.restore_40dp
+import tomato.shared.generated.resources.restore_dialog_desc
+import tomato.shared.generated.resources.settings
 import kotlin.text.Typography.nbsp
 
 @Composable
@@ -52,12 +58,10 @@ fun BackupBottomSheet(
     resetBackupState: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedUri: Uri? by remember { mutableStateOf(null) }
+    var selectedFileLocator: FileLocator by remember { mutableStateOf(FileLocator()) }
 
-    val chooseFolder = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocumentTree()
-    ) { uri: Uri? ->
-        selectedUri = uri
+    val launchDirectoryPicker = rememberDirectoryPickerLauncher { fileLocator ->
+        selectedFileLocator = fileLocator
         resetBackupState()
     }
 
@@ -66,7 +70,7 @@ fun BackupBottomSheet(
         onDismissRequest = onDismissRequest,
         onStartAction = onStartBackup,
         resetBackupState = resetBackupState,
-        openPicker = { chooseFolder.launch(null) },
+        openPicker = launchDirectoryPicker,
         icon = {
             Icon(
                 painterResource(Res.drawable.backup_40dp),
@@ -74,19 +78,19 @@ fun BackupBottomSheet(
                 tint = colorScheme.secondary
             )
         },
-        titleText = stringResource(R.string.backup),
+        titleText = stringResource(Res.string.backup),
         labelText = AnnotatedString.fromHtml(
             stringResource(
-                R.string.backup_dialog_desc,
-                "<b>${stringResource(R.string.settings)}$nbsp>$nbsp${
-                    stringResource(R.string.backup_and_restore)
-                }$nbsp>$nbsp${stringResource(R.string.restore)}</b>"
+                Res.string.backup_dialog_desc,
+                "<b>${stringResource(Res.string.settings)}$nbsp>$nbsp${
+                    stringResource(Res.string.backup_and_restore)
+                }$nbsp>$nbsp${stringResource(Res.string.restore)}</b>"
             )
         ),
-        buttonText = if (backupState == BackupRestoreState.DONE) stringResource(R.string.exit)
-        else if (selectedUri == null) stringResource(R.string.choose_folder)
-        else stringResource(R.string.backup),
-        selectedFileLocator = FileLocator(selectedUri),
+        buttonText = if (backupState == BackupRestoreState.DONE) stringResource(Res.string.exit)
+        else if (selectedFileLocator.isNull) stringResource(Res.string.choose_folder)
+        else stringResource(Res.string.backup),
+        selectedFileLocator = selectedFileLocator,
         modifier = modifier
     )
 }
@@ -99,12 +103,10 @@ fun RestoreBottomSheet(
     resetRestoreState: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedUri: Uri? by remember { mutableStateOf(null) }
+    var selectedFileLocator: FileLocator by remember { mutableStateOf(FileLocator()) }
 
-    val chooseFile = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocument()
-    ) { uri: Uri? ->
-        selectedUri = uri
+    val launchFilePicker = rememberFilePickerLauncher("application/octet-stream") { locator ->
+        selectedFileLocator = locator
         resetRestoreState()
     }
 
@@ -113,7 +115,7 @@ fun RestoreBottomSheet(
         onDismissRequest = onDismissRequest,
         onStartAction = onStartRestore,
         resetBackupState = resetRestoreState,
-        openPicker = { chooseFile.launch(arrayOf("application/octet-stream")) },
+        openPicker = launchFilePicker,
         icon = {
             Icon(
                 painterResource(Res.drawable.restore_40dp),
@@ -121,12 +123,12 @@ fun RestoreBottomSheet(
                 tint = colorScheme.secondary
             )
         },
-        titleText = stringResource(R.string.restore),
-        labelText = AnnotatedString.fromHtml(stringResource(R.string.restore_dialog_desc)),
-        buttonText = if (restoreState == BackupRestoreState.DONE) stringResource(R.string.restart_app)
-        else if (selectedUri == null) stringResource(R.string.choose_file)
-        else stringResource(R.string.restore),
-        selectedFileLocator = FileLocator(selectedUri),
+        titleText = stringResource(Res.string.restore),
+        labelText = AnnotatedString.fromHtml(stringResource(Res.string.restore_dialog_desc)),
+        buttonText = if (restoreState == BackupRestoreState.DONE) stringResource(Res.string.restart_app)
+        else if (selectedFileLocator.isNull) stringResource(Res.string.choose_file)
+        else stringResource(Res.string.restore),
+        selectedFileLocator = selectedFileLocator,
         modifier = modifier
     )
 }

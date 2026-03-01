@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore
 
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,15 +47,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
@@ -69,8 +66,13 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.arrow_back
+import tomato.shared.generated.resources.back
 import tomato.shared.generated.resources.backup
+import tomato.shared.generated.resources.backup_and_restore
+import tomato.shared.generated.resources.backup_desc
 import tomato.shared.generated.resources.restore
+import tomato.shared.generated.resources.restore_desc
+import tomato.shared.generated.resources.settings
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -80,7 +82,6 @@ fun BackupRestoreScreen(
     modifier: Modifier = Modifier,
     viewModel: BackupRestoreViewModel = koinViewModel()
 ) {
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -106,19 +107,9 @@ fun BackupRestoreScreen(
     )
     else if (showDialog == 2) RestoreBottomSheet(
         restoreState = backupState,
-        onDismissRequest = if (backupState == BackupRestoreState.DONE) {
-            {
-                val packageManager = context.packageManager
-                val intent = packageManager.getLaunchIntentForPackage(context.packageName)
-                val componentName = intent?.component
-
-                val mainIntent = Intent.makeRestartActivityTask(componentName)
-                mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-
-                context.startActivity(mainIntent)
-                Runtime.getRuntime().exit(0)
-            }
-        } else {
+        onDismissRequest = if (backupState == BackupRestoreState.DONE)
+            viewModel::restartApp
+        else {
             { showDialog = 0 }
         },
         onStartRestore = {
@@ -145,12 +136,12 @@ fun BackupRestoreScreen(
                 LargeFlexibleTopAppBar(
                     title = {
                         Text(
-                            stringResource(R.string.backup_and_restore),
+                            stringResource(Res.string.backup_and_restore),
                             fontFamily = LocalAppFonts.current.topBarTitle
                         )
                     },
                     subtitle = {
-                        Text(stringResource(R.string.settings))
+                        Text(stringResource(Res.string.settings))
                     },
                     navigationIcon = {
                         if (!widthExpanded)
@@ -163,7 +154,7 @@ fun BackupRestoreScreen(
                             ) {
                                 Icon(
                                     painterResource(Res.drawable.arrow_back),
-                                    stringResource(R.string.back)
+                                    stringResource(Res.string.back)
                                 )
                             }
                     },
@@ -190,8 +181,8 @@ fun BackupRestoreScreen(
 
                 item {
                     ClickableListItem(
-                        headlineContent = { Text(stringResource(R.string.backup)) },
-                        supportingContent = { Text(stringResource(R.string.backup_desc)) },
+                        headlineContent = { Text(stringResource(Res.string.backup)) },
+                        supportingContent = { Text(stringResource(Res.string.backup_desc)) },
                         leadingContent = { Icon(painterResource(Res.drawable.backup), null) },
                         items = 2,
                         index = 0
@@ -199,8 +190,8 @@ fun BackupRestoreScreen(
                 }
                 item {
                     ClickableListItem(
-                        headlineContent = { Text(stringResource(R.string.restore)) },
-                        supportingContent = { Text(stringResource(R.string.restore_desc)) },
+                        headlineContent = { Text(stringResource(Res.string.restore)) },
+                        supportingContent = { Text(stringResource(Res.string.restore_desc)) },
                         leadingContent = { Icon(painterResource(Res.drawable.restore), null) },
                         items = 2,
                         index = 1

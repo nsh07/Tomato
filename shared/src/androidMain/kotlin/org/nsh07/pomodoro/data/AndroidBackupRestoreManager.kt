@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.data
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.provider.DocumentsContract
 import androidx.sqlite.db.SimpleSQLiteQuery
@@ -29,9 +30,13 @@ import java.io.FileOutputStream
 import kotlin.time.Clock
 
 actual data class FileLocator(val uri: Uri?) {
-    actual fun getPath(): String? {
-        return uri?.path
-    }
+    actual constructor() : this(null)
+
+    actual val path: String?
+        get() = uri?.path
+
+    actual val isNull: Boolean
+        get() = uri == null
 }
 
 class AndroidBackupRestoreManager(
@@ -68,7 +73,7 @@ class AndroidBackupRestoreManager(
     }
 
     override suspend fun performRestore(fileLocator: FileLocator) {
-        if (fileLocator.uri == null) return
+        if (fileLocator.isNull) return
         withContext(Dispatchers.IO) {
             database.close()
 
@@ -80,11 +85,23 @@ class AndroidBackupRestoreManager(
             File("${dbFile.path}-wal").delete()
             File("${dbFile.path}-shm").delete()
 
-            context.contentResolver.openInputStream(fileLocator.uri)?.use { input ->
+            context.contentResolver.openInputStream(fileLocator.uri!!)?.use { input ->
                 FileOutputStream(dbFile).use { output ->
                     input.copyTo(output)
                 }
             }
         }
+    }
+
+    override fun restartApp() {
+        val packageManager = context.packageManager
+        val intent = packageManager.getLaunchIntentForPackage(context.packageName)
+        val componentName = intent?.component
+
+        val mainIntent = Intent.makeRestartActivityTask(componentName)
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+
+        context.startActivity(mainIntent)
+        Runtime.getRuntime().exit(0)
     }
 }

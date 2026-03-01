@@ -29,4 +29,7 @@ class BackupRestoreViewModel(
 
     suspend fun performRestore(fileLocator: FileLocator) =
         backupRestoreManager.performRestore(fileLocator)
+
+    fun restartApp() =
+        backupRestoreManager.restartApp()
 }

@@ -79,7 +79,7 @@
     <string name="dark">Tmavý</string>
     <string name="dnd">Režim Nerušit</string>
     <string name="dnd_desc">Zapnout režim Nerušit při spuštném časovači soustředění</string>
-    <string name="dnd_permission_message">Povolte oprávnění „%1$s“</string>
+    <string name="dnd_permission_message">Povolte oprávnění %1$s</string>
     <string name="duration">Trvání</string>
     <string name="durations">Trvání</string>
     <string name="dynamic">Dynamické</string>
@@ -105,7 +105,7 @@
     <string name="minutes_format">%1$d min</string>
     <string name="paused">Pozastaveno</string>
     <string name="play">Pokračovat</string>
-    <string name="pomodoro_info">„Sezení“ je sekvence intervalů pomodoro, které obsahují intervaly soustředění, intervaly krátkých přestávek a interval dlouhé přestávky. Poslední přestávka sezení je vždy dlouhá přestávka.</string>
+    <string name="pomodoro_info">Sezení je sekvence intervalů pomodoro, které obsahují intervaly soustředění, intervaly krátkých přestávek a interval dlouhé přestávky. Poslední přestávka sezení je vždy dlouhá přestávka.</string>
     <string name="rate_on_google_play">Ohodnoťte nás na Google Play</string>
     <string name="reset_data_dialog_text">Všechny uložené statistiky budou nenávratně smazány. Tato akce je nevratná.</string>
     <string name="secure_aod">Bezpečný VZD</string>
@@ -143,4 +143,5 @@
     <string name="infinite">Nekonečno</string>
     <string name="infinite_focus">Nekonečné soutředění</string>
     <string name="settings_infinite_focus_tip">Dlouze podržte prst na časovači pro zapnutí nekonečného režimu soustředění</string>
+    <string name="cancel">Zrušit</string>
 </resources>

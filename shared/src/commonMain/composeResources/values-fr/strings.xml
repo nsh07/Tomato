@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -14,7 +13,8 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  --><resources>
+  -->
+<resources>
     <string name="start">Démarrer</string>
     <string name="stop">Pause</string>
     <string name="focus">Concentration</string>
@@ -145,5 +145,5 @@
     <string name="vibration_pattern">Motif de vibration</string>
     <string name="infinite">Infini</string>
     <string name="infinite_focus">Concentration infinie</string>
-    <string name="settings_infinite_focus_tip">Appuyez longuement sur l'horloge du minuteur pour activer le mode de concentration infinie</string>
+    <string name="settings_infinite_focus_tip">Appuyez longuement sur l\u0027horloge du minuteur pour activer le mode de concentration infinie</string>
 </resources>

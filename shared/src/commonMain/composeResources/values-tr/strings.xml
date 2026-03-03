@@ -144,4 +144,5 @@
     <string name="infinite">Sonsuz</string>
     <string name="infinite_focus">Sonsuz odak</string>
     <string name="settings_infinite_focus_tip">Sonsuz odak modunu açmak için zamanlayıcı saatine uzun basın</string>
+    <string name="cancel">İptal</string>
 </resources>

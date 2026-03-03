@@ -140,4 +140,10 @@
     <string name="choose_file">Choisir un fichier</string>
     <string name="restart_app">Redémarrer l\u0027application</string>
     <string name="milliseconds_format">%1$dms</string>
+    <string name="cancel">Annuler</string>
+    <string name="lifetime">Depuis toujours</string>
+    <string name="vibration_pattern">Motif de vibration</string>
+    <string name="infinite">Infini</string>
+    <string name="infinite_focus">Concentration infinie</string>
+    <string name="settings_infinite_focus_tip">Appuyez longuement sur l'horloge du minuteur pour activer le mode de concentration infinie</string>
 </resources>

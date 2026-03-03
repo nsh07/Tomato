@@ -142,4 +142,8 @@
     <string name="daily_focus_goal">Щоденна ціль фокусу</string>
     <string name="milliseconds_format">%1$dмс</string>
     <string name="vibration_pattern">Шаблон вібрації</string>
+    <string name="infinite">Нескінченна</string>
+    <string name="infinite_focus">Нескінченний фокус</string>
+    <string name="settings_infinite_focus_tip">Натисніть і утримуйте кнопку таймера, щоб увімкнути режим нескінченного фокусу</string>
+    <string name="cancel">Скасувати</string>
 </resources>

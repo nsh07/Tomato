@@ -329,15 +329,17 @@ fun SharedTransitionScope.StatsMainScreen(
                         hoursFormat = hoursFormat,
                         hoursMinutesFormat = hoursMinutesFormat,
                         minutesFormat = minutesFormat,
-                        xValueFormatter = CartesianValueFormatter { context, x, _ ->
-                            context.model.extraStore[lastWeekSummaryChartData.second][x.toInt()]
+                        xValueFormatter = remember(lastWeekSummaryChartData.second) {
+                            CartesianValueFormatter { context, x, _ ->
+                                context.model.extraStore[lastWeekSummaryChartData.second][x.toInt()]
+                            }
                         },
                         goal = goal,
                         zoomState = zoomStates[0],
                         scrollState = scrollStates[0],
                         modifier = if (!widthExpanded) {
                             Modifier
-                                .sharedBounds(
+                                .sharedElement(
                                     sharedContentState = this@StatsMainScreen
                                         .rememberSharedContentState("last week chart"),
                                     animatedVisibilityScope = LocalNavAnimatedContentScope.current
@@ -437,15 +439,17 @@ fun SharedTransitionScope.StatsMainScreen(
                         hoursMinutesFormat = hoursMinutesFormat,
                         minutesFormat = minutesFormat,
                         thickness = 8.dp,
-                        xValueFormatter = CartesianValueFormatter { context, x, _ ->
-                            context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
+                        xValueFormatter = remember(lastMonthSummaryChartData.second) {
+                            CartesianValueFormatter { context, x, _ ->
+                                context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
+                            }
                         },
                         goal = goal,
                         zoomState = zoomStates[1],
                         scrollState = scrollStates[1],
                         modifier = if (!widthExpanded) {
                             Modifier
-                                .sharedBounds(
+                                .sharedElement(
                                     sharedContentState = this@StatsMainScreen
                                         .rememberSharedContentState("last month chart"),
                                     animatedVisibilityScope = LocalNavAnimatedContentScope.current
@@ -546,15 +550,17 @@ fun SharedTransitionScope.StatsMainScreen(
                         hoursFormat = hoursFormat,
                         hoursMinutesFormat = hoursMinutesFormat,
                         minutesFormat = minutesFormat,
-                        xValueFormatter = CartesianValueFormatter { context, x, _ ->
-                            context.model.extraStore[lastYearSummaryChartData.second][x.toInt()]
+                        xValueFormatter = remember(lastYearSummaryChartData.second) {
+                            CartesianValueFormatter { context, x, _ ->
+                                context.model.extraStore[lastYearSummaryChartData.second][x.toInt()]
+                            }
                         },
                         goal = goal,
                         zoomState = zoomStates[2],
                         scrollState = scrollStates[2],
                         modifier = if (!widthExpanded) {
                             Modifier
-                                .sharedBounds(
+                                .sharedElement(
                                     sharedContentState = this@StatsMainScreen
                                         .rememberSharedContentState("last year chart"),
                                     animatedVisibilityScope = LocalNavAnimatedContentScope.current
@@ -587,10 +593,12 @@ fun SharedTransitionScope.StatsMainScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Text(
-                            millisecondsToHoursMinutes(
-                                allTimeTotalFocus ?: 0L,
-                                hoursMinutesFormat
-                            ),
+                            remember(allTimeTotalFocus) {
+                                millisecondsToHoursMinutes(
+                                    allTimeTotalFocus ?: 0L,
+                                    hoursMinutesFormat
+                                )
+                            },
                             style = typography.displaySmall
                         )
                         Text(

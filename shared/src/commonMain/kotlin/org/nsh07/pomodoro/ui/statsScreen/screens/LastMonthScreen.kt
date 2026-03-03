@@ -244,7 +244,7 @@ fun SharedTransitionScope.LastMonthScreen(
                         zoomState = zoomState,
                         scrollState = scrollState,
                         modifier = Modifier
-                            .sharedBounds(
+                            .sharedElement(
                                 sharedContentState = this@LastMonthScreen
                                     .rememberSharedContentState("last month chart"),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current

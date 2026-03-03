@@ -64,22 +64,6 @@ fun StatsScreenRoot(
 ) {
     val backStack = viewModel.backStack
 
-    val todayStat by viewModel.todayStat.collectAsStateWithLifecycle(null)
-    val allTimeTotalFocus by viewModel.allTimeTotalFocus.collectAsStateWithLifecycle(null)
-
-    val lastWeekMainChartData by viewModel.lastWeekMainChartData.collectAsStateWithLifecycle()
-    val lastWeekFocusHistoryValues by viewModel.lastWeekFocusHistoryValues.collectAsStateWithLifecycle()
-    val lastWeekFocusBreakdownValues by viewModel.lastWeekFocusBreakdownValues.collectAsStateWithLifecycle()
-
-    val lastMonthMainChartData by viewModel.lastMonthMainChartData.collectAsStateWithLifecycle()
-    val lastMonthCalendarData by viewModel.lastMonthCalendarData.collectAsStateWithLifecycle()
-    val lastMonthFocusBreakdownValues by viewModel.lastMonthFocusBreakdownValues.collectAsStateWithLifecycle()
-
-    val lastYearMainChartData by viewModel.lastYearMainChartData.collectAsStateWithLifecycle()
-    val lastYearFocusHeatmapData by viewModel.lastYearFocusHeatmapData.collectAsStateWithLifecycle()
-    val lastYearFocusBreakdownValues by viewModel.lastYearFocusBreakdownValues.collectAsStateWithLifecycle()
-    val lastYearMaxFocus by viewModel.lastYearMaxFocus.collectAsStateWithLifecycle()
-
     val colorScheme = colorScheme
 
     val hoursFormat = stringResource(Res.string.hours_format)
@@ -104,13 +88,27 @@ fun StatsScreenRoot(
             ),
             entryProvider = entryProvider {
                 entry<Screen.Stats.Main>(
-                    metadata = listPane(detailPlaceholder = {
-                        DetailPlaceholder(
-                            icon = Res.drawable.query_stats,
-                            background = colorScheme.surface
-                        )
-                    })
+                    metadata = listPane(
+                        detailPlaceholder = {
+                            DetailPlaceholder(
+                                icon = Res.drawable.query_stats,
+                                background = colorScheme.surface
+                            )
+                        }
+                    )
                 ) {
+                    val todayStat by viewModel.todayStat.collectAsStateWithLifecycle(null)
+                    val allTimeTotalFocus by
+                    viewModel.allTimeTotalFocus.collectAsStateWithLifecycle(null)
+
+                    val lastWeekMainChartData by viewModel.lastWeekMainChartData.collectAsStateWithLifecycle()
+                    val lastMonthMainChartData by viewModel.lastMonthMainChartData.collectAsStateWithLifecycle()
+                    val lastYearMainChartData by viewModel.lastYearMainChartData.collectAsStateWithLifecycle()
+
+                    val lastWeekFocusBreakdownValues by viewModel.lastWeekFocusBreakdownValues.collectAsStateWithLifecycle()
+                    val lastMonthFocusBreakdownValues by viewModel.lastMonthFocusBreakdownValues.collectAsStateWithLifecycle()
+                    val lastYearFocusBreakdownValues by viewModel.lastYearFocusBreakdownValues.collectAsStateWithLifecycle()
+
                     StatsMainScreen(
                         goal = focusGoal,
                         contentPadding = contentPadding,
@@ -139,6 +137,10 @@ fun StatsScreenRoot(
                 entry<Screen.Stats.LastWeek>(
                     metadata = detailPane()
                 ) {
+                    val lastWeekMainChartData by viewModel.lastWeekMainChartData.collectAsStateWithLifecycle()
+                    val lastWeekFocusHistoryValues by viewModel.lastWeekFocusHistoryValues.collectAsStateWithLifecycle()
+                    val lastWeekFocusBreakdownValues by viewModel.lastWeekFocusBreakdownValues.collectAsStateWithLifecycle()
+
                     LastWeekScreen(
                         goal = focusGoal,
                         contentPadding = contentPadding,
@@ -157,6 +159,10 @@ fun StatsScreenRoot(
                 entry<Screen.Stats.LastMonth>(
                     metadata = detailPane()
                 ) {
+                    val lastMonthMainChartData by viewModel.lastMonthMainChartData.collectAsStateWithLifecycle()
+                    val lastMonthCalendarData by viewModel.lastMonthCalendarData.collectAsStateWithLifecycle()
+                    val lastMonthFocusBreakdownValues by viewModel.lastMonthFocusBreakdownValues.collectAsStateWithLifecycle()
+
                     LastMonthScreen(
                         goal = focusGoal,
                         contentPadding = contentPadding,
@@ -175,6 +181,11 @@ fun StatsScreenRoot(
                 entry<Screen.Stats.LastYear>(
                     metadata = detailPane()
                 ) {
+                    val lastYearMainChartData by viewModel.lastYearMainChartData.collectAsStateWithLifecycle()
+                    val lastYearFocusHeatmapData by viewModel.lastYearFocusHeatmapData.collectAsStateWithLifecycle()
+                    val lastYearFocusBreakdownValues by viewModel.lastYearFocusBreakdownValues.collectAsStateWithLifecycle()
+                    val lastYearMaxFocus by viewModel.lastYearMaxFocus.collectAsStateWithLifecycle()
+
                     LastYearScreen(
                         goal = focusGoal,
                         contentPadding = contentPadding,

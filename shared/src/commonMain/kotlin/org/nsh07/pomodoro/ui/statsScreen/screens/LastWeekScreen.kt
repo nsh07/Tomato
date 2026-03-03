@@ -242,7 +242,7 @@ fun SharedTransitionScope.LastWeekScreen(
                         zoomState = zoomState,
                         scrollState = scrollState,
                         modifier = Modifier
-                            .sharedBounds(
+                            .sharedElement(
                                 sharedContentState = this@LastWeekScreen
                                     .rememberSharedContentState("last week chart"),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current

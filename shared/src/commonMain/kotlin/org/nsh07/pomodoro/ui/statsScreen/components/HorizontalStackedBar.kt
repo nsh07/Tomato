@@ -106,6 +106,7 @@ fun HorizontalStackedBar(
     gap: Dp = 2.dp
 ) {
     val shapes = shapes
+    val valuesTotal = remember(values) { values.sum() }
     val firstNonZeroIndex = remember(values) { values.indexOfFirst { it > 0L } }
     val lastNonZeroIndex = remember(values) { values.indexOfLast { it > 0L } }
 
@@ -159,7 +160,7 @@ fun HorizontalStackedBar(
                                 }
                             ) {
                                 Text(
-                                    text = labelFormatter(index, item, values.sum()),
+                                    text = labelFormatter(index, item, valuesTotal),
                                     style = typography.bodySmall,
                                     color = colorScheme.inverseOnSurface,
                                     modifier = Modifier

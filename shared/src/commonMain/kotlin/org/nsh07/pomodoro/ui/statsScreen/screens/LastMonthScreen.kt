@@ -237,8 +237,10 @@ fun SharedTransitionScope.LastMonthScreen(
                         hoursMinutesFormat = hoursMinutesFormat,
                         minutesFormat = minutesFormat,
                         thickness = 8.dp,
-                        xValueFormatter = CartesianValueFormatter { context, x, _ ->
-                            context.model.extraStore[mainChartData.second][x.toInt()]
+                        xValueFormatter = remember(mainChartData.second) {
+                            CartesianValueFormatter { context, x, _ ->
+                                context.model.extraStore[mainChartData.second][x.toInt()]
+                            }
                         },
                         goal = goal,
                         zoomState = zoomState,

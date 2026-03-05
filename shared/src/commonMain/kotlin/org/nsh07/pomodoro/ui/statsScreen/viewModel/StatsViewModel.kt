@@ -32,15 +32,13 @@ import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
@@ -103,11 +101,22 @@ class StatsViewModel(
     private val yearDayFormatter = DateTimeFormatter.ofPattern("d MMM")
 
     private val lastWeekStatsFlow = statRepository.getLastNDaysStats(7).filter { it.isNotEmpty() }
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000), replay = 1)
     private val lastMonthStatsFlow = statRepository.getLastNDaysStats(31).filter { it.isNotEmpty() }
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000), replay = 1)
     private val lastYearStatsFlow = statRepository.getLastNDaysStats(365).filter { it.isNotEmpty() }
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000), replay = 1)
 
-    private val _lastYearMaxFocus = MutableStateFlow(Long.MAX_VALUE)
-    val lastYearMaxFocus = _lastYearMaxFocus.asStateFlow()
+    val lastYearMaxFocus: StateFlow<Long> = lastYearStatsFlow
+        .map { list ->
+            list.fastMaxBy { it.totalFocusTime() }?.totalFocusTime() ?: Long.MAX_VALUE
+        }
+        .flowOn(Dispatchers.Default)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = Long.MAX_VALUE
+        )
 
     val lastWeekMainChartData: StateFlow<Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>> =
         lastWeekStatsFlow
@@ -127,7 +136,7 @@ class StatsViewModel(
                 }
                 lastWeekSummary
             }
-            .flowOn(Dispatchers.IO)
+            .flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -152,7 +161,7 @@ class StatsViewModel(
                     )
                 }
             }
-            .flowOn(Dispatchers.IO)
+            .flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -172,7 +181,7 @@ class StatsViewModel(
                     it?.breakTime ?: 0L
                 )
             }
-            .flowOn(Dispatchers.IO)
+            .flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -191,7 +200,7 @@ class StatsViewModel(
                 }
                 lastMonthSummary
             }
-            .flowOn(Dispatchers.IO)
+            .flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -209,7 +218,7 @@ class StatsViewModel(
                     addAll(list)
                 }
             }
-            .flowOn(Dispatchers.IO)
+            .flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -229,7 +238,7 @@ class StatsViewModel(
                     it?.breakTime ?: 0L
                 )
             }
-            .flowOn(Dispatchers.IO)
+            .flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -248,7 +257,7 @@ class StatsViewModel(
                 }
                 lastYearSummary
             }
-            .flowOn(Dispatchers.IO)
+            .flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -259,11 +268,6 @@ class StatsViewModel(
         lastYearStatsFlow
             .map { list ->
                 val list = list.reversed()
-                _lastYearMaxFocus.update {
-                    list.fastMaxBy {
-                        it.totalFocusTime()
-                    }?.totalFocusTime() ?: Long.MAX_VALUE
-                }
                 buildList {
                     repeat(list.first().date.dayOfWeek.value - DayOfWeek.MONDAY.value) {
                         add(null) // Make sure that the data starts with a Monday
@@ -276,7 +280,7 @@ class StatsViewModel(
                     }
                 }
             }
-            .flowOn(Dispatchers.IO)
+            .flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -296,7 +300,7 @@ class StatsViewModel(
                     it?.breakTime ?: 0L
                 )
             }
-            .flowOn(Dispatchers.IO)
+            .flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),

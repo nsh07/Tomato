@@ -84,23 +84,27 @@ fun TimeLineChart(
     thickness: Dp = 2.dp,
     pointSpacing: Dp = 12.dp,
     xValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
-    yValueFormatter: CartesianValueFormatter = CartesianValueFormatter { _, value, _ ->
-        if (value >= 60 * 60 * 1000) {
-            millisecondsToHours(value.toLong(), hoursFormat)
-        } else {
-            millisecondsToMinutes(value.toLong(), minutesFormat)
+    yValueFormatter: CartesianValueFormatter = remember {
+        CartesianValueFormatter { _, value, _ ->
+            if (value >= 60 * 60 * 1000) {
+                millisecondsToHours(value.toLong(), hoursFormat)
+            } else {
+                millisecondsToMinutes(value.toLong(), minutesFormat)
+            }
         }
     },
-    markerValueFormatter: DefaultCartesianMarker.ValueFormatter = DefaultCartesianMarker.ValueFormatter { _, targets ->
-        val first = targets.firstOrNull()
-        val value = if (first is LineCartesianLayerMarkerTarget) {
-            first.points.sumOf { it.entry.y.toLong() }
-        } else 0L
+    markerValueFormatter: DefaultCartesianMarker.ValueFormatter = remember {
+        DefaultCartesianMarker.ValueFormatter { _, targets ->
+            val first = targets.firstOrNull()
+            val value = if (first is LineCartesianLayerMarkerTarget) {
+                first.points.sumOf { it.entry.y.toLong() }
+            } else 0L
 
-        if (value >= 60 * 60 * 1000) {
-            millisecondsToHoursMinutes(value, hoursMinutesFormat)
-        } else {
-            millisecondsToMinutes(value, minutesFormat)
+            if (value >= 60 * 60 * 1000) {
+                millisecondsToHoursMinutes(value, hoursMinutesFormat)
+            } else {
+                millisecondsToMinutes(value, minutesFormat)
+            }
         }
     },
     zoomState: VicoZoomState = rememberVicoZoomState(

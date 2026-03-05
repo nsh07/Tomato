@@ -235,8 +235,10 @@ fun SharedTransitionScope.LastWeekScreen(
                         hoursFormat = hoursFormat,
                         hoursMinutesFormat = hoursMinutesFormat,
                         minutesFormat = minutesFormat,
-                        xValueFormatter = CartesianValueFormatter { context, x, _ ->
-                            context.model.extraStore[mainChartData.second][x.toInt()]
+                        xValueFormatter = remember(mainChartData.second) {
+                            CartesianValueFormatter { context, x, _ ->
+                                context.model.extraStore[mainChartData.second][x.toInt()]
+                            }
                         },
                         goal = goal,
                         zoomState = zoomState,

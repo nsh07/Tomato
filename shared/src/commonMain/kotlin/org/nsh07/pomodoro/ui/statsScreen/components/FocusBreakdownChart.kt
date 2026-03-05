@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.ui.statsScreen.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
@@ -35,13 +36,15 @@ fun FocusBreakdownChart(
         hoursFormat = hoursFormat,
         hoursMinutesFormat = hoursMinutesFormat,
         minutesFormat = minutesFormat,
-        xValueFormatter = CartesianValueFormatter { _, value, _ ->
-            when (value) {
-                0.0 -> "0 - 6"
-                1.0 -> "6 - 12"
-                2.0 -> "12 - 18"
-                3.0 -> "18 - 24"
-                else -> ""
+        xValueFormatter = remember {
+            CartesianValueFormatter { _, value, _ ->
+                when (value) {
+                    0.0 -> "0 - 6"
+                    1.0 -> "6 - 12"
+                    2.0 -> "12 - 18"
+                    3.0 -> "18 - 24"
+                    else -> ""
+                }
             }
         },
         goal = 0,

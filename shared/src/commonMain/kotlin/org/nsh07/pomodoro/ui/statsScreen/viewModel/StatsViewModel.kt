@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Nishant Mishra
+ * Copyright (c) 2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -75,6 +75,17 @@ class StatsViewModel(
         )
     }
 
+    val lastWeekChartProducer = CartesianChartModelProducer()
+    val lastWeekXLabelKey = ExtraStore.Key<List<String>>()
+
+    val lastMonthChartProducer = CartesianChartModelProducer()
+    val lastMonthXLabelKey = ExtraStore.Key<List<String>>()
+
+    val lastYearChartProducer = CartesianChartModelProducer()
+    val lastYearXLabelKey = ExtraStore.Key<List<String>>()
+
+    private val yearDayFormatter = DateTimeFormatter.ofPattern("d MMM")
+
     val todayStat = statRepository
         .getTodayStat()
         .stateIn(
@@ -91,21 +102,55 @@ class StatsViewModel(
             initialValue = null
         )
 
-    private val lastWeekSummary =
-        Pair(CartesianChartModelProducer(), ExtraStore.Key<List<String>>())
-    private val lastMonthSummary =
-        Pair(CartesianChartModelProducer(), ExtraStore.Key<List<String>>())
-    private val lastYearSummary =
-        Pair(CartesianChartModelProducer(), ExtraStore.Key<List<String>>())
-
-    private val yearDayFormatter = DateTimeFormatter.ofPattern("d MMM")
-
     private val lastWeekStatsFlow = statRepository.getLastNDaysStats(7).filter { it.isNotEmpty() }
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000), replay = 1)
     private val lastMonthStatsFlow = statRepository.getLastNDaysStats(31).filter { it.isNotEmpty() }
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000), replay = 1)
     private val lastYearStatsFlow = statRepository.getLastNDaysStats(365).filter { it.isNotEmpty() }
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000), replay = 1)
+
+    init {
+        viewModelScope.launch(Dispatchers.Default) {
+            lastWeekStatsFlow.collect { list ->
+                val reversed = list.reversed()
+                val keys = reversed.map {
+                    it.date.dayOfWeek.getDisplayName(TextStyle.NARROW, Locale.getDefault())
+                }
+                val values = reversed.map { it.totalFocusTime() }
+
+                lastWeekChartProducer.runTransaction {
+                    columnSeries { series(values) }
+                    extras { it[lastWeekXLabelKey] = keys }
+                }
+            }
+        }
+
+        viewModelScope.launch(Dispatchers.Default) {
+            lastMonthStatsFlow.collect { list ->
+                val reversed = list.reversed()
+                val keys = reversed.map { it.date.dayOfMonth.toString() }
+                val values = reversed.map { it.totalFocusTime() }
+
+                lastMonthChartProducer.runTransaction {
+                    columnSeries { series(values) }
+                    extras { it[lastMonthXLabelKey] = keys }
+                }
+            }
+        }
+
+        viewModelScope.launch(Dispatchers.Default) {
+            lastYearStatsFlow.collect { list ->
+                val reversed = list.reversed()
+                val keys = reversed.map { it.date.format(yearDayFormatter) }
+                val values = reversed.map { it.totalFocusTime() }
+
+                lastYearChartProducer.runTransaction {
+                    lineSeries { series(values) }
+                    extras { it[lastYearXLabelKey] = keys }
+                }
+            }
+        }
+    }
 
     val lastYearMaxFocus: StateFlow<Long> = lastYearStatsFlow
         .map { list ->
@@ -118,31 +163,6 @@ class StatsViewModel(
             initialValue = Long.MAX_VALUE
         )
 
-    val lastWeekMainChartData: StateFlow<Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>> =
-        lastWeekStatsFlow
-            .map { list ->
-                // reversing is required because we need ascending order while the DB returns descending order
-                val reversed = list.reversed()
-                val keys = reversed.map {
-                    it.date.dayOfWeek.getDisplayName(
-                        TextStyle.NARROW,
-                        Locale.getDefault()
-                    )
-                }
-                val values = reversed.map { it.totalFocusTime() }
-                lastWeekSummary.first.runTransaction {
-                    columnSeries { series(values) }
-                    extras { it[lastWeekSummary.second] = keys }
-                }
-                lastWeekSummary
-            }
-            .flowOn(Dispatchers.Default)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = lastWeekSummary
-            )
-
     val lastWeekFocusHistoryValues: StateFlow<List<Pair<String, List<Long>>>> =
         lastWeekStatsFlow
             .map { value ->
@@ -152,12 +172,7 @@ class StatsViewModel(
                             TextStyle.NARROW,
                             Locale.getDefault()
                         ),
-                        listOf(
-                            it.focusTimeQ1,
-                            it.focusTimeQ2,
-                            it.focusTimeQ3,
-                            it.focusTimeQ4
-                        )
+                        listOf(it.focusTimeQ1, it.focusTimeQ2, it.focusTimeQ3, it.focusTimeQ4)
                     )
                 }
             }
@@ -188,34 +203,15 @@ class StatsViewModel(
                 initialValue = Pair(listOf(0L, 0L, 0L, 0L), 0L)
             )
 
-    val lastMonthMainChartData: StateFlow<Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>> =
-        lastMonthStatsFlow
-            .map { list ->
-                val reversed = list.reversed()
-                val keys = reversed.map { it.date.dayOfMonth.toString() }
-                val values = reversed.map { it.totalFocusTime() }
-                lastMonthSummary.first.runTransaction {
-                    columnSeries { series(values) }
-                    extras { it[lastMonthSummary.second] = keys }
-                }
-                lastMonthSummary
-            }
-            .flowOn(Dispatchers.Default)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = lastMonthSummary
-            )
-
     val lastMonthCalendarData: StateFlow<List<Stat?>> =
         lastMonthStatsFlow
             .map { list ->
-                val list = list.reversed()
+                val reversedList = list.reversed()
                 buildList {
-                    repeat(list.first().date.dayOfWeek.value - DayOfWeek.MONDAY.value) {
-                        add(null) // Make sure that the data starts with a Monday
+                    repeat(reversedList.first().date.dayOfWeek.value - DayOfWeek.MONDAY.value) {
+                        add(null)
                     }
-                    addAll(list)
+                    addAll(reversedList)
                 }
             }
             .flowOn(Dispatchers.Default)
@@ -245,38 +241,19 @@ class StatsViewModel(
                 initialValue = Pair(listOf(0L, 0L, 0L, 0L), 0L)
             )
 
-    val lastYearMainChartData: StateFlow<Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>> =
-        lastYearStatsFlow
-            .map { list ->
-                val reversed = list.reversed()
-                val keys = reversed.map { it.date.format(yearDayFormatter) }
-                val values = reversed.map { it.totalFocusTime() }
-                lastYearSummary.first.runTransaction {
-                    lineSeries { series(values) }
-                    extras { it[lastYearSummary.second] = keys }
-                }
-                lastYearSummary
-            }
-            .flowOn(Dispatchers.Default)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = lastYearSummary
-            )
-
     val lastYearFocusHeatmapData: StateFlow<List<Stat?>> =
         lastYearStatsFlow
             .map { list ->
-                val list = list.reversed()
+                val reversedList = list.reversed()
                 buildList {
-                    repeat(list.first().date.dayOfWeek.value - DayOfWeek.MONDAY.value) {
-                        add(null) // Make sure that the data starts with a Monday
+                    repeat(reversedList.first().date.dayOfWeek.value - DayOfWeek.MONDAY.value) {
+                        add(null)
                     }
-                    list.indices.forEach {
-                        if (it > 0 && list[it].date.month != list[it - 1].date.month) {
-                            repeat(7) { add(null) } // Add a week gap if a new month starts
+                    reversedList.indices.forEach {
+                        if (it > 0 && reversedList[it].date.month != reversedList[it - 1].date.month) {
+                            repeat(7) { add(null) }
                         }
-                        add(list[it])
+                        add(reversedList[it])
                     }
                 }
             }

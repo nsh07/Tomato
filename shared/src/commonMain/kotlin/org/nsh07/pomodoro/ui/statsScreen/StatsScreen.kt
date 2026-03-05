@@ -101,10 +101,6 @@ fun StatsScreenRoot(
                     val allTimeTotalFocus by
                     viewModel.allTimeTotalFocus.collectAsStateWithLifecycle(null)
 
-                    val lastWeekMainChartData by viewModel.lastWeekMainChartData.collectAsStateWithLifecycle()
-                    val lastMonthMainChartData by viewModel.lastMonthMainChartData.collectAsStateWithLifecycle()
-                    val lastYearMainChartData by viewModel.lastYearMainChartData.collectAsStateWithLifecycle()
-
                     val lastWeekFocusBreakdownValues by viewModel.lastWeekFocusBreakdownValues.collectAsStateWithLifecycle()
                     val lastMonthFocusBreakdownValues by viewModel.lastMonthFocusBreakdownValues.collectAsStateWithLifecycle()
                     val lastYearFocusBreakdownValues by viewModel.lastYearFocusBreakdownValues.collectAsStateWithLifecycle()
@@ -112,9 +108,12 @@ fun StatsScreenRoot(
                     StatsMainScreen(
                         goal = focusGoal,
                         contentPadding = contentPadding,
-                        lastWeekSummaryChartData = lastWeekMainChartData,
-                        lastMonthSummaryChartData = lastMonthMainChartData,
-                        lastYearSummaryChartData = lastYearMainChartData,
+                        lastWeekSummaryChartModelProducer = viewModel.lastWeekChartProducer,
+                        lastWeekSummaryChartXLabelKey = viewModel.lastWeekXLabelKey,
+                        lastMonthSummaryChartModelProducer = viewModel.lastMonthChartProducer,
+                        lastMonthSummaryChartXLabelKey = viewModel.lastMonthXLabelKey,
+                        lastYearSummaryChartModelProducer = viewModel.lastYearChartProducer,
+                        lastYearSummaryChartXLabelKey = viewModel.lastYearXLabelKey,
                         todayStat = todayStat,
                         allTimeTotalFocus = allTimeTotalFocus,
                         lastWeekAverageFocusTimes = lastWeekFocusBreakdownValues.first,
@@ -137,7 +136,6 @@ fun StatsScreenRoot(
                 entry<Screen.Stats.LastWeek>(
                     metadata = detailPane()
                 ) {
-                    val lastWeekMainChartData by viewModel.lastWeekMainChartData.collectAsStateWithLifecycle()
                     val lastWeekFocusHistoryValues by viewModel.lastWeekFocusHistoryValues.collectAsStateWithLifecycle()
                     val lastWeekFocusBreakdownValues by viewModel.lastWeekFocusBreakdownValues.collectAsStateWithLifecycle()
 
@@ -146,7 +144,8 @@ fun StatsScreenRoot(
                         contentPadding = contentPadding,
                         focusBreakdownValues = lastWeekFocusBreakdownValues,
                         focusHistoryValues = lastWeekFocusHistoryValues,
-                        mainChartData = lastWeekMainChartData,
+                        mainChartModelProducer = viewModel.lastWeekChartProducer,
+                        xLabelKey = viewModel.lastWeekXLabelKey,
                         onBack = backStack::onBack,
                         hoursMinutesFormat = hoursMinutesFormat,
                         hoursFormat = hoursFormat,
@@ -159,7 +158,6 @@ fun StatsScreenRoot(
                 entry<Screen.Stats.LastMonth>(
                     metadata = detailPane()
                 ) {
-                    val lastMonthMainChartData by viewModel.lastMonthMainChartData.collectAsStateWithLifecycle()
                     val lastMonthCalendarData by viewModel.lastMonthCalendarData.collectAsStateWithLifecycle()
                     val lastMonthFocusBreakdownValues by viewModel.lastMonthFocusBreakdownValues.collectAsStateWithLifecycle()
 
@@ -168,7 +166,8 @@ fun StatsScreenRoot(
                         contentPadding = contentPadding,
                         focusBreakdownValues = lastMonthFocusBreakdownValues,
                         calendarData = lastMonthCalendarData,
-                        mainChartData = lastMonthMainChartData,
+                        mainChartModelProducer = viewModel.lastMonthChartProducer,
+                        xLabelKey = viewModel.lastMonthXLabelKey,
                         onBack = backStack::onBack,
                         hoursMinutesFormat = hoursMinutesFormat,
                         hoursFormat = hoursFormat,
@@ -181,7 +180,6 @@ fun StatsScreenRoot(
                 entry<Screen.Stats.LastYear>(
                     metadata = detailPane()
                 ) {
-                    val lastYearMainChartData by viewModel.lastYearMainChartData.collectAsStateWithLifecycle()
                     val lastYearFocusHeatmapData by viewModel.lastYearFocusHeatmapData.collectAsStateWithLifecycle()
                     val lastYearFocusBreakdownValues by viewModel.lastYearFocusBreakdownValues.collectAsStateWithLifecycle()
                     val lastYearMaxFocus by viewModel.lastYearMaxFocus.collectAsStateWithLifecycle()
@@ -192,7 +190,8 @@ fun StatsScreenRoot(
                         focusBreakdownValues = lastYearFocusBreakdownValues,
                         focusHeatmapData = lastYearFocusHeatmapData,
                         heatmapMaxValue = lastYearMaxFocus,
-                        mainChartData = lastYearMainChartData,
+                        mainChartModelProducer = viewModel.lastYearChartProducer,
+                        xLabelKey = viewModel.lastYearXLabelKey,
                         onBack = backStack::onBack,
                         hoursMinutesFormat = hoursMinutesFormat,
                         hoursFormat = hoursFormat,

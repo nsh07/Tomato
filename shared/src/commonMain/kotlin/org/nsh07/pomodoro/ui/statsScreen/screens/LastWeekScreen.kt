@@ -103,7 +103,8 @@ fun SharedTransitionScope.LastWeekScreen(
     contentPadding: PaddingValues,
     focusBreakdownValues: Pair<List<Long>, Long>,
     focusHistoryValues: List<Pair<String, List<Long>>>,
-    mainChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
+    mainChartModelProducer: CartesianChartModelProducer,
+    xLabelKey: ExtraStore.Key<List<String>>,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     hoursMinutesFormat: String,
@@ -231,13 +232,13 @@ fun SharedTransitionScope.LastWeekScreen(
                 }
                 item {
                     TimeColumnChart(
-                        modelProducer = mainChartData.first,
+                        modelProducer = mainChartModelProducer,
                         hoursFormat = hoursFormat,
                         hoursMinutesFormat = hoursMinutesFormat,
                         minutesFormat = minutesFormat,
-                        xValueFormatter = remember(mainChartData.second) {
+                        xValueFormatter = remember(xLabelKey) {
                             CartesianValueFormatter { context, x, _ ->
-                                context.model.extraStore[mainChartData.second][x.toInt()]
+                                context.model.extraStore[xLabelKey][x.toInt()]
                             }
                         },
                         goal = goal,

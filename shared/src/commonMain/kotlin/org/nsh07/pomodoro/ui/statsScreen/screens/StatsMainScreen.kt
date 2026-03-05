@@ -98,9 +98,12 @@ import tomato.shared.generated.resources.total
 fun SharedTransitionScope.StatsMainScreen(
     contentPadding: PaddingValues,
     goal: Long,
-    lastWeekSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
-    lastMonthSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
-    lastYearSummaryChartData: Pair<CartesianChartModelProducer, ExtraStore.Key<List<String>>>,
+    lastWeekSummaryChartModelProducer: CartesianChartModelProducer,
+    lastWeekSummaryChartXLabelKey: ExtraStore.Key<List<String>>,
+    lastMonthSummaryChartModelProducer: CartesianChartModelProducer,
+    lastMonthSummaryChartXLabelKey: ExtraStore.Key<List<String>>,
+    lastYearSummaryChartModelProducer: CartesianChartModelProducer,
+    lastYearSummaryChartXLabelKey: ExtraStore.Key<List<String>>,
     todayStat: Stat?,
     allTimeTotalFocus: Long?,
     lastWeekAverageFocusTimes: List<Long>,
@@ -325,13 +328,13 @@ fun SharedTransitionScope.StatsMainScreen(
                     }
 
                     TimeColumnChart(
-                        modelProducer = lastWeekSummaryChartData.first,
+                        modelProducer = lastWeekSummaryChartModelProducer,
                         hoursFormat = hoursFormat,
                         hoursMinutesFormat = hoursMinutesFormat,
                         minutesFormat = minutesFormat,
-                        xValueFormatter = remember(lastWeekSummaryChartData.second) {
+                        xValueFormatter = remember(lastWeekSummaryChartXLabelKey) {
                             CartesianValueFormatter { context, x, _ ->
-                                context.model.extraStore[lastWeekSummaryChartData.second][x.toInt()]
+                                context.model.extraStore[lastWeekSummaryChartXLabelKey][x.toInt()]
                             }
                         },
                         goal = goal,
@@ -434,14 +437,14 @@ fun SharedTransitionScope.StatsMainScreen(
                     }
 
                     TimeColumnChart(
-                        modelProducer = lastMonthSummaryChartData.first,
+                        modelProducer = lastMonthSummaryChartModelProducer,
                         hoursFormat = hoursFormat,
                         hoursMinutesFormat = hoursMinutesFormat,
                         minutesFormat = minutesFormat,
                         thickness = 8.dp,
-                        xValueFormatter = remember(lastMonthSummaryChartData.second) {
+                        xValueFormatter = remember(lastMonthSummaryChartXLabelKey) {
                             CartesianValueFormatter { context, x, _ ->
-                                context.model.extraStore[lastMonthSummaryChartData.second][x.toInt()]
+                                context.model.extraStore[lastMonthSummaryChartXLabelKey][x.toInt()]
                             }
                         },
                         goal = goal,
@@ -546,13 +549,13 @@ fun SharedTransitionScope.StatsMainScreen(
                     }
 
                     TimeLineChart(
-                        modelProducer = lastYearSummaryChartData.first,
+                        modelProducer = lastYearSummaryChartModelProducer,
                         hoursFormat = hoursFormat,
                         hoursMinutesFormat = hoursMinutesFormat,
                         minutesFormat = minutesFormat,
-                        xValueFormatter = remember(lastYearSummaryChartData.second) {
+                        xValueFormatter = remember(lastYearSummaryChartXLabelKey) {
                             CartesianValueFormatter { context, x, _ ->
-                                context.model.extraStore[lastYearSummaryChartData.second][x.toInt()]
+                                context.model.extraStore[lastYearSummaryChartXLabelKey][x.toInt()]
                             }
                         },
                         goal = goal,

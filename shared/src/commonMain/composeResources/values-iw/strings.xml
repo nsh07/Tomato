@@ -118,12 +118,12 @@
     <string name="vibrate_desc">הפעלת רטט בעת סיום של קוצב זמן</string>
     <string name="restart_app">פתיחת היישום מחדש</string>
     <string name="restart">פתיחה מחדש</string>
-    <string name="dnd_permission_message">הפעלת הרשאה עבור „%1$s”</string>
+    <string name="dnd_permission_message">הפעלת הרשאה עבור %1$s</string>
     <string name="dynamic_color_desc">אימוץ צבעי הנושא מהרקע שלך</string>
     <string name="focus_breakdown_desc">משכי זמן ממוצעים של מיקוד במהלך שעות שונות ביום</string>
     <string name="get_plus">רכישת Tomato+</string>
     <string name="less">פחות</string>
-    <string name="pomodoro_info">„סבב” הוא רצף פרקי זמן של פומודורו, הכוללים פרקי זמן למיקוד, פרקי זמן להפסקה, ופרקי זמן של הפסקה ארוכה. ההפסקה האחרונה של הסבב היא תמיד ארוכה.</string>
+    <string name="pomodoro_info">סבב הוא רצף פרקי זמן של פומודורו, הכוללים פרקי זמן למיקוד, פרקי זמן להפסקה, ופרקי זמן של הפסקה ארוכה. ההפסקה האחרונה של הסבב היא תמיד ארוכה.</string>
     <string name="secure_aod">‏AOD מאובטח</string>
     <string name="secure_aod_desc">נעילה אוטומטית של המכשיר לאחר פרק זמן מסוים, תוך כדי השארת ה־AOD גלוי</string>
     <string name="session_length_desc">פרקי זמן למיקוד בסבב אחד: %1$d</string>
@@ -138,4 +138,10 @@
     <string name="media_volume_for_alarm_desc">השמעה דרך האוזניות בלבד. אם האוזניות מנותקות, ההתראה תושמע דרך הרמקול ולפי עוצמת הקול של המדיה.</string>
     <string name="focus_breakdown">התפלגות מיקוד</string>
     <string name="focus_history_desc">התפלגות המיקוד של כל יום בשבוע שעבר. יש ללחוץ על תרשים של יום מסוים למידע נוסף.</string>
+    <string name="infinite">לעד</string>
+    <string name="infinite_focus">מיקוד לעד</string>
+    <string name="settings_infinite_focus_tip">לחיצה ארוכה על שעון קוצב הזמן תפעיל את מצב המיקוד לעד</string>
+    <string name="cancel">ביטול</string>
+    <string name="focus_history_heatmap">מפת היסטוריית מיקוד</string>
+    <string name="history_widget_desc">צפייה בטבלה של משכי הזמן של המיקוד בימים קודמים. מספר הימים שיוצגו תלוי בגודל הווידג׳ט.</string>
 </resources>

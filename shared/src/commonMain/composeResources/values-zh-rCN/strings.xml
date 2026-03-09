@@ -48,7 +48,7 @@
     <string name="settings">设置</string>
     <string name="session_length">小节长度</string>
     <string name="session_length_desc">一小节内的专注时段: %1$d</string>
-    <string name="pomodoro_info">一个“小节”是一系列包含专注时段、短休息时段和长休息时段的番茄钟时段。一个小节的最后一个休息时段始终是长休息时段。</string>
+    <string name="pomodoro_info">一个「小节」是一系列包含专注时段、短休息时段和长休息时段的番茄钟时段。一个小节的最后一个休息时段始终是长休息时段。</string>
     <string name="stats">统计</string>
     <string name="today">今天</string>
     <string name="break_">休息</string>
@@ -141,4 +141,8 @@
     <string name="choose_file">选择文件</string>
     <string name="restart_app">重启应用</string>
     <string name="vibration_pattern">振动模式</string>
+    <string name="infinite">无限</string>
+    <string name="infinite_focus">无限专注时长</string>
+    <string name="settings_infinite_focus_tip">长按计时器时钟来启用无限专注模式</string>
+    <string name="cancel">取消</string>
 </resources>

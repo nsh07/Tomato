@@ -146,4 +146,5 @@
     <string name="infinite">無限</string>
     <string name="infinite_focus">無限專注</string>
     <string name="settings_infinite_focus_tip">長按計時器時鐘即可啟用無限專注模式</string>
+    <string name="cancel">取消</string>
 </resources>

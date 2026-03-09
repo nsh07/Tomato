@@ -156,7 +156,7 @@ fun SharedTransitionScope.LastYearScreen(
                     Text(
                         text = stringResource(Res.string.last_year),
                         fontFamily = LocalAppFonts.current.topBarTitle,
-                        modifier = Modifier.sharedBounds(
+                        modifier = Modifier.sharedElement(
                             sharedContentState = this@LastYearScreen
                                 .rememberSharedContentState("last year heading"),
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current
@@ -212,31 +212,25 @@ fun SharedTransitionScope.LastYearScreen(
                     Row(
                         verticalAlignment = Alignment.Bottom,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .sharedElement(
+                                sharedContentState = this@LastYearScreen
+                                    .rememberSharedContentState("last year average focus timer"),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
                     ) {
                         Text(
                             millisecondsToHoursMinutes(
                                 focusDuration,
                                 hoursMinutesFormat
                             ),
-                            style = typography.displaySmall,
-                            modifier = Modifier
-                                .sharedElement(
-                                    sharedContentState = this@LastYearScreen
-                                        .rememberSharedContentState("last year average focus timer"),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                )
+                            style = typography.displaySmall
                         )
                         Text(
                             stringResource(Res.string.focus_per_day_avg),
                             style = typography.titleSmall,
-                            modifier = Modifier
-                                .padding(bottom = 5.2.dp)
-                                .sharedElement(
-                                    sharedContentState = this@LastYearScreen
-                                        .rememberSharedContentState("focus per day average (year)"),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                )
+                            modifier = Modifier.padding(bottom = 5.2.dp)
                         )
                     }
                 }

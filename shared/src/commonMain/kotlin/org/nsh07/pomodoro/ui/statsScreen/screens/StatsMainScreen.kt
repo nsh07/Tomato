@@ -120,6 +120,7 @@ fun SharedTransitionScope.StatsMainScreen(
     appInfo: AppInfo = koinInject(),
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val topBarTitleFont = LocalAppFonts.current.topBarTitle
 
     val widthExpanded = currentWindowAdaptiveInfo()
         .windowSizeClass
@@ -132,7 +133,7 @@ fun SharedTransitionScope.StatsMainScreen(
                     Text(
                         stringResource(Res.string.stats),
                         style = LocalTextStyle.current.copy(
-                            fontFamily = LocalAppFonts.current.topBarTitle,
+                            fontFamily = topBarTitleFont,
                             fontSize = 32.sp,
                             lineHeight = 32.sp
                         ),
@@ -174,7 +175,8 @@ fun SharedTransitionScope.StatsMainScreen(
             item {
                 Text(
                     stringResource(Res.string.today),
-                    style = typography.headlineSmall,
+                    style = typography.titleLarge,
+                    fontFamily = topBarTitleFont,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
@@ -273,8 +275,9 @@ fun SharedTransitionScope.StatsMainScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             stringResource(Res.string.last_week),
-                            style = typography.headlineSmall,
-                            modifier = if (!widthExpanded) Modifier.sharedBounds(
+                            style = typography.titleLarge,
+                            fontFamily = topBarTitleFont,
+                            modifier = if (!widthExpanded) Modifier.sharedElement(
                                 sharedContentState = this@StatsMainScreen
                                     .rememberSharedContentState("last week heading"),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current
@@ -291,7 +294,15 @@ fun SharedTransitionScope.StatsMainScreen(
 
                     Row(
                         verticalAlignment = Alignment.Bottom,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = if (!widthExpanded) {
+                            Modifier
+                                .sharedElement(
+                                    sharedContentState = this@StatsMainScreen
+                                        .rememberSharedContentState("last week average focus timer"),
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                )
+                        } else Modifier
                     ) {
                         Text(
                             millisecondsToHoursMinutes(
@@ -300,30 +311,12 @@ fun SharedTransitionScope.StatsMainScreen(
                                 },
                                 hoursMinutesFormat
                             ),
-                            style = typography.displaySmall,
-                            modifier = if (!widthExpanded) {
-                                Modifier
-                                    .sharedElement(
-                                        sharedContentState = this@StatsMainScreen
-                                            .rememberSharedContentState("last week average focus timer"),
-                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                    )
-                            } else Modifier
+                            style = typography.displaySmall
                         )
                         Text(
                             stringResource(Res.string.focus_per_day_avg),
                             style = typography.titleSmall,
-                            modifier = Modifier
-                                .padding(bottom = 5.2.dp)
-                                .then(
-                                    if (!widthExpanded) {
-                                        Modifier.sharedElement(
-                                            sharedContentState = this@StatsMainScreen
-                                                .rememberSharedContentState("focus per day average (week)"),
-                                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                        )
-                                    } else Modifier
-                                )
+                            modifier = Modifier.padding(bottom = 5.2.dp)
                         )
                     }
 
@@ -380,9 +373,10 @@ fun SharedTransitionScope.StatsMainScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             stringResource(Res.string.last_month),
-                            style = typography.headlineSmall,
+                            style = typography.titleLarge,
+                            fontFamily = topBarTitleFont,
                             modifier = if (!widthExpanded) {
-                                Modifier.sharedBounds(
+                                Modifier.sharedElement(
                                     sharedContentState = this@StatsMainScreen
                                         .rememberSharedContentState("last month heading"),
                                     animatedVisibilityScope = LocalNavAnimatedContentScope.current
@@ -401,6 +395,13 @@ fun SharedTransitionScope.StatsMainScreen(
                     Row(
                         verticalAlignment = Alignment.Bottom,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = if (!widthExpanded) {
+                            Modifier.sharedElement(
+                                sharedContentState = this@StatsMainScreen
+                                    .rememberSharedContentState("focus per day average (month)"),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
+                        } else Modifier
                     ) {
                         Text(
                             millisecondsToHoursMinutes(
@@ -409,30 +410,12 @@ fun SharedTransitionScope.StatsMainScreen(
                                 },
                                 hoursMinutesFormat
                             ),
-                            style = typography.displaySmall,
-                            modifier = if (!widthExpanded) {
-                                Modifier
-                                    .sharedElement(
-                                        sharedContentState = this@StatsMainScreen
-                                            .rememberSharedContentState("last month average focus timer"),
-                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                    )
-                            } else Modifier
+                            style = typography.displaySmall
                         )
                         Text(
                             text = stringResource(Res.string.focus_per_day_avg),
                             style = typography.titleSmall,
-                            modifier = Modifier
-                                .padding(bottom = 5.2.dp)
-                                .then(
-                                    if (!widthExpanded) {
-                                        Modifier.sharedElement(
-                                            sharedContentState = this@StatsMainScreen
-                                                .rememberSharedContentState("focus per day average (month)"),
-                                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                        )
-                                    } else Modifier
-                                )
+                            modifier = Modifier.padding(bottom = 5.2.dp)
                         )
                     }
 
@@ -490,9 +473,10 @@ fun SharedTransitionScope.StatsMainScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             stringResource(Res.string.last_year),
-                            style = typography.headlineSmall,
+                            style = typography.titleLarge,
+                            fontFamily = topBarTitleFont,
                             modifier = if (!widthExpanded) {
-                                Modifier.sharedBounds(
+                                Modifier.sharedElement(
                                     sharedContentState = this@StatsMainScreen
                                         .rememberSharedContentState("last year heading"),
                                     animatedVisibilityScope = LocalNavAnimatedContentScope.current
@@ -510,7 +494,14 @@ fun SharedTransitionScope.StatsMainScreen(
 
                     Row(
                         verticalAlignment = Alignment.Bottom,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = if (!widthExpanded) {
+                            Modifier.sharedElement(
+                                sharedContentState = this@StatsMainScreen
+                                    .rememberSharedContentState("last year average focus timer"),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
+                        } else Modifier
                     ) {
                         Text(
                             millisecondsToHoursMinutes(
@@ -519,32 +510,12 @@ fun SharedTransitionScope.StatsMainScreen(
                                 },
                                 hoursMinutesFormat
                             ),
-                            style = typography.displaySmall,
-                            modifier = Modifier
-                                .then(
-                                    if (!widthExpanded) {
-                                        Modifier.sharedElement(
-                                            sharedContentState = this@StatsMainScreen
-                                                .rememberSharedContentState("last year average focus timer"),
-                                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                        )
-                                    } else Modifier
-                                )
+                            style = typography.displaySmall
                         )
                         Text(
                             text = stringResource(Res.string.focus_per_day_avg),
                             style = typography.titleSmall,
-                            modifier = Modifier
-                                .padding(bottom = 5.2.dp)
-                                .then(
-                                    if (!widthExpanded) {
-                                        Modifier.sharedElement(
-                                            sharedContentState = this@StatsMainScreen
-                                                .rememberSharedContentState("focus per day average (year)"),
-                                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                        )
-                                    } else Modifier
-                                )
+                            modifier = Modifier.padding(bottom = 5.2.dp)
                         )
                     }
 

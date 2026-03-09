@@ -146,7 +146,7 @@ fun SharedTransitionScope.LastWeekScreen(
                     Text(
                         text = stringResource(Res.string.last_week),
                         fontFamily = LocalAppFonts.current.topBarTitle,
-                        modifier = Modifier.sharedBounds(
+                        modifier = Modifier.sharedElement(
                             sharedContentState = this@LastWeekScreen
                                 .rememberSharedContentState("last week heading"),
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current
@@ -202,31 +202,27 @@ fun SharedTransitionScope.LastWeekScreen(
                     Spacer(Modifier.height(16.dp))
                     Row(
                         verticalAlignment = Alignment.Bottom,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = if (!widthExpanded) {
+                            Modifier.sharedElement(
+                                sharedContentState = this@LastWeekScreen
+                                    .rememberSharedContentState("last week average focus timer"),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            )
+                        } else Modifier
                     ) {
                         Text(
                             millisecondsToHoursMinutes(
                                 focusDuration,
                                 hoursMinutesFormat
                             ),
-                            style = typography.displaySmall,
-                            modifier = Modifier
-                                .sharedElement(
-                                    sharedContentState = this@LastWeekScreen
-                                        .rememberSharedContentState("last week average focus timer"),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                )
+                            style = typography.displaySmall
                         )
                         Text(
                             stringResource(Res.string.focus_per_day_avg),
                             style = typography.titleSmall,
                             modifier = Modifier
                                 .padding(bottom = 5.2.dp)
-                                .sharedElement(
-                                    sharedContentState = this@LastWeekScreen
-                                        .rememberSharedContentState("focus per day average (week)"),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                )
                         )
                     }
                 }

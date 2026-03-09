@@ -398,7 +398,7 @@ fun SharedTransitionScope.StatsMainScreen(
                         modifier = if (!widthExpanded) {
                             Modifier.sharedElement(
                                 sharedContentState = this@StatsMainScreen
-                                    .rememberSharedContentState("focus per day average (month)"),
+                                    .rememberSharedContentState("last month average focus timer"),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current
                             )
                         } else Modifier

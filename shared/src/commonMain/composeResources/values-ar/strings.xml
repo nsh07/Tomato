@@ -144,4 +144,5 @@
     <string name="infinite_focus">التركيز اللامتناهي</string>
     <string name="settings_infinite_focus_tip">اضغط مطول على ساعة المؤقت لتفعيل وضع التركيز اللامتناهي</string>
     <string name="infinite">اللامتناهي</string>
+    <string name="cancel">إلغاء</string>
 </resources>

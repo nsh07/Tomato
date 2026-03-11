@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -29,6 +30,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.bmc
 import tomato.shared.generated.resources.open_in_browser
@@ -38,7 +41,8 @@ import tomato.shared.generated.resources.weblate
 @Composable
 fun TopButton(modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current
-    ClickableListItem(
+    SegmentedListItem(
+        onClick = { uriHandler.openUri("https://coff.ee/nsh07") },
         leadingContent = {
             Icon(
                 painterResource(Res.drawable.bmc),
@@ -47,20 +51,21 @@ fun TopButton(modifier: Modifier = Modifier) {
                 modifier = Modifier.size(24.dp)
             )
         },
-        headlineContent = { Text(stringResource(R.string.bmc)) },
+        content = { Text(stringResource(R.string.bmc)) },
         supportingContent = { Text(stringResource(R.string.bmc_desc)) },
         trailingContent = { Icon(painterResource(Res.drawable.open_in_browser), null) },
-        items = 2,
-        index = 0,
+        shapes = segmentedListItemShapes(0, 2),
+        colors = listItemColors,
         modifier = modifier
-    ) { uriHandler.openUri("https://coff.ee/nsh07") }
+    )
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun BottomButton(modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current
-    ClickableListItem(
+    SegmentedListItem(
+        onClick = { uriHandler.openUri("https://hosted.weblate.org/engage/tomato/") },
         leadingContent = {
             Icon(
                 painterResource(Res.drawable.weblate),
@@ -69,11 +74,11 @@ fun BottomButton(modifier: Modifier = Modifier) {
                 modifier = Modifier.size(24.dp)
             )
         },
-        headlineContent = { Text(stringResource(R.string.help_with_translation)) },
+        content = { Text(stringResource(R.string.help_with_translation)) },
         supportingContent = { Text(stringResource(R.string.help_with_translation_desc)) },
         trailingContent = { Icon(painterResource(Res.drawable.open_in_browser), null) },
-        items = 2,
-        index = 1,
+        shapes = segmentedListItemShapes(1, 2),
+        colors = listItemColors,
         modifier = modifier
-    ) { uriHandler.openUri("https://hosted.weblate.org/engage/tomato/") }
+    )
 }

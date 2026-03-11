@@ -43,6 +43,7 @@ import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -68,7 +69,6 @@ import org.koin.compose.koinInject
 import org.nsh07.pomodoro.di.AppInfo
 import org.nsh07.pomodoro.di.FlavorUI
 import org.nsh07.pomodoro.ui.mergePaddingValues
-import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.LicenseBottomSheet
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
@@ -76,6 +76,7 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import tomato.shared.generated.resources.Res
@@ -298,13 +299,15 @@ fun AboutScreen(
                 item { Spacer(Modifier.height(12.dp)) }
 
                 item {
-                    ClickableListItem(
+                    SegmentedListItem(
+                        onClick = { showLicense = true },
                         leadingContent = { Icon(painterResource(Res.drawable.gavel), null) },
-                        headlineContent = { Text(stringResource(Res.string.license)) },
+                        content = { Text(stringResource(Res.string.license)) },
                         supportingContent = { Text("GNU General Public License Version 3") },
-                        items = 1,
-                        index = 0
-                    ) { showLicense = true }
+                        selected = showLicense,
+                        shapes = segmentedListItemShapes(0, 1),
+                        colors = listItemColors
+                    )
                 }
             }
         }

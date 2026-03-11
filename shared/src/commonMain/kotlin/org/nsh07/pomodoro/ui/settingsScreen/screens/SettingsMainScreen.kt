@@ -50,6 +50,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
@@ -70,6 +71,7 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
+import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.androidDeviceManufacturerIs
 import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import tomato.shared.generated.resources.Res
@@ -248,7 +250,7 @@ fun SettingsMainScreen(
                             Text(currentLocale.platformLocale.displayLanguage)
                         },
                         selected = showLocaleSheet,
-                        shapes = segmentedListItemShapes(0, 1, true),
+                        shapes = segmentedListItemShapes(0, 1),
                         colors = listItemColors,
                         onClick = { showLocaleSheet = true }
                     ) { Text(stringResource(Res.string.language)) }
@@ -265,7 +267,7 @@ fun SettingsMainScreen(
                         trailingContent = {
                             Icon(painterResource(Res.drawable.open_in_browser), null)
                         },
-                        shapes = segmentedListItemShapes(0, 1, true),
+                        shapes = segmentedListItemShapes(0, 1),
                         colors = listItemColors,
                         onClick = { uriHandler.openUri("https://gist.github.com/nsh07/3b42969aef017d98f72b097f1eca8911") }
                     ) { Text(stringResource(Res.string.now_bar)) }
@@ -288,5 +290,23 @@ fun SettingsMainScreen(
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Preview
+@Composable
+private fun SettingsMainScreenPreview() {
+    TomatoTheme {
+        SettingsMainScreen(
+            settingsState = SettingsState(),
+            contentPadding = PaddingValues(),
+            currentScreen = Screen.Settings.Main,
+            isPlus = false,
+            onAction = {},
+            onNavigate = {},
+            setShowPaywall = {},
+            appInfo = AppInfo(debug = true, versionName = "1.0.0", versionCode = 1L)
+        )
     }
 }

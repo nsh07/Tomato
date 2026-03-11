@@ -34,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -55,7 +56,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.nsh07.pomodoro.ui.mergePaddingValues
-import org.nsh07.pomodoro.ui.settingsScreen.components.ClickableListItem
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreViewModel
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
@@ -63,6 +63,7 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.arrow_back
@@ -180,22 +181,26 @@ fun BackupRestoreScreen(
                 }
 
                 item {
-                    ClickableListItem(
-                        headlineContent = { Text(stringResource(Res.string.backup)) },
+                    SegmentedListItem(
+                        onClick = { showDialog = 1 },
+                        content = { Text(stringResource(Res.string.backup)) },
                         supportingContent = { Text(stringResource(Res.string.backup_desc)) },
                         leadingContent = { Icon(painterResource(Res.drawable.backup), null) },
-                        items = 2,
-                        index = 0
-                    ) { showDialog = 1 }
+                        selected = showDialog == 1,
+                        shapes = segmentedListItemShapes(0, 2),
+                        colors = listItemColors
+                    )
                 }
                 item {
-                    ClickableListItem(
-                        headlineContent = { Text(stringResource(Res.string.restore)) },
+                    SegmentedListItem(
+                        onClick = { showDialog = 2 },
+                        content = { Text(stringResource(Res.string.restore)) },
                         supportingContent = { Text(stringResource(Res.string.restore_desc)) },
                         leadingContent = { Icon(painterResource(Res.drawable.restore), null) },
-                        items = 2,
-                        index = 1
-                    ) { showDialog = 2 }
+                        selected = showDialog == 2,
+                        shapes = segmentedListItemShapes(1, 2),
+                        colors = listItemColors
+                    )
                 }
             }
         }

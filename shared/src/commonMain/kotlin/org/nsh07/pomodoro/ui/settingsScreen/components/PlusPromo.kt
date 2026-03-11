@@ -18,9 +18,9 @@
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -28,19 +28,22 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.app_name_plus
 import tomato.shared.generated.resources.arrow_forward_big
 import tomato.shared.generated.resources.get_plus
 import tomato.shared.generated.resources.tomato_logo_notification
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PlusPromo(
     isPlus: Boolean,
     setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ClickableListItem(
+    SegmentedListItem(
+        onClick = { setShowPaywall(true) },
         leadingContent = {
             Icon(
                 painterResource(Res.drawable.tomato_logo_notification),
@@ -48,7 +51,7 @@ fun PlusPromo(
                 modifier = Modifier.size(24.dp)
             )
         },
-        headlineContent = {
+        content = {
             Text(
                 if (!isPlus) stringResource(Res.string.get_plus)
                 else stringResource(Res.string.app_name_plus)
@@ -60,15 +63,9 @@ fun PlusPromo(
                 null
             )
         },
-        colors = if (isPlus) listItemColors else ListItemDefaults.colors(
-            containerColor = colorScheme.primary,
-            leadingIconColor = colorScheme.onPrimary,
-            trailingIconColor = colorScheme.onPrimary,
-            supportingColor = colorScheme.onPrimary,
-            headlineColor = colorScheme.onPrimary
-        ),
-        items = 1,
-        index = 0,
+        selected = !isPlus,
+        shapes = segmentedListItemShapes(0, 1),
+        colors = listItemColors,
         modifier = modifier
-    ) { setShowPaywall(true) }
+    )
 }

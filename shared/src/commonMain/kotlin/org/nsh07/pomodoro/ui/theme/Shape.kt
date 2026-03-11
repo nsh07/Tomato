@@ -60,7 +60,7 @@ object TomatoShapeDefaults {
     fun segmentedListItemShapes(
         index: Int,
         count: Int,
-        singleElement: Boolean = false
+        singleElement: Boolean = count == 1
     ): ListItemShapes =
         ListItemDefaults.segmentedShapes(
             index,

@@ -32,11 +32,16 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.C
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.listPane
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.nsh07.pomodoro.ui.Screen
@@ -69,6 +74,13 @@ fun StatsScreenRoot(
     val hoursFormat = stringResource(Res.string.hours_format)
     val hoursMinutesFormat = stringResource(Res.string.hours_and_minutes_format)
     val minutesFormat = stringResource(Res.string.minutes_format)
+
+    var chartsVisible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        delay(300)
+        chartsVisible = true
+    }
 
     SharedTransitionLayout {
         NavDisplay(
@@ -106,6 +118,7 @@ fun StatsScreenRoot(
                     val lastYearFocusBreakdownValues by viewModel.lastYearFocusBreakdownValues.collectAsStateWithLifecycle()
 
                     StatsMainScreen(
+                        chartsVisible = chartsVisible,
                         goal = focusGoal,
                         contentPadding = contentPadding,
                         lastWeekSummaryChartModelProducer = viewModel.lastWeekChartProducer,

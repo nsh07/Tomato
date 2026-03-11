@@ -38,6 +38,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
@@ -96,6 +97,7 @@ import tomato.shared.generated.resources.total
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SharedTransitionScope.StatsMainScreen(
+    chartsVisible: Boolean,
     contentPadding: PaddingValues,
     goal: Long,
     lastWeekSummaryChartModelProducer: CartesianChartModelProducer,
@@ -320,28 +322,35 @@ fun SharedTransitionScope.StatsMainScreen(
                         )
                     }
 
-                    TimeColumnChart(
-                        modelProducer = lastWeekSummaryChartModelProducer,
-                        hoursFormat = hoursFormat,
-                        hoursMinutesFormat = hoursMinutesFormat,
-                        minutesFormat = minutesFormat,
-                        xValueFormatter = remember(lastWeekSummaryChartXLabelKey) {
-                            CartesianValueFormatter { context, x, _ ->
-                                context.model.extraStore[lastWeekSummaryChartXLabelKey][x.toInt()]
-                            }
-                        },
-                        goal = goal,
-                        zoomState = zoomStates[0],
-                        scrollState = scrollStates[0],
-                        modifier = if (!widthExpanded) {
-                            Modifier
-                                .sharedElement(
-                                    sharedContentState = this@StatsMainScreen
-                                        .rememberSharedContentState("last week chart"),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                )
-                        } else Modifier
-                    )
+                    if (chartsVisible)
+                        TimeColumnChart(
+                            modelProducer = lastWeekSummaryChartModelProducer,
+                            hoursFormat = hoursFormat,
+                            hoursMinutesFormat = hoursMinutesFormat,
+                            minutesFormat = minutesFormat,
+                            xValueFormatter = remember(lastWeekSummaryChartXLabelKey) {
+                                CartesianValueFormatter { context, x, _ ->
+                                    context.model.extraStore[lastWeekSummaryChartXLabelKey][x.toInt()]
+                                }
+                            },
+                            goal = goal,
+                            zoomState = zoomStates[0],
+                            scrollState = scrollStates[0],
+                            modifier = if (!widthExpanded) {
+                                Modifier
+                                    .sharedElement(
+                                        sharedContentState = this@StatsMainScreen
+                                            .rememberSharedContentState("last week chart"),
+                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                    )
+                            } else Modifier
+                        )
+                    else Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(226.dp)
+                    ) { LoadingIndicator() }
                 }
             }
 
@@ -419,29 +428,36 @@ fun SharedTransitionScope.StatsMainScreen(
                         )
                     }
 
-                    TimeColumnChart(
-                        modelProducer = lastMonthSummaryChartModelProducer,
-                        hoursFormat = hoursFormat,
-                        hoursMinutesFormat = hoursMinutesFormat,
-                        minutesFormat = minutesFormat,
-                        thickness = 8.dp,
-                        xValueFormatter = remember(lastMonthSummaryChartXLabelKey) {
-                            CartesianValueFormatter { context, x, _ ->
-                                context.model.extraStore[lastMonthSummaryChartXLabelKey][x.toInt()]
-                            }
-                        },
-                        goal = goal,
-                        zoomState = zoomStates[1],
-                        scrollState = scrollStates[1],
-                        modifier = if (!widthExpanded) {
-                            Modifier
-                                .sharedElement(
-                                    sharedContentState = this@StatsMainScreen
-                                        .rememberSharedContentState("last month chart"),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                )
-                        } else Modifier
-                    )
+                    if (chartsVisible)
+                        TimeColumnChart(
+                            modelProducer = lastMonthSummaryChartModelProducer,
+                            hoursFormat = hoursFormat,
+                            hoursMinutesFormat = hoursMinutesFormat,
+                            minutesFormat = minutesFormat,
+                            thickness = 8.dp,
+                            xValueFormatter = remember(lastMonthSummaryChartXLabelKey) {
+                                CartesianValueFormatter { context, x, _ ->
+                                    context.model.extraStore[lastMonthSummaryChartXLabelKey][x.toInt()]
+                                }
+                            },
+                            goal = goal,
+                            zoomState = zoomStates[1],
+                            scrollState = scrollStates[1],
+                            modifier = if (!widthExpanded) {
+                                Modifier
+                                    .sharedElement(
+                                        sharedContentState = this@StatsMainScreen
+                                            .rememberSharedContentState("last month chart"),
+                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                    )
+                            } else Modifier
+                        )
+                    else Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(226.dp)
+                    ) { LoadingIndicator() }
                 }
             }
 
@@ -519,28 +535,35 @@ fun SharedTransitionScope.StatsMainScreen(
                         )
                     }
 
-                    TimeLineChart(
-                        modelProducer = lastYearSummaryChartModelProducer,
-                        hoursFormat = hoursFormat,
-                        hoursMinutesFormat = hoursMinutesFormat,
-                        minutesFormat = minutesFormat,
-                        xValueFormatter = remember(lastYearSummaryChartXLabelKey) {
-                            CartesianValueFormatter { context, x, _ ->
-                                context.model.extraStore[lastYearSummaryChartXLabelKey][x.toInt()]
-                            }
-                        },
-                        goal = goal,
-                        zoomState = zoomStates[2],
-                        scrollState = scrollStates[2],
-                        modifier = if (!widthExpanded) {
-                            Modifier
-                                .sharedElement(
-                                    sharedContentState = this@StatsMainScreen
-                                        .rememberSharedContentState("last year chart"),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                )
-                        } else Modifier
-                    )
+                    if (chartsVisible)
+                        TimeLineChart(
+                            modelProducer = lastYearSummaryChartModelProducer,
+                            hoursFormat = hoursFormat,
+                            hoursMinutesFormat = hoursMinutesFormat,
+                            minutesFormat = minutesFormat,
+                            xValueFormatter = remember(lastYearSummaryChartXLabelKey) {
+                                CartesianValueFormatter { context, x, _ ->
+                                    context.model.extraStore[lastYearSummaryChartXLabelKey][x.toInt()]
+                                }
+                            },
+                            goal = goal,
+                            zoomState = zoomStates[2],
+                            scrollState = scrollStates[2],
+                            modifier = if (!widthExpanded) {
+                                Modifier
+                                    .sharedElement(
+                                        sharedContentState = this@StatsMainScreen
+                                            .rememberSharedContentState("last year chart"),
+                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                    )
+                            } else Modifier
+                        )
+                    else Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(226.dp)
+                    ) { LoadingIndicator() }
                 }
             }
 

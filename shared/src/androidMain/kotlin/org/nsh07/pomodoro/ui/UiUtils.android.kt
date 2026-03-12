@@ -121,11 +121,11 @@ actual fun rememberRingtoneNameProviderCallback(): suspend (String?) -> String {
             withContext(Dispatchers.IO) {
                 try {
                     RingtoneManager.getRingtone(context, alarmSoundFilePath?.toUri())
-                        ?.getTitle(context) ?: ""
+                        ?.getTitle(context) ?: "..."
                 } catch (e: Exception) {
                     Log.e("AlarmSettings", "Unable to get ringtone title: ${e.message}")
                     e.printStackTrace()
-                    ""
+                    "..."
                 }
             }
         }

@@ -32,8 +32,8 @@ object TomatoShapeDefaults {
     val topListItemShape: RoundedCornerShape
         @Composable get() =
             RoundedCornerShape(
-                topStart = shapes.largeIncreased.topStart,
-                topEnd = shapes.largeIncreased.topEnd,
+                topStart = shapes.large.topStart,
+                topEnd = shapes.large.topEnd,
                 bottomStart = shapes.extraSmall.bottomStart,
                 bottomEnd = shapes.extraSmall.bottomStart
             )
@@ -47,13 +47,13 @@ object TomatoShapeDefaults {
             RoundedCornerShape(
                 topStart = shapes.extraSmall.topStart,
                 topEnd = shapes.extraSmall.topEnd,
-                bottomStart = shapes.largeIncreased.bottomStart,
-                bottomEnd = shapes.largeIncreased.bottomEnd
+                bottomStart = shapes.large.bottomStart,
+                bottomEnd = shapes.large.bottomEnd
             )
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     val cardShape: CornerBasedShape
-        @Composable get() = shapes.largeIncreased
+        @Composable get() = shapes.large
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable

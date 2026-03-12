@@ -43,6 +43,7 @@ import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -59,6 +60,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -83,8 +85,8 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import tomato.shared.generated.resources.Res
@@ -131,6 +133,7 @@ fun AlarmSettings(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val inspectionMode = LocalInspectionMode.current // used to show all features in preview
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     val widthExpanded = currentWindowAdaptiveInfo()
@@ -153,8 +156,8 @@ fun AlarmSettings(
 
     val vibrator = rememberPlatformVibrator()
 
-    val hasVibrator = vibrator.hasVibrator
-    val hasAmplitudeControl = vibrator.hasAmplitudeControl
+    val hasVibrator = if (!inspectionMode) vibrator.hasVibrator else true
+    val hasAmplitudeControl = if (!inspectionMode) vibrator.hasAmplitudeControl else true
 
     DisposableEffect(Unit) {
         onDispose { vibrator.cancel() }
@@ -166,22 +169,27 @@ fun AlarmSettings(
         settingsState.mediaVolumeForAlarm
     ) {
         listOf(
-            listOf(
-                SettingsSwitchItem(
-                    checked = settingsState.alarmEnabled,
-                    icon = Res.drawable.alarm_on,
-                    label = Res.string.sound,
-                    description = Res.string.alarm_desc,
-                    onClick = { onAction(SettingsAction.SaveAlarmEnabled(it)) }
-                ),
-                SettingsSwitchItem(
-                    checked = settingsState.vibrateEnabled,
-                    icon = Res.drawable.mobile_vibrate,
-                    label = Res.string.vibrate,
-                    description = Res.string.vibrate_desc,
-                    onClick = { onAction(SettingsAction.SaveVibrateEnabled(it)) }
+            buildList {
+                add(
+                    SettingsSwitchItem(
+                        checked = settingsState.alarmEnabled,
+                        icon = Res.drawable.alarm_on,
+                        label = Res.string.sound,
+                        description = Res.string.alarm_desc,
+                        onClick = { onAction(SettingsAction.SaveAlarmEnabled(it)) }
+                    )
                 )
-            ),
+
+                if (hasVibrator) add(
+                    SettingsSwitchItem(
+                        checked = settingsState.vibrateEnabled,
+                        icon = Res.drawable.mobile_vibrate,
+                        label = Res.string.vibrate,
+                        description = Res.string.vibrate_desc,
+                        onClick = { onAction(SettingsAction.SaveVibrateEnabled(it)) }
+                    )
+                )
+            },
             listOf(
                 SettingsSwitchItem(
                     checked = settingsState.mediaVolumeForAlarm,
@@ -253,11 +261,12 @@ fun AlarmSettings(
                 }
 
                 item {
-                    ListItem(
+                    SegmentedListItem(
+                        onClick = ringtonePickerLauncherCallback,
                         leadingContent = {
                             Icon(painterResource(Res.drawable.alarm), null)
                         },
-                        headlineContent = { Text(stringResource(Res.string.alarm_sound)) },
+                        content = { Text(stringResource(Res.string.alarm_sound)) },
                         supportingContent = { Text(alarmName) },
                         trailingContent = {
                             Icon(
@@ -266,18 +275,18 @@ fun AlarmSettings(
                             )
                         },
                         colors = listItemColors,
-                        modifier = Modifier
-                            .clip(topListItemShape)
-                            .clickable(onClick = ringtonePickerLauncherCallback)
+                        shapes = segmentedListItemShapes(0, 3)
                     )
                 }
+
                 switchItems.fastForEachIndexed { baseIndex, items ->
                     itemsIndexed(items) { index, item ->
-                        ListItem(
+                        SegmentedListItem(
+                            onClick = { item.onClick(!item.checked) },
                             leadingContent = {
                                 Icon(painterResource(item.icon), contentDescription = null)
                             },
-                            headlineContent = { Text(stringResource(item.label)) },
+                            content = { Text(stringResource(item.label)) },
                             supportingContent = {
                                 if (item.collapsible) {
                                     var expanded by remember { mutableStateOf(false) }
@@ -316,14 +325,9 @@ fun AlarmSettings(
                                 )
                             },
                             colors = listItemColors,
-                            modifier = Modifier
-                                .clip(
-                                    when {
-                                        items.size == 1 -> cardShape
-                                        index == items.lastIndex -> bottomListItemShape
-                                        else -> middleListItemShape
-                                    }
-                                )
+                            shapes = if (baseIndex == 0)
+                                segmentedListItemShapes(index + 1, items.size + 1)
+                            else segmentedListItemShapes(index, items.size)
                         )
                     }
 
@@ -470,7 +474,7 @@ fun AlarmSettings(
 @Composable
 fun AlarmSettingsPreview() {
     val settingsState = SettingsState()
-    TomatoTheme {
+    TomatoTheme(dynamicColor = false) {
         AlarmSettings(
             settingsState = settingsState,
             contentPadding = PaddingValues(),

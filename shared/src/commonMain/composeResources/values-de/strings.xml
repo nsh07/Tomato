@@ -141,4 +141,8 @@
     <string name="milliseconds_format">%1$d ms</string>
     <string name="daily_focus_goal">Tägliches Fokus Ziel</string>
     <string name="vibration_pattern">Vibrations Muster</string>
+    <string name="infinite">Endlos</string>
+    <string name="infinite_focus">Endloser Fokus</string>
+    <string name="settings_infinite_focus_tip">Drücke lange den Timer um den Endlos Modus zu aktivieren</string>
+    <string name="cancel">Abbrechen</string>
 </resources>

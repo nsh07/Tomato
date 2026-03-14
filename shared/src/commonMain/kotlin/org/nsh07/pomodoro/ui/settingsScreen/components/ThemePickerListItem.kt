@@ -18,21 +18,18 @@
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -44,10 +41,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.brightness_auto
 import tomato.shared.generated.resources.dark
@@ -78,62 +72,51 @@ fun ThemePickerListItem(
         )
     }
 
-    Column(
-        modifier
-            .clip(
-                if (items > 1)
-                    when (index) {
-                        0 -> topListItemShape
-                        items - 1 -> bottomListItemShape
-                        else -> middleListItemShape
+    SegmentedListItem(
+        onClick = {},
+        leadingContent = {
+            AnimatedContent(themeMap[theme]!!.first) {
+                Icon(
+                    painter = painterResource(it),
+                    contentDescription = null,
+                )
+            }
+        },
+        content = { Text(stringResource(Res.string.theme)) },
+        supportingContent = {
+            val options = themeMap.toList()
+            val selectedIndex = options.indexOf(Pair(theme, themeMap[theme]))
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                options.fastForEachIndexed { index, theme ->
+                    val isSelected = selectedIndex == index
+                    ToggleButton(
+                        checked = isSelected,
+                        onCheckedChange = { onThemeChange(theme.first) },
+                        modifier = Modifier
+                            .weight(1f)
+                            .semantics { role = Role.RadioButton },
+                        shapes =
+                            when (index) {
+                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                            },
+                    ) {
+                        Text(
+                            stringResource(theme.second.second),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
-                else cardShape,
-            ),
-    ) {
-        ListItem(
-            leadingContent = {
-                AnimatedContent(themeMap[theme]!!.first) {
-                    Icon(
-                        painter = painterResource(it),
-                        contentDescription = null,
-                    )
-                }
-            },
-            headlineContent = { Text(stringResource(Res.string.theme)) },
-            colors = listItemColors,
-        )
-
-        val options = themeMap.toList()
-        val selectedIndex = options.indexOf(Pair(theme, themeMap[theme]))
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-            modifier = Modifier
-                .background(listItemColors.containerColor)
-                .padding(start = 52.dp, end = 16.dp, bottom = 8.dp)
-        ) {
-            options.fastForEachIndexed { index, theme ->
-                val isSelected = selectedIndex == index
-                ToggleButton(
-                    checked = isSelected,
-                    onCheckedChange = { onThemeChange(theme.first) },
-                    modifier = Modifier
-                        .weight(1f)
-                        .semantics { role = Role.RadioButton },
-                    shapes =
-                        when (index) {
-                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                            options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                        },
-                ) {
-                    Text(
-                        stringResource(theme.second.second),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
                 }
             }
-        }
-    }
+        },
+        colors = listItemColors,
+        shapes = segmentedListItemShapes(index, items),
+        modifier = modifier
+    )
 }

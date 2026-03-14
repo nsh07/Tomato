@@ -18,8 +18,10 @@
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -28,28 +30,25 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme.shapes
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.check
@@ -62,6 +61,7 @@ import tomato.shared.generated.resources.dynamic_color
 import tomato.shared.generated.resources.dynamic_color_desc
 import tomato.shared.generated.resources.palette
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ColorSchemePickerListItem(
     color: Color,
@@ -77,69 +77,61 @@ fun ColorSchemePickerListItem(
         Color(0xff9fd75c), Color(0xffc1d02d), Color(0xfffabd00), Color(0xffffb86e),
         Color.White
     )
-    val zeroCorner = remember { CornerSize(0) }
 
-    Column(
-        modifier
-            .clip(
-                when (index) {
-                    0 -> topListItemShape
-                    items - 1 -> bottomListItemShape
-                    else -> middleListItemShape
-                }
-            )
-    ) {
-        if (androidSdkVersionAtLeast(31)) {
-            ListItem(
-                leadingContent = {
-                    Icon(
-                        painterResource(Res.drawable.colors),
-                        null
-                    )
-                },
-                headlineContent = { Text(stringResource(Res.string.dynamic_color)) },
-                supportingContent = { Text(stringResource(Res.string.dynamic_color_desc)) },
-                trailingContent = {
-                    val checked = color == colorSchemes.last()
-                    Switch(
-                        checked = checked,
-                        onCheckedChange = {
-                            if (it) onColorChange(colorSchemes.last())
-                            else onColorChange(colorSchemes.first())
-                        },
-                        enabled = isPlus,
-                        thumbContent = {
-                            if (checked) {
-                                Icon(
-                                    painter = painterResource(Res.drawable.check),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(SwitchDefaults.IconSize),
-                                )
-                            } else {
-                                Icon(
-                                    painter = painterResource(Res.drawable.clear),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(SwitchDefaults.IconSize),
-                                )
-                            }
-                        },
-                        colors = switchColors
-                    )
-                },
-                colors = listItemColors,
-                modifier = Modifier.clip(middleListItemShape)
-            )
-            Spacer(Modifier.height(2.dp))
-        }
+    if (androidSdkVersionAtLeast(31)) {
+        val checked = color == colorSchemes.last()
+        SegmentedListItem(
+            onClick = {
+                if (!checked) onColorChange(colorSchemes.last())
+                else onColorChange(colorSchemes.first())
+            },
+            leadingContent = { Icon(painterResource(Res.drawable.colors), null) },
+            content = { Text(stringResource(Res.string.dynamic_color)) },
+            supportingContent = { Text(stringResource(Res.string.dynamic_color_desc)) },
+            trailingContent = {
+                Switch(
+                    checked = checked,
+                    onCheckedChange = {
+                        if (it) onColorChange(colorSchemes.last())
+                        else onColorChange(colorSchemes.first())
+                    },
+                    enabled = isPlus,
+                    thumbContent = {
+                        if (checked) {
+                            Icon(
+                                painter = painterResource(Res.drawable.check),
+                                contentDescription = null,
+                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                            )
+                        } else {
+                            Icon(
+                                painter = painterResource(Res.drawable.clear),
+                                contentDescription = null,
+                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                            )
+                        }
+                    },
+                    colors = switchColors
+                )
+            },
+            colors = listItemColors,
+            enabled = isPlus,
+            shapes = segmentedListItemShapes(index, items),
+            modifier = modifier
+        )
+        Spacer(Modifier.height(2.dp))
+    }
 
-        ListItem(
+    Box {
+        SegmentedListItem(
+            onClick = {},
             leadingContent = {
                 Icon(
                     painter = painterResource(Res.drawable.palette),
                     contentDescription = null
                 )
             },
-            headlineContent = { Text(stringResource(Res.string.color_scheme)) },
+            content = { Text(stringResource(Res.string.color_scheme)) },
             supportingContent = {
                 Text(
                     if (color == Color.White) stringResource(Res.string.dynamic)
@@ -147,32 +139,45 @@ fun ColorSchemePickerListItem(
                 )
             },
             colors = listItemColors,
-            modifier = Modifier.clip(
-                RoundedCornerShape(
-                    topStart = middleListItemShape.topStart,
-                    topEnd = middleListItemShape.topEnd,
-                    zeroCorner,
-                    zeroCorner
+            enabled = isPlus,
+            shapes = ListItemDefaults.segmentedShapes(
+                1,
+                3,
+                ListItemDefaults.shapes(
+                    shape = shapes.extraSmall.copy(
+                        bottomStart = CornerSize(0),
+                        bottomEnd = CornerSize(0)
+                    )
                 )
-            )
+            ),
+            modifier = modifier
         )
 
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 48.dp),
-            userScrollEnabled = isPlus,
-            modifier = Modifier
-                .background(listItemColors.containerColor)
-                .padding(bottom = 8.dp)
-        ) {
-            items(colorSchemes.dropLast(1)) {
-                ColorPickerButton(
-                    color = it,
-                    isSelected = it == color,
-                    enabled = isPlus,
-                    modifier = Modifier.padding(4.dp)
-                ) {
-                    onColorChange(it)
-                }
+        Box( // TODO: Workaround to disable clickable behavior of SegmentedListItem. Remove once an overload is implemented
+            Modifier
+                .matchParentSize()
+                .clickable(false) {}
+        )
+    }
+
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = 48.dp),
+        userScrollEnabled = isPlus,
+        modifier = modifier
+            .background(
+                animateColorAsState(listItemColors.containerColor).value,
+                shape = shapes.extraSmall.copy(topStart = CornerSize(0), topEnd = CornerSize(0))
+            )
+            .padding(bottom = 8.dp)
+    ) {
+        items(colorSchemes.dropLast(1)) {
+            ColorPickerButton(
+                color = it,
+                isSelected = it == color,
+                enabled = isPlus,
+                modifier = Modifier.padding(4.dp)
+            ) {
+                onColorChange(it)
             }
         }
     }

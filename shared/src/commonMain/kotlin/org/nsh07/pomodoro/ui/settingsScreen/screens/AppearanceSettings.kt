@@ -34,8 +34,8 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -44,7 +44,6 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,7 +63,7 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.toColor
 import tomato.shared.generated.resources.Res
@@ -181,11 +180,12 @@ fun AppearanceSettings(
                         description = Res.string.black_theme_desc,
                         onClick = { onAction(SettingsAction.SaveBlackTheme(it)) }
                     )
-                    ListItem(
+                    SegmentedListItem(
+                        onClick = { item.onClick(!item.checked) },
                         leadingContent = {
                             Icon(painterResource(item.icon), contentDescription = null)
                         },
-                        headlineContent = { Text(stringResource(item.label)) },
+                        content = { Text(stringResource(item.label)) },
                         supportingContent = { Text(stringResource(item.description)) },
                         trailingContent = {
                             Switch(
@@ -211,7 +211,8 @@ fun AppearanceSettings(
                             )
                         },
                         colors = listItemColors,
-                        modifier = Modifier.clip(bottomListItemShape)
+                        enabled = isPlus,
+                        shapes = segmentedListItemShapes(2, 3)
                     )
                 }
 
@@ -229,7 +230,7 @@ fun AppearanceSettingsPreview() {
         AppearanceSettings(
             settingsState = settingsState,
             contentPadding = PaddingValues(),
-            isPlus = false,
+            isPlus = true,
             onAction = {},
             setShowPaywall = {},
             onBack = {}

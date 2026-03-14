@@ -120,7 +120,10 @@ object CustomColors {
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     val listItemColors: ListItemColors
         @Composable get() =
-            ListItemDefaults.segmentedColors(containerColor = if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainerHigh)
+            ListItemDefaults.segmentedColors(
+                containerColor = if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainerHigh,
+                disabledContainerColor = if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainerHigh,
+            )
 
     val switchColors: SwitchColors
         @Composable get() = SwitchDefaults.colors(

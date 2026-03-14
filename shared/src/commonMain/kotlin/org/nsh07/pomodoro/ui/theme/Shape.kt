@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.theme
 
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -67,11 +66,11 @@ object TomatoShapeDefaults {
             count,
             ListItemDefaults.shapes(
                 shape = if (singleElement) shapes.large else shapes.extraSmall,
-                selectedShape = CircleShape,
-                pressedShape = CircleShape,
+                selectedShape = shapes.extraLargeIncreased,
+                pressedShape = shapes.extraLargeIncreased,
                 focusedShape = shapes.large,
                 hoveredShape = shapes.extraLarge,
-                draggedShape = CircleShape
+                draggedShape = shapes.extraLargeIncreased
             )
         )
 

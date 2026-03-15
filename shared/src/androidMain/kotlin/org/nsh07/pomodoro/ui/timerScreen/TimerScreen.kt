@@ -18,7 +18,6 @@
 package org.nsh07.pomodoro.ui.timerScreen
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -111,7 +110,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -122,7 +120,7 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
-import org.nsh07.pomodoro.R
+import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
@@ -134,8 +132,13 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.app_name
+import tomato.shared.generated.resources.app_name_plus
 import tomato.shared.generated.resources.check_circle_40dp
+import tomato.shared.generated.resources.focus
 import tomato.shared.generated.resources.in_progress_40dp
+import tomato.shared.generated.resources.infinite_focus
+import tomato.shared.generated.resources.long_break
 import tomato.shared.generated.resources.not_started_40dp
 import tomato.shared.generated.resources.pause
 import tomato.shared.generated.resources.pause_large
@@ -143,8 +146,15 @@ import tomato.shared.generated.resources.play
 import tomato.shared.generated.resources.play_large
 import tomato.shared.generated.resources.restart
 import tomato.shared.generated.resources.restart_large
+import tomato.shared.generated.resources.short_break
 import tomato.shared.generated.resources.skip_next
 import tomato.shared.generated.resources.skip_next_large
+import tomato.shared.generated.resources.skip_to_next
+import tomato.shared.generated.resources.timer_reset_message
+import tomato.shared.generated.resources.timer_session_count
+import tomato.shared.generated.resources.timer_settings_reset_info
+import tomato.shared.generated.resources.undo
+import tomato.shared.generated.resources.up_next
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
@@ -235,8 +245,8 @@ fun SharedTransitionScope.TimerScreen(
                                     when (it) {
                                         TimerMode.BRAND ->
                                             Text(
-                                                if (!isPlus) stringResource(R.string.app_name)
-                                                else stringResource(R.string.app_name_plus),
+                                                if (!isPlus) stringResource(Res.string.app_name)
+                                                else stringResource(Res.string.app_name_plus),
                                                 style = TextStyle(
                                                     fontFamily = LocalAppFonts.current.topBarTitle,
                                                     fontSize = 32.sp,
@@ -249,8 +259,8 @@ fun SharedTransitionScope.TimerScreen(
                                         TimerMode.FOCUS ->
                                             AnimatedContent(timerState.infiniteFocus) { inf ->
                                                 Text(
-                                                    if (inf) stringResource(R.string.infinite_focus)
-                                                    else stringResource(R.string.focus),
+                                                    if (inf) stringResource(Res.string.infinite_focus)
+                                                    else stringResource(Res.string.focus),
                                                     style = TextStyle(
                                                         fontFamily = LocalAppFonts.current.topBarTitle,
                                                         fontSize = 32.sp,
@@ -262,7 +272,7 @@ fun SharedTransitionScope.TimerScreen(
                                             }
 
                                         TimerMode.SHORT_BREAK -> Text(
-                                            stringResource(R.string.short_break),
+                                            stringResource(Res.string.short_break),
                                             style = TextStyle(
                                                 fontFamily = LocalAppFonts.current.topBarTitle,
                                                 fontSize = 32.sp,
@@ -273,7 +283,7 @@ fun SharedTransitionScope.TimerScreen(
                                         )
 
                                         TimerMode.LONG_BREAK -> Text(
-                                            stringResource(R.string.long_break),
+                                            stringResource(Res.string.long_break),
                                             style = TextStyle(
                                                 fontFamily = LocalAppFonts.current.topBarTitle,
                                                 fontSize = 32.sp,
@@ -365,6 +375,8 @@ fun SharedTransitionScope.TimerScreen(
                                         }
                                     }
                                     var expanded by remember { mutableStateOf(timerState.showBrandTitle) }
+                                    val timerResetSettingsInfo =
+                                        stringResource(Res.string.timer_settings_reset_info)
                                     Column(
                                         horizontalAlignment = CenterHorizontally,
                                         modifier = Modifier
@@ -372,7 +384,6 @@ fun SharedTransitionScope.TimerScreen(
                                             .combinedClickable(
                                                 onClick = { expanded = !expanded },
                                                 onLongClick = {
-                                                    @SuppressLint("LocalContextGetResourceValueCall")
                                                     if (!timerState.timerRunning) onAction(
                                                         TimerAction.SetInfiniteFocus(
                                                             !timerState.infiniteFocus
@@ -380,7 +391,7 @@ fun SharedTransitionScope.TimerScreen(
                                                     )
                                                     else Toast.makeText(
                                                         context,
-                                                        context.getString(R.string.timer_settings_reset_info),
+                                                        timerResetSettingsInfo,
                                                         Toast.LENGTH_SHORT
                                                     ).show()
                                                 }
@@ -415,7 +426,7 @@ fun SharedTransitionScope.TimerScreen(
                                         ) {
                                             Text(
                                                 stringResource(
-                                                    R.string.timer_session_count,
+                                                    Res.string.timer_session_count,
                                                     timerState.currentFocusCount,
                                                     timerState.totalFocusCount
                                                 ),
@@ -469,13 +480,13 @@ fun SharedTransitionScope.TimerScreen(
                                                 if (timerState.timerRunning) {
                                                     Icon(
                                                         painterResource(Res.drawable.pause_large),
-                                                        contentDescription = stringResource(R.string.pause),
+                                                        contentDescription = stringResource(Res.string.pause),
                                                         modifier = Modifier.size(32.dp)
                                                     )
                                                 } else {
                                                     Icon(
                                                         painterResource(Res.drawable.play_large),
-                                                        contentDescription = stringResource(R.string.play),
+                                                        contentDescription = stringResource(Res.string.play),
                                                         modifier = Modifier.size(32.dp)
                                                     )
                                                 }
@@ -487,21 +498,21 @@ fun SharedTransitionScope.TimerScreen(
                                                     if (timerState.timerRunning) {
                                                         Icon(
                                                             painterResource(Res.drawable.pause),
-                                                            contentDescription = stringResource(R.string.pause)
+                                                            contentDescription = stringResource(Res.string.pause)
                                                         )
                                                     } else {
                                                         Icon(
                                                             painterResource(Res.drawable.play),
-                                                            contentDescription = stringResource(R.string.play)
+                                                            contentDescription = stringResource(Res.string.play)
                                                         )
                                                     }
                                                 },
                                                 text = {
                                                     Text(
                                                         if (timerState.timerRunning) stringResource(
-                                                            R.string.pause
+                                                            Res.string.pause
                                                         ) else stringResource(
-                                                            R.string.play
+                                                            Res.string.play
                                                         )
                                                     )
                                                 },
@@ -515,16 +526,19 @@ fun SharedTransitionScope.TimerScreen(
 
                                     customItem(
                                         {
+                                            val timerResetMessage =
+                                                stringResource(Res.string.timer_reset_message)
+                                            val undo = stringResource(Res.string.undo)
+
                                             FilledTonalIconButton(
                                                 onClick = {
                                                     onAction(TimerAction.ResetTimer)
                                                     haptic.performHapticFeedback(HapticFeedbackType.VirtualKey)
 
-                                                    @SuppressLint("LocalContextGetResourceValueCall")
                                                     scope.launch {
                                                         val result = snackbarHostState.showSnackbar(
-                                                            context.getString(R.string.timer_reset_message),
-                                                            actionLabel = context.getString(R.string.undo),
+                                                            timerResetMessage,
+                                                            actionLabel = undo,
                                                             withDismissAction = true,
                                                             duration = SnackbarDuration.Long
                                                         )
@@ -544,7 +558,7 @@ fun SharedTransitionScope.TimerScreen(
                                             ) {
                                                 Icon(
                                                     painterResource(Res.drawable.restart_large),
-                                                    contentDescription = stringResource(R.string.restart),
+                                                    contentDescription = stringResource(Res.string.restart),
                                                     modifier = Modifier.size(32.dp)
                                                 )
                                             }
@@ -554,10 +568,10 @@ fun SharedTransitionScope.TimerScreen(
                                                 leadingIcon = {
                                                     Icon(
                                                         painterResource(Res.drawable.restart),
-                                                        stringResource(R.string.restart)
+                                                        stringResource(Res.string.restart)
                                                     )
                                                 },
-                                                text = { Text(stringResource(R.string.restart)) },
+                                                text = { Text(stringResource(Res.string.restart)) },
                                                 onClick = {
                                                     onAction(TimerAction.ResetTimer)
                                                     state.dismiss()
@@ -584,7 +598,7 @@ fun SharedTransitionScope.TimerScreen(
                                             ) {
                                                 Icon(
                                                     painterResource(Res.drawable.skip_next_large),
-                                                    contentDescription = stringResource(R.string.skip_to_next),
+                                                    contentDescription = stringResource(Res.string.skip_to_next),
                                                     modifier = Modifier.size(32.dp)
                                                 )
                                             }
@@ -594,10 +608,10 @@ fun SharedTransitionScope.TimerScreen(
                                                 leadingIcon = {
                                                     Icon(
                                                         painterResource(Res.drawable.skip_next),
-                                                        stringResource(R.string.skip_to_next)
+                                                        stringResource(Res.string.skip_to_next)
                                                     )
                                                 },
-                                                text = { Text(stringResource(R.string.skip_to_next)) },
+                                                text = { Text(stringResource(Res.string.skip_to_next)) },
                                                 onClick = {
                                                     onAction(TimerAction.SkipTimer(fromButton = true))
                                                     state.dismiss()
@@ -615,7 +629,7 @@ fun SharedTransitionScope.TimerScreen(
                             item {
                                 Column(horizontalAlignment = CenterHorizontally) {
                                     Text(
-                                        stringResource(R.string.up_next),
+                                        stringResource(Res.string.up_next),
                                         style = typography.titleSmall
                                     )
                                     AnimatedContent(
@@ -660,9 +674,9 @@ fun SharedTransitionScope.TimerScreen(
                                     ) {
                                         Text(
                                             when (it) {
-                                                TimerMode.FOCUS -> stringResource(R.string.focus)
-                                                TimerMode.SHORT_BREAK -> stringResource(R.string.short_break)
-                                                else -> stringResource(R.string.long_break)
+                                                TimerMode.FOCUS -> stringResource(Res.string.focus)
+                                                TimerMode.SHORT_BREAK -> stringResource(Res.string.short_break)
+                                                else -> stringResource(Res.string.long_break)
                                             },
                                             style = typography.titleMediumEmphasized,
                                             textAlign = TextAlign.Center,
@@ -692,7 +706,7 @@ fun SharedTransitionScope.TimerScreen(
                         TopAppBar(
                             title = {
                                 Text(
-                                    text = stringResource(R.string.up_next),
+                                    text = stringResource(Res.string.up_next),
                                     fontFamily = LocalAppFonts.current.topBarTitle,
                                     maxLines = 1
                                 )
@@ -744,7 +758,7 @@ fun SharedTransitionScope.TimerScreen(
                                 }
                             ) {
                                 Text(
-                                    stringResource(R.string.focus),
+                                    stringResource(Res.string.focus),
                                     maxLines = 1
                                 )
                             }
@@ -790,8 +804,8 @@ fun SharedTransitionScope.TimerScreen(
                                 }
                             ) {
                                 Text(
-                                    if (it != timerState.totalFocusCount - 1) stringResource(R.string.short_break)
-                                    else stringResource(R.string.long_break),
+                                    if (it != timerState.totalFocusCount - 1) stringResource(Res.string.short_break)
+                                    else stringResource(Res.string.long_break),
                                     maxLines = 1
                                 )
                             }

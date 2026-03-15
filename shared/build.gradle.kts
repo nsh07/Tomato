@@ -35,7 +35,7 @@ compose.resources {
 kotlin {
     compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
 
-    androidLibrary {
+    android {
         namespace = "org.nsh07.pomodoro.shared"
         compileSdk = 36
         minSdk = 26
@@ -91,10 +91,6 @@ kotlin {
             implementation(libs.koin.android)
         }
 
-        androidUnitTest.dependencies {
-            implementation(libs.junit)
-        }
-
         androidInstrumentedTest.dependencies {
             implementation(libs.androidx.junit)
             implementation(libs.androidx.espresso.core)
@@ -109,4 +105,10 @@ dependencies {
 
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
+}
+
+androidComponents {
+    onVariants { variant ->
+        variant.sources.res?.addStaticSourceDirectory("src/commonMain/composeResources")
+    }
 }

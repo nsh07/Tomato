@@ -49,8 +49,6 @@ class TimerViewModel(
     private val _time: MutableStateFlow<Long> = timerStateHolder.time
     val timerState: StateFlow<TimerState> = stateRepository.timerState.asStateFlow()
 
-    val time: StateFlow<Long> = _time.asStateFlow()
-
     val progress = _time.combine(stateRepository.timerState) { remainingTime, uiState ->
         (uiState.totalTime.toFloat() - remainingTime) / uiState.totalTime
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0f)

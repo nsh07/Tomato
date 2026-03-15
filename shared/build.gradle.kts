@@ -56,37 +56,34 @@ kotlin {
             implementation(libs.androidx.ui)
             implementation(libs.androidx.ui.graphics)
             implementation(libs.androidx.ui.tooling)
+            implementation(libs.androidx.lifecycle.runtime.ktx)
+            implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.material3)
             implementation(libs.androidx.adaptive)
+
+            implementation(libs.androidx.navigation3.runtime)
+            implementation(libs.androidx.navigation3.ui)
             implementation(libs.androidx.compose.adaptive.navigation3)
 
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
-        }
 
-        androidMain.dependencies {
-            // Android-specific Compose
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.lifecycle.runtime.ktx)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.viewmodel.compose)
-
-            // Keep using AndroidX Compose for now (you can migrate to CMP later)
-            implementation(libs.androidx.core.ktx)
-            implementation(project.dependencies.platform(libs.androidx.compose.bom))
-
-            implementation(libs.vico.compose.m3)
-            implementation(libs.material.kolor)
-
-            // Room
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.room.ktx)
 
-            // Glance widgets
-            implementation(libs.androidx.glance.appwidget)
-            implementation(libs.androidx.glance.material3)
+            implementation(libs.vico.compose.m3)
+            implementation(libs.material.kolor)
+        }
+
+        androidMain.dependencies {
+            implementation(project.dependencies.platform(libs.androidx.compose.bom))
+
+            // Android-specific Compose
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.core.ktx)
 
             implementation(libs.koin.android)
         }
@@ -95,6 +92,7 @@ kotlin {
             implementation(libs.androidx.junit)
             implementation(libs.androidx.espresso.core)
             implementation(libs.androidx.ui.test.junit4)
+            implementation(libs.androidx.ui.test.manifest)
         }
     }
 }

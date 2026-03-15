@@ -26,16 +26,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.painterResource
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
-import tomato.shared.generated.resources.Res
-import tomato.shared.generated.resources.bmc
-import tomato.shared.generated.resources.open_in_browser
-import tomato.shared.generated.resources.weblate
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -45,7 +41,7 @@ fun TopButton(modifier: Modifier = Modifier) {
         onClick = { uriHandler.openUri("https://coff.ee/nsh07") },
         leadingContent = {
             Icon(
-                painterResource(Res.drawable.bmc),
+                painterResource(R.drawable.bmc),
                 tint = colorScheme.primary,
                 contentDescription = null,
                 modifier = Modifier.size(24.dp)
@@ -53,7 +49,7 @@ fun TopButton(modifier: Modifier = Modifier) {
         },
         content = { Text(stringResource(R.string.bmc)) },
         supportingContent = { Text(stringResource(R.string.bmc_desc)) },
-        trailingContent = { Icon(painterResource(Res.drawable.open_in_browser), null) },
+        trailingContent = { Icon(painterResource(R.drawable.open_in_browser), null) },
         shapes = segmentedListItemShapes(0, 2),
         colors = listItemColors,
         modifier = modifier
@@ -68,7 +64,7 @@ fun BottomButton(modifier: Modifier = Modifier) {
         onClick = { uriHandler.openUri("https://hosted.weblate.org/engage/tomato/") },
         leadingContent = {
             Icon(
-                painterResource(Res.drawable.weblate),
+                painterResource(R.drawable.weblate),
                 tint = colorScheme.secondary,
                 contentDescription = null,
                 modifier = Modifier.size(24.dp)
@@ -76,7 +72,7 @@ fun BottomButton(modifier: Modifier = Modifier) {
         },
         content = { Text(stringResource(R.string.help_with_translation)) },
         supportingContent = { Text(stringResource(R.string.help_with_translation_desc)) },
-        trailingContent = { Icon(painterResource(Res.drawable.open_in_browser), null) },
+        trailingContent = { Icon(painterResource(R.drawable.open_in_browser), null) },
         shapes = segmentedListItemShapes(1, 2),
         colors = listItemColors,
         modifier = modifier

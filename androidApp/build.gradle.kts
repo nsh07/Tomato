@@ -137,5 +137,7 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android)
 
+    testImplementation(libs.junit)
+
     implementation(project(":shared"))
 }

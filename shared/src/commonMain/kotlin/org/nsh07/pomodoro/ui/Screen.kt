@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui
 
-import androidx.annotation.StringRes
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.DrawableResource
@@ -71,7 +70,7 @@ data class NavItem(
     val route: Screen,
     val unselectedIcon: DrawableResource,
     val selectedIcon: DrawableResource,
-    @param:StringRes val label: Int,
+    val label: StringResource,
     val onNavigateHome: () -> Unit
 )
 

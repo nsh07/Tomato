@@ -35,7 +35,6 @@ import org.koin.dsl.module
 import org.koin.plugin.module.dsl.create
 import org.koin.plugin.module.dsl.single
 import org.koin.plugin.module.dsl.viewModel
-import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.AndroidBackupRestoreManager
 import org.nsh07.pomodoro.data.AppDatabase
 import org.nsh07.pomodoro.data.AppPreferenceRepository
@@ -47,6 +46,7 @@ import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.service.AppServiceHelper
 import org.nsh07.pomodoro.service.ServiceHelper
 import org.nsh07.pomodoro.service.addTimerActions
+import org.nsh07.pomodoro.shared.R
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreViewModel
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel

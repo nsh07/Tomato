@@ -48,7 +48,7 @@
     <string name="settings">設定</string>
     <string name="session_length">セッションの長さ</string>
     <string name="session_length_desc">一つのセッションにおける集中時間の回数: %1$d</string>
-    <string name="pomodoro_info">「セッション」とは、集中時間・短い休憩・長い休憩を含む一連のポモドーロ間隔のことです。セッションの最後の休憩は必ず長い休憩になります。</string>
+    <string name="pomodoro_info">セッションとは、集中時間・短い休憩・長い休憩を含む一連のポモドーロ間隔のことです。セッションの最後の休憩は必ず長い休憩になります。</string>
     <string name="stats">統計</string>
     <string name="today">今日</string>
     <string name="break_">休憩</string>
@@ -100,7 +100,7 @@
     <string name="session_only_progress_desc">通知にセッション全体ではなく、現在のタイマーのみの進行状況を表示します</string>
     <string name="auto_start_next_timer_desc">アラームを停止した後に次のアラームを開始します</string>
     <string name="auto_start_next_timer">次のタイマーを自動的に開始</string>
-    <string name="secure_aod">安全な常時表示ディスプレイ</string>
+    <string name="secure_aod">安心常時表示ディスプレイ</string>
     <string name="secure_aod_desc">常時表示ディスプレイは見られるように維持したまま、タイムアウト後に自動的に端末をロックします</string>
     <string name="undo">戻す</string>
     <string name="timer_reset_message">タイマーはリセットされました</string>
@@ -140,4 +140,8 @@
     <string name="less">短い</string>
     <string name="dnd_permission_message">"%1$s" の権限を有効にしてください</string>
     <string name="vibration_pattern">振動パターン</string>
+    <string name="cancel">キャンセル</string>
+    <string name="infinite_focus">没頭</string>
+    <string name="settings_infinite_focus_tip">タイマー時計を長押しすると時間無制限の集中モードが有効になります</string>
+    <string name="infinite">没頭</string>
 </resources>

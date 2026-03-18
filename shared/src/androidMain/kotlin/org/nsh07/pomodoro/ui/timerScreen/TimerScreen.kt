@@ -56,6 +56,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.systemGestureExclusion
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -410,12 +411,17 @@ fun SharedTransitionScope.TimerScreen(
                                             ),
                                             textAlign = TextAlign.Center,
                                             maxLines = 1,
-                                            modifier = Modifier.sharedBounds(
-                                                sharedContentState = this@TimerScreen.rememberSharedContentState(
-                                                    "clock"
-                                                ),
-                                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                            )
+                                            autoSize = TextAutoSize.StepBased(
+                                                maxFontSize = clockFontSize.sp
+                                            ),
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .sharedBounds(
+                                                    sharedContentState = this@TimerScreen.rememberSharedContentState(
+                                                        "clock"
+                                                    ),
+                                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                                )
                                         )
                                         AnimatedVisibility(
                                             expanded,

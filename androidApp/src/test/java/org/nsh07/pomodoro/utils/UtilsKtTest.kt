@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -22,6 +22,7 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import org.junit.Assert.assertThrows
 import org.junit.Test
+import java.util.Locale
 
 class UtilsKtTest {
 
@@ -74,6 +75,16 @@ class UtilsKtTest {
     @Test
     fun `millisecondsToStr Long MAX VALUE`() {
         assertEquals("153722867280912:55", millisecondsToStr(Long.MAX_VALUE))
+    }
+
+    @Test
+    fun `millisecondsToStr Eastern Arabic numerals`() {
+        Locale.setDefault(Locale.of("ar"))
+        assertEquals(
+            "٢٥:٠٠",
+            millisecondsToStr(25 * 60 * 1000)
+        )
+        Locale.setDefault(Locale.US)
     }
 
     @Test

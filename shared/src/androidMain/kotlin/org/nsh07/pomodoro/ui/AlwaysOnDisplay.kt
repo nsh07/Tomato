@@ -27,8 +27,10 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -205,9 +207,11 @@ fun SharedTransitionScope.AlwaysOnDisplay(
     ) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.offset {
-                IntOffset(x, y)
-            }
+            modifier = Modifier
+                .size(250.dp)
+                .offset {
+                    IntOffset(x, y)
+                }
         ) {
             if (!timerState.infiniteFocus) {
                 if (timerState.timerMode == TimerMode.FOCUS) {
@@ -259,23 +263,30 @@ fun SharedTransitionScope.AlwaysOnDisplay(
                 Box(modifier = Modifier.size(250.dp))
             }
 
+            val clockFontSize = if (!timerState.infiniteFocus)
+                if (timerState.timeStr.length < 6) 56.sp else 52.sp
+            else 78.sp
+
             Text(
                 text = timerState.timeStr,
                 style = TextStyle(
                     fontFamily = typography.bodyMedium.fontFamily,
-                    fontSize = if (!timerState.infiniteFocus)
-                        if (timerState.timeStr.length < 6) 56.sp else 52.sp
-                    else 78.sp,
+                    fontSize = clockFontSize,
                     letterSpacing = (-2).sp,
                     fontFeatureSettings = "tnum"
                 ),
                 textAlign = TextAlign.Center,
                 color = onSurface,
                 maxLines = 1,
-                modifier = Modifier.sharedBounds(
-                    sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("clock"),
-                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                )
+                autoSize = TextAutoSize.StepBased(
+                    maxFontSize = clockFontSize
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .sharedBounds(
+                        sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState("clock"),
+                        animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                    )
             )
         }
     }

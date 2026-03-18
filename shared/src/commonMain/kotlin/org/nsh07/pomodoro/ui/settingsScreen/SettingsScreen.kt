@@ -37,6 +37,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
@@ -89,24 +91,24 @@ fun SettingsScreenRoot(
             viewModel.sessionsSliderState.onValueChangeFinished,
             viewModel.sessionsSliderState.valueRange
         )
-    ) {
-        viewModel.sessionsSliderState
-    }
+    ) { viewModel.sessionsSliderState }
+
+    val directionMultiplier = if (LocalLayoutDirection.current == LayoutDirection.Ltr) 1 else -1
 
     NavDisplay(
         backStack = backStack,
         onBack = backStack::onBack,
         transitionSpec = {
-            (slideInHorizontally(initialOffsetX = { it }))
-                .togetherWith(slideOutHorizontally(targetOffsetX = { -it / 4 }) + fadeOut())
+            (slideInHorizontally(initialOffsetX = { directionMultiplier * it }))
+                .togetherWith(slideOutHorizontally(targetOffsetX = { directionMultiplier * -it / 4 }) + fadeOut())
         },
         popTransitionSpec = {
-            (slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn())
-                .togetherWith(slideOutHorizontally(targetOffsetX = { it }))
+            (slideInHorizontally(initialOffsetX = { directionMultiplier * -it / 4 }) + fadeIn())
+                .togetherWith(slideOutHorizontally(targetOffsetX = { directionMultiplier * it }))
         },
         predictivePopTransitionSpec = {
-            (slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn())
-                .togetherWith(slideOutHorizontally(targetOffsetX = { it }))
+            (slideInHorizontally(initialOffsetX = { directionMultiplier * -it / 4 }) + fadeIn())
+                .togetherWith(slideOutHorizontally(targetOffsetX = { directionMultiplier * it }))
         },
         sceneStrategy = rememberListDetailSceneStrategy(
             directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())

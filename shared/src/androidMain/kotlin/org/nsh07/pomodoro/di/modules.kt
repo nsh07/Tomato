@@ -72,7 +72,6 @@ val servicesModule = module {
     single { create(::createNotificationManager) }
     single { create(::createNotificationCompatBuilder) }
 
-    single<TimerStateHolder>()
     single<ActivityCallbacks>()
 }
 

@@ -33,7 +33,6 @@ import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
-import org.nsh07.pomodoro.di.TimerStateHolder
 import org.nsh07.pomodoro.service.ServiceHelper
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -42,11 +41,10 @@ import java.time.temporal.ChronoUnit
 class TimerViewModel(
     private val serviceHelper: ServiceHelper,
     private val stateRepository: StateRepository,
-    private val statRepository: StatRepository,
-    timerStateHolder: TimerStateHolder,
+    private val statRepository: StatRepository
 ) : ViewModel() {
 
-    private val _time: MutableStateFlow<Long> = timerStateHolder.time
+    private val _time: MutableStateFlow<Long> = stateRepository.time
     val timerState: StateFlow<TimerState> = stateRepository.timerState.asStateFlow()
 
     val progress = _time.combine(stateRepository.timerState) { remainingTime, uiState ->

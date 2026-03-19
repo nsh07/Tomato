@@ -41,12 +41,10 @@ import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
-import org.nsh07.pomodoro.di.TimerStateHolder
 import org.nsh07.pomodoro.service.ServiceHelper
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
-import org.nsh07.pomodoro.utils.getDefaultAlarmTone
 import org.nsh07.pomodoro.utils.logError
 import org.nsh07.pomodoro.utils.millisecondsToStr
 
@@ -56,10 +54,9 @@ class SettingsViewModel(
     private val preferenceRepository: PreferenceRepository,
     private val stateRepository: StateRepository,
     private val statRepository: StatRepository,
-    private val serviceHelper: ServiceHelper,
-    timerStateHolder: TimerStateHolder
+    private val serviceHelper: ServiceHelper
 ) : ViewModel() {
-    private val time: MutableStateFlow<Long> = timerStateHolder.time
+    private val time: MutableStateFlow<Long> = stateRepository.time
 
     val backStack = mutableStateListOf<Screen.Settings>(Screen.Settings.Main)
 
@@ -98,12 +95,6 @@ class SettingsViewModel(
     private var focusFlowCollectionJob: Job? = null
     private var shortBreakFlowCollectionJob: Job? = null
     private var longBreakFlowCollectionJob: Job? = null
-
-    init {
-        viewModelScope.launch {
-            reloadSettings()
-        }
-    }
 
     fun onAction(action: SettingsAction) {
         when (action) {
@@ -402,147 +393,6 @@ class SettingsViewModel(
                 "vibration_amplitude",
                 vibrationAmplitude
             )
-        }
-    }
-
-    suspend fun reloadSettings() {
-        var settingsState = _settingsState.value
-        val focusTime =
-            preferenceRepository.getIntPreference("focus_time")?.toLong()
-                ?: preferenceRepository.saveIntPreference(
-                    "focus_time",
-                    settingsState.focusTime.toInt()
-                ).toLong()
-        val shortBreakTime =
-            preferenceRepository.getIntPreference("short_break_time")?.toLong()
-                ?: preferenceRepository.saveIntPreference(
-                    "short_break_time",
-                    settingsState.shortBreakTime.toInt()
-                ).toLong()
-        val longBreakTime =
-            preferenceRepository.getIntPreference("long_break_time")?.toLong()
-                ?: preferenceRepository.saveIntPreference(
-                    "long_break_time",
-                    settingsState.longBreakTime.toInt()
-                ).toLong()
-        val focusGoal = preferenceRepository.getIntPreference("focus_goal")?.toLong()
-            ?: preferenceRepository.saveIntPreference("focus_goal", settingsState.focusGoal.toInt())
-                .toLong()
-
-        val sessionLength =
-            preferenceRepository.getIntPreference("session_length")
-                ?: preferenceRepository.saveIntPreference(
-                    "session_length",
-                    settingsState.sessionLength
-                )
-
-        val alarmSoundUri = (
-                preferenceRepository.getStringPreference("alarm_sound")
-                    ?: preferenceRepository.saveStringPreference(
-                        "alarm_sound",
-                        getDefaultAlarmTone().toString()
-                    )
-                )
-
-        val theme = preferenceRepository.getStringPreference("theme")
-            ?: preferenceRepository.saveStringPreference("theme", settingsState.theme)
-        val colorScheme = preferenceRepository.getStringPreference("color_scheme")
-            ?: preferenceRepository.saveStringPreference("color_scheme", settingsState.colorScheme)
-        val blackTheme = preferenceRepository.getBooleanPreference("black_theme")
-            ?: preferenceRepository.saveBooleanPreference("black_theme", settingsState.blackTheme)
-        val aodEnabled = preferenceRepository.getBooleanPreference("aod_enabled")
-            ?: preferenceRepository.saveBooleanPreference("aod_enabled", settingsState.aodEnabled)
-        val alarmEnabled = preferenceRepository.getBooleanPreference("alarm_enabled")
-            ?: preferenceRepository.saveBooleanPreference(
-                "alarm_enabled",
-                settingsState.alarmEnabled
-            )
-        val vibrateEnabled = preferenceRepository.getBooleanPreference("vibrate_enabled")
-            ?: preferenceRepository.saveBooleanPreference(
-                "vibrate_enabled",
-                settingsState.vibrateEnabled
-            )
-        val dndEnabled = preferenceRepository.getBooleanPreference("dnd_enabled")
-            ?: preferenceRepository.saveBooleanPreference("dnd_enabled", settingsState.dndEnabled)
-        val mediaVolumeForAlarm =
-            preferenceRepository.getBooleanPreference("media_volume_for_alarm")
-                ?: preferenceRepository.saveBooleanPreference(
-                    "media_volume_for_alarm",
-                    settingsState.mediaVolumeForAlarm
-                )
-        val singleProgressBar = preferenceRepository.getBooleanPreference("single_progress_bar")
-            ?: preferenceRepository.saveBooleanPreference(
-                "single_progress_bar",
-                settingsState.singleProgressBar
-            )
-        val autostartNextSession =
-            preferenceRepository.getBooleanPreference("autostart_next_session")
-                ?: preferenceRepository.saveBooleanPreference(
-                    "autostart_next_session",
-                    settingsState.autostartNextSession
-                )
-        val secureAod = preferenceRepository.getBooleanPreference("secure_aod")
-            ?: preferenceRepository.saveBooleanPreference("secure_aod", settingsState.secureAod)
-
-        val vibrationOnDuration = (preferenceRepository.getIntPreference("vibration_on_duration")
-            ?: preferenceRepository.saveIntPreference(
-                "vibration_on_duration",
-                settingsState.vibrationOnDuration.toInt()
-            )).toLong()
-
-        val vibrationOffDuration = (preferenceRepository.getIntPreference("vibration_off_duration")
-            ?: preferenceRepository.saveIntPreference(
-                "vibration_off_duration",
-                settingsState.vibrationOffDuration.toInt()
-            )).toLong()
-
-        val vibrationAmplitude = preferenceRepository.getIntPreference("vibration_amplitude")
-            ?: preferenceRepository.saveIntPreference(
-                "vibration_amplitude",
-                settingsState.vibrationAmplitude
-            )
-
-
-        _settingsState.update { currentState ->
-            currentState.copy(
-                focusTime = focusTime,
-                shortBreakTime = shortBreakTime,
-                longBreakTime = longBreakTime,
-                focusGoal = focusGoal,
-                sessionLength = sessionLength,
-                theme = theme,
-                colorScheme = colorScheme,
-                alarmSoundUri = alarmSoundUri,
-                blackTheme = blackTheme,
-                aodEnabled = aodEnabled,
-                alarmEnabled = alarmEnabled,
-                vibrateEnabled = vibrateEnabled,
-                dndEnabled = dndEnabled,
-                mediaVolumeForAlarm = mediaVolumeForAlarm,
-                singleProgressBar = singleProgressBar,
-                autostartNextSession = autostartNextSession,
-                secureAod = secureAod,
-                vibrationOnDuration = vibrationOnDuration,
-                vibrationOffDuration = vibrationOffDuration,
-                vibrationAmplitude = vibrationAmplitude
-            )
-        }
-
-        settingsState = _settingsState.value
-
-        if (!stateRepository.timerState.value.serviceRunning) {
-            time.update { settingsState.focusTime }
-            stateRepository.timerState.update { currentState ->
-                currentState.copy(
-                    timerMode = TimerMode.FOCUS,
-                    timeStr = millisecondsToStr(time.value),
-                    totalTime = time.value,
-                    nextTimerMode = if (settingsState.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
-                    nextTimeStr = millisecondsToStr(if (settingsState.sessionLength > 1) settingsState.shortBreakTime else settingsState.longBreakTime),
-                    currentFocusCount = 1,
-                    totalFocusCount = settingsState.sessionLength
-                )
-            }
         }
     }
 

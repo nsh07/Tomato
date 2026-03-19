@@ -47,11 +47,9 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.di.ActivityCallbacks
-import org.nsh07.pomodoro.di.TimerStateHolder
 import org.nsh07.pomodoro.qsTile.TomatoQSTileService
 import org.nsh07.pomodoro.shared.R
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -68,7 +66,7 @@ class TimerService : Service(), KoinComponent {
     private val activityCallbacks: ActivityCallbacks by inject()
     private val _timerState by lazy { stateRepository.timerState }
     private val _settingsState by lazy { stateRepository.settingsState }
-    private val _time = get<TimerStateHolder>().time
+    private val _time = stateRepository.time
 
     /**
      * Remaining time

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (c) 2025 Nishant Mishra
+  ~ Copyright (c) 2025-2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
   ~
@@ -54,6 +54,20 @@
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="Required to keep the timer running in the background" />
+        </service>
+
+        <service
+            android:name=".qsTile.TomatoQSTileService"
+            android:exported="true"
+            android:icon="@drawable/tomato_logo_quick_tile"
+            android:label="@string/timer"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.quicksettings.ACTIVE_TILE"
+                android:value="true" />
         </service>
 
         <receiver

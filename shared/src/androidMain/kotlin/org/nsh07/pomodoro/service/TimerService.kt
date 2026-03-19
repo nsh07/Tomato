@@ -20,6 +20,7 @@ package org.nsh07.pomodoro.service
 import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.Service
+import android.content.ComponentName
 import android.content.Intent
 import android.media.AudioAttributes
 import android.media.MediaPlayer
@@ -29,6 +30,7 @@ import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.service.quicksettings.TileService
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -50,6 +52,7 @@ import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.di.ActivityCallbacks
 import org.nsh07.pomodoro.di.TimerStateHolder
+import org.nsh07.pomodoro.qsTile.TomatoQSTileService
 import org.nsh07.pomodoro.shared.R
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.utils.millisecondsToStr
@@ -116,6 +119,7 @@ class TimerService : Service(), KoinComponent {
 
     override fun onDestroy() {
         stateRepository.timerState.update { it.copy(serviceRunning = false) }
+        updateQSTile()
         runBlocking {
             job.cancel()
             saveTimeToDb()
@@ -227,6 +231,8 @@ class TimerService : Service(), KoinComponent {
                 }
             }
         }
+
+        updateQSTile()
     }
 
     @SuppressLint(
@@ -589,6 +595,11 @@ class TimerService : Service(), KoinComponent {
         notificationManager.cancel(1)
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
+    }
+
+    private fun updateQSTile() {
+        val componentName = ComponentName(this, TomatoQSTileService::class.java)
+        TileService.requestListeningState(this, componentName)
     }
 
     enum class Actions {

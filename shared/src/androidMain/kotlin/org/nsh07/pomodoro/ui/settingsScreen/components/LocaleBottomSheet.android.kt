@@ -21,7 +21,6 @@ import android.app.LocaleConfig
 import android.app.LocaleManager
 import android.os.Build
 import android.os.LocaleList
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,16 +29,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -54,9 +51,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
-import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.check
 import tomato.shared.generated.resources.choose_language
@@ -117,11 +112,23 @@ actual fun LocaleBottomSheet(
                     state = listState,
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .clip(shapes.largeIncreased)
+                        .clip(shapes.large)
                 ) {
                     item {
-                        ListItem(
-                            headlineContent = {
+                        SegmentedListItem(
+                            onClick = {
+                                scope
+                                    .launch { bottomSheetState.hide() }
+                                    .invokeOnCompletion {
+                                        if (Build.VERSION.SDK_INT >= 33) {
+                                            context
+                                                .getSystemService(LocaleManager::class.java)
+                                                .applicationLocales = LocaleList()
+                                        }
+                                        setShowSheet(false)
+                                    }
+                            },
+                            content = {
                                 Text(stringResource(Res.string.system_default))
                             },
                             trailingContent = {
@@ -131,31 +138,9 @@ actual fun LocaleBottomSheet(
                                         contentDescription = stringResource(Res.string.selected)
                                     )
                             },
-                            colors =
-                                if (currentLocales.isEmpty)
-                                    ListItemDefaults.colors(
-                                        containerColor = colorScheme.secondaryContainer,
-                                        headlineColor = colorScheme.onSecondaryContainer,
-                                        leadingIconColor = colorScheme.onSecondaryContainer,
-                                        trailingIconColor = colorScheme.onSecondaryContainer
-                                    )
-                                else listItemColors,
-                            modifier = Modifier
-                                .clip(if (currentLocales.isEmpty) CircleShape else shapes.largeIncreased)
-                                .clickable(
-                                    onClick = {
-                                        scope
-                                            .launch { bottomSheetState.hide() }
-                                            .invokeOnCompletion {
-                                                if (Build.VERSION.SDK_INT >= 33) {
-                                                    context
-                                                        .getSystemService(LocaleManager::class.java)
-                                                        .applicationLocales = LocaleList()
-                                                }
-                                                setShowSheet(false)
-                                            }
-                                    }
-                                )
+                            colors = listItemColors,
+                            selected = currentLocales.isEmpty,
+                            shapes = segmentedListItemShapes(0, 1)
                         )
                     }
                     item {
@@ -165,51 +150,33 @@ actual fun LocaleBottomSheet(
                         supportedLocalesList,
                         key = { _: Int, it: AppLocale -> it.name }
                     ) { index, it ->
-                        ListItem(
-                            headlineContent = {
-                                Text(it.name)
+                        val selected = !currentLocales.isEmpty && it.locale == currentLocales.get(0)
+
+                        SegmentedListItem(
+                            onClick = {
+                                scope
+                                    .launch { bottomSheetState.hide() }
+                                    .invokeOnCompletion { _ ->
+                                        if (Build.VERSION.SDK_INT >= 33) {
+                                            context.getSystemService(LocaleManager::class.java)
+                                                .applicationLocales =
+                                                LocaleList(it.locale)
+                                        }
+                                        setShowSheet(false)
+                                    }
                             },
+                            content = { Text(it.name) },
                             trailingContent = {
-                                if (!currentLocales.isEmpty && it.locale == currentLocales.get(0))
+                                if (selected)
                                     Icon(
                                         painterResource(Res.drawable.check),
                                         tint = colorScheme.primary,
                                         contentDescription = stringResource(Res.string.selected)
                                     )
                             },
-                            colors =
-                                if (!currentLocales.isEmpty && it.locale == currentLocales.get(0))
-                                    ListItemDefaults.colors(
-                                        containerColor = colorScheme.secondaryContainer,
-                                        headlineColor = colorScheme.onSecondaryContainer,
-                                        leadingIconColor = colorScheme.onSecondaryContainer,
-                                        trailingIconColor = colorScheme.onSecondaryContainer
-                                    )
-                                else listItemColors,
-                            modifier = Modifier
-                                .clip(
-                                    if (!currentLocales.isEmpty && it.locale == currentLocales.get(0))
-                                        CircleShape
-                                    else when (index) {
-                                        0 -> topListItemShape
-                                        supportedLocalesSize - 1 -> bottomListItemShape
-                                        else -> middleListItemShape
-                                    }
-                                )
-                                .clickable(
-                                    onClick = {
-                                        scope
-                                            .launch { bottomSheetState.hide() }
-                                            .invokeOnCompletion { _ ->
-                                                if (Build.VERSION.SDK_INT >= 33) {
-                                                    context.getSystemService(LocaleManager::class.java)
-                                                        .applicationLocales =
-                                                        LocaleList(it.locale)
-                                                }
-                                                setShowSheet(false)
-                                            }
-                                    }
-                                )
+                            colors = listItemColors,
+                            selected = selected,
+                            shapes = segmentedListItemShapes(index, supportedLocalesSize)
                         )
                     }
                 }

@@ -66,7 +66,7 @@ import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.utils.millisecondsToMinutes
 import org.nsh07.pomodoro.widget.TomatoWidgetSize.Height2
 import org.nsh07.pomodoro.widget.TomatoWidgetSize.Width4
-import org.nsh07.pomodoro.widget.componenets.HorizontalStackedBarGlance
+import org.nsh07.pomodoro.widget.components.HorizontalStackedBarGlance
 import java.time.LocalDate
 
 class TodayAppWidget : GlanceAppWidget(), KoinComponent {

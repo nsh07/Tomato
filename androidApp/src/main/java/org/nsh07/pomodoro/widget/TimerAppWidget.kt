@@ -32,11 +32,12 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
-import androidx.glance.action.action
+import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.components.SquareIconButton
 import androidx.glance.appwidget.provideContent
@@ -46,6 +47,7 @@ import androidx.glance.layout.Box
 import androidx.glance.layout.Row
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.size
+import androidx.glance.material3.ColorProviders
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import org.koin.core.component.KoinComponent
@@ -53,8 +55,11 @@ import org.koin.core.component.get
 import org.nsh07.pomodoro.MainActivity
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.StateRepository
+import org.nsh07.pomodoro.service.TimerService
+import org.nsh07.pomodoro.ui.theme.lightScheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
+import org.nsh07.pomodoro.widget.StartServiceAction.Companion.key
 import org.nsh07.pomodoro.widget.components.createCustomFontBitmap
 
 class TimerAppWidget : GlanceAppWidget(), KoinComponent {
@@ -81,8 +86,8 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
         val breakMode =
             timerState.timerMode == TimerMode.SHORT_BREAK || timerState.timerMode == TimerMode.LONG_BREAK
 
-        val secondaryButtonColor = if (!breakMode) colors.tertiary else colors.secondary
-        val onSecondaryButtonColor = if (!breakMode) colors.onTertiary else colors.onSecondary
+        val secondaryButtonColor = if (!breakMode) colors.tertiary else colors.primary
+        val onSecondaryButtonColor = if (!breakMode) colors.onTertiary else colors.onPrimary
 
         Box(
             modifier = GlanceModifier
@@ -98,10 +103,7 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
                         .size(circleSize)
                         .background(
                             ImageProvider(R.drawable.rounded_full),
-                            colorFilter = ColorFilter.tint(
-                                if (!breakMode) colors.widgetBackground
-                                else colors.surface
-                            )
+                            colorFilter = ColorFilter.tint(colors.widgetBackground)
                         )
                 ) {
                     val textBitmap = createCustomFontBitmap(
@@ -129,7 +131,9 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
                         CircleIconButton(
                             imageProvider = ImageProvider(R.drawable.restart),
                             contentDescription = context.getString(R.string.restart),
-                            onClick = {},
+                            onClick = actionRunCallback<StartServiceAction>(
+                                actionParametersOf(key to TimerService.Actions.RESET)
+                            ),
                             backgroundColor = secondaryButtonColor,
                             contentColor = onSecondaryButtonColor
                         )
@@ -137,7 +141,9 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
                     CircleIconButton(
                         imageProvider = ImageProvider(R.drawable.skip_next),
                         contentDescription = context.getString(R.string.skip_to_next),
-                        onClick = {},
+                        onClick = actionRunCallback<StartServiceAction>(
+                            actionParametersOf(key to TimerService.Actions.SKIP)
+                        ),
                         backgroundColor = secondaryButtonColor,
                         contentColor = onSecondaryButtonColor
                     )
@@ -152,7 +158,9 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
                             if (!timerState.timerRunning) ImageProvider(R.drawable.play)
                             else ImageProvider(R.drawable.pause),
                         contentDescription = context.getString(R.string.play),
-                        onClick = action() { },
+                        onClick = actionRunCallback<StartServiceAction>(
+                            actionParametersOf(key to TimerService.Actions.TOGGLE)
+                        ),
                         backgroundColor =
                             if (breakMode)
                                 colors.tertiary
@@ -171,8 +179,8 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
     @Preview(widthDp = 196, heightDp = 196)
     @Composable
     private fun ContentPreview() {
-        GlanceTheme {
-            Box(GlanceModifier.background(colors.inverseSurface)) {
+        GlanceTheme(colors = ColorProviders(lightScheme)) {
+            Box(GlanceModifier.background(Color.White)) {
                 Content(
                     timerState = TimerState()
                 )

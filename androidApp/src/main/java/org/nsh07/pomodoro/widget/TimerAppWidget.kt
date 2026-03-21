@@ -18,12 +18,44 @@
 package org.nsh07.pomodoro.widget
 
 import android.content.Context
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
+import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
+import androidx.glance.GlanceTheme.colors
+import androidx.glance.Image
+import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
+import androidx.glance.LocalSize
+import androidx.glance.action.action
+import androidx.glance.action.actionStartActivity
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
+import androidx.glance.appwidget.components.CircleIconButton
+import androidx.glance.appwidget.components.SquareIconButton
 import androidx.glance.appwidget.provideContent
+import androidx.glance.background
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
+import androidx.glance.layout.Row
+import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.size
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.nsh07.pomodoro.MainActivity
+import org.nsh07.pomodoro.R
+import org.nsh07.pomodoro.data.StateRepository
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
+import org.nsh07.pomodoro.widget.components.createCustomFontBitmap
 
 class TimerAppWidget : GlanceAppWidget(), KoinComponent {
     override val sizeMode: SizeMode = SizeMode.Exact
@@ -32,9 +64,118 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
         context: Context,
         id: GlanceId
     ) {
+        val stateRepository: StateRepository = get()
         provideContent {
+            val timerState by stateRepository.timerState.collectAsState()
             GlanceTheme {
+                Content(timerState)
+            }
+        }
+    }
 
+    @Composable
+    private fun Content(timerState: TimerState) {
+        val size = LocalSize.current
+        val context = LocalContext.current
+        val circleSize = minOf(256.dp, size.width, size.height)
+        val breakMode =
+            timerState.timerMode == TimerMode.SHORT_BREAK || timerState.timerMode == TimerMode.LONG_BREAK
+
+        val secondaryButtonColor = if (!breakMode) colors.tertiary else colors.secondary
+        val onSecondaryButtonColor = if (!breakMode) colors.onTertiary else colors.onSecondary
+
+        Box(
+            modifier = GlanceModifier
+                .fillMaxSize()
+                .background(Color.Transparent)
+                .clickable(actionStartActivity<MainActivity>()),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(contentAlignment = Alignment.TopEnd) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = GlanceModifier
+                        .size(circleSize)
+                        .background(
+                            ImageProvider(R.drawable.rounded_full),
+                            colorFilter = ColorFilter.tint(
+                                if (!breakMode) colors.widgetBackground
+                                else colors.surface
+                            )
+                        )
+                ) {
+                    val textBitmap = createCustomFontBitmap(
+                        context,
+                        timerState.timeStr,
+                        (circleSize.value * 0.25f),
+                        if (!breakMode) colors.primary
+                        else colors.tertiary
+                    )
+
+                    Image(
+                        provider = ImageProvider(textBitmap),
+                        contentDescription = timerState.timeStr
+                    )
+                }
+
+                Row(
+                    GlanceModifier
+                        .background(
+                            ImageProvider(R.drawable.rounded_24dp),
+                            colorFilter = ColorFilter.tint(secondaryButtonColor)
+                        )
+                ) {
+                    if (timerState.timerRunning)
+                        CircleIconButton(
+                            imageProvider = ImageProvider(R.drawable.restart),
+                            contentDescription = context.getString(R.string.restart),
+                            onClick = {},
+                            backgroundColor = secondaryButtonColor,
+                            contentColor = onSecondaryButtonColor
+                        )
+
+                    CircleIconButton(
+                        imageProvider = ImageProvider(R.drawable.skip_next),
+                        contentDescription = context.getString(R.string.skip_to_next),
+                        onClick = {},
+                        backgroundColor = secondaryButtonColor,
+                        contentColor = onSecondaryButtonColor
+                    )
+                }
+
+                Box(
+                    contentAlignment = Alignment.BottomStart,
+                    modifier = GlanceModifier.size(circleSize)
+                ) {
+                    SquareIconButton(
+                        imageProvider =
+                            if (!timerState.timerRunning) ImageProvider(R.drawable.play)
+                            else ImageProvider(R.drawable.pause),
+                        contentDescription = context.getString(R.string.play),
+                        onClick = action() { },
+                        backgroundColor =
+                            if (breakMode)
+                                colors.tertiary
+                            else colors.primary,
+                        contentColor =
+                            if (breakMode)
+                                colors.onTertiary
+                            else colors.onPrimary
+                    )
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalGlancePreviewApi::class)
+    @Preview(widthDp = 196, heightDp = 196)
+    @Composable
+    private fun ContentPreview() {
+        GlanceTheme {
+            Box(GlanceModifier.background(colors.inverseSurface)) {
+                Content(
+                    timerState = TimerState()
+                )
             }
         }
     }

@@ -17,6 +17,9 @@
 
 package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class TimerState(
     val timerMode: TimerMode = TimerMode.FOCUS,
     val timeStr: String = "25:00",

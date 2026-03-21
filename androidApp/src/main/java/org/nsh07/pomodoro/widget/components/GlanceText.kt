@@ -21,11 +21,17 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.text.TextPaint
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.res.ResourcesCompat.getFont
 import androidx.core.graphics.createBitmap
 import androidx.core.util.TypedValueCompat.spToPx
+import androidx.glance.GlanceModifier
+import androidx.glance.Image
+import androidx.glance.ImageProvider
+import androidx.glance.text.FontWeight
 import androidx.glance.unit.ColorProvider
 import org.nsh07.pomodoro.R
 
@@ -34,18 +40,31 @@ fun createCustomFontBitmap(
     context: Context,
     text: String,
     fontSizeSp: Float,
-    fontColor: ColorProvider
+    fontColor: ColorProvider,
+    fontWeight: FontWeight = FontWeight.Normal,
+    isClock: Boolean = true
 ): Bitmap {
-    val customTypeface = getFont(context, R.font.google_sans_flex)
+    val customTypeface = Typeface.create(
+        getFont(context, R.font.google_sans_flex),
+        when (fontWeight) {
+            FontWeight.Bold -> Typeface.BOLD
+            FontWeight.Medium -> Typeface.ITALIC
+            else -> Typeface.NORMAL
+        }
+    )
     val displayMetrics = context.resources.displayMetrics
 
     val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
         typeface = customTypeface
         textSize = spToPx(fontSizeSp, displayMetrics)
         color = fontColor.getColor(context).toArgb()
-        fontFeatureSettings = "tnum"
-        fontVariationSettings = "'ROND' 100"
-        letterSpacing = -0.04f
+        if (isClock) {
+            fontVariationSettings = "'ROND' 100"
+            if (fontWeight == FontWeight.Normal) {
+                fontFeatureSettings = "tnum"
+                letterSpacing = -0.04f
+            }
+        }
     }
 
     val width = textPaint.measureText(text).toInt()
@@ -60,4 +79,30 @@ fun createCustomFontBitmap(
     canvas.drawText(text, 0f, -fontMetrics.ascent, textPaint)
 
     return bitmap
+}
+
+@Composable
+fun GlanceText(
+    context: Context,
+    text: String,
+    fontSizeSp: Float,
+    fontColor: ColorProvider,
+    modifier: GlanceModifier = GlanceModifier,
+    fontWeight: FontWeight = FontWeight.Normal,
+    isClock: Boolean = true
+) {
+    Image(
+        provider = ImageProvider(
+            createCustomFontBitmap(
+                context,
+                text,
+                fontSizeSp,
+                fontColor,
+                fontWeight,
+                isClock
+            )
+        ),
+        contentDescription = text,
+        modifier = modifier
+    )
 }

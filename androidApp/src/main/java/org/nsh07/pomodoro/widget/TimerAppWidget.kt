@@ -28,7 +28,6 @@ import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.GlanceTheme.colors
-import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
@@ -60,7 +59,7 @@ import org.nsh07.pomodoro.ui.theme.lightScheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import org.nsh07.pomodoro.widget.StartServiceAction.Companion.key
-import org.nsh07.pomodoro.widget.components.createCustomFontBitmap
+import org.nsh07.pomodoro.widget.components.GlanceText
 
 class TimerAppWidget : GlanceAppWidget(), KoinComponent {
     override val sizeMode: SizeMode = SizeMode.Exact
@@ -106,17 +105,12 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
                             colorFilter = ColorFilter.tint(colors.widgetBackground)
                         )
                 ) {
-                    val textBitmap = createCustomFontBitmap(
+                    GlanceText(
                         context,
                         timerState.timeStr,
                         (circleSize.value * 0.25f),
                         if (!breakMode) colors.primary
                         else colors.tertiary
-                    )
-
-                    Image(
-                        provider = ImageProvider(textBitmap),
-                        contentDescription = timerState.timeStr
                     )
                 }
 

@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.glance.ColorFilter
@@ -51,6 +52,9 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.width
+import androidx.glance.material3.ColorProviders
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -62,10 +66,12 @@ import org.nsh07.pomodoro.MainActivity
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
+import org.nsh07.pomodoro.ui.theme.lightScheme
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.utils.millisecondsToMinutes
 import org.nsh07.pomodoro.widget.TomatoWidgetSize.Height2
 import org.nsh07.pomodoro.widget.TomatoWidgetSize.Width4
+import org.nsh07.pomodoro.widget.components.GlanceText
 import org.nsh07.pomodoro.widget.components.HorizontalStackedBarGlance
 import java.time.LocalDate
 
@@ -115,17 +121,18 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
                         fontSize = typography.titleMedium.fontSize
                     )
                 )
-                Text(
+
+                GlanceText(
+                    context,
                     millisecondsToHoursMinutes(
                         stat.totalFocusTime(),
                         context.getString(R.string.hours_and_minutes_format)
                     ),
-                    style = TextStyle(
-                        color = colors.onSurface,
-                        fontSize = typography.displaySmall.fontSize,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    maxLines = 1
+                    typography.displaySmall.fontSize.value,
+                    colors.onSurface,
+                    fontWeight = FontWeight.Bold,
+                    isClock = true,
+                    modifier = GlanceModifier.padding(top = 4.dp)
                 )
 
                 Spacer(GlanceModifier.defaultWeight())
@@ -140,24 +147,26 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
                     if (size.width >= Width4) {
                         Row {
                             values.fastForEach {
-                                Text(
-                                    if (it <= 60 * 60 * 1000)
-                                        millisecondsToMinutes(
-                                            it,
-                                            context.getString(R.string.minutes_format)
-                                        )
-                                    else millisecondsToHoursMinutes(
-                                        it,
-                                        context.getString(R.string.hours_and_minutes_format)
-                                    ),
-                                    style = TextStyle(
-                                        color = colors.onSurfaceVariant,
-                                        fontSize = typography.bodyLarge.fontSize,
-                                        fontWeight = FontWeight.Bold,
-                                        textAlign = androidx.glance.text.TextAlign.Center
-                                    ),
+                                Box(
+                                    contentAlignment = Alignment.Center,
                                     modifier = GlanceModifier.width(((size.width.value - 32f) / 4).dp)
-                                )
+                                ) {
+                                    GlanceText(
+                                        context,
+                                        if (it <= 60 * 60 * 1000)
+                                            millisecondsToMinutes(
+                                                it,
+                                                context.getString(R.string.minutes_format)
+                                            )
+                                        else millisecondsToHoursMinutes(
+                                            it,
+                                            context.getString(R.string.hours_and_minutes_format)
+                                        ),
+                                        typography.bodyLarge.fontSize.value,
+                                        colors.onSurfaceVariant,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
                             }
                         }
                     }
@@ -180,6 +189,30 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
                             scope.launch { this@TodayAppWidget.updateAll(context) }
                         }
                 )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalGlancePreviewApi::class)
+    @Preview(widthDp = 400, heightDp = 216)
+    @Composable
+    private fun ContentPreview() {
+        GlanceTheme(colors = ColorProviders(lightScheme)) {
+            Box(GlanceModifier.background(Color.Black)) {
+                Box(
+                    GlanceModifier.cornerRadius(32.dp)
+                ) {
+                    Content(
+                        Stat(
+                            date = LocalDate.of(2026, 3, 12),
+                            focusTimeQ1 = 1617943 + 7200000,
+                            focusTimeQ2 = 5704591,
+                            focusTimeQ3 = 556490,
+                            focusTimeQ4 = 1200498,
+                            breakTime = 3939448
+                        )
+                    )
+                }
             }
         }
     }

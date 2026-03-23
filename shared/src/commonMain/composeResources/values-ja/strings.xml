@@ -143,5 +143,5 @@
     <string name="cancel">キャンセル</string>
     <string name="infinite_focus">没頭</string>
     <string name="settings_infinite_focus_tip">タイマー時計を長押しすると時間無制限の集中モードが有効になります</string>
-    <string name="infinite">没頭</string>
+    <string name="infinite">無制限</string>
 </resources>

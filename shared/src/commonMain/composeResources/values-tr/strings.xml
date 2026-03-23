@@ -17,7 +17,7 @@
   --><resources>
     <string name="start">Başlat</string>
     <string name="stop">Durdur</string>
-    <string name="focus">Odaklan</string>
+    <string name="focus">Odak</string>
     <string name="short_break">Kısa Mola</string>
     <string name="long_break">Uzun Mola</string>
     <string name="exit">Çıkış</string>

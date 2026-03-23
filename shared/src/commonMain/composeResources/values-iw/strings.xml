@@ -18,7 +18,7 @@
     <string name="alarm">התראה</string>
     <string name="alarm_desc">השמעת התראה בעת סיום של קוצב זמן</string>
     <string name="alarm_sound">קול התראה</string>
-    <string name="always_on_display">השארת המסך דולק (AOD)</string>
+    <string name="always_on_display">‏Always On Display</string>
     <string name="always_on_display_desc">הקשה על מקום כלשהו בעת הצגת קוצב הזמן תפעיל את מצב AOD</string>
     <string name="black_theme">ערכת נושא כהה</string>
     <string name="black_theme_desc">שימוש בצבע שחור מוחלט לערכת הנושא הכהה</string>

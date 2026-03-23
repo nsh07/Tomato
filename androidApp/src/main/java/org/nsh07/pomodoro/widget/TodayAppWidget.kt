@@ -132,7 +132,7 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
                     colors.onSurface,
                     fontWeight = FontWeight.Bold,
                     isClock = true,
-                    modifier = GlanceModifier.padding(top = 4.dp)
+                    modifier = GlanceModifier.padding(top = 8.dp)
                 )
 
                 Spacer(GlanceModifier.defaultWeight())
@@ -198,14 +198,14 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
     @Composable
     private fun ContentPreview() {
         GlanceTheme(colors = ColorProviders(lightScheme)) {
-            Box(GlanceModifier.background(Color.Black)) {
+            Box(GlanceModifier.background(Color.White)) {
                 Box(
                     GlanceModifier.cornerRadius(32.dp)
                 ) {
                     Content(
                         Stat(
                             date = LocalDate.of(2026, 3, 12),
-                            focusTimeQ1 = 1617943 + 7200000,
+                            focusTimeQ1 = 1617943,
                             focusTimeQ2 = 5704591,
                             focusTimeQ3 = 556490,
                             focusTimeQ4 = 1200498,

@@ -326,7 +326,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             )
         )
         GlanceTheme(colors = ColorProviders(lightScheme)) {
-            Box(GlanceModifier.background(Color.Black)) {
+            Box(GlanceModifier.background(Color.White)) {
                 Box(
                     GlanceModifier.cornerRadius(32.dp)
                 ) {

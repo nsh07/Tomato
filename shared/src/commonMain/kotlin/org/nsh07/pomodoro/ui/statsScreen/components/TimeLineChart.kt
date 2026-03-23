@@ -135,7 +135,7 @@ fun TimeLineChart(
                                 stroke = LineCartesianLayer.LineStroke.Continuous(
                                     thickness, StrokeCap.Round
                                 ),
-                                pointConnector = LineCartesianLayer.PointConnector.cubic(0.5f)
+                                interpolator = LineCartesianLayer.Interpolator.catmullRom()
                             )
                         ),
                         pointSpacing = pointSpacing

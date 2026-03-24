@@ -23,7 +23,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
-import org.nsh07.pomodoro.shared.R
+import org.nsh07.pomodoro.R
 
 fun NotificationCompat.Builder.addTimerActions(
     context: Context,

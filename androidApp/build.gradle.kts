@@ -139,6 +139,13 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android)
 
+    // TODO: remove this when CMP migration is done
+    implementation(libs.koin.compose)
+    implementation(libs.koin.compose.viewmodel)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.components.resources)
+
     testImplementation(libs.junit)
 
     implementation(project(":shared"))

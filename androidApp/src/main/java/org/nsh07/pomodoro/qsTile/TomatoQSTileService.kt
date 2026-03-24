@@ -20,9 +20,9 @@ package org.nsh07.pomodoro.qsTile
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import org.koin.android.ext.android.get
+import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.service.AppServiceHelper
-import org.nsh07.pomodoro.shared.R
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast

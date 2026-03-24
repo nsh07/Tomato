@@ -25,7 +25,6 @@ import android.graphics.Typeface
 import android.text.TextPaint
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.toArgb
-import androidx.core.content.res.ResourcesCompat.getFont
 import androidx.core.graphics.createBitmap
 import androidx.core.util.TypedValueCompat.spToPx
 import androidx.glance.GlanceModifier
@@ -33,8 +32,6 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.text.FontWeight
 import androidx.glance.unit.ColorProvider
-import org.nsh07.pomodoro.R
-
 
 fun createCustomFontBitmap(
     context: Context,
@@ -45,7 +42,10 @@ fun createCustomFontBitmap(
     isClock: Boolean = true
 ): Bitmap {
     val customTypeface = Typeface.create(
-        getFont(context, R.font.google_sans_flex),
+        Typeface.createFromAsset(
+            context.assets,
+            "composeResources/tomato.shared.generated.resources/font/google_sans_flex.ttf"
+        ),
         when (fontWeight) {
             FontWeight.Bold -> Typeface.BOLD
             FontWeight.Medium -> Typeface.ITALIC

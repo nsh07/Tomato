@@ -20,6 +20,7 @@ package org.nsh07.pomodoro.service
 import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.Service
+import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
 import android.media.AudioAttributes
@@ -31,10 +32,13 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.service.quicksettings.TileService
+import android.util.Log
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
+import androidx.glance.GlanceId
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -54,6 +58,7 @@ import org.nsh07.pomodoro.di.ActivityCallbacks
 import org.nsh07.pomodoro.qsTile.TomatoQSTileService
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.utils.millisecondsToStr
+import org.nsh07.pomodoro.widget.TimerAppWidget
 import kotlin.text.Typography.middleDot
 
 class TimerService : Service(), KoinComponent {
@@ -67,6 +72,10 @@ class TimerService : Service(), KoinComponent {
     private val _timerState by lazy { stateRepository.timerState }
     private val _settingsState by lazy { stateRepository.settingsState }
     private val _time = stateRepository.time
+
+    private val widget by lazy { TimerAppWidget() }
+    private val widgetManager by lazy { GlanceAppWidgetManager(this) }
+    private var glanceId: GlanceId? = null
 
     /**
      * Remaining time
@@ -130,6 +139,16 @@ class TimerService : Service(), KoinComponent {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (glanceId == null) {
+            val widgetId = intent?.getIntExtra(
+                AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID
+            ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
+
+            glanceId = if (widgetId == AppWidgetManager.INVALID_APPWIDGET_ID) null
+            else widgetManager.getGlanceIdBy(widgetId)
+        }
+
         when (intent?.action) {
             Actions.TOGGLE.toString() -> {
                 startForegroundService()
@@ -178,6 +197,7 @@ class TimerService : Service(), KoinComponent {
             if (pauseTime != 0L) pauseDuration += SystemClock.elapsedRealtime() - pauseTime
 
             var iterations = -1
+            var notificationUpdateCounter = -1
 
             timerScope.launch {
                 while (true) {
@@ -199,8 +219,17 @@ class TimerService : Service(), KoinComponent {
 
                     iterations =
                         (iterations + 1) % stateRepository.timerFrequency.toInt().coerceAtLeast(1)
+                    notificationUpdateCounter =
+                        (notificationUpdateCounter + 1) % (
+                                stateRepository.timerFrequency.toInt().coerceAtLeast(1) * 10
+                                ) // update widget every 10 seconds
 
-                    if (iterations == 0) showTimerNotification(time.toInt())
+                    if (iterations == 0) {
+                        Log.d("TimerService", "Notification updated")
+                        showTimerNotification(time.toInt())
+                    }
+
+                    if (notificationUpdateCounter == 0) updateWidget()
 
                     if (time < 0) {
                         skipTimer()
@@ -311,6 +340,17 @@ class TimerService : Service(), KoinComponent {
             _timerState.update { currentState ->
                 currentState.copy(alarmRinging = true)
             }
+        }
+    }
+
+    /**
+     * Updates the most recently interacted [TimerAppWidget] widget to make it show the correct time
+     * as long as the timer runs
+     */
+    private suspend fun updateWidget() {
+        glanceId?.let {
+            widget.update(this@TimerService, it)
+            Log.d("TimerService", "Widget updated")
         }
     }
 
@@ -455,6 +495,7 @@ class TimerService : Service(), KoinComponent {
         }
 
         updateProgressSegments()
+        updateWidget()
     }
 
     fun startAlarm() {

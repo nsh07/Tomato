@@ -1,0 +1,6 @@
+New features:
+- New fully-featured timer widget
+
+Improvements:
+- Stats screen animations are now significantly smoother
+- All widgets use Google Sans as the font now

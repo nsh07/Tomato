@@ -28,6 +28,7 @@ import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.GlanceTheme.colors
+import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
@@ -105,42 +106,54 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
                             colorFilter = ColorFilter.tint(colors.widgetBackground)
                         )
                 ) {
-                    GlanceText(
-                        context,
-                        timerState.timeStr,
-                        (circleSize.value * 0.25f),
-                        if (!breakMode) colors.primary
-                        else colors.tertiary
-                    )
+                    val clockHeight = (circleSize.value * 0.25f)
+                    if (timerState.alarmRinging) {
+                        Image(
+                            ImageProvider(R.drawable.alarm),
+                            contentDescription = context.getString(R.string.stop_alarm),
+                            colorFilter = ColorFilter.tint(colors.primary),
+                            modifier = GlanceModifier.size(clockHeight.dp)
+                        )
+                    } else {
+                        GlanceText(
+                            context,
+                            timerState.timeStr,
+                            clockHeight,
+                            if (!breakMode) colors.primary
+                            else colors.tertiary
+                        )
+                    }
                 }
 
-                Row(
-                    GlanceModifier
-                        .background(
-                            ImageProvider(R.drawable.rounded_24dp),
-                            colorFilter = ColorFilter.tint(secondaryButtonColor)
-                        )
-                ) {
-                    if (timerState.timerRunning)
+                if (!timerState.alarmRinging) {
+                    Row(
+                        GlanceModifier
+                            .background(
+                                ImageProvider(R.drawable.rounded_24dp),
+                                colorFilter = ColorFilter.tint(secondaryButtonColor)
+                            )
+                    ) {
+                        if (timerState.timerRunning)
+                            CircleIconButton(
+                                imageProvider = ImageProvider(R.drawable.restart),
+                                contentDescription = context.getString(R.string.restart),
+                                onClick = actionRunCallback<StartServiceAction>(
+                                    actionParametersOf(key to TimerService.Actions.RESET)
+                                ),
+                                backgroundColor = secondaryButtonColor,
+                                contentColor = onSecondaryButtonColor
+                            )
+
                         CircleIconButton(
-                            imageProvider = ImageProvider(R.drawable.restart),
-                            contentDescription = context.getString(R.string.restart),
+                            imageProvider = ImageProvider(R.drawable.skip_next),
+                            contentDescription = context.getString(R.string.skip_to_next),
                             onClick = actionRunCallback<StartServiceAction>(
-                                actionParametersOf(key to TimerService.Actions.RESET)
+                                actionParametersOf(key to TimerService.Actions.SKIP)
                             ),
                             backgroundColor = secondaryButtonColor,
                             contentColor = onSecondaryButtonColor
                         )
-
-                    CircleIconButton(
-                        imageProvider = ImageProvider(R.drawable.skip_next),
-                        contentDescription = context.getString(R.string.skip_to_next),
-                        onClick = actionRunCallback<StartServiceAction>(
-                            actionParametersOf(key to TimerService.Actions.SKIP)
-                        ),
-                        backgroundColor = secondaryButtonColor,
-                        contentColor = onSecondaryButtonColor
-                    )
+                    }
                 }
 
                 Box(
@@ -149,12 +162,22 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
                 ) {
                     SquareIconButton(
                         imageProvider =
-                            if (!timerState.timerRunning) ImageProvider(R.drawable.play)
-                            else ImageProvider(R.drawable.pause),
+                            if (timerState.alarmRinging) {
+                                ImageProvider(R.drawable.stop)
+                            } else {
+                                if (!timerState.timerRunning) ImageProvider(R.drawable.play)
+                                else ImageProvider(R.drawable.pause)
+                            },
                         contentDescription = context.getString(R.string.play),
-                        onClick = actionRunCallback<StartServiceAction>(
-                            actionParametersOf(key to TimerService.Actions.TOGGLE)
-                        ),
+                        onClick = if (timerState.alarmRinging) {
+                            actionRunCallback<StartServiceAction>(
+                                actionParametersOf(key to TimerService.Actions.STOP_ALARM)
+                            )
+                        } else {
+                            actionRunCallback<StartServiceAction>(
+                                actionParametersOf(key to TimerService.Actions.TOGGLE)
+                            )
+                        },
                         backgroundColor =
                             if (breakMode)
                                 colors.tertiary

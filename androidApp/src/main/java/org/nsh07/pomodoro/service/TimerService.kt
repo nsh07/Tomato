@@ -571,6 +571,10 @@ class TimerService : Service(), KoinComponent {
 
         if (settingsState.autostartNextSession && !fromAutoStop)  // auto start next session
             toggleTimer()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            updateWidget()
+        }
     }
 
     private fun initializeMediaPlayer(): MediaPlayer? {

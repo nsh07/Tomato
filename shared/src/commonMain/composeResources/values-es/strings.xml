@@ -37,7 +37,7 @@
     <string name="settings">Configuración</string>
     <string name="session_length">Duración de la sesión</string>
     <string name="session_length_desc">Intervalos de concentración en una sesión: %1$d</string>
-    <string name="pomodoro_info">Una "sesión" es una secuencia de intervalos Pomodoro que contiene intervalos de concentración, intervalos de descanso cortos y un intervalo de descanso largo. El último descanso de una sesión es siempre un descanso largo.</string>
+    <string name="pomodoro_info">Una sesión es una secuencia de intervalos Pomodoro que contiene intervalos de concentración, intervalos de descanso cortos y un intervalo de descanso largo. El último descanso de una sesión es siempre un descanso largo.</string>
     <string name="stats">Estadísticas</string>
     <string name="today">Hoy</string>
     <string name="break_">Descanso</string>
@@ -121,7 +121,7 @@
     <string name="back">Atrás</string>
     <string name="today_widget_desc">Estadísticas de concentración de hoy</string>
     <string name="history_widget_desc">Ver un gráfico con la duración de la concentración de los últimos días. El número de días que se muestra depende del tamaño del widget.</string>
-    <string name="dnd_permission_message">Habilitar permiso para "%1$s"</string>
+    <string name="dnd_permission_message">Habilitar permiso para %1$s</string>
     <string name="duration">Duración</string>
     <string name="lifetime">Total</string>
     <string name="total">en total</string>
@@ -133,7 +133,7 @@
     <string name="restore">Restaurar</string>
     <string name="restore_desc">Restaurar estadísticas y ajustes</string>
     <string name="backup_dialog_desc">Tus estadísticas y ajustes se guardarán en un archivo en la carpeta que hayas elegido. Puedes restaurar estos datos más tarde en %1$s.</string>
-    <string name="restore_dialog_desc">Tus estadísticas y ajustes serán restaurados del archivo de copia de seguridad elegido. La aplicación tendrá que ser reiniciada cuando la restauración esté completa. &lt;b&gt;Todos los datos existentes serán borrados, y esto no se puede deshacer.&lt;/b&gt;</string>
+    <string name="restore_dialog_desc">Tus estadísticas y ajustes serán restaurados del archivo de copia de seguridad elegido. La aplicación tendrá que ser reiniciada cuando la restauración esté completa. <b>Todos los datos existentes serán borrados, y esto no se puede deshacer.</b></string>
     <string name="choose_folder">Elegir carpeta</string>
     <string name="choose_file">Elegir archivo</string>
     <string name="restart_app">Reiniciar app</string>

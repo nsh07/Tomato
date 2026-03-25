@@ -78,7 +78,7 @@
     <string name="get_plus">احصل علي Tomato+</string>
     <string name="dynamic_color">اللون الديناميكي</string>
     <string name="dynamic_color_desc">مواءمة ألوان المظهر مع خلفية شاشتك</string>
-    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss" translatable="false">Tomato FOSS</string>
     <string name="tomato_foss_desc">كل الميزات مفتوحة في هذه النسخة، اذا كنت تريد صنع اختلاف في حياتك، فكر في التبرع لي علي %1$s.</string>
     <string name="language">اللغة</string>
     <string name="choose_language">اختيار لغة</string>

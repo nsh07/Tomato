@@ -78,7 +78,7 @@
     <string name="get_plus">获取 Tomato+</string>
     <string name="dynamic_color">动态配色</string>
     <string name="dynamic_color_desc">从你的壁纸中提取主题色</string>
-    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss" translatable="false">Tomato FOSS</string>
     <string name="tomato_foss_desc">此版本已解锁所有功能。若这个应用对你有帮助，请考虑在 %1$s 上捐款支持我。</string>
     <string name="language">语言</string>
     <string name="choose_language">选择语言</string>

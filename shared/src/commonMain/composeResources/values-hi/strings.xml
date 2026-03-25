@@ -48,7 +48,7 @@
     <string name="pause">पॉज करें</string>
     <string name="paused">पॉज किया हुआ है</string>
     <string name="play">शुरू करें</string>
-    <string name="pomodoro_info">"पीरियड" पोमोडोरो इंटरवल का एक सिक्वेंस होता है जिसमें फोकस इंटरवल, छोटे ब्रेक के इंटरवल और एक लंबे ब्रेक का इंटरवल होते है। पीरियड का आखिरी ब्रेक हमेशा एक लंबा ब्रेक होता है।</string>
+    <string name="pomodoro_info">पीरियड पोमोडोरो इंटरवल का एक सिक्वेंस होता है जिसमें फोकस इंटरवल, छोटे ब्रेक के इंटरवल और एक लंबे ब्रेक का इंटरवल होते है। पीरियड का आखिरी ब्रेक हमेशा एक लंबा ब्रेक होता है।</string>
     <string name="restart">वापस शुरू करें</string>
     <string name="session_length">पीरियड की लंबाई</string>
     <string name="session_length_desc">एक पीरियड में फोकस इंटरवल: %1$d</string>
@@ -74,7 +74,7 @@
     <string name="appearance">रंग-रूप</string>
     <string name="durations">ड्यूरेशन</string>
     <string name="dnd">डू नॉट डिस्टर्ब</string>
-    <string name="dnd_desc">फोकस टाइमर चलते समय \u0027डू नॉट डिस्टर्ब\u0027 मोड ऑन करें</string>
+    <string name="dnd_desc">फोकस टाइमर चलते समय 'डू नॉट डिस्टर्ब' मोड ऑन करें</string>
     <string name="get_plus">Tomato+ लें</string>
     <string name="dynamic_color">डायनामिक रंग</string>
     <string name="dynamic_color_desc">अपने वॉलपेपर से रंग चुनें</string>
@@ -121,7 +121,7 @@
     <string name="reset_data_dialog_title">सभी आँकड़ों को रीसेट करें?</string>
     <string name="today_widget_desc">आज के फोकस आंकड़े</string>
     <string name="history_widget_desc">पिछले कुछ दिनों के फोकस ड्यूरेशन का चार्ट देखें। दिखाए जाने वाले दिनों की संख्या विजेट के साइज़ पर निर्भर करती है।</string>
-    <string name="dnd_permission_message">"%1$s" के लिए परमिशन चालू करें</string>
+    <string name="dnd_permission_message">%1$s के लिए परमिशन चालू करें</string>
     <string name="lifetime">लाइफटाइम</string>
     <string name="total">कुल</string>
     <string name="duration">अवधि</string>
@@ -135,7 +135,7 @@
     <string name="restore">रिस्टोर</string>
     <string name="restore_desc">आंकड़ों और सेटिंग्स को रीस्टोर करें</string>
     <string name="backup_dialog_desc">आपके आंकड़े और सेटिंग्स आपके चुने हुए फ़ोल्डर में एक फ़ाइल में सेव हो जाएँगे। आप बाद में %1$s से इस डेटा को रिस्टोर कर सकते हैं।</string>
-    <string name="restore_dialog_desc">आपके आंकड़े और सेटिंग्स चुनी हुई बैकअप फ़ाइल से रिस्टोर हो जाएँगे। रिस्टोर पूरा होने पर ऐप को रीस्टार्ट करना होगा। &lt;b&gt;सारा मौजूदा डेटा मिट जाएगा, और इसे वापस नहीं किया जा सकता।&lt;/b&gt;</string>
+    <string name="restore_dialog_desc">आपके आंकड़े और सेटिंग्स चुनी हुई बैकअप फ़ाइल से रिस्टोर हो जाएँगे। रिस्टोर पूरा होने पर ऐप को रीस्टार्ट करना होगा। <b>सारा मौजूदा डेटा मिट जाएगा, और इसे वापस नहीं किया जा सकता।</b></string>
     <string name="choose_folder">फ़ोल्डर चुनें</string>
     <string name="choose_file">फ़ाइल चुनें</string>
     <string name="restart_app">ऐप रीस्टार्ट करें</string>

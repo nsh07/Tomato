@@ -14,7 +14,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  --><resources>
+  --><resources xmlns:tools="http://schemas.android.com/tools">
     <string name="start">Indít</string>
     <string name="stop">Leállít</string>
     <string name="focus">Fókuszálás</string>
@@ -78,7 +78,7 @@
     <string name="choose_language">Nyelv kiválasztása</string>
     <string name="dnd">Ne zavarjanak</string>
     <string name="dnd_desc">Ne zavarjanak mód bekapcsolása a Fókusz időzítő futása alatt</string>
-    <string name="dnd_permission_message">Engedélyek megadása a "%1$s"-nak</string>
+    <string name="dnd_permission_message">Engedélyek megadása a %1$s-nak</string>
     <string name="duration">Időtartam</string>
     <string name="durations">Időtartamok</string>
     <string name="dynamic_color">Dinamikus szín</string>

@@ -14,7 +14,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  --><resources>
+  --><resources xmlns:tools="http://schemas.android.com/tools">
     <string name="about">Về ứng dụng</string>
     <string name="alarm">Chuông báo</string>
     <string name="alarm_desc">Rung chuông khi thời gian kết thúc</string>

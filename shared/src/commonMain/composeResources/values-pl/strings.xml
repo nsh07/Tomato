@@ -97,7 +97,7 @@
     <string name="auto_start_next_timer">Automatycznie startuj następny timer</string>
     <string name="auto_start_next_timer_desc">Zacznij następny timer po zatrzymanie alarmu</string>
     <string name="back">Powtót</string>
-    <string name="dnd_permission_message">Włącz pozwolenie dla "%1$s"</string>
+    <string name="dnd_permission_message">Włącz pozwolenie dla %1$s</string>
     <string name="duration">Długość</string>
     <string name="focus_history">Historia skupienia</string>
 </resources>

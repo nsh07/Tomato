@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -13,9 +14,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  -->
-
-<resources>
+  --><resources>
     <string name="start">Inizia</string>
     <string name="stop">Ferma</string>
     <string name="focus">Concentrati</string>
@@ -49,7 +48,7 @@
     <string name="settings">Impostazioni</string>
     <string name="session_length">Lunghezza sessione</string>
     <string name="session_length_desc">Intervalli di concentrazione per sessione: %1$d</string>
-    <string name="pomodoro_info">Una &quot;sessione&quot; è una sequenza di intervalli &quot;pomodoro&quot; che include intervalli di concentrazione, di pausa breve, e di pausa lunga. L\u0027ultima pausa di una sessione è sempre una pausa lunga.</string>
+    <string name="pomodoro_info">Una sessione è una sequenza di intervalli pomodoro che include intervalli di concentrazione, di pausa breve, e di pausa lunga. L'ultima pausa di una sessione è sempre una pausa lunga.</string>
     <string name="stats">Statistiche</string>
     <string name="today">Oggi</string>
     <string name="break_">Pausa</string>
@@ -68,7 +67,7 @@
     <string name="up_next">Prossimo</string>
     <string name="timer">Timer</string>
     <string name="timer_progress">Progresso timer</string>
-    <string name="last_year">L\u0027anno scorso</string>
+    <string name="last_year">L'anno scorso</string>
     <string name="always_on_display_desc">Tocca un punto qualsiasi durante la visualizzazione del timer per passare alla modalità AOD</string>
     <string name="appearance">Aspetto</string>
     <string name="sound">Suono</string>
@@ -79,7 +78,7 @@
     <string name="choose_language">Scegli la lingua</string>
     <string name="durations">Durate</string>
     <string name="dnd_desc">Attiva la modalità non disturbare quando avvii un timer di concentrazione.</string>
-    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss" translatable="false">Tomato FOSS</string>
     <string name="rate_on_google_play">Valuta su Google Play</string>
     <string name="selected">Selezionato</string>
     <string name="dynamic_color">Colore dinamico</string>

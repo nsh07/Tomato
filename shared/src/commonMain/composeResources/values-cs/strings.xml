@@ -133,7 +133,7 @@
     <string name="restore">Obnovit</string>
     <string name="restore_desc">Obnovit statistiky a nastavení</string>
     <string name="backup_dialog_desc">Vaše statistiky a nastavení budou uloženy do souboru ve zvolené složce. Tato data můžete obnovit později v %1$s.</string>
-    <string name="restore_dialog_desc">Vaše statistiky a nastavení budou obnoveny ze zvoleného souboru zálohy. Po dokončení obnovení bude potřeba aplikaci restartovat. &lt;b&gt;Všechna existující data budou vymazána, tato akce je nevratná.&lt;/b&gt;</string>
+    <string name="restore_dialog_desc">Vaše statistiky a nastavení budou obnoveny ze zvoleného souboru zálohy. Po dokončení obnovení bude potřeba aplikaci restartovat. <b>Všechna existující data budou vymazána, tato akce je nevratná.</b></string>
     <string name="choose_folder">Vybrat složku</string>
     <string name="choose_file">Vybrat soubor</string>
     <string name="restart_app">Restartovat aplikaci</string>

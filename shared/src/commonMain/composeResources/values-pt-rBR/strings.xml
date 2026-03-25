@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -13,9 +14,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  -->
-
-<resources>
+  --><resources>
     <string name="start">Começar</string>
     <string name="stop">Parar</string>
     <string name="focus">Focar</string>
@@ -49,7 +48,7 @@
     <string name="settings">Configurações</string>
     <string name="session_length">Duração da sessão</string>
     <string name="session_length_desc">Intervalos de foco em uma sessão: %1$d</string>
-    <string name="pomodoro_info">Uma &quot;sessão&quot; é uma sequência de intervalos Pomodoro que contém intervalos de foco, intervalos de pausa curta e um intervalo de pausa longa. A última pausa de uma sessão é sempre uma pausa longa.</string>
+    <string name="pomodoro_info">Uma sessão é uma sequência de intervalos Pomodoro que contém intervalos de foco, intervalos de pausa curta e um intervalo de pausa longa. A última pausa de uma sessão é sempre uma pausa longa.</string>
     <string name="stats">Estatísticas</string>
     <string name="today">Hoje</string>
     <string name="break_">Pausa</string>
@@ -79,7 +78,7 @@
     <string name="get_plus">Obtenha o Tomato+</string>
     <string name="dynamic_color">Cor dinâmica</string>
     <string name="dynamic_color_desc">Adapte as cores do tema à partir do seu papel de parede</string>
-    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss" translatable="false">Tomato FOSS</string>
     <string name="tomato_foss_desc">Todos os recursos estão desbloqueados nesta versão. Se meu app fez a diferença na sua vida, considere me apoiar fazendo uma doação em %1$s.</string>
     <string name="language">Idioma</string>
     <string name="choose_language">Escolher idioma</string>

@@ -78,7 +78,7 @@
     <string name="get_plus">Hole dir Tomato+</string>
     <string name="dynamic_color">Dynamische Farben</string>
     <string name="dynamic_color_desc">Design an Hintergrundbild anpassen</string>
-    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss" translatable="false">Tomato FOSS</string>
     <string name="tomato_foss_desc">In dieser Version sind alle Funktionen freigeschaltet. Wenn dir die App gefällt, kannst du mich gerne mit einer Spende auf %1$s unterstützen.</string>
     <string name="language">Sprache</string>
     <string name="choose_language">Sprache wählen</string>
@@ -119,7 +119,7 @@
     <string name="focus_history_calendar_desc">Fokus-Verlauf des letzten Monats. Die Tage des Vormonats sind mit einer anderen Farbe markiert. Tippe auf ein Datum, um weitere Informationen zu erhalten.</string>
     <string name="reset_data_dialog_title">Alle Statistiken zurücksetzen?</string>
     <string name="back">Zurück</string>
-    <string name="dnd_permission_message">Erlaube Rechte für "%1$s"</string>
+    <string name="dnd_permission_message">Erlaube Rechte für %1$s</string>
     <string name="duration">Dauer</string>
     <string name="gap">Lücke</string>
     <string name="history_widget_desc">Sieh ein Diagramm der Fokus Dauern der letzten Tage. Die Anzahl an Tagen hängt von der Größe des Widget ab.</string>
@@ -135,7 +135,7 @@
     <string name="restore">Wiederherstellen</string>
     <string name="restore_desc">Statistiken und Einstellungen wiederherstellen</string>
     <string name="backup_dialog_desc">Deine Statistiken und Einstellungen werden in einer Datei in deinem gewähltem Ordner gespeichert. Du kannst diese Datei später in %1$s wiederherstellen.</string>
-    <string name="restore_dialog_desc">Deine Statistiken und Einstellungen werden von der gewählten Backup Datei wiederhergestellt. Die App muss neu gestartet werden, wenn die Wiederherstellung abgeschlossen ist. &lt;b&gt;Alle existierenden Daten werden gelöscht. Dieser Vorgang kann nicht rückgängig gemacht werden.&lt;/b&gt;</string>
+    <string name="restore_dialog_desc">Deine Statistiken und Einstellungen werden von der gewählten Backup Datei wiederhergestellt. Die App muss neu gestartet werden, wenn die Wiederherstellung abgeschlossen ist. <b>Alle existierenden Daten werden gelöscht. Dieser Vorgang kann nicht rückgängig gemacht werden.</b></string>
     <string name="choose_folder">Wähle einen Ordner</string>
     <string name="choose_file">Wähle eine Datei</string>
     <string name="milliseconds_format">%1$d ms</string>

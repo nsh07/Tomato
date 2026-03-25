@@ -43,7 +43,7 @@
     <string name="pause">Jeda</string>
     <string name="paused">Dijeda</string>
     <string name="play">Mulai</string>
-    <string name="pomodoro_info">"Sesi" adalah rangkaian interval pomodoro yang berisi interval fokus, interval rehat pendek, dan interval rehat panjang. Rehat terakhir dalam suatu sesi selalu merupakan rehat panjang.</string>
+    <string name="pomodoro_info">Sesi adalah rangkaian interval pomodoro yang berisi interval fokus, interval rehat pendek, dan interval rehat panjang. Rehat terakhir dalam suatu sesi selalu merupakan rehat panjang.</string>
     <string name="restart">Mulai ulang</string>
     <string name="session_length">Lama sesi</string>
     <string name="session_length_desc">Interval fokus dalam satu sesi: %1$d</string>
@@ -76,7 +76,7 @@
     <string name="get_plus">Dapatkan Tomato+</string>
     <string name="dynamic_color">Warna dinamis</string>
     <string name="dynamic_color_desc">Sesuaikan warna tema dari wallpaper perangkat</string>
-    <string name="tomato_foss">Tomato FOSS</string>
+    <string name="tomato_foss" translatable="false">Tomato FOSS</string>
     <string name="tomato_foss_desc">Semua fitur tidak terkunci di versi sumber terbuka ini. Jika aplikasi ini bermanfaat , mohon pertimbangkan untuk dukung saya dengan berdonasi di %1$s.</string>
     <string name="language">Bahasa</string>
     <string name="choose_language">Pilih bahasa</string>

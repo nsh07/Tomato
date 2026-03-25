@@ -128,8 +128,8 @@
     <string name="restore">復元</string>
     <string name="restore_desc">統計と設定を復元します</string>
     <string name="backup_dialog_desc">統計と設定は、選択されたフォルダにあるファイルに保存されます。後でこのデータを %1$s で復元できます。</string>
-    <string name="daily_focus_goal">日毎の集中時間の目標</string>
-    <string name="restore_dialog_desc">統計と設定は選択されたバックアップファイルから復元されます。復元完了時にアプリの再起動が必要となります。&lt;b&gt;既存の全てのデータが削除され、元に戻すことはできません。&lt;/b&gt;</string>
+    <string name="daily_focus_goal">一日の目標集中時間</string>
+    <string name="restore_dialog_desc">統計と設定は選択されたバックアップファイルから復元されます。復元完了時にアプリの再起動が必要となります。<b>既存の全てのデータが削除され、元に戻すことはできません。</b></string>
     <string name="choose_folder">フォルダ選択</string>
     <string name="choose_file">ファイル選択</string>
     <string name="restart_app">アプリを再起動</string>
@@ -138,7 +138,7 @@
     <string name="focus_break_ratio">集中と休憩の比率</string>
     <string name="focus_history_desc">過去1週間分の各日の集中時間の内訳です。各日のチャートをタップすると詳細を表示します。</string>
     <string name="less">短い</string>
-    <string name="dnd_permission_message">"%1$s" の権限を有効にしてください</string>
+    <string name="dnd_permission_message">%1$s の権限を有効にしてください</string>
     <string name="vibration_pattern">振動パターン</string>
     <string name="cancel">キャンセル</string>
     <string name="infinite_focus">没頭</string>

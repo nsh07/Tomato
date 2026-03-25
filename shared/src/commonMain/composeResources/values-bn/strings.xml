@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -13,9 +14,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  -->
-
-<resources xmlns:tools="http://schemas.android.com/tools">
+  --><resources xmlns:tools="http://schemas.android.com/tools">
     <string name="alarm">আলার্ম</string>
     <string name="alarm_desc">টাইমার শেষ হলে এলার্ম বাজাও</string>
     <string name="alarm_sound">এলার্মের শব্দ</string>
@@ -56,7 +55,7 @@
     <string name="pause">থামুন</string>
     <string name="paused">স্থির</string>
     <string name="play">চালু</string>
-    <string name="pomodoro_info">&quot;সেশন&quot; হলো Pomodoro এর একটি ক্রম যার মধ্যে ফোকাস সময়, ছোট বিরতি এবং একটি দীর্ঘ বিরতি ব্থাকে। একটি সেশন এর শেষ বিরতি সর্বদা একটি দীর্ঘ বিরতি।</string>
+    <string name="pomodoro_info">সেশন হলো Pomodoro এর একটি ক্রম যার মধ্যে ফোকাস সময়, ছোট বিরতি এবং একটি দীর্ঘ বিরতি ব্থাকে। একটি সেশন এর শেষ বিরতি সর্বদা একটি দীর্ঘ বিরতি।</string>
     <string name="rate_on_google_play">গুগল প্লে তে রেট করুন</string>
     <string name="restart">পুনরায় শুরু করুন</string>
     <string name="selected" tools:override="true">নির্ধারিত</string>

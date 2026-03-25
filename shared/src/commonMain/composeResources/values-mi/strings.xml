@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -13,9 +14,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  -->
-
-<resources>
+  --><resources>
     <string name="alarm">Wawā</string>
     <string name="alarm_desc">Whakatangihia te wawā inā mutu te kaitaki</string>
     <string name="alarm_sound">Reo wawā</string>
@@ -46,7 +45,7 @@
     <string name="pause">Taihoa</string>
     <string name="paused">Kua tū</string>
     <string name="play">Whakakā</string>
-    <string name="pomodoro_info">Ko te &quot;huringa&quot; ko ētehi wā e takingia - he wāhanga arotahi, he wāhanga whakatā poto, ā, he wāhanga hoki o taua wā e whai whakatā nui ai te tangata. Ko te wā o te whakatā nui te wāhanga whakamutunga o te huringa.</string>
+    <string name="pomodoro_info">Ko te huringa ko ētehi wā e takingia - he wāhanga arotahi, he wāhanga whakatā poto, ā, he wāhanga hoki o taua wā e whai whakatā nui ai te tangata. Ko te wā o te whakatā nui te wāhanga whakamutunga o te huringa.</string>
     <string name="restart">Tīmata anō</string>
     <string name="session_length">Ko te roa o te huringa</string>
     <string name="session_length_desc">Wā arotahi i te huringa kotahi: %1$d</string>

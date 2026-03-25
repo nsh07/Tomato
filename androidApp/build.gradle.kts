@@ -44,8 +44,8 @@ android {
         applicationId = "org.nsh07.pomodoro"
         minSdk = 26
         targetSdk = 36
-        versionCode = 33
-        versionName = "1.8.5-alpha04"
+        versionCode = 34
+        versionName = "1.8.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

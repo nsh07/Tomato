@@ -34,5 +34,5 @@ jobs:
       - name: Upload debug APK artifact
         uses: actions/upload-artifact@v7
         with:
-          name: tomato-debug
-          path: ./androidApp/build/intermediates/apk/foss/debug/androidApp-foss-debug.apk
+          archive: false
+          path: ./androidApp/build/outputs/apk/foss/debug/androidApp-foss-debug.apk

@@ -1,0 +1,10 @@
+New features:
+- New timer widget
+- Run a flow state timer using the new Infinite Focus mode. Press and hold the timer clock to get started.
+- You can now start the timer from a quick settings tile
+- Refreshed widgets that look consistent with the app
+
+Improvements:
+- Stats screen animations are now much smoother
+- Fixed icons in right-to-left languages
+- Fixed Eastern Arabic numerals getting clipped

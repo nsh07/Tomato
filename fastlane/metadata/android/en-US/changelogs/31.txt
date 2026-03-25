@@ -1,0 +1,8 @@
+New features:
+- Year line chart is now more minimal
+- List items are now more rounded when clicked
+
+Fixes:
+- Notifications and Live Updates/Now Bar now work with infinite focus mode
+
+The app is undergoing a lot of under-the-hood changes. Please report any bugs you find. Thanks!

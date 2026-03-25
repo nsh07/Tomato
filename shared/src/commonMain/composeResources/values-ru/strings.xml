@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2026 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  --><resources>
+    <string name="alarm">Сигнал</string>
+    <string name="alarm_desc">Воспроизвести сигнал по окончании таймера</string>
+    <string name="alarm_sound">Звук сигнала</string>
+    <string name="always_on_display">Всегда Включенный Экран</string>
+    <string name="always_on_display_desc">Переходить в режим Всегда Включенный Экран при нажатии на любое место при просмотре таймера</string>
+    <string name="black_theme">Чёрная тема</string>
+    <string name="black_theme_desc">Использовать чёрный цвет в тёмной теме</string>
+    <string name="break_">Перерыв</string>
+    <string name="choose_color_scheme">Выбрать цветовую схему</string>
+    <string name="choose_theme">Выбрать тему</string>
+    <string name="color">Цвет</string>
+    <string name="color_scheme">Цветовая схема</string>
+    <string name="completed">Готово</string>
+    <string name="dark">Тёмная</string>
+    <string name="dynamic">Динамическая</string>
+    <string name="exit">Выход</string>
+    <string name="focus">Фокус</string>
+    <string name="focus_per_day_avg">Фокусировок в день (среднее)</string>
+    <string name="last_month">Последний месяц</string>
+    <string name="last_week">Последняя неделя</string>
+    <string name="last_year">Последний год</string>
+    <string name="light">Светлая</string>
+    <string name="long_break">Долгий перерыв</string>
+    <string name="min_remaining_notification">%1$s минут осталось</string>
+    <string name="more">Больше</string>
+    <string name="more_info">Больше информации</string>
+    <string name="ok">Ок</string>
+    <string name="pause">Пауза</string>
+    <string name="paused">Приостановлено</string>
+    <string name="play">Пуск</string>
+    <string name="pomodoro_info">Сессия — это последовательность интервалов помодоро, которые содержат интервалы фокусировки, короткие интервалы перерыва и длинный интервал перерыва. Последний перерыв в сеансе — всегда долгий перерыв.</string>
+    <string name="restart">Перезапуск</string>
+    <string name="session_length">Длинна сессии</string>
+    <string name="session_length_desc">Интервалы фокусировки в одной сессии: %1$d</string>
+    <string name="settings">Настройки</string>
+    <string name="short_break">Короткий перерыв</string>
+    <string name="skip">Пропустить</string>
+    <string name="skip_to_next">Перейти далее</string>
+    <string name="start">Начать</string>
+    <string name="start_next">Начать далее</string>
+    <string name="stats">Статистика</string>
+    <string name="stop">Стоп</string>
+    <string name="stop_alarm">Сигнал остановки</string>
+    <string name="stop_alarm_dialog_text">Текущий таймер завершен. Нажмите в любом месте для остановки сигнала.</string>
+    <string name="stop_alarm_question">Остановить сигнал?</string>
+    <string name="system_default">Система</string>
+    <string name="theme">Тема</string>
+    <string name="timer">Таймер</string>
+    <string name="timer_progress">Прогресс таймера</string>
+    <string name="timer_session_count">%1$d из %2$d</string>
+    <string name="today">Сегодня</string>
+    <string name="up_next">Далее</string>
+    <string name="up_next_notification">Далее: %1$s (%2$s)</string>
+    <string name="vibrate">Вибрация</string>
+    <string name="vibrate_desc">Вибрация при завершении таймера</string>
+    <string name="sound">Звук</string>
+    <string name="dnd">Не беспокоить</string>
+    <string name="dnd_desc">Включить режим Не беспокоить во время таймера фокусировки</string>
+    <string name="get_plus">Получить Tomato+</string>
+    <string name="dynamic_color">Динамические цвета</string>
+    <string name="dynamic_color_desc">Использовать цвета темы в соответствии с вашими обоями</string>
+    <string name="tomato_foss_desc">В этой версии разблокированы все функции. Если моё приложение изменило вашу жизнь, пожалуйста, рассмотрите возможность поддержать меня, сделав пожертвование на %1$s.</string>
+    <string name="language">Язык</string>
+    <string name="choose_language">Выбрать язык</string>
+    <string name="rate_on_google_play">Оценить в Google Play</string>
+    <string name="selected">Выбрано</string>
+    <string name="durations">Длительности</string>
+    <string name="appearance">Внешний вид</string>
+    <string name="tomato_foss" translatable="false">Tomato (свободное и открытое программное обеспечение)</string>
+    <string name="help_with_translation">Помочь перевести Tomato</string>
+    <string name="timer_settings_reset_info">Необходимо сбросить таймер для изменения настроек</string>
+    <string name="hours_and_minutes_format">%1$dч %2$dмин</string>
+    <string name="hours_format">%1$dч</string>
+    <string name="minutes_format">%1$dмин</string>
+    <string name="about">О приложении</string>
+    <string name="help_with_translation_desc">Переведите Tomato на ваш язык</string>
+    <string name="rate_on_google_play_desc">Понравилось приложение? Оставьте отзыв!</string>
+    <string name="bmc_desc">Поддержать меня небольшим донатом</string>
+    <string name="tomato_plus_desc">Больше кастомизации с Tomato+</string>
+    <string name="license">Лицензия</string>
+    <string name="media_volume_for_alarm">Режим В наушниках</string>
+    <string name="media_volume_for_alarm_desc">Воспроизведение только в наушниках. Если наушники не подключены, сигнал воспроизводится через основной динамик с громкостью медиа.</string>
+    <string name="session_only_progress">Упрощённый прогресс</string>
+    <string name="session_only_progress_desc">Отображать в уведомлении прогресс только текущего таймера, а не всей сессии целиком.</string>
+    <string name="auto_start_next_timer_desc">Запускать следующий таймер после остановки сигнала</string>
+    <string name="auto_start_next_timer">Автозапуск следующего таймера</string>
+    <string name="secure_aod">Безопасный Всегда Включенный Экран</string>
+    <string name="secure_aod_desc">Автоматически блокировать устройство по истечении времени во время отображения Всегда Включенного Экрана</string>
+    <string name="timer_reset_message">Таймер сброшен</string>
+    <string name="undo">Отменить</string>
+    <string name="focus_break_ratio">Соотношение Фокус-Перерыв</string>
+    <string name="focus_breakdown_desc">Средняя продолжительность фокуса в разное время суток</string>
+    <string name="focus_history">История фокусировки</string>
+    <string name="less">Меньше</string>
+    <string name="show_chart">Показать график</string>
+    <string name="focus_history_heatmap">Тепловая карта истории фокуса</string>
+    <string name="focus_history_heatmap_desc">История фокуса за прошлый год. Более тёмные цвета обозначают большую продолжительность. Дни сгруппированы по месяцам. Нажмите на день, чтобы узнать подробности.</string>
+    <string name="focus_history_calendar">Календарь истории фокуса</string>
+    <string name="focus_history_calendar_desc">История фокуса за прошлый месяц. Дни предыдущего месяца выделены другим цветом. Нажмите на дату, чтобы узнать подробности.</string>
+    <string name="reset_data">Сбросить статистику</string>
+    <string name="reset_data_dialog_title">Сбросить всю статистику?</string>
+    <string name="reset_data_dialog_text">Вся сохраненная статистика будет удалена навсегда. Это действие нельзя отменить.</string>
+    <string name="back">Назад</string>
+    <string name="today_widget_desc">Статистика фокуса за сегодня</string>
+    <string name="focus_history_desc">Разбивка фокуса по каждому дню прошлой недели. Нажмите на график дня, чтобы узнать подробнее.</string>
+    <string name="focus_breakdown">Разбивка фокуса</string>
+    <string name="total">всего</string>
+    <string name="restore_dialog_desc">Ваша статистика и настройки будут восстановлены из выбранного файла бекапа. Приложение нужно будет перезагрузить после завершения восстановления. <b>Все данные будут безвозвратно удалены, это действие нельзя отменить.</b></string>
+    <string name="restore_desc">Восстановить статистики и настройки</string>
+    <string name="backup_dialog_desc">Ваша статистика и настройки будут сохранены в файл в выбранной папке. Вы сможете восстановить эти данные через %1$s.</string>
+    <string name="dnd_permission_message">Необходимо предоставить разрешение для %1$s</string>
+    <string name="duration">Длительность</string>
+    <string name="history_widget_desc">Просмотреть график длительности фокусировок за последние несколько дней. Количество отображаемых дней зависит от размера виджета.</string>
+    <string name="milliseconds_format">%1$dмс</string>
+    <string name="gap">Задержка</string>
+    <string name="lifetime">За всё время</string>
+    <string name="vibration_strength">Сила</string>
+    <string name="daily_focus_goal">Ежедневная цель</string>
+    <string name="backup_and_restore">Резервное копирование и восстановление</string>
+    <string name="backup">Резервное копирование</string>
+    <string name="backup_desc">Резервное копирование всех данных и настроек</string>
+    <string name="restore">Восстановление</string>
+    <string name="choose_folder">Выберите папку</string>
+    <string name="choose_file">Выберите файл</string>
+    <string name="restart_app">Перезапустите приложение</string>
+    <string name="vibration_pattern">Паттерн вибрации</string>
+    <string name="infinite">Бесконечный</string>
+    <string name="infinite_focus">Бесконечная фокусировка</string>
+    <string name="settings_infinite_focus_tip">Нажмите и удерживайте таймер, чтобы включить режим бесконечной фокусировки</string>
+    <string name="cancel">Отмена</string>
+</resources>

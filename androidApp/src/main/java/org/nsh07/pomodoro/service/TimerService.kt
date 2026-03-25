@@ -20,6 +20,8 @@ package org.nsh07.pomodoro.service
 import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.Service
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Intent
 import android.media.AudioAttributes
 import android.media.MediaPlayer
@@ -29,9 +31,14 @@ import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.service.quicksettings.TileService
+import android.util.Log
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
+import androidx.glance.GlanceId
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -44,14 +51,14 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.di.ActivityCallbacks
-import org.nsh07.pomodoro.di.TimerStateHolder
+import org.nsh07.pomodoro.qsTile.TomatoQSTileService
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.utils.millisecondsToStr
+import org.nsh07.pomodoro.widget.TimerAppWidget
 import kotlin.text.Typography.middleDot
 
 class TimerService : Service(), KoinComponent {
@@ -64,7 +71,11 @@ class TimerService : Service(), KoinComponent {
     private val activityCallbacks: ActivityCallbacks by inject()
     private val _timerState by lazy { stateRepository.timerState }
     private val _settingsState by lazy { stateRepository.settingsState }
-    private val _time = get<TimerStateHolder>().time
+    private val _time = stateRepository.time
+
+    private val widget by lazy { TimerAppWidget() }
+    private val widgetManager by lazy { GlanceAppWidgetManager(this) }
+    private var glanceId: GlanceId? = null
 
     /**
      * Remaining time
@@ -115,6 +126,7 @@ class TimerService : Service(), KoinComponent {
 
     override fun onDestroy() {
         stateRepository.timerState.update { it.copy(serviceRunning = false) }
+        updateQSTile()
         runBlocking {
             job.cancel()
             saveTimeToDb()
@@ -127,6 +139,16 @@ class TimerService : Service(), KoinComponent {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (glanceId == null) {
+            val widgetId = intent?.getIntExtra(
+                AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID
+            ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
+
+            glanceId = if (widgetId == AppWidgetManager.INVALID_APPWIDGET_ID) null
+            else widgetManager.getGlanceIdBy(widgetId)
+        }
+
         when (intent?.action) {
             Actions.TOGGLE.toString() -> {
                 startForegroundService()
@@ -175,6 +197,7 @@ class TimerService : Service(), KoinComponent {
             if (pauseTime != 0L) pauseDuration += SystemClock.elapsedRealtime() - pauseTime
 
             var iterations = -1
+            var notificationUpdateCounter = -1
 
             timerScope.launch {
                 while (true) {
@@ -182,8 +205,12 @@ class TimerService : Service(), KoinComponent {
                     if (startTime == 0L) startTime = SystemClock.elapsedRealtime()
 
                     val settingsState = _settingsState.value
+                    val timerState = _timerState.value
+
+                    val focusTime =
+                        if (!timerState.infiniteFocus) settingsState.focusTime else Long.MAX_VALUE
                     time = when (_timerState.value.timerMode) {
-                        TimerMode.FOCUS -> settingsState.focusTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration)
+                        TimerMode.FOCUS -> focusTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration)
 
                         TimerMode.SHORT_BREAK -> settingsState.shortBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration)
 
@@ -192,8 +219,17 @@ class TimerService : Service(), KoinComponent {
 
                     iterations =
                         (iterations + 1) % stateRepository.timerFrequency.toInt().coerceAtLeast(1)
+                    notificationUpdateCounter =
+                        (notificationUpdateCounter + 1) % (
+                                stateRepository.timerFrequency.toInt().coerceAtLeast(1) * 10
+                                ) // update widget every 10 seconds
 
-                    if (iterations == 0) showTimerNotification(time.toInt())
+                    if (iterations == 0) {
+                        Log.d("TimerService", "Notification updated")
+                        showTimerNotification(time.toInt())
+                    }
+
+                    if (notificationUpdateCounter == 0) updateWidget()
 
                     if (time < 0) {
                         skipTimer()
@@ -204,7 +240,9 @@ class TimerService : Service(), KoinComponent {
                     } else {
                         _timerState.update { currentState ->
                             currentState.copy(
-                                timeStr = millisecondsToStr(time)
+                                timeStr = if (!currentState.infiniteFocus || currentState.timerMode != TimerMode.FOCUS)
+                                    millisecondsToStr(time)
+                                else millisecondsToStr(currentState.totalTime - time) // elapsed time
                             )
                         }
                         val totalTime = _timerState.value.totalTime
@@ -220,6 +258,8 @@ class TimerService : Service(), KoinComponent {
                 }
             }
         }
+
+        updateQSTile()
     }
 
     @SuppressLint(
@@ -230,22 +270,23 @@ class TimerService : Service(), KoinComponent {
         remainingTime: Int, paused: Boolean = false, complete: Boolean = false
     ) {
         val settingsState = _settingsState.value
+        val timerState = _timerState.value
 
         if (complete) notificationBuilder.clearActions().addStopAlarmAction(this)
 
-        val totalTime = when (_timerState.value.timerMode) {
+        val totalTime = when (timerState.timerMode) {
             TimerMode.FOCUS -> settingsState.focusTime.toInt()
             TimerMode.SHORT_BREAK -> settingsState.shortBreakTime.toInt()
             else -> settingsState.longBreakTime.toInt()
         }
 
-        val currentTimer = when (_timerState.value.timerMode) {
+        val currentTimer = when (timerState.timerMode) {
             TimerMode.FOCUS -> getString(R.string.focus)
             TimerMode.SHORT_BREAK -> getString(R.string.short_break)
             else -> getString(R.string.long_break)
         }
 
-        val nextTimer = when (_timerState.value.nextTimerMode) {
+        val nextTimer = when (timerState.nextTimerMode) {
             TimerMode.FOCUS -> getString(R.string.focus)
             TimerMode.SHORT_BREAK -> getString(R.string.short_break)
             else -> getString(R.string.long_break)
@@ -260,7 +301,10 @@ class TimerService : Service(), KoinComponent {
                 .setContentTitle(
                     if (!complete) {
                         "$currentTimer  $middleDot  ${
-                            getString(R.string.min_remaining_notification, remainingTimeString)
+                            if (timerState.timerMode == TimerMode.FOCUS && timerState.infiniteFocus)
+                                getString(R.string.infinite)
+                            else
+                                getString(R.string.min_remaining_notification, remainingTimeString)
                         }" + if (paused) "  $middleDot  ${getString(R.string.paused)}" else ""
                     } else "$currentTimer $middleDot ${getString(R.string.completed)}"
                 )
@@ -274,13 +318,20 @@ class TimerService : Service(), KoinComponent {
                 .setStyle(
                     notificationStyle
                         .setProgress( // Set the current progress by filling the previous intervals and part of the current interval
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && !settingsState.singleProgressBar) {
+                            if (timerState.infiniteFocus) {
+                                if (timerState.timerMode == TimerMode.FOCUS) (Long.MAX_VALUE - remainingTime).toInt()
+                                else (totalTime - remainingTime)
+                            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && !settingsState.singleProgressBar) {
                                 (totalTime - remainingTime) + ((cycles + 1) / 2) * settingsState.focusTime.toInt() + (cycles / 2) * settingsState.shortBreakTime.toInt()
                             } else (totalTime - remainingTime)
                         )
                 )
                 .setWhen(System.currentTimeMillis() + remainingTime) // Sets the Live Activity/Now Bar chip time
-                .setShortCriticalText(millisecondsToStr(time.coerceAtLeast(0)))
+                .setShortCriticalText(
+                    if (timerState.timerMode == TimerMode.FOCUS && timerState.infiniteFocus)
+                        millisecondsToStr((Long.MAX_VALUE - time).coerceAtLeast(0))
+                    else millisecondsToStr(time.coerceAtLeast(0))
+                )
                 .build()
         )
 
@@ -292,12 +343,23 @@ class TimerService : Service(), KoinComponent {
         }
     }
 
+    /**
+     * Updates the most recently interacted [TimerAppWidget] widget to make it show the correct time
+     * as long as the timer runs
+     */
+    private suspend fun updateWidget() {
+        glanceId?.let {
+            widget.update(this@TimerService, it)
+            Log.d("TimerService", "Widget updated")
+        }
+    }
+
     private fun updateProgressSegments() {
         val settingsState = _settingsState.value
         notificationStyle = NotificationCompat.ProgressStyle()
             .also {
                 // Add all the Focus, Short break and long break intervals in order
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && !settingsState.singleProgressBar) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && !settingsState.singleProgressBar && !_timerState.value.infiniteFocus) {
                     // Android 16 and later supports live updates
                     // Set progress bar sections if on Baklava or later
                     for (i in 0..<settingsState.sessionLength * 2) {
@@ -334,6 +396,7 @@ class TimerService : Service(), KoinComponent {
 
     private suspend fun resetTimer() {
         val settingsState = _settingsState.value
+        val timerState = _timerState.value
 
         timerStateSnapshot.save(
             lastSavedDuration,
@@ -342,21 +405,23 @@ class TimerService : Service(), KoinComponent {
             startTime,
             pauseTime,
             pauseDuration,
-            _timerState.value
+            timerState
         )
 
         saveTimeToDb()
         lastSavedDuration = 0
-        time = settingsState.focusTime
         cycles = 0
         startTime = 0L
         pauseTime = 0L
         pauseDuration = 0L
 
+        time = if (!timerState.infiniteFocus) settingsState.focusTime else Long.MAX_VALUE
+
         _timerState.update { currentState ->
             currentState.copy(
                 timerMode = TimerMode.FOCUS,
-                timeStr = millisecondsToStr(time),
+                timeStr = if (!currentState.infiniteFocus) millisecondsToStr(time)
+                else millisecondsToStr(0),
                 totalTime = time,
                 nextTimerMode = if (settingsState.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
                 nextTimeStr = millisecondsToStr(if (settingsState.sessionLength > 1) settingsState.shortBreakTime else settingsState.longBreakTime),
@@ -391,12 +456,14 @@ class TimerService : Service(), KoinComponent {
         cycles = (cycles + 1) % (settingsState.sessionLength * 2)
 
         if (cycles % 2 == 0) {
-            if (_timerState.value.timerRunning) setDoNotDisturb(true)
-            time = settingsState.focusTime
             _timerState.update { currentState ->
+                if (currentState.timerRunning) setDoNotDisturb(true)
+                time = if (!currentState.infiniteFocus) settingsState.focusTime else Long.MAX_VALUE
+
                 currentState.copy(
                     timerMode = TimerMode.FOCUS,
-                    timeStr = millisecondsToStr(time),
+                    timeStr = if (!currentState.infiniteFocus) millisecondsToStr(time)
+                    else millisecondsToStr(0),
                     totalTime = time,
                     nextTimerMode = if (cycles == (settingsState.sessionLength - 1) * 2) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
                     nextTimeStr = if (cycles == (settingsState.sessionLength - 1) * 2) millisecondsToStr(
@@ -409,22 +476,26 @@ class TimerService : Service(), KoinComponent {
                 )
             }
         } else {
-            if (_timerState.value.timerRunning) setDoNotDisturb(false)
             val long = cycles == (settingsState.sessionLength * 2) - 1
             time = if (long) settingsState.longBreakTime else settingsState.shortBreakTime
 
             _timerState.update { currentState ->
+                if (currentState.timerRunning) setDoNotDisturb(false)
+
                 currentState.copy(
                     timerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
                     timeStr = millisecondsToStr(time),
                     totalTime = time,
                     nextTimerMode = TimerMode.FOCUS,
-                    nextTimeStr = millisecondsToStr(settingsState.focusTime)
+                    nextTimeStr = if (!currentState.infiniteFocus)
+                        millisecondsToStr(settingsState.focusTime)
+                    else getString(R.string.infinite)
                 )
             }
         }
 
         updateProgressSegments()
+        updateWidget()
     }
 
     fun startAlarm() {
@@ -500,6 +571,10 @@ class TimerService : Service(), KoinComponent {
 
         if (settingsState.autostartNextSession && !fromAutoStop)  // auto start next session
             toggleTimer()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            updateWidget()
+        }
     }
 
     private fun initializeMediaPlayer(): MediaPlayer? {
@@ -516,7 +591,7 @@ class TimerService : Service(), KoinComponent {
                         .build()
                 )
                 settingsState.alarmSoundUri?.let {
-                    setDataSource(applicationContext, it)
+                    setDataSource(applicationContext, it.toUri())
                     prepare()
                 }
             }
@@ -563,6 +638,11 @@ class TimerService : Service(), KoinComponent {
         notificationManager.cancel(1)
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
+    }
+
+    private fun updateQSTile() {
+        val componentName = ComponentName(this, TomatoQSTileService::class.java)
+        TileService.requestListeningState(this, componentName)
     }
 
     enum class Actions {

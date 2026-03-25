@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2026 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  --><resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="about">Về ứng dụng</string>
+    <string name="alarm">Chuông báo</string>
+    <string name="alarm_desc">Rung chuông khi thời gian kết thúc</string>
+    <string name="alarm_sound">Âm thanh chuông</string>
+    <string name="always_on_display">Always On Display</string>
+    <string name="always_on_display_desc">Chạm màn hình ở bất kỳ vị trí nào khi đang hiển thị đếm giờ để chuyển sang chế độ AOD</string>
+    <string name="appearance">Giao diện</string>
+    <string name="auto_start_next_timer">Tự động bắt đầu khoảng đếm giờ tiếp</string>
+    <string name="auto_start_next_timer_desc">Bắt đầu khoảng đếm giờ tiếp sau khi dừng chuông báo</string>
+    <string name="back">Trở về</string>
+    <string name="black_theme">Giao diện tối</string>
+    <string name="black_theme_desc">Dùng giao diện tối hoàn toàn</string>
+    <string name="bmc_desc">Hỗ trợ mình với một khoảng đóng góp nhỏ</string>
+    <string name="break_">Nghỉ</string>
+    <string name="choose_color_scheme">Chọn bộ màu sắc</string>
+    <string name="choose_language">Chọn ngôn ngữ</string>
+    <string name="choose_theme">Chọn giao diện</string>
+    <string name="color">Màu sắc</string>
+    <string name="color_scheme">Phối màu</string>
+    <string name="completed">Hoàn thành</string>
+    <string name="dark">Tối</string>
+    <string name="dnd">Chế độ không làm phiền</string>
+    <string name="dnd_desc">Bật chế độ không làm phiền khi đang tập trung</string>
+    <string name="dnd_permission_message">Bật cho phép %1$s</string>
+    <string name="duration">Khoảng thời gian</string>
+    <string name="durations">Các khoảng thời gian</string>
+    <string name="dynamic">Động</string>
+    <string name="dynamic_color">Màu động</string>
+    <string name="dynamic_color_desc">Tự chọn tông màu từ màn hình nền của bạn</string>
+    <string name="exit">Thoát</string>
+    <string name="focus">Tập trung</string>
+    <string name="focus_break_ratio">Tỉ lệ tập trung-giải lao</string>
+    <string name="focus_breakdown">Phân tích tập trung</string>
+    <string name="focus_breakdown_desc">Trung bình thời gian tập trung ở các thời điểm khác nhau trong ngày</string>
+    <string name="focus_history">Lịch sử tập trung</string>
+    <string name="focus_history_calendar">Lịch hịch sử tập trung</string>
+    <string name="focus_history_calendar_desc">Lịch sử tập trung cho tháng vừa rồi. Những ngày của tháng trước được hiển thị với màu khác. Nhấn vào một ngày để xem chi tiết.</string>
+    <string name="focus_history_desc">Phân tích tập trung của từng ngày trong tuần vừa qua. Nhấn vào đồ thị của một ngày để xem chi tiết.</string>
+    <string name="focus_history_heatmap">Bản đồ nhiệt lịch sử tập trung</string>
+</resources>

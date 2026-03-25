@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -19,9 +19,8 @@ package org.nsh07.pomodoro.utils
 
 import androidx.compose.ui.graphics.Color
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
-import org.junit.Assert.assertThrows
 import org.junit.Test
+import java.util.Locale
 
 class UtilsKtTest {
 
@@ -61,19 +60,18 @@ class UtilsKtTest {
     }
 
     @Test
-    fun `millisecondsToStr negative milliseconds`() {
-        val exception = assertThrows(IllegalArgumentException::class.java) {
-            millisecondsToStr(-1)
-        }
-        assertTrue(
-            "millisecondsToStr should throw IllegalArgumentException for negative values",
-            exception is IllegalArgumentException
-        )
+    fun `millisecondsToStr Long MAX VALUE`() {
+        assertEquals("153722867280912:55", millisecondsToStr(Long.MAX_VALUE))
     }
 
     @Test
-    fun `millisecondsToStr Long MAX VALUE`() {
-        assertEquals("153722867280912:55", millisecondsToStr(Long.MAX_VALUE))
+    fun `millisecondsToStr Eastern Arabic numerals`() {
+        Locale.setDefault(Locale.of("ar"))
+        assertEquals(
+            "٢٥:٠٠",
+            millisecondsToStr(25 * 60 * 1000)
+        )
+        Locale.setDefault(Locale.US)
     }
 
     @Test
@@ -99,17 +97,6 @@ class UtilsKtTest {
     @Test
     fun `millisecondsToHours large number of hours`() {
         assertEquals("25h", millisecondsToHours(25 * 3600000))
-    }
-
-    @Test
-    fun `millisecondsToHours negative milliseconds`() {
-        val exception = assertThrows(IllegalArgumentException::class.java) {
-            millisecondsToHours(-1)
-        }
-        assertTrue(
-            "millisecondsToHours should throw IllegalArgumentException for negative values",
-            exception is IllegalArgumentException
-        )
     }
 
     @Test
@@ -155,17 +142,6 @@ class UtilsKtTest {
     @Test
     fun `millisecondsToHoursMinutes just less than 2 hours`() {
         assertEquals("1h 59m", millisecondsToHoursMinutes(3600000 + 3599999))
-    }
-
-    @Test
-    fun `millisecondsToHoursMinutes negative milliseconds`() {
-        val exception = assertThrows(IllegalArgumentException::class.java) {
-            millisecondsToHoursMinutes(-1)
-        }
-        assertTrue(
-            "millisecondsToHoursMinutes should throw IllegalArgumentException for negative values",
-            exception is IllegalArgumentException
-        )
     }
 
     @Test

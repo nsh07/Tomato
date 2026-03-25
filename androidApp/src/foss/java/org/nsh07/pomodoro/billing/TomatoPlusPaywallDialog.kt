@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -41,7 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.ui.theme.AppFonts.robotoFlexTopBar
+import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -69,7 +69,7 @@ fun TomatoPlusPaywallDialog(
             Text(
                 stringResource(R.string.tomato_foss),
                 style = typography.headlineSmall,
-                fontFamily = robotoFlexTopBar,
+                fontFamily = LocalAppFonts.current.topBarTitle,
                 color = colorScheme.onSurface
             )
             Spacer(Modifier.height(8.dp))

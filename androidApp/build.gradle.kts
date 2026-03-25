@@ -44,8 +44,8 @@ android {
         applicationId = "org.nsh07.pomodoro"
         minSdk = 26
         targetSdk = 36
-        versionCode = 29
-        versionName = "1.8.4-play-rev"
+        versionCode = 34
+        versionName = "1.8.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -94,6 +94,16 @@ android {
         includeInApk = false
         includeInBundle = false
     }
+    sourceSets {
+        getByName("main") {
+            res.directories.addAll(
+                listOf(
+                    "src/main/res",
+                    "${project(":shared").projectDir}/src/commonMain/composeResources"
+                )
+            )
+        }
+    }
 }
 
 kotlin {
@@ -114,23 +124,12 @@ dependencies {
     implementation(libs.androidx.adaptive)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-
-    implementation(libs.androidx.navigation3.runtime)
-    implementation(libs.androidx.navigation3.ui)
-    implementation(libs.androidx.compose.adaptive.navigation3)
-
-    implementation(libs.vico.compose.m3)
-    implementation(libs.material.kolor)
-
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
 
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
+    implementation(libs.androidx.glance.preview)
+    implementation(libs.androidx.glance.appwidget.preview)
 
     "playImplementation"(libs.revenuecat.purchases)
     "playImplementation"(libs.revenuecat.purchases.ui)
@@ -139,16 +138,15 @@ dependencies {
     implementation(project.dependencies.platform(libs.koin.bom))
     implementation(libs.koin.core)
     implementation(libs.koin.android)
+
+    // TODO: remove this when CMP migration is done
     implementation(libs.koin.compose)
+    implementation(libs.koin.compose.viewmodel)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.components.resources)
 
     testImplementation(libs.junit)
 
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
     implementation(project(":shared"))
 }

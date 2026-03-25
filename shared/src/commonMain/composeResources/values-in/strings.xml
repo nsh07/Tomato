@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2026 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  --><resources>
+    <string name="dynamic">Dinamis</string>
+    <string name="alarm">Alarm</string>
+    <string name="alarm_desc">Bunyikan alarm ketika timer selesai</string>
+    <string name="alarm_sound">Suara alarm</string>
+    <string name="black_theme">Tema hitam</string>
+    <string name="black_theme_desc">Gunakan tema hitam</string>
+    <string name="break_">Rehat</string>
+    <string name="choose_color_scheme">Pilih skema warna</string>
+    <string name="choose_theme">Pilih tema</string>
+    <string name="color">Warna</string>
+    <string name="color_scheme">Skema warna</string>
+    <string name="completed">Selesai</string>
+    <string name="dark">Gelap</string>
+    <string name="exit">Keluar</string>
+    <string name="focus">Fokus</string>
+    <string name="focus_per_day_avg">fokus per hari (rerata)</string>
+    <string name="last_month">Bulan lalu</string>
+    <string name="last_week">Minggu lalu</string>
+    <string name="last_year">Tahun lalu</string>
+    <string name="light">Terang</string>
+    <string name="long_break">Rehat panjang</string>
+    <string name="min_remaining_notification">%1$s menit tersisa</string>
+    <string name="more">Lebih banyak</string>
+    <string name="more_info">Info lebih</string>
+    <string name="ok">Oke</string>
+    <string name="pause">Jeda</string>
+    <string name="paused">Dijeda</string>
+    <string name="play">Mulai</string>
+    <string name="pomodoro_info">Sesi adalah rangkaian interval pomodoro yang berisi interval fokus, interval rehat pendek, dan interval rehat panjang. Rehat terakhir dalam suatu sesi selalu merupakan rehat panjang.</string>
+    <string name="restart">Mulai ulang</string>
+    <string name="session_length">Lama sesi</string>
+    <string name="session_length_desc">Interval fokus dalam satu sesi: %1$d</string>
+    <string name="settings">Pengaturan</string>
+    <string name="short_break">Rehat pendek</string>
+    <string name="skip">Lewati</string>
+    <string name="skip_to_next">Lewati ke berikutnya</string>
+    <string name="start">Mulai</string>
+    <string name="start_next">Mulai selanjutnya</string>
+    <string name="stats">Statistik</string>
+    <string name="stop">Hentikan</string>
+    <string name="stop_alarm">Hentikan alarm</string>
+    <string name="stop_alarm_dialog_text">Sesi ini sudah selesai. Ketuk di mana saja untuk hentikan alarm.</string>
+    <string name="stop_alarm_question">Hentikan Alarm?</string>
+    <string name="system_default">Sistem</string>
+    <string name="theme">Tema</string>
+    <string name="timer">Timer</string>
+    <string name="timer_progress">Progres timer</string>
+    <string name="timer_session_count">%1$d dari %2$d</string>
+    <string name="today">Hari ini</string>
+    <string name="up_next">Berikutnya</string>
+    <string name="up_next_notification">Berikutnya: %1$s (%2$s)</string>
+    <string name="vibrate">Getar</string>
+    <string name="vibrate_desc">Getar ketika timer selesai</string>
+    <string name="appearance">Tampilan</string>
+    <string name="durations">Durasi</string>
+    <string name="sound">Suara</string>
+    <string name="dnd">Jangan Ganggu</string>
+    <string name="dnd_desc">Aktifkan mode Jangan Ganggu ketika timer Fokus berjalan</string>
+    <string name="get_plus">Dapatkan Tomato+</string>
+    <string name="dynamic_color">Warna dinamis</string>
+    <string name="dynamic_color_desc">Sesuaikan warna tema dari wallpaper perangkat</string>
+    <string name="tomato_foss" translatable="false">Tomato FOSS</string>
+    <string name="tomato_foss_desc">Semua fitur tidak terkunci di versi sumber terbuka ini. Jika aplikasi ini bermanfaat , mohon pertimbangkan untuk dukung saya dengan berdonasi di %1$s.</string>
+    <string name="language">Bahasa</string>
+    <string name="choose_language">Pilih bahasa</string>
+    <string name="rate_on_google_play">Beri nilai di Google Play</string>
+    <string name="selected">Dipilih</string>
+    <string name="always_on_display_desc">Ketuk di mana saja saat melihat pengatur waktu untuk beralih ke mode AOD</string>
+    <string name="always_on_display">Always On Display (AOD)</string>
+    <string name="help_with_translation">Bantu dengan terjemahan</string>
+    <string name="timer_settings_reset_info">Atur timer untuk ubah pengaturan</string>
+    <string name="about">Tentang</string>
+    <string name="auto_start_next_timer">Mulai otomatis timer berikutnya</string>
+    <string name="auto_start_next_timer_desc">Mulai timer berikutnya setelah menghentikan alarm</string>
+    <string name="back">Kembali</string>
+    <string name="bmc_desc">Dukung saya dengan donasi kecil</string>
+    <string name="dnd_permission_message">Aktifkan izin untuk %1$s</string>
+    <string name="duration">Durasi</string>
+    <string name="focus_break_ratio">Rasio jeda-fokus</string>
+    <string name="focus_breakdown">Rincian fokus</string>
+    <string name="focus_breakdown_desc">Durasi fokus rata-rata pada waktu yang berbeda dalam sehari</string>
+    <string name="focus_history">Riwayat fokus</string>
+    <string name="focus_history_calendar">Kalender riwayat fokus</string>
+    <string name="focus_history_calendar_desc">Riwayat fokus pada bulan lalu. Tanggal-tanggal di bulan sebelumnya ditandai dengan warna yg berbeda. Ketuk tanggal untuk informasi selengkapnya.</string>
+    <string name="focus_history_desc">Rincian fokus setiap hari dalam seminggu terakhir. Ketuk grafik hari tersebut untuk informasi selengkapnya.</string>
+    <string name="focus_history_heatmap">Heatmap riwayat fokus</string>
+    <string name="focus_history_heatmap_desc">Riwayat fokus pada tahun lalu. Warna yg lebih gelap menunjukkan durasi yg lebih lama. Hari-hari dikelompokkan berdasarkan bulan. Ketuk pada hari tersebut untuk informasi selengkapnya.</string>
+    <string name="gap">Celah</string>
+    <string name="help_with_translation_desc">Terjemahkan Tomato ke bahasamu</string>
+    <string name="history_widget_desc">Lihat grafik durasi fokus beberapa hari terakhir. Jumlah hari yang ditampilkan bergantung pada ukuran widget.</string>
+    <string name="hours_and_minutes_format">%1$dh %2$dm</string>
+    <string name="hours_format">%1$dh</string>
+    <string name="less">Lebih sedikit</string>
+    <string name="license">Lisensi</string>
+    <string name="lifetime">Seumur hidup</string>
+    <string name="media_volume_for_alarm">Mode headphone</string>
+    <string name="media_volume_for_alarm_desc">Hanya berbunyi melalui headphone. Jika headphone dilepas, alarm akan berbunyi melalui speaker dengan volume media.</string>
+    <string name="minutes_format">%1$dm</string>
+    <string name="rate_on_google_play_desc">Suka aplikasinya? Tulis ulasan!</string>
+    <string name="reset_data">Reset statistik</string>
+    <string name="reset_data_dialog_text">Semua statistik yang tersimpan akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.</string>
+    <string name="reset_data_dialog_title">Reset semua statistik?</string>
+    <string name="secure_aod_desc">Kunci perangkat Anda secara otomatis setelah waktu habis, sambil tetap menampilkan AOD</string>
+    <string name="show_chart">Tampilkan grafik</string>
+    <string name="timer_reset_message">Timer direset</string>
+    <string name="today_widget_desc">Statistik fokus hari ini</string>
+    <string name="tomato_plus_desc">Kustomisasi lebih lanjut dengan Tomato+</string>
+    <string name="total">total</string>
+    <string name="undo">Undo</string>
+    <string name="vibration_strength">Kekuatan</string>
+    <string name="daily_focus_goal">Target fokus harian</string>
+    <string name="milliseconds_format">%1$dms</string>
+    <string name="backup_and_restore">Pencadangan dan pemulihan</string>
+    <string name="backup">Cadangkan</string>
+    <string name="backup_desc">Cadangkan semua statistik dan pengaturan</string>
+    <string name="restore">Pulihkan</string>
+    <string name="restore_desc">Pulihkan statistik dan pengaturan</string>
+    <string name="backup_dialog_desc">Statistik dan pengaturan Anda akan disimpan ke dalam file di folder yang Anda pilih. Anda dapat memulihkan data ini nanti dalam %1$s.</string>
+    <string name="restore_dialog_desc">Statistik dan pengaturan Anda akan dipulihkan dari file cadangan yang dipilih. Aplikasi perlu dihidupkan ulang setelah pemulihan selesai. <b>Semua data yang ada akan dihapus, dan ini tidak dapat dibatalkan.</b></string>
+    <string name="choose_folder">Pilih folder</string>
+    <string name="choose_file">Pilih file</string>
+    <string name="restart_app">Restart aplikasi</string>
+    <string name="vibration_pattern">Pola getaran</string>
+    <string name="infinite">Tidak terbatas</string>
+    <string name="infinite_focus">Fokus tidak terbatas</string>
+    <string name="settings_infinite_focus_tip">Tekan lama jam pengatur waktu untuk mengaktifkan mode fokus tak terbatas</string>
+    <string name="cancel">Batal</string>
+    <string name="secure_aod">AOD aman</string>
+    <string name="session_only_progress">Progress sederhana</string>
+    <string name="session_only_progress_desc">Tampilkan progress timer saat ini saja di notifikasi, bukan seluruh sesi</string>
+</resources>

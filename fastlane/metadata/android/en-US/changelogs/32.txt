@@ -1,0 +1,9 @@
+New features:
+- Settings list items are now more compact and clickable
+- You can now start the timer from a quick settings tile
+
+Fixes:
+- Fixed a bug that sometimes caused the app to forget the timer duration when opened from recents
+- Lags when opening the stats screen have been fixed. This will be optimized further in future updates.
+- Fixed icons in right-to-left languages
+- Fixed Eastern Arabic numerals getting clipped

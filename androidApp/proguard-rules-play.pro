@@ -25,3 +25,8 @@
 -keep class androidx.work.OverwritingInputMerger {
     public <init>();
 }
+
+# Keep Glance ActionCallbacks which are instantiated via reflection
+-keep class * implements androidx.glance.appwidget.action.ActionCallback {
+    public <init>();
+}

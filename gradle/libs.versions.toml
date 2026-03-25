@@ -18,7 +18,7 @@ room = "2.8.4"
 vico = "3.1.0-alpha.3"
 composeMultiplatform = "1.11.0-alpha04"
 koinBom = "4.2.0"
-koinCompilerPlugin = "0.3.0"
+koinCompilerPlugin = "0.4.1"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }

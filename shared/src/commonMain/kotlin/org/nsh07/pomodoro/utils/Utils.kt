@@ -22,7 +22,6 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 fun millisecondsToStr(t: Long): String {
-    require(t >= 0L)
     return String.format(
         Locale.getDefault(),
         "%02d:%02d",
@@ -32,7 +31,6 @@ fun millisecondsToStr(t: Long): String {
 }
 
 fun millisecondsToHours(t: Long, format: String = "%dh"): String {
-    require(t >= 0L)
     return String.format(
         Locale.getDefault(),
         format,
@@ -41,7 +39,6 @@ fun millisecondsToHours(t: Long, format: String = "%dh"): String {
 }
 
 fun millisecondsToMinutes(t: Long, format: String = "%dm"): String {
-    require(t >= 0L)
     return String.format(
         Locale.getDefault(),
         format,
@@ -50,7 +47,6 @@ fun millisecondsToMinutes(t: Long, format: String = "%dm"): String {
 }
 
 fun millisecondsToHoursMinutes(t: Long, format: String = $$"%1$dh %2$dm"): String {
-    require(t >= 0L)
     return String.format(
         Locale.getDefault(),
         format,

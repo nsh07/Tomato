@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2025-2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -14,7 +13,8 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  --><resources xmlns:tools="http://schemas.android.com/tools">
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="alarm">Ξυπνητήρι</string>
     <string name="alarm_desc">Κουδούνισμα όταν ένα χρονόμετρο τελειώνει</string>
     <string name="alarm_sound">Ήχος κουδουνίσματος</string>
@@ -135,7 +135,7 @@
     <string name="restore">Επαναφορά</string>
     <string name="restore_desc">Επαναφορά στατιστικών και ρυθμίσεων</string>
     <string name="backup_dialog_desc">Τα στατιστικά και οι ρυθμίσεις σας θα αποθηκευτούν σε ένα αρχείο στον φάκελο της επιλογής σας. Μπορείτε να επαναφέρετε αυτά τα δεδομένα αργότερα σε %1$s.</string>
-    <string name="restore_dialog_desc">Τα στατιστικά και οι ρυθμίσεις σας θα επαναφερθούν από το αρχείο της επιλογής σας. Η εφαρμογή θα χρειαστεί επαννεκίνηση όταν η επαναφορά ολοκληρωθεί. <b>\'Ολα τα υπάρχοντα δεδομένα θα διαγραφούν, και αυτό δε μπορεί να αναιρεθεί.</b></string>
+    <string name="restore_dialog_desc">Τα στατιστικά και οι ρυθμίσεις σας θα επαναφερθούν από το αρχείο της επιλογής σας. Η εφαρμογή θα χρειαστεί επαννεκίνηση όταν η επαναφορά ολοκληρωθεί. <b>\\u0027Ολα τα υπάρχοντα δεδομένα θα διαγραφούν, και αυτό δε μπορεί να αναιρεθεί.</b></string>
     <string name="choose_folder">Επιλέξτε φάκελο</string>
     <string name="choose_file">Επιλέξτε αρχείο</string>
     <string name="restart_app">Επανεκκίνηση εφαρμογής</string>

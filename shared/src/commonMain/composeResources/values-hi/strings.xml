@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -14,7 +13,8 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  --><resources>
+  -->
+<resources>
     <string name="start">शुरू करें</string>
     <string name="stop">रोकें</string>
     <string name="focus">फोकस</string>
@@ -74,7 +74,7 @@
     <string name="appearance">रंग-रूप</string>
     <string name="durations">ड्यूरेशन</string>
     <string name="dnd">डू नॉट डिस्टर्ब</string>
-    <string name="dnd_desc">फोकस टाइमर चलते समय 'डू नॉट डिस्टर्ब' मोड ऑन करें</string>
+    <string name="dnd_desc">फोकस टाइमर चलते समय \u0027डू नॉट डिस्टर्ब\u0027 मोड ऑन करें</string>
     <string name="get_plus">Tomato+ लें</string>
     <string name="dynamic_color">डायनामिक रंग</string>
     <string name="dynamic_color_desc">अपने वॉलपेपर से रंग चुनें</string>

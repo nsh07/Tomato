@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -14,10 +13,11 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  --><resources xmlns:tools="http://schemas.android.com/tools">
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="alarm">Alarma</string>
-    <string name="alarm_desc">Feu sonar l'alarma quan s'acabi un temporitzador</string>
-    <string name="alarm_sound">So d'alarma</string>
+    <string name="alarm_desc">Feu sonar l\u0027alarma quan s\u0027acabi un temporitzador</string>
+    <string name="alarm_sound">So d\u0027alarma</string>
     <string name="always_on_display">Always On Display</string>
     <string name="always_on_display_desc">Toca en qualsevol lloc mentre visualitzes el temporitzador per canviar al mode AOD</string>
     <string name="appearance">Aparença</string>
@@ -25,14 +25,14 @@
     <string name="black_theme_desc">Utilitza un tema fosc negre pur</string>
     <string name="break_">Descans</string>
     <string name="choose_color_scheme">Trieu la combinació de colors</string>
-    <string name="choose_language">Trieu l'idioma</string>
+    <string name="choose_language">Trieu l\u0027idioma</string>
     <string name="choose_theme">Tria un tema</string>
     <string name="color">Color</string>
     <string name="color_scheme">Esquema de colors</string>
     <string name="completed">Completat</string>
     <string name="dark">Fosc</string>
     <string name="dnd">No Molestar</string>
-    <string name="dnd_desc">Activa No Molestar quan s'executa un temporitzador de concentració</string>
+    <string name="dnd_desc">Activa No Molestar quan s\u0027executa un temporitzador de concentració</string>
     <string name="durations">Durades</string>
     <string name="dynamic">Dinàmic</string>
     <string name="dynamic_color">Color dinàmic</string>
@@ -54,11 +54,11 @@
     <string name="minutes_format">%1$dm</string>
     <string name="more">Més</string>
     <string name="more_info">Més informació</string>
-    <string name="ok">D'acord</string>
+    <string name="ok">D\u0027acord</string>
     <string name="pause">Pausa</string>
     <string name="paused">En pausa</string>
     <string name="play">Començar</string>
-    <string name="pomodoro_info">Una sessió és una seqüència d'intervals pomodoro que conté intervals de concentració, intervals de descans curts i un interval de descans llarg. L'últim descans d'una sessió sempre és un descans llarg.</string>
+    <string name="pomodoro_info">Una sessió és una seqüència d\u0027intervals pomodoro que conté intervals de concentració, intervals de descans curts i un interval de descans llarg. L\u0027últim descans d\u0027una sessió sempre és un descans llarg.</string>
     <string name="rate_on_google_play">Valora a Google Play</string>
     <string name="restart">Reinicia</string>
     <string name="selected" tools:override="true">Seleccionat</string>
@@ -74,8 +74,8 @@
     <string name="stats">Estadístiques</string>
     <string name="stop">Atura</string>
     <string name="stop_alarm">Aturar alarma</string>
-    <string name="stop_alarm_dialog_text">El temporitzador actual s'ha completat. Toca qualsevol lloc per aturar l'alarma.</string>
-    <string name="stop_alarm_question">Aturar l'alarma?</string>
+    <string name="stop_alarm_dialog_text">El temporitzador actual s\u0027ha completat. Toca qualsevol lloc per aturar l\u0027alarma.</string>
+    <string name="stop_alarm_question">Aturar l\u0027alarma?</string>
     <string name="system_default">Sistema</string>
     <string name="theme">Tema</string>
     <string name="timer">Temporitzador</string>
@@ -87,36 +87,36 @@
     <string name="up_next">A continuació</string>
     <string name="up_next_notification">A continuació: %1$s (%2$s)</string>
     <string name="vibrate">Vibració</string>
-    <string name="vibrate_desc">Vibra quan s'acaba un temporitzador</string>
+    <string name="vibrate_desc">Vibra quan s\u0027acaba un temporitzador</string>
     <string name="about">Sobre</string>
     <string name="help_with_translation_desc">Tradueix Tomato al teu idioma</string>
-    <string name="rate_on_google_play_desc">T'ha agradat l'aplicació? Escriu una ressenya!</string>
-    <string name="bmc_desc">Ajuda'm amb una petita donació</string>
-    <string name="tomato_plus_desc">Personalitza'l encara més amb Tomato+</string>
+    <string name="rate_on_google_play_desc">T\u0027ha agradat l\u0027aplicació? Escriu una ressenya!</string>
+    <string name="bmc_desc">Ajuda\u0027m amb una petita donació</string>
+    <string name="tomato_plus_desc">Personalitza\u0027l encara més amb Tomato+</string>
     <string name="license">Llicència</string>
-    <string name="media_volume_for_alarm">Mode d'auriculars</string>
-    <string name="media_volume_for_alarm_desc">Només es reprodueix amb auriculars. Si els auriculars estan desconnectats, l'alarma es reprodueix per l'altaveu al volum multimèdia.</string>
+    <string name="media_volume_for_alarm">Mode d\u0027auriculars</string>
+    <string name="media_volume_for_alarm_desc">Només es reprodueix amb auriculars. Si els auriculars estan desconnectats, l\u0027alarma es reprodueix per l\u0027altaveu al volum multimèdia.</string>
     <string name="session_only_progress">Progrés simplificat</string>
     <string name="session_only_progress_desc">Mostra el progrés del temporitzador actual només a les notificacions, en lloc de tota la sessió</string>
-    <string name="auto_start_next_timer_desc">Inicia el següent temporitzador després d'aturar una alarma</string>
+    <string name="auto_start_next_timer_desc">Inicia el següent temporitzador després d\u0027aturar una alarma</string>
     <string name="auto_start_next_timer">Inici automàtic del següent temporitzador</string>
     <string name="secure_aod">AOD segur</string>
-    <string name="secure_aod_desc">Bloqueja automàticament el dispositiu després d'un temps d'espera, mantenint l'AOD visible</string>
+    <string name="secure_aod_desc">Bloqueja automàticament el dispositiu després d\u0027un temps d\u0027espera, mantenint l\u0027AOD visible</string>
     <string name="timer_reset_message">Temporitzador reiniciat</string>
     <string name="undo">Desfer</string>
     <string name="focus_break_ratio">Relació de concentració-descans</string>
     <string name="focus_breakdown">Desglossament de concentració</string>
     <string name="focus_breakdown_desc">Durada mitjana de la concentració a diferents hores del dia</string>
     <string name="focus_history">Historial de concentració</string>
-    <string name="focus_history_desc">Desglossament de la concentració de cada dia de la setmana passada. Toca el gràfic d'un dia per obtenir més informació.</string>
+    <string name="focus_history_desc">Desglossament de la concentració de cada dia de la setmana passada. Toca el gràfic d\u0027un dia per obtenir més informació.</string>
     <string name="less">Menys</string>
     <string name="show_chart">Mostrar gràfic</string>
-    <string name="focus_history_heatmap">Mapa de calor de l'historial de concentració</string>
-    <string name="focus_history_heatmap_desc">Historial de concentració de l'any passat. Els colors més foscos representen una durada més llarga. Els dies s'agrupen per mes. Toca un dia per obtenir més informació.</string>
-    <string name="focus_history_calendar">Calendari de l'historial de concentració</string>
+    <string name="focus_history_heatmap">Mapa de calor de l\u0027historial de concentració</string>
+    <string name="focus_history_heatmap_desc">Historial de concentració de l\u0027any passat. Els colors més foscos representen una durada més llarga. Els dies s\u0027agrupen per mes. Toca un dia per obtenir més informació.</string>
+    <string name="focus_history_calendar">Calendari de l\u0027historial de concentració</string>
     <string name="focus_history_calendar_desc">Historial de concentració del mes passat. Els dies del mes anterior estan marcats amb un color diferent. Toca una data per obtenir més informació.</string>
     <string name="reset_data">Restableix les estadístiques</string>
     <string name="reset_data_dialog_title">Restablir totes les estadístiques?</string>
-    <string name="reset_data_dialog_text">Totes les estadístiques desades s'eliminaran permanentment. Això no es pot desfer.</string>
+    <string name="reset_data_dialog_text">Totes les estadístiques desades s\u0027eliminaran permanentment. Això no es pot desfer.</string>
     <string name="back">Enrere</string>
 </resources>

@@ -94,6 +94,7 @@ import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.timerScreen.AlarmDialog
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 import org.nsh07.pomodoro.utils.onBack
@@ -317,9 +318,12 @@ fun AppScreen(
                             contentPadding = contentPadding,
                             progress = { progress },
                             onAction = timerViewModel::onAction,
-                            modifier = if (isAODEnabled && uiState.timerRunning) Modifier
+                            modifier = if (isAODEnabled) Modifier
                                 .clickable {
-                                    if (backStack.size < 2) backStack.add(Screen.AOD)
+                                    if (!uiState.timerRunning)
+                                        timerViewModel.onAction(TimerAction.ToggleTimer)
+                                    if (backStack.size < 2)
+                                        backStack.add(Screen.AOD)
                                 } else Modifier
                         )
                     }

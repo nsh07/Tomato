@@ -27,6 +27,10 @@ plugins {
     alias(libs.plugins.koin.compiler)
 }
 
+koinCompiler {
+    compileSafety.set(false)
+}
+
 // TODO: remove when CMP migration is done
 compose.resources {
     publicResClass = true

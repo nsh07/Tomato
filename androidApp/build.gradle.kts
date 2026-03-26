@@ -115,6 +115,10 @@ ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
 
+koinCompiler {
+    compileSafety.set(false)
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

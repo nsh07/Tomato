@@ -57,20 +57,42 @@ fun mergePaddingValues(
 @Composable
 expect fun rememberRequestDndPermissionCallback(): (Boolean) -> Unit
 
+/**
+ * Returns and remembers a lambda that requests the system for the notification permission
+ *
+ * @return a lambda that launches the current platform's corresponding notification permission
+ * dialog
+ */
 @Composable
 expect fun rememberRequestNotificationPermissionCallback(): () -> Unit
 
+/**
+ * Returns and remembers a lambda that launches the ringtone picker
+ *
+ * @param alarmSoundFilePath string representation of the existing ringtone's path
+ * @param onResult lambda that passes the ringtone picked by the user in an instance of
+ * [SettingsAction.SaveAlarmSound]. This should essentially be a [androidx.lifecycle.ViewModel]'s
+ * MVI intent handler.
+ *
+ * @return a lambda that launches the current platform's ringtone/media picker
+ */
 @Composable
 expect fun rememberRingtonePickerLauncherCallback(
     alarmSoundFilePath: String?,
     onResult: (SettingsAction) -> Unit
 ): () -> Unit
 
+/**
+ * Returns and remembers a lambda that returns the name of the current ringtone
+ *
+ * @return a lambda that accepts the string representation of the existing ringtone's path and
+ * returns its name as a [String]
+ */
 @Composable
 expect fun rememberRingtoneNameProviderCallback(): suspend (String?) -> String
 
 /**
- * (Copied from [androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective] with
+ * (copied from [androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective] with
  * minor modifications, namely the reduction of horizontalPartitionSpacerSize to 0.dp)
  *
  * Calculates the recommended [PaneScaffoldDirective] from a given [WindowAdaptiveInfo]. Use this

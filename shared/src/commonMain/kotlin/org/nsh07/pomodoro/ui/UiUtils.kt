@@ -58,6 +58,9 @@ fun mergePaddingValues(
 expect fun rememberRequestDndPermissionCallback(): (Boolean) -> Unit
 
 @Composable
+expect fun rememberRequestNotificationPermissionCallback(): () -> Unit
+
+@Composable
 expect fun rememberRingtonePickerLauncherCallback(
     alarmSoundFilePath: String?,
     onResult: (SettingsAction) -> Unit

@@ -17,11 +17,6 @@
 
 package org.nsh07.pomodoro.ui.timerScreen
 
-import android.Manifest
-import android.os.Build
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionLayout
@@ -108,7 +103,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
@@ -122,6 +116,7 @@ import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_L
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.ui.rememberRequestNotificationPermissionCallback
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
@@ -131,6 +126,7 @@ import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
+import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.app_name
@@ -174,7 +170,6 @@ fun SharedTransitionScope.TimerScreen(
     val motionScheme = motionScheme
     val scope = rememberCoroutineScope()
     val haptic = LocalHapticFeedback.current
-    val context = LocalContext.current
 
     val color by animateColorAsState(
         if (timerState.timerMode == TimerMode.FOCUS) colorScheme.primary
@@ -205,10 +200,7 @@ fun SharedTransitionScope.TimerScreen(
         .windowSizeClass
         .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
 
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = {}
-    )
+    val requestNotificationPermissionCallback = rememberRequestNotificationPermissionCallback()
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -390,11 +382,13 @@ fun SharedTransitionScope.TimerScreen(
                                                             !timerState.infiniteFocus
                                                         )
                                                     )
-                                                    else Toast.makeText(
-                                                        context,
-                                                        timerResetSettingsInfo,
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
+                                                    else scope.launch {
+                                                        snackbarHostState.currentSnackbarData?.dismiss()
+                                                        snackbarHostState.showSnackbar(
+                                                            timerResetSettingsInfo,
+                                                            duration = SnackbarDuration.Short
+                                                        )
+                                                    }
                                                 }
                                             )
                                     ) {
@@ -468,8 +462,8 @@ fun SharedTransitionScope.TimerScreen(
                                                         HapticFeedbackType.ToggleOff
                                                     )
 
-                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checked) {
-                                                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                                    if (androidSdkVersionAtLeast(33) && checked) {
+                                                        requestNotificationPermissionCallback()
                                                     }
                                                 },
                                                 checked = timerState.timerRunning,
@@ -542,6 +536,7 @@ fun SharedTransitionScope.TimerScreen(
                                                     haptic.performHapticFeedback(HapticFeedbackType.VirtualKey)
 
                                                     scope.launch {
+                                                        snackbarHostState.currentSnackbarData?.dismiss()
                                                         val result = snackbarHostState.showSnackbar(
                                                             timerResetMessage,
                                                             actionLabel = undo,

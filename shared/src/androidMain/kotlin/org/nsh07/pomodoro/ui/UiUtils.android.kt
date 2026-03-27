@@ -17,17 +17,20 @@
 
 package org.nsh07.pomodoro.ui
 
+import android.Manifest
 import android.app.Activity
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
@@ -74,6 +77,16 @@ actual fun rememberRequestDndPermissionCallback(): (Boolean) -> Unit {
             }
         }
     }
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Composable
+actual fun rememberRequestNotificationPermissionCallback(): () -> Unit {
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = {}
+    )
+    return { permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS) }
 }
 
 @Composable

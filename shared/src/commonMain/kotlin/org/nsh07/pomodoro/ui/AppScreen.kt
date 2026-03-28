@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui
 
-import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionLayout
@@ -70,7 +69,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -87,7 +85,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.nsh07.pomodoro.di.FlavorUI
-import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
@@ -120,8 +117,6 @@ fun AppScreen(
     settingsViewModel: SettingsViewModel = koinViewModel(),
     statsViewModel: StatsViewModel = koinViewModel()
 ) {
-    val context = LocalContext.current
-
     val uiState by timerViewModel.timerState.collectAsStateWithLifecycle()
     val settingsState by settingsViewModel.settingsState.collectAsStateWithLifecycle()
     val progress by timerViewModel.progress.collectAsStateWithLifecycle()
@@ -162,10 +157,7 @@ fun AppScreen(
 
     if (uiState.alarmRinging)
         AlarmDialog {
-            Intent(context, TimerService::class.java).also {
-                it.action = TimerService.Actions.STOP_ALARM.toString()
-                context.startService(it)
-            }
+            timerViewModel.onAction(TimerAction.StopAlarm)
         }
 
     var showPaywall by remember { mutableStateOf(false) }

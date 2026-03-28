@@ -41,7 +41,7 @@ import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
-import org.nsh07.pomodoro.service.ServiceHelper
+import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -54,7 +54,7 @@ class SettingsViewModel(
     private val preferenceRepository: PreferenceRepository,
     private val stateRepository: StateRepository,
     private val statRepository: StatRepository,
-    private val serviceHelper: ServiceHelper
+    private val timerHelper: TimerHelper
 ) : ViewModel() {
     private val time: MutableStateFlow<Long> = stateRepository.time
 
@@ -156,7 +156,7 @@ class SettingsViewModel(
     private fun deleteStats() {
         viewModelScope.launch(Dispatchers.IO) {
 
-            serviceHelper.startService(TimerAction.ResetTimer)
+            timerHelper.onAction(TimerAction.ResetTimer)
             statRepository.deleteAllStats()
             _settingsState.update {
                 it.copy(isShowingEraseDataDialog = false)
@@ -218,7 +218,7 @@ class SettingsViewModel(
     fun cancelTextFieldFlowCollection() {
         if (!serviceRunning.value)
             try {
-                serviceHelper.startService(TimerAction.ResetTimer)
+                timerHelper.onAction(TimerAction.ResetTimer)
             } catch (e: Exception) {
                 logError(
                     "Service",

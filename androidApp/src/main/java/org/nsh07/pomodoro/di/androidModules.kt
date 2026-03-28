@@ -22,6 +22,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.os.Build
+import android.os.SystemClock
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
@@ -39,8 +40,9 @@ import org.nsh07.pomodoro.data.AppStatRepository
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
-import org.nsh07.pomodoro.service.AppServiceHelper
-import org.nsh07.pomodoro.service.ServiceHelper
+import org.nsh07.pomodoro.service.AndroidTimerHelper
+import org.nsh07.pomodoro.service.TimerHelper
+import org.nsh07.pomodoro.service.TimerManager
 import org.nsh07.pomodoro.service.addTimerActions
 
 val servicesModule = module {
@@ -50,7 +52,8 @@ val servicesModule = module {
     single<AppStatRepository>() bind StatRepository::class
     single<AppPreferenceRepository>() bind PreferenceRepository::class
     single<StateRepository>()
-    single<AppServiceHelper>() bind ServiceHelper::class
+    single<AndroidTimerHelper>() bind TimerHelper::class
+    single<TimerManager> { TimerManager(get(), get(), SystemClock::elapsedRealtime) }
 
     single { NotificationManagerCompat.from(get()) }
     single { create(::createNotificationManager) }
@@ -89,7 +92,7 @@ private fun createNotificationCompatBuilder(context: Context): NotificationCompa
                 PendingIntent.FLAG_IMMUTABLE
             )
         )
-        .addTimerActions(context, R.drawable.play, context.getString(R.string.start))
+        .addTimerActions(context, context.getString(R.string.start))
         .setShowWhen(true)
         .setSilent(true)
         .setOngoing(true)

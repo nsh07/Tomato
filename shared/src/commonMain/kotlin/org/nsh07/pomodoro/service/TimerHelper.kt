@@ -19,6 +19,6 @@ package org.nsh07.pomodoro.service
 
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 
-interface ServiceHelper {
-    fun startService(action: TimerAction)
+interface TimerHelper {
+    fun onAction(action: TimerAction)
 }

@@ -21,17 +21,15 @@ import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
 import android.content.Intent
-import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import org.nsh07.pomodoro.R
 
 fun NotificationCompat.Builder.addTimerActions(
     context: Context,
-    @DrawableRes playPauseIcon: Int,
     playPauseText: String
 ): NotificationCompat.Builder = this
     .addAction(
-        playPauseIcon,
+        R.drawable.play,
         playPauseText,
         PendingIntent.getService(
             context,

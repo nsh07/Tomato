@@ -27,12 +27,10 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.IBinder
-import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.service.quicksettings.TileService
-import android.util.Log
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -47,12 +45,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinComponent
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.di.ActivityCallbacks
 import org.nsh07.pomodoro.qsTile.TomatoQSTileService
@@ -63,37 +58,20 @@ import kotlin.text.Typography.middleDot
 
 class TimerService : Service(), KoinComponent {
 
+    private val timerManager: TimerManager by inject()
+
     private val stateRepository: StateRepository by inject()
-    private val statRepository: StatRepository by inject()
     private val notificationManager: NotificationManagerCompat by inject()
     private val notificationManagerService: NotificationManager by inject()
     private val notificationBuilder: NotificationCompat.Builder by inject()
     private val activityCallbacks: ActivityCallbacks by inject()
     private val _timerState by lazy { stateRepository.timerState }
     private val _settingsState by lazy { stateRepository.settingsState }
-    private val _time = stateRepository.time
 
     private val widget by lazy { TimerAppWidget() }
     private val widgetManager by lazy { GlanceAppWidgetManager(this) }
     private var glanceId: GlanceId? = null
 
-    /**
-     * Remaining time
-     */
-    private var time: Long
-        get() = _time.value
-        set(value) = _time.update { value }
-
-    private var cycles = 0
-    private var startTime = 0L
-    private var pauseTime = 0L
-    private var pauseDuration = 0L
-
-    private var lastSavedDuration = 0L
-
-    private val timerStateSnapshot by lazy { stateRepository.timerStateSnapshot }
-
-    private val saveLock = Mutex()
     private var job = SupervisorJob()
     private val timerScope = CoroutineScope(Dispatchers.IO + job)
     private val skipScope = CoroutineScope(Dispatchers.IO + job)
@@ -129,8 +107,8 @@ class TimerService : Service(), KoinComponent {
         updateQSTile()
         runBlocking {
             job.cancel()
-            saveTimeToDb()
-            lastSavedDuration = 0
+            timerManager.saveTimeToDb()
+            timerManager.resetLastSavedDuration()
             setDoNotDisturb(false)
             notificationManager.cancel(1)
             alarm?.release()
@@ -158,14 +136,23 @@ class TimerService : Service(), KoinComponent {
             Actions.RESET.toString() -> {
                 if (_timerState.value.timerRunning) toggleTimer()
                 skipScope.launch {
-                    resetTimer()
+                    timerManager.resetTimer(::updateProgressSegments)
                     stopForegroundService()
                 }
             }
 
-            Actions.UNDO_RESET.toString() -> undoReset()
+            Actions.UNDO_RESET.toString() -> timerManager.undoReset()
 
-            Actions.SKIP.toString() -> skipScope.launch { skipTimer(true) }
+            Actions.SKIP.toString() -> skipScope.launch {
+                timerManager.skipTimer(
+                    onStart = { showTimerNotification(0, paused = true, complete = false) },
+                    onCompletion = {
+                        updateProgressSegments()
+                        updateWidget()
+                    },
+                    setDoNotDisturb = ::setDoNotDisturb
+                )
+            }
 
             Actions.STOP_ALARM.toString() -> stopAlarm()
 
@@ -176,90 +163,33 @@ class TimerService : Service(), KoinComponent {
 
     private fun toggleTimer() {
         updateProgressSegments()
-
-        if (_timerState.value.timerRunning) {
-            setDoNotDisturb(false)
-            notificationBuilder.clearActions().addTimerActions(
-                this, R.drawable.play, getString(R.string.start)
-            )
-            showTimerNotification(time.toInt(), paused = true)
-            _timerState.update { currentState ->
-                currentState.copy(timerRunning = false)
-            }
-            pauseTime = SystemClock.elapsedRealtime()
-        } else {
-            if (_timerState.value.timerMode == TimerMode.FOCUS) setDoNotDisturb(true)
-            else setDoNotDisturb(false)
-            notificationBuilder.clearActions().addTimerActions(
-                this, R.drawable.pause, getString(R.string.stop)
-            )
-            _timerState.update { it.copy(timerRunning = true) }
-            if (pauseTime != 0L) pauseDuration += SystemClock.elapsedRealtime() - pauseTime
-
-            var iterations = -1
-            var notificationUpdateCounter = -1
-
-            timerScope.launch {
-                while (true) {
-                    if (!_timerState.value.timerRunning) break
-                    if (startTime == 0L) startTime = SystemClock.elapsedRealtime()
-
-                    val settingsState = _settingsState.value
-                    val timerState = _timerState.value
-
-                    val focusTime =
-                        if (!timerState.infiniteFocus) settingsState.focusTime else Long.MAX_VALUE
-                    time = when (_timerState.value.timerMode) {
-                        TimerMode.FOCUS -> focusTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration)
-
-                        TimerMode.SHORT_BREAK -> settingsState.shortBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration)
-
-                        else -> settingsState.longBreakTime - (SystemClock.elapsedRealtime() - startTime - pauseDuration)
-                    }
-
-                    iterations =
-                        (iterations + 1) % stateRepository.timerFrequency.toInt().coerceAtLeast(1)
-                    notificationUpdateCounter =
-                        (notificationUpdateCounter + 1) % (
-                                stateRepository.timerFrequency.toInt().coerceAtLeast(1) * 10
-                                ) // update widget every 10 seconds
-
-                    if (iterations == 0) {
-                        Log.d("TimerService", "Notification updated")
-                        showTimerNotification(time.toInt())
-                    }
-
-                    if (notificationUpdateCounter == 0) updateWidget()
-
-                    if (time < 0) {
-                        skipTimer()
-                        _timerState.update { currentState ->
-                            currentState.copy(timerRunning = false)
-                        }
-                        break
-                    } else {
-                        _timerState.update { currentState ->
-                            currentState.copy(
-                                timeStr = if (!currentState.infiniteFocus || currentState.timerMode != TimerMode.FOCUS)
-                                    millisecondsToStr(time)
-                                else millisecondsToStr(currentState.totalTime - time) // elapsed time
-                            )
-                        }
-                        val totalTime = _timerState.value.totalTime
-
-                        if (totalTime - time < lastSavedDuration)
-                            lastSavedDuration =
-                                0 // Sanity check, prevents bugs if service is force closed
-                        if (totalTime - time - lastSavedDuration > 60000)
-                            saveTimeToDb()
-                    }
-
-                    delay((1000f / stateRepository.timerFrequency).toLong())
+        timerManager.toggleTimer(
+            scope = timerScope,
+            onPause = { remainingTime ->
+                notificationBuilder.clearActions().addTimerActions(
+                    this, getString(R.string.start)
+                )
+                showTimerNotification(remainingTime.toInt(), paused = true)
+            },
+            onStart = {
+                notificationBuilder.clearActions().addTimerActions(
+                    this, getString(R.string.stop)
+                )
+            },
+            onTick = { remainingTime, updateNotification, updateWidget ->
+                if (updateNotification) {
+                    showTimerNotification(remainingTime.toInt())
                 }
-            }
-        }
-
-        updateQSTile()
+                if (updateWidget) updateWidget()
+            },
+            onTimerExpired = { showTimerNotification(0, paused = true, complete = true) },
+            onSkipComplete = {
+                updateProgressSegments()
+                updateWidget()
+            },
+            setDoNotDisturb = ::setDoNotDisturb,
+            onStateChanged = ::updateQSTile
+        )
     }
 
     @SuppressLint(
@@ -322,15 +252,19 @@ class TimerService : Service(), KoinComponent {
                                 if (timerState.timerMode == TimerMode.FOCUS) (Long.MAX_VALUE - remainingTime).toInt()
                                 else (totalTime - remainingTime)
                             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && !settingsState.singleProgressBar) {
-                                (totalTime - remainingTime) + ((cycles + 1) / 2) * settingsState.focusTime.toInt() + (cycles / 2) * settingsState.shortBreakTime.toInt()
+                                (totalTime - remainingTime) + ((timerManager.cycles + 1) / 2) * settingsState.focusTime.toInt() + (timerManager.cycles / 2) * settingsState.shortBreakTime.toInt()
                             } else (totalTime - remainingTime)
                         )
                 )
                 .setWhen(System.currentTimeMillis() + remainingTime) // Sets the Live Activity/Now Bar chip time
                 .setShortCriticalText(
                     if (timerState.timerMode == TimerMode.FOCUS && timerState.infiniteFocus)
-                        millisecondsToStr((Long.MAX_VALUE - time).coerceAtLeast(0))
-                    else millisecondsToStr(time.coerceAtLeast(0))
+                        millisecondsToStr(
+                            (Long.MAX_VALUE - stateRepository.time.value).coerceAtLeast(
+                                0
+                            )
+                        )
+                    else millisecondsToStr(stateRepository.time.value.coerceAtLeast(0))
                 )
                 .build()
         )
@@ -347,12 +281,10 @@ class TimerService : Service(), KoinComponent {
      * Updates the most recently interacted [TimerAppWidget] widget to make it show the correct time
      * as long as the timer runs
      */
-    private suspend fun updateWidget() {
+    private suspend fun updateWidget() =
         glanceId?.let {
             widget.update(this@TimerService, it)
-            Log.d("TimerService", "Widget updated")
         }
-    }
 
     private fun updateProgressSegments() {
         val settingsState = _settingsState.value
@@ -392,110 +324,6 @@ class TimerService : Service(), KoinComponent {
                     )
                 }
             }
-    }
-
-    private suspend fun resetTimer() {
-        val settingsState = _settingsState.value
-        val timerState = _timerState.value
-
-        timerStateSnapshot.save(
-            lastSavedDuration,
-            time,
-            cycles,
-            startTime,
-            pauseTime,
-            pauseDuration,
-            timerState
-        )
-
-        saveTimeToDb()
-        lastSavedDuration = 0
-        cycles = 0
-        startTime = 0L
-        pauseTime = 0L
-        pauseDuration = 0L
-
-        time = if (!timerState.infiniteFocus) settingsState.focusTime else Long.MAX_VALUE
-
-        _timerState.update { currentState ->
-            currentState.copy(
-                timerMode = TimerMode.FOCUS,
-                timeStr = if (!currentState.infiniteFocus) millisecondsToStr(time)
-                else millisecondsToStr(0),
-                totalTime = time,
-                nextTimerMode = if (settingsState.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
-                nextTimeStr = millisecondsToStr(if (settingsState.sessionLength > 1) settingsState.shortBreakTime else settingsState.longBreakTime),
-                currentFocusCount = 1,
-                totalFocusCount = settingsState.sessionLength
-            )
-        }
-
-        updateProgressSegments()
-    }
-
-    private fun undoReset() {
-        lastSavedDuration = timerStateSnapshot.lastSavedDuration
-        time = timerStateSnapshot.time
-        cycles = timerStateSnapshot.cycles
-        startTime = timerStateSnapshot.startTime
-        pauseTime = timerStateSnapshot.pauseTime
-        pauseDuration = timerStateSnapshot.pauseDuration
-        _timerState.update { timerStateSnapshot.timerState }
-    }
-
-    private suspend fun skipTimer(fromButton: Boolean = false) {
-        val settingsState = _settingsState.value
-        saveTimeToDb()
-        updateProgressSegments()
-        showTimerNotification(0, paused = true, complete = !fromButton)
-        lastSavedDuration = 0
-        startTime = 0L
-        pauseTime = 0L
-        pauseDuration = 0L
-
-        cycles = (cycles + 1) % (settingsState.sessionLength * 2)
-
-        if (cycles % 2 == 0) {
-            _timerState.update { currentState ->
-                if (currentState.timerRunning) setDoNotDisturb(true)
-                time = if (!currentState.infiniteFocus) settingsState.focusTime else Long.MAX_VALUE
-
-                currentState.copy(
-                    timerMode = TimerMode.FOCUS,
-                    timeStr = if (!currentState.infiniteFocus) millisecondsToStr(time)
-                    else millisecondsToStr(0),
-                    totalTime = time,
-                    nextTimerMode = if (cycles == (settingsState.sessionLength - 1) * 2) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                    nextTimeStr = if (cycles == (settingsState.sessionLength - 1) * 2) millisecondsToStr(
-                        settingsState.longBreakTime
-                    ) else millisecondsToStr(
-                        settingsState.shortBreakTime
-                    ),
-                    currentFocusCount = cycles / 2 + 1,
-                    totalFocusCount = settingsState.sessionLength
-                )
-            }
-        } else {
-            val long = cycles == (settingsState.sessionLength * 2) - 1
-            time = if (long) settingsState.longBreakTime else settingsState.shortBreakTime
-
-            _timerState.update { currentState ->
-                if (currentState.timerRunning) setDoNotDisturb(false)
-
-                currentState.copy(
-                    timerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                    timeStr = millisecondsToStr(time),
-                    totalTime = time,
-                    nextTimerMode = TimerMode.FOCUS,
-                    nextTimeStr = if (!currentState.infiniteFocus)
-                        millisecondsToStr(settingsState.focusTime)
-                    else getString(R.string.infinite)
-                )
-            }
-        }
-
-        updateProgressSegments()
-        updateWidget()
     }
 
     fun startAlarm() {
@@ -558,7 +386,7 @@ class TimerService : Service(), KoinComponent {
             currentState.copy(alarmRinging = false)
         }
         notificationBuilder.clearActions().addTimerActions(
-            this, R.drawable.play,
+            this,
             getString(R.string.start_next)
         )
         showTimerNotification(
@@ -612,22 +440,6 @@ class TimerService : Service(), KoinComponent {
     private fun updateAlarmTone() {
         alarm?.release()
         alarm = initializeMediaPlayer()
-    }
-
-    suspend fun saveTimeToDb() {
-        saveLock.withLock {
-            val elapsedTime = _timerState.value.totalTime - time
-            when (_timerState.value.timerMode) {
-                TimerMode.FOCUS -> statRepository.addFocusTime(
-                    (elapsedTime - lastSavedDuration).coerceAtLeast(0L)
-                )
-
-                else -> statRepository.addBreakTime(
-                    (elapsedTime - lastSavedDuration).coerceAtLeast(0L)
-                )
-            }
-            lastSavedDuration = elapsedTime
-        }
     }
 
     private fun startForegroundService() {

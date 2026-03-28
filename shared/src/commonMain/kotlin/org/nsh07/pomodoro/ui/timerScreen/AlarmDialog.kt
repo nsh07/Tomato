@@ -13,9 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License along with Tomato.
  * If not, see <https://www.gnu.org/licenses/>.
- */
-
-package org.nsh07.pomodoro.ui.timerScreen
+ */package org.nsh07.pomodoro.ui.timerScreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

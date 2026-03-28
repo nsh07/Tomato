@@ -28,6 +28,8 @@ import androidx.compose.material3.adaptive.occludingVerticalHingeBounds
 import androidx.compose.material3.adaptive.separatingVerticalHingeBounds
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.WindowInfo
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
@@ -47,6 +49,14 @@ fun mergePaddingValues(
         end = restSource.calculateEndPadding(layoutDirection)
     )
 }
+
+@Composable
+expect fun AodSystemBarsHandler(
+    density: Density,
+    windowInfo: WindowInfo,
+    secureAod: Boolean,
+    setTimerFrequency: (Float) -> Unit
+)
 
 /**
  * Returns and remembers a lambda that requests the system for the DND permission

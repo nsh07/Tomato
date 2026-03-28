@@ -31,11 +31,6 @@ koinCompiler {
     compileSafety.set(false)
 }
 
-// TODO: remove when CMP migration is done
-compose.resources {
-    publicResClass = true
-}
-
 kotlin {
     compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
 
@@ -53,6 +48,8 @@ kotlin {
         }
     }
 
+    jvm()
+
     sourceSets {
         commonMain.dependencies {
             implementation(project.dependencies.platform(libs.androidx.compose.bom))
@@ -60,7 +57,7 @@ kotlin {
             implementation(libs.androidx.ui)
             implementation(libs.androidx.ui.graphics)
             implementation(libs.androidx.ui.tooling)
-            implementation(libs.androidx.lifecycle.runtime.ktx)
+            implementation(libs.androidx.lifecycle.runtime)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.material3)
@@ -76,7 +73,6 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
 
             implementation(libs.androidx.room.runtime)
-            implementation(libs.androidx.room.ktx)
 
             implementation(libs.vico.compose.m3)
             implementation(libs.material.kolor)
@@ -97,6 +93,11 @@ kotlin {
             implementation(libs.androidx.espresso.core)
             implementation(libs.androidx.ui.test.junit4)
             implementation(libs.androidx.ui.test.manifest)
+        }
+
+        jvmMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutines.swing)
         }
     }
 }

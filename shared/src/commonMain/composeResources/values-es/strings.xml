@@ -140,4 +140,8 @@
     <string name="daily_focus_goal">Objetivo de concentración diario</string>
     <string name="milliseconds_format">%1$dms</string>
     <string name="vibration_pattern">Patrón de vibración</string>
+    <string name="infinite">Infinito</string>
+    <string name="infinite_focus">Concentración infinita</string>
+    <string name="settings_infinite_focus_tip">Mantén presionado el reloj del temporizador para activar el modo de concentración infinita</string>
+    <string name="cancel">Cancelar</string>
 </resources>

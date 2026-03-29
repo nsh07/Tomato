@@ -24,15 +24,22 @@ import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.service.TimerManager
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 
-class DesktopTimerHelper(private val timerManager: TimerManager) : TimerHelper {
+class DesktopTimerHelper(
+    private val timerManager: TimerManager
+) : TimerHelper {
     // TODO: Implement DesktopTimerHelper
 
     private val scope = CoroutineScope(Dispatchers.IO)
+
+    private val toggleTimer = {
+        timerManager.toggleTimer(scope, {}, {}, { _, _, _ -> }, {}, {}, {}, {})
+    }
 
     override fun onAction(action: TimerAction) {
         when (action) {
             TimerAction.ResetTimer -> scope.launch {
                 timerManager.resetTimer { }
+                timerManager.clear()
             }
 
             is TimerAction.SkipTimer -> scope.launch {
@@ -41,9 +48,7 @@ class DesktopTimerHelper(private val timerManager: TimerManager) : TimerHelper {
 
             TimerAction.StopAlarm -> {}
 
-            TimerAction.ToggleTimer -> scope.launch {
-                timerManager.toggleTimer(scope, {}, {}, { _, _, _ -> }, {}, {}, {}, {})
-            }
+            TimerAction.ToggleTimer -> toggleTimer()
 
             TimerAction.UndoReset -> scope.launch {
                 timerManager.undoReset()

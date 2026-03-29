@@ -31,7 +31,6 @@ actual fun AodSystemBarsHandler(
     secureAod: Boolean,
     setTimerFrequency: (Float) -> Unit
 ) {
-    TODO("Not yet implemented")
 }
 
 actual fun Modifier.androidSystemGestureExclusion(): Modifier = this
@@ -42,7 +41,8 @@ actual fun htmlToAnnotatedString(html: String): AnnotatedString =
 
 @Composable
 actual fun rememberRequestDndPermissionCallback(): (Boolean) -> Unit {
-    TODO("Not yet implemented")
+    // TODO: implement
+    return {}
 }
 
 @Composable
@@ -56,10 +56,12 @@ actual fun rememberRingtonePickerLauncherCallback(
     alarmSoundFilePath: String?,
     onResult: (SettingsAction) -> Unit
 ): () -> Unit {
-    TODO("Not yet implemented")
+    // TODO: implement
+    return {}
 }
 
 @Composable
 actual fun rememberRingtoneNameProviderCallback(): suspend (String?) -> String {
-    TODO("Not yet implemented")
+    // TODO: implement
+    return { _ -> "..." }
 }

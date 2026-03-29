@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -33,6 +34,7 @@ import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.ui.AppScreen
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import org.nsh07.pomodoro.utils.toColor
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -56,7 +58,19 @@ fun ApplicationScope.AppWindow(
         CompositionLocalProvider(
             LocalViewModelStoreOwner provides windowViewModelStoreOwner
         ) {
-            TomatoTheme {
+            val darkTheme = when (settingsState.theme) {
+                "dark" -> true
+                "light" -> false
+                else -> isSystemInDarkTheme()
+            }
+
+            val seed = settingsState.colorScheme.toColor()
+
+            TomatoTheme(
+                darkTheme = darkTheme,
+                seedColor = seed,
+                blackTheme = settingsState.blackTheme
+            ) {
                 AppScreen(
                     isAODEnabled = settingsState.aodEnabled,
                     isPlus = isPlus,

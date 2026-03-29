@@ -17,9 +17,7 @@
 
 package org.nsh07.pomodoro.utils
 
-actual fun androidSdkVersionAtLeast(version: Int): Boolean {
-    TODO("Not yet implemented")
-}
+actual fun androidSdkVersionAtLeast(version: Int): Boolean = false
 
 actual fun androidDeviceManufacturerIs(manufacturer: String): Boolean {
     TODO("Not yet implemented")

@@ -18,8 +18,23 @@
 package org.nsh07.pomodoro.ui.settingsScreen
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+
+class DesktopPlatformVibrator : PlatformVibrator {
+    override val hasVibrator = false
+    override val hasAmplitudeControl = false
+
+    override fun playWaveform(
+        onDuration: Long,
+        offDuration: Long,
+        amplitude: Int
+    ) {
+    }
+
+    override fun cancel() {}
+}
 
 @Composable
 actual fun rememberPlatformVibrator(): PlatformVibrator {
-    TODO("Not yet implemented")
+    return remember { DesktopPlatformVibrator() }
 }

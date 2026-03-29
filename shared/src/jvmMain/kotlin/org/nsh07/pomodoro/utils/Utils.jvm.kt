@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Nishant Mishra
+ * Copyright (c) 2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -15,33 +15,20 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-pluginManagement {
-    repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
-        mavenCentral()
-        gradlePluginPortal()
-    }
+package org.nsh07.pomodoro.utils
+
+actual fun androidSdkVersionAtLeast(version: Int): Boolean {
+    TODO("Not yet implemented")
 }
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+actual fun androidDeviceManufacturerIs(manufacturer: String): Boolean {
+    TODO("Not yet implemented")
 }
 
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
+actual fun getDefaultAlarmTone(): String? {
+    TODO("Not yet implemented")
 }
 
-rootProject.name = "Tomato"
-include(":androidApp")
-include(":desktopApp")
-include(":shared")
+actual fun logError(tag: String, message: String): Int {
+    TODO("Not yet implemented")
+}

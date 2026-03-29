@@ -95,8 +95,10 @@ fun StatsScreenRoot(
             predictivePopTransitionSpec = {
                 unveilIn(initialColor = colorScheme.surfaceDim).togetherWith(fadeOut())
             },
-            sceneStrategy = rememberListDetailSceneStrategy(
-                directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
+            sceneStrategies = listOf(
+                rememberListDetailSceneStrategy(
+                    directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
+                )
             ),
             entryProvider = entryProvider {
                 entry<Screen.Stats.Main>(

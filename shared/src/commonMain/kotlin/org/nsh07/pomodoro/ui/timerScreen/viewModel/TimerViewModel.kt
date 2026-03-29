@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +35,7 @@ import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.service.TimerHelper
+import org.nsh07.pomodoro.ui.Screen
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -43,6 +45,7 @@ class TimerViewModel(
     private val stateRepository: StateRepository,
     private val statRepository: StatRepository
 ) : ViewModel() {
+    val rootBackstack = mutableStateListOf<Screen>(Screen.Timer)
 
     private val _time: MutableStateFlow<Long> = stateRepository.time
     val timerState: StateFlow<TimerState> = stateRepository.timerState.asStateFlow()

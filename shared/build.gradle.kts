@@ -31,13 +31,17 @@ koinCompiler {
     compileSafety.set(false)
 }
 
+compose.resources {
+    publicResClass = true
+}
+
 kotlin {
     compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
 
     android {
         namespace = "org.nsh07.pomodoro.shared"
-        compileSdk = 36
-        minSdk = 26
+        compileSdk = libs.versions.app.targetSdk.get().toInt()
+        minSdk = libs.versions.app.minSdk.get().toInt()
 
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
@@ -54,8 +58,8 @@ kotlin {
         commonMain.dependencies {
             implementation(project.dependencies.platform(libs.androidx.compose.bom))
             implementation(libs.components.resources)
-            implementation(libs.androidx.ui)
-            implementation(libs.androidx.ui.graphics)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.ui.graphics)
             implementation(libs.androidx.ui.tooling)
             implementation(libs.androidx.lifecycle.runtime)
             implementation(libs.androidx.lifecycle.viewmodel)
@@ -63,7 +67,6 @@ kotlin {
             implementation(libs.androidx.material3)
             implementation(libs.androidx.adaptive)
 
-            implementation(libs.androidx.navigation3.runtime)
             implementation(libs.androidx.navigation3.ui)
             implementation(libs.androidx.compose.adaptive.navigation3)
 

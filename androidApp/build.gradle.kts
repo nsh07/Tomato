@@ -38,14 +38,15 @@ tasks.withType(Test::class) {
 
 android {
     namespace = "org.nsh07.pomodoro"
-    compileSdk = 36
+    compileSdk = libs.versions.app.targetSdk.get().toInt()
 
     defaultConfig {
         applicationId = "org.nsh07.pomodoro"
-        minSdk = 26
-        targetSdk = 36
-        versionCode = 34
-        versionName = "1.8.5"
+
+        minSdk = libs.versions.app.minSdk.get().toInt()
+        targetSdk = libs.versions.app.targetSdk.get().toInt()
+        versionCode = libs.versions.app.versionCode.get().toInt()
+        versionName = libs.versions.app.versionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -127,7 +128,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.adaptive)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
+    implementation(libs.compose.ui)
     implementation(libs.androidx.material3)
 
     implementation(libs.androidx.glance.appwidget)

@@ -116,7 +116,7 @@
     <string name="focus_history_heatmap_desc">تاريخ التركيز. الألوان الداكنة تمثل المدة الأطول. الأيام مجمعة حسب الشهر. اضغط على يوم لمزيد من المعلومات.</string>
     <string name="focus_history_calendar">تقويم تاريخ التركيز</string>
     <string name="focus_history_calendar_desc">تاريخ الشهر الماضي. أيام الشهر السابق معلمة بلون مختلف. اضغط على تاريخ لمزيد من المعلومات.</string>
-    <string name="reset_data">صفّر الإحصائيات</string>
+    <string name="reset_data">إعادة ضبط الإحصائيات</string>
     <string name="reset_data_dialog_title">صفّر كل الإحصائيات؟</string>
     <string name="reset_data_dialog_text">سيتم حذف جميع الإحصائيات المحفوظة بشكل دائم. لا يمكن التراجع عن هذا.</string>
     <string name="back">ارجع</string>

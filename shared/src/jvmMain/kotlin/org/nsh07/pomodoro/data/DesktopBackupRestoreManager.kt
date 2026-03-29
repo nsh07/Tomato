@@ -27,3 +27,17 @@ actual class FileLocator {
         TODO("Not yet implemented")
     }
 }
+
+class DesktopBackupRestoreManager : BackupRestoreManager {
+    override suspend fun performBackup(directoryLocator: FileLocator) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun performRestore(fileLocator: FileLocator) {
+        TODO("Not yet implemented")
+    }
+
+    override fun restartApp() {
+        TODO("Not yet implemented")
+    }
+}

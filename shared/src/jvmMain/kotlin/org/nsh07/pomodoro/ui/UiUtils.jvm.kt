@@ -47,7 +47,8 @@ actual fun rememberRequestDndPermissionCallback(): (Boolean) -> Unit {
 
 @Composable
 actual fun rememberRequestNotificationPermissionCallback(): () -> Unit {
-    TODO("Not yet implemented")
+    // TODO: implement
+    return {}
 }
 
 @Composable

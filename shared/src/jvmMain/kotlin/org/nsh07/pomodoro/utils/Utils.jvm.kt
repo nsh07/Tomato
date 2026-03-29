@@ -26,7 +26,8 @@ actual fun androidDeviceManufacturerIs(manufacturer: String): Boolean {
 }
 
 actual fun getDefaultAlarmTone(): String? {
-    TODO("Not yet implemented")
+    // TODO: implement
+    return null
 }
 
 actual fun logError(tag: String, message: String): Int {

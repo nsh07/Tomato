@@ -21,6 +21,7 @@ materialKolor = "4.1.1"
 navigation3 = "1.1.0-beta01"
 revenuecat = "9.27.0"
 room = "2.8.4"
+sqlite = "2.6.2"
 vico = "3.1.0-alpha.3"
 composeMultiplatform = "1.11.0-alpha04"
 koinBom = "4.2.0"
@@ -41,10 +42,11 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime", version.ref = "lifecycleRuntime" }
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycleRuntime" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntime" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "composeMultiplatform" }
 androidx-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 compose-ui = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "composeMultiplatform" }
 compose-ui-graphics = { group = "org.jetbrains.compose.ui", name = "ui-graphics" }
 androidx-ui-test-junit4 = { group = "org.jetbrains.compose.ui", name = "ui-test-junit4" }

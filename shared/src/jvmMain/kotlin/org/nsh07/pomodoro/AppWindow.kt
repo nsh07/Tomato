@@ -17,27 +17,53 @@
 
 package org.nsh07.pomodoro
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Window
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import org.koin.compose.koinInject
+import org.nsh07.pomodoro.data.StateRepository
+import org.nsh07.pomodoro.ui.AppScreen
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
+import org.nsh07.pomodoro.ui.theme.TomatoTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ApplicationScope.AppWindow() =
+fun ApplicationScope.AppWindow(
+    settingsViewModel: SettingsViewModel = koinInject(),
+    stateRepository: StateRepository = koinInject()
+) =
     Window(
         onCloseRequest = ::exitApplication,
         title = "Tomato"
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
+        val settingsState by settingsViewModel.settingsState.collectAsState()
+        val isPlus by settingsViewModel.isPlus.collectAsState()
+
+        val windowViewModelStoreOwner = remember {
+            object : ViewModelStoreOwner {
+                override val viewModelStore = ViewModelStore()
+            }
+        }
+
+        CompositionLocalProvider(
+            LocalViewModelStoreOwner provides windowViewModelStoreOwner
         ) {
-            CircularWavyProgressIndicator()
+            TomatoTheme {
+                AppScreen(
+                    isAODEnabled = settingsState.aodEnabled,
+                    isPlus = isPlus,
+                    setTimerFrequency = {
+                        stateRepository.timerFrequency = it
+                    }
+                )
+            }
         }
     }

@@ -17,16 +17,51 @@
 
 package org.nsh07.pomodoro.ui.theme
 
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
+import com.materialkolor.dynamiccolor.ColorSpec
+import com.materialkolor.rememberDynamicColorScheme
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 actual fun TomatoTheme(
     darkTheme: Boolean,
     seedColor: Color,
     dynamicColor: Boolean,
     blackTheme: Boolean,
-    content: @Composable (() -> Unit)
+    content: @Composable () -> Unit
 ) {
-    TODO("Not yet implemented")
+    val colorScheme = when {
+        darkTheme -> darkScheme
+        else -> lightScheme
+    }
+
+    CustomColors.black = blackTheme && darkTheme
+
+    val dynamicColorScheme = rememberDynamicColorScheme(
+        seedColor = when (seedColor) {
+            Color.White -> colorScheme.primary
+            else -> seedColor
+        },
+        isDark = darkTheme,
+        specVersion = if (blackTheme && darkTheme) ColorSpec.SpecVersion.SPEC_2021 else ColorSpec.SpecVersion.SPEC_2025,
+        isAmoled = blackTheme && darkTheme
+    )
+
+    val scheme =
+        if (seedColor == Color.White && !(blackTheme && darkTheme)) colorScheme
+        else dynamicColorScheme
+
+    CompositionLocalProvider(LocalAppFonts provides getAppFonts()) {
+        MaterialExpressiveTheme(
+            colorScheme = scheme,
+            typography = typography(),
+            motionScheme = MotionScheme.expressive(),
+            content = content
+        )
+    }
 }

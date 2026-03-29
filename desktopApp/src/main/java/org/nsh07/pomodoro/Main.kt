@@ -18,7 +18,25 @@
 package org.nsh07.pomodoro
 
 import androidx.compose.ui.window.application
+import org.koin.core.context.startKoin
+import org.nsh07.pomodoro.di.dbModule
+import org.nsh07.pomodoro.di.desktopModule
+import org.nsh07.pomodoro.di.flavorModule
+import org.nsh07.pomodoro.di.flavorUiModule
+import org.nsh07.pomodoro.di.servicesModule
+import org.nsh07.pomodoro.di.viewModels
 
 fun main() = application {
+    startKoin {
+        modules(
+            dbModule,
+            servicesModule,
+            desktopModule,
+            viewModels,
+            flavorModule,
+            flavorUiModule
+        )
+    }
+
     AppWindow()
 }

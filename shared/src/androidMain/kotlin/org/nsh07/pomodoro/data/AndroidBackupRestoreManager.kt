@@ -21,7 +21,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.DocumentsContract
-import androidx.sqlite.db.SimpleSQLiteQuery
+import androidx.room.RoomRawQuery
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -46,7 +46,7 @@ class AndroidBackupRestoreManager(
 ) : BackupRestoreManager {
     override suspend fun performBackup(directoryLocator: FileLocator) {
         withContext(Dispatchers.IO) {
-            systemDao.checkpoint(SimpleSQLiteQuery("pragma wal_checkpoint(full)"))
+            systemDao.checkpoint(RoomRawQuery("PRAGMA wal_checkpoint(full)"))
 
             val dbName = "app_database"
             val dbFile = context.getDatabasePath(dbName)

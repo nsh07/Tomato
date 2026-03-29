@@ -19,10 +19,10 @@ package org.nsh07.pomodoro.data
 
 import androidx.room.Dao
 import androidx.room.RawQuery
-import androidx.sqlite.db.SupportSQLiteQuery
+import androidx.room.RoomRawQuery
 
 @Dao
 interface SystemDao {
     @RawQuery
-    fun checkpoint(supportSQLiteQuery: SupportSQLiteQuery): Int
+    suspend fun checkpoint(supportSQLiteQuery: RoomRawQuery): Int
 }

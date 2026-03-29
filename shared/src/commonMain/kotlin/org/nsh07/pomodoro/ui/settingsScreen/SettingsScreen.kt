@@ -110,8 +110,10 @@ fun SettingsScreenRoot(
             (slideInHorizontally(initialOffsetX = { directionMultiplier * -it / 4 }) + fadeIn())
                 .togetherWith(slideOutHorizontally(targetOffsetX = { directionMultiplier * it }))
         },
-        sceneStrategy = rememberListDetailSceneStrategy(
-            directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
+        sceneStrategies = listOf(
+            rememberListDetailSceneStrategy(
+                directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
+            )
         ),
         entryProvider = entryProvider {
             entry<Screen.Settings.Main>(

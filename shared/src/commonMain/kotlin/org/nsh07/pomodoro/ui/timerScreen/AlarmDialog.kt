@@ -60,8 +60,7 @@ fun AlarmDialog(
     Dialog(
         onDismissRequest = stopAlarm,
         properties = DialogProperties(
-            usePlatformDefaultWidth = false,
-            decorFitsSystemWindows = false
+            usePlatformDefaultWidth = false
         )
     ) {
         Box(

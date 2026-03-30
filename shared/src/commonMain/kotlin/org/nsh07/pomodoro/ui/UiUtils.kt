@@ -92,7 +92,7 @@ expect fun rememberRequestNotificationPermissionCallback(): () -> Unit
 expect fun rememberRingtonePickerLauncherCallback(
     alarmSoundFilePath: String?,
     onResult: (SettingsAction) -> Unit
-): () -> Unit
+): suspend () -> Unit
 
 /**
  * Returns and remembers a lambda that returns the name of the current ringtone

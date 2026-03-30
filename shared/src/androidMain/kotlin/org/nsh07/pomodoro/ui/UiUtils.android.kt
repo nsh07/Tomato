@@ -155,7 +155,7 @@ actual fun rememberRequestNotificationPermissionCallback(): () -> Unit {
 actual fun rememberRingtonePickerLauncherCallback(
     alarmSoundFilePath: String?,
     onResult: (SettingsAction) -> Unit
-): () -> Unit {
+): suspend () -> Unit {
     val alamSoundString = stringResource(Res.string.alarm_sound)
 
     val ringtonePickerLauncher = rememberLauncherForActivityResult(

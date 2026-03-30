@@ -22,6 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.WindowInfo
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.Density
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.dialogs.openFilePicker
+import io.github.vinceglb.filekit.name
+import io.github.vinceglb.filekit.parent
+import io.github.vinceglb.filekit.path
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 
 @Composable
@@ -40,28 +46,25 @@ actual fun htmlToAnnotatedString(html: String): AnnotatedString =
     AnnotatedString(html.replace("</?([a-z]+)>".toRegex(), ""))
 
 @Composable
-actual fun rememberRequestDndPermissionCallback(): (Boolean) -> Unit {
-    // TODO: implement
-    return {}
-}
+actual fun rememberRequestDndPermissionCallback(): (Boolean) -> Unit = {}
 
 @Composable
-actual fun rememberRequestNotificationPermissionCallback(): () -> Unit {
-    // TODO: implement
-    return {}
-}
+actual fun rememberRequestNotificationPermissionCallback(): () -> Unit = {}
 
 @Composable
 actual fun rememberRingtonePickerLauncherCallback(
     alarmSoundFilePath: String?,
     onResult: (SettingsAction) -> Unit
-): () -> Unit {
-    // TODO: implement
-    return {}
+): suspend () -> Unit = {
+    val file = FileKit.openFilePicker(
+        directory = alarmSoundFilePath?.let {
+            PlatformFile(it).parent()
+        }
+    )
+    onResult(SettingsAction.SaveAlarmSound(file?.path))
 }
 
 @Composable
-actual fun rememberRingtoneNameProviderCallback(): suspend (String?) -> String {
-    // TODO: implement
-    return { _ -> "..." }
+actual fun rememberRingtoneNameProviderCallback(): suspend (String?) -> String = { path ->
+    path?.let { PlatformFile(it).name } ?: "..."
 }

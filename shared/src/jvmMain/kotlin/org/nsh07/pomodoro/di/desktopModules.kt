@@ -19,6 +19,9 @@ package org.nsh07.pomodoro.di
 
 import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.databasesDir
+import io.github.vinceglb.filekit.path
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.dsl.bind
@@ -94,8 +97,7 @@ val flavorUiModule = module {
 }
 
 private fun createDatabase(): AppDatabase {
-    // TODO: use data directory instead of tmp dir
-    val dbFile = File(System.getProperty("java.io.tmpdir"), "app_database")
+    val dbFile = File(FileKit.databasesDir.path, "app_database")
     return Room
         .databaseBuilder<AppDatabase>(name = dbFile.absolutePath)
         .setDriver(BundledSQLiteDriver())

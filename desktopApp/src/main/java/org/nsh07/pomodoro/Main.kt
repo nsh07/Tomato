@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro
 
 import androidx.compose.ui.window.application
+import io.github.vinceglb.filekit.FileKit
 import org.koin.core.context.startKoin
 import org.nsh07.pomodoro.di.dbModule
 import org.nsh07.pomodoro.di.desktopModule
@@ -27,6 +28,8 @@ import org.nsh07.pomodoro.di.servicesModule
 import org.nsh07.pomodoro.di.viewModels
 
 fun main() = application {
+    FileKit.init(appId = "org.nsh07.pomodoro")
+
     startKoin {
         modules(
             dbModule,

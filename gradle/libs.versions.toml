@@ -10,6 +10,8 @@ agp = "9.1.0"
 composeBom = "2026.03.00"
 coreKtx = "1.18.0"
 espressoCore = "3.7.0"
+filekitCore = "0.13.0"
+filekitDialogsCompose = "0.13.0"
 glance = "1.2.0-rc01"
 junit = "4.13.2"
 junitVersion = "1.3.0"
@@ -53,6 +55,8 @@ androidx-ui-test-junit4 = { group = "org.jetbrains.compose.ui", name = "ui-test-
 androidx-ui-test-manifest = { group = "org.jetbrains.compose.ui", name = "ui-test-manifest" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
+filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekitCore" }
+filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekitDialogsCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 revenuecat-purchases = { module = "com.revenuecat.purchases:purchases", version.ref = "revenuecat" }

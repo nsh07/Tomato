@@ -18,17 +18,27 @@
 package org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore
 
 import androidx.compose.runtime.Composable
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.dialogs.FileKitType
+import io.github.vinceglb.filekit.dialogs.openDirectoryPicker
+import io.github.vinceglb.filekit.dialogs.openFilePicker
+import io.github.vinceglb.filekit.path
 import org.nsh07.pomodoro.data.FileLocator
 
 @Composable
-actual fun rememberDirectoryPickerLauncher(onResult: (FileLocator) -> Unit): () -> Unit {
-    TODO("Not yet implemented")
+actual fun rememberDirectoryPickerLauncher(onResult: (FileLocator) -> Unit): suspend () -> Unit = {
+    val folder = FileKit.openDirectoryPicker()
+    onResult(FileLocator(folder?.path))
 }
 
 @Composable
 actual fun rememberFilePickerLauncher(
     mimeType: String,
+    fileExtension: String?,
     onResult: (FileLocator) -> Unit
-): () -> Unit {
-    TODO("Not yet implemented")
+): suspend () -> Unit = {
+    val file = FileKit.openFilePicker(
+        fileExtension?.let { FileKitType.File(it) } ?: FileKitType.File()
+    )
+    onResult(FileLocator(file?.path))
 }

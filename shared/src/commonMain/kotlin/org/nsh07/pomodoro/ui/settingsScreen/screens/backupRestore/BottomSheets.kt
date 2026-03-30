@@ -104,7 +104,7 @@ fun RestoreBottomSheet(
 ) {
     var selectedFileLocator: FileLocator by remember { mutableStateOf(FileLocator()) }
 
-    val launchFilePicker = rememberFilePickerLauncher("application/octet-stream") { locator ->
+    val launchFilePicker = rememberFilePickerLauncher("application/octet-stream", "db") { locator ->
         selectedFileLocator = locator
         resetRestoreState()
     }

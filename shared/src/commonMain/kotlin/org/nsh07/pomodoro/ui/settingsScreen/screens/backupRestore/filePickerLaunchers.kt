@@ -23,10 +23,11 @@ import org.nsh07.pomodoro.data.FileLocator
 @Composable
 expect fun rememberDirectoryPickerLauncher(
     onResult: (FileLocator) -> Unit
-): () -> Unit
+): suspend () -> Unit
 
 @Composable
 expect fun rememberFilePickerLauncher(
     mimeType: String,
+    fileExtension: String? = null,
     onResult: (FileLocator) -> Unit
-): () -> Unit
+): suspend () -> Unit

@@ -17,27 +17,79 @@
 
 package org.nsh07.pomodoro.data
 
-actual class FileLocator {
-    actual val path: String?
-        get() = TODO("Not yet implemented")
-    actual val isNull: Boolean
-        get() = TODO("Not yet implemented")
+import androidx.room.RoomRawQuery
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.databasesDir
+import io.github.vinceglb.filekit.path
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
+import kotlin.system.exitProcess
+import kotlin.time.Clock
 
-    actual constructor() {
-        TODO("Not yet implemented")
-    }
+actual class FileLocator(actual val path: String?) {
+    actual constructor() : this(null)
+
+    actual val isNull: Boolean
+        get() = path == null
 }
 
-class DesktopBackupRestoreManager : BackupRestoreManager {
+class DesktopBackupRestoreManager(
+    private val database: AppDatabase,
+    private val systemDao: SystemDao
+) : BackupRestoreManager {
     override suspend fun performBackup(directoryLocator: FileLocator) {
-        TODO("Not yet implemented")
+        withContext(Dispatchers.IO) {
+            systemDao.checkpoint(RoomRawQuery("PRAGMA wal_checkpoint(full)"))
+
+            val dbName = "app_database"
+            val dbFile = File(FileKit.databasesDir.path, dbName)
+
+            val outputFile = File(directoryLocator.path!!, "tomato-backup-${Clock.System.now()}.db")
+            dbFile.copyTo(outputFile, overwrite = true)
+        }
     }
 
     override suspend fun performRestore(fileLocator: FileLocator) {
-        TODO("Not yet implemented")
+        if (fileLocator.isNull) return
+        withContext(Dispatchers.IO) {
+            database.close()
+
+            val dbName = "app_database"
+            val dbFile = File(FileKit.databasesDir.path, dbName)
+
+            if (!dbFile.parentFile!!.exists()) dbFile.parentFile!!.mkdirs()
+
+            File("${dbFile.path}-wal").delete()
+            File("${dbFile.path}-shm").delete()
+
+            val inputFile = File(fileLocator.path!!)
+            inputFile.copyTo(dbFile, overwrite = true)
+        }
     }
 
     override fun restartApp() {
-        TODO("Not yet implemented")
+        try {
+            val processInfo = ProcessHandle.current().info()
+            val command = processInfo.command().orElse(null)
+            val arguments = processInfo.arguments().orElse(emptyArray())
+
+            if (command != null) {
+                val commandList = mutableListOf<String>()
+                commandList.add(command)
+                commandList.addAll(arguments)
+
+                ProcessBuilder(commandList).start()
+
+                exitProcess(0)
+            } else {
+                System.err.println("Failed to restart: Could not resolve the execution command.")
+                exitProcess(0)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            println("Failed to restart: ${e.message}")
+            exitProcess(0)
+        }
     }
 }

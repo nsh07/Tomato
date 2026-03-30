@@ -19,15 +19,11 @@ package org.nsh07.pomodoro.utils
 
 actual fun androidSdkVersionAtLeast(version: Int): Boolean = false
 
-actual fun androidDeviceManufacturerIs(manufacturer: String): Boolean {
-    TODO("Not yet implemented")
-}
+actual fun androidDeviceManufacturerIs(manufacturer: String): Boolean = false
 
-actual fun getDefaultAlarmTone(): String? {
-    // TODO: implement
-    return null
-}
+actual fun getDefaultAlarmTone(): String? = null
 
 actual fun logError(tag: String, message: String): Int {
-    TODO("Not yet implemented")
+    System.err.println("$tag: $message")
+    return 0
 }

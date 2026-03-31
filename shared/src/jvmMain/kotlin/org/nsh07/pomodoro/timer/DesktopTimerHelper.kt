@@ -19,44 +19,130 @@ package org.nsh07.pomodoro.timer
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.service.TimerManager
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 
 class DesktopTimerHelper(
-    private val timerManager: TimerManager
+    private val timerManager: TimerManager,
+    private val stateRepository: StateRepository
 ) : TimerHelper {
     // TODO: Implement DesktopTimerHelper
 
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private var job = SupervisorJob()
+    private val timerScope = CoroutineScope(Dispatchers.IO + job)
+    private val skipScope = CoroutineScope(Dispatchers.IO + job)
 
-    private val toggleTimer = {
-        timerManager.toggleTimer(scope, {}, {}, { _, _, _ -> }, {}, {}, {}, {})
-    }
+    private var autoAlarmStopScope: Job? = null
+
+    private val _timerState by lazy { stateRepository.timerState }
+    private val _settingsState by lazy { stateRepository.settingsState }
 
     override fun onAction(action: TimerAction) {
+        if (action == TimerAction.ResetTimer)
+            _timerState.update { currentState ->
+                currentState.copy(serviceRunning = false)
+            }
+        else
+            _timerState.update { currentState ->
+                currentState.copy(serviceRunning = true)
+            }
+
         when (action) {
-            TimerAction.ResetTimer -> scope.launch {
-                timerManager.resetTimer { }
-                timerManager.clear()
+            TimerAction.ResetTimer -> {
+                if (_timerState.value.timerRunning) toggleTimer()
+                skipScope.launch {
+                    timerManager.resetTimer {}
+                }
             }
 
-            is TimerAction.SkipTimer -> scope.launch {
-                timerManager.skipTimer({}, {}, {})
+            is TimerAction.SkipTimer -> skipScope.launch {
+                timerManager.skipTimer(
+                    onStart = { showTimerNotification(complete = false) },
+                    onCompletion = { },
+                    setDoNotDisturb = { }
+                )
             }
 
-            TimerAction.StopAlarm -> {}
+            TimerAction.StopAlarm -> stopAlarm()
 
             TimerAction.ToggleTimer -> toggleTimer()
 
-            TimerAction.UndoReset -> scope.launch {
-                timerManager.undoReset()
-            }
+            TimerAction.UndoReset -> timerManager.undoReset()
 
             is TimerAction.SetInfiniteFocus -> {
                 System.err.println("Invalid action: $action")
             }
         }
+    }
+
+    private fun toggleTimer() {
+        timerManager.toggleTimer(
+            scope = timerScope,
+            onPause = { showTimerNotification() },
+            onStart = { },
+            onTick = { _, updateNotification, _ ->
+                if (updateNotification) {
+                    showTimerNotification()
+                }
+            },
+            onTimerExpired = {
+                showTimerNotification(complete = true)
+            },
+            onSkipComplete = { },
+            setDoNotDisturb = {},
+            onStateChanged = {}
+        )
+    }
+
+    private fun showTimerNotification(complete: Boolean = false) {
+        if (complete) {
+            startAlarm()
+            _timerState.update { currentState ->
+                currentState.copy(alarmRinging = true)
+            }
+        }
+    }
+
+    // TODO: play sound when alarm is triggered
+    private fun startAlarm() {
+//        val settingsState = _settingsState.value
+//        if (settingsState.alarmEnabled) alarm?.start()
+
+        autoAlarmStopScope = CoroutineScope(Dispatchers.IO).launch {
+            delay(1 * 60 * 1000)
+            stopAlarm(fromAutoStop = true)
+        }
+    }
+
+    private fun stopAlarm(fromAutoStop: Boolean = false) {
+        val settingsState = _settingsState.value
+        autoAlarmStopScope?.cancel()
+
+//        if (settingsState.alarmEnabled) {
+//            alarm?.pause()
+//            alarm?.seekTo(0)
+//        }
+//
+//        if (settingsState.vibrateEnabled) {
+//            vibrator.cancel()
+//        }
+//
+//        activityCallbacks.activityTurnScreenOn(false)
+
+        _timerState.update { currentState ->
+            currentState.copy(alarmRinging = false)
+        }
+
+        showTimerNotification(complete = false)
+
+        if (settingsState.autostartNextSession && !fromAutoStop)  // auto start next session
+            toggleTimer()
     }
 }

@@ -21,7 +21,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
-import android.os.Build
 import android.os.SystemClock
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -34,6 +33,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.create
 import org.koin.plugin.module.dsl.single
+import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.AppPreferenceRepository
 import org.nsh07.pomodoro.data.AppStatRepository
@@ -62,19 +62,7 @@ val servicesModule = module {
     single<ActivityCallbacks>()
 }
 
-private fun createAppInfo(context: Context): AppInfo {
-    val debug = context.packageName.endsWith(".debug")
-
-    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-    val versionName = packageInfo.versionName ?: "-"
-    val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        packageInfo.longVersionCode
-    } else {
-        0L
-    }
-
-    return AppInfo(debug, versionName, versionCode)
-}
+private fun createAppInfo(): AppInfo = AppInfo(BuildConfig.DEBUG)
 
 private fun createNotificationManager(context: Context): NotificationManager {
     return context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager

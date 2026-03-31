@@ -24,6 +24,7 @@ import org.koin.dsl.module
 import org.koin.plugin.module.dsl.create
 import org.koin.plugin.module.dsl.single
 import org.koin.plugin.module.dsl.viewModel
+import org.nsh07.pomodoro.BuildKonfig
 import org.nsh07.pomodoro.data.AndroidBackupRestoreManager
 import org.nsh07.pomodoro.data.AppDatabase
 import org.nsh07.pomodoro.data.BackupRestoreManager
@@ -54,6 +55,6 @@ private fun createDatabase(context: Context): AppDatabase {
     return Room.databaseBuilder(
         context,
         AppDatabase::class.java,
-        "app_database"
+        BuildKonfig.DATABASE_NAME
     ).build()
 }

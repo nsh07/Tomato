@@ -50,7 +50,7 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "org.nsh07.pomodoro.Main"
+        mainClass = "org.nsh07.pomodoro.MainKt"
 
         nativeDistributions {
             targetFormats(

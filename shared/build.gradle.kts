@@ -15,6 +15,8 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -25,6 +27,8 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.koin.compiler)
+
+    alias(libs.plugins.buildKonfig)
 }
 
 koinCompiler {
@@ -84,7 +88,6 @@ kotlin {
         androidMain.dependencies {
             implementation(project.dependencies.platform(libs.androidx.compose.bom))
 
-            // Android-specific Compose
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.core.ktx)
 
@@ -107,6 +110,15 @@ kotlin {
             implementation(libs.filekit.core)
             implementation(libs.filekit.dialogs.compose)
         }
+    }
+}
+
+buildkonfig {
+    packageName = "org.nsh07.pomodoro"
+    defaultConfigs {
+        buildConfigField(INT, "VERSION_CODE", libs.versions.app.versionCode.get())
+        buildConfigField(STRING, "VERSION_NAME", libs.versions.app.versionName.get())
+        buildConfigField(STRING, "DATABASE_NAME", "app_database")
     }
 }
 

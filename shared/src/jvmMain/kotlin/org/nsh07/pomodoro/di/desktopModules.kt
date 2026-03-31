@@ -29,6 +29,7 @@ import org.koin.dsl.module
 import org.koin.plugin.module.dsl.create
 import org.koin.plugin.module.dsl.single
 import org.koin.plugin.module.dsl.viewModel
+import org.nsh07.pomodoro.BuildKonfig
 import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.billing.FossBillingManager
 import org.nsh07.pomodoro.billing.TomatoPlusPaywallDialog
@@ -97,7 +98,7 @@ val flavorUiModule = module {
 }
 
 private fun createDatabase(): AppDatabase {
-    val dbFile = File(FileKit.databasesDir.path, "app_database")
+    val dbFile = File(FileKit.databasesDir.path, BuildKonfig.DATABASE_NAME)
     return Room
         .databaseBuilder<AppDatabase>(name = dbFile.absolutePath)
         .setDriver(BundledSQLiteDriver())
@@ -107,9 +108,5 @@ private fun createDatabase(): AppDatabase {
 
 private fun createAppInfo(): AppInfo {
     // TODO: Implement AppInfo
-    return AppInfo(
-        debug = true,
-        versionName = "1.0",
-        versionCode = 1
-    )
+    return AppInfo(debug = true)
 }

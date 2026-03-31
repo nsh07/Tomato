@@ -23,6 +23,7 @@ import io.github.vinceglb.filekit.databasesDir
 import io.github.vinceglb.filekit.path
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.nsh07.pomodoro.BuildKonfig
 import java.io.File
 import kotlin.system.exitProcess
 import kotlin.time.Clock
@@ -42,7 +43,7 @@ class DesktopBackupRestoreManager(
         withContext(Dispatchers.IO) {
             systemDao.checkpoint(RoomRawQuery("PRAGMA wal_checkpoint(full)"))
 
-            val dbName = "app_database"
+            val dbName = BuildKonfig.DATABASE_NAME
             val dbFile = File(FileKit.databasesDir.path, dbName)
 
             val outputFile = File(directoryLocator.path!!, "tomato-backup-${Clock.System.now()}.db")
@@ -55,7 +56,7 @@ class DesktopBackupRestoreManager(
         withContext(Dispatchers.IO) {
             database.close()
 
-            val dbName = "app_database"
+            val dbName = BuildKonfig.DATABASE_NAME
             val dbFile = File(FileKit.databasesDir.path, dbName)
 
             if (!dbFile.parentFile!!.exists()) dbFile.parentFile!!.mkdirs()

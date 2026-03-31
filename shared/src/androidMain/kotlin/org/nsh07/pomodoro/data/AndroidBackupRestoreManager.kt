@@ -24,6 +24,7 @@ import android.provider.DocumentsContract
 import androidx.room.RoomRawQuery
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.nsh07.pomodoro.BuildKonfig
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -48,7 +49,7 @@ class AndroidBackupRestoreManager(
         withContext(Dispatchers.IO) {
             systemDao.checkpoint(RoomRawQuery("PRAGMA wal_checkpoint(full)"))
 
-            val dbName = "app_database"
+            val dbName = BuildKonfig.DATABASE_NAME
             val dbFile = context.getDatabasePath(dbName)
 
             val documentId = DocumentsContract.getTreeDocumentId(directoryLocator.uri)
@@ -77,7 +78,7 @@ class AndroidBackupRestoreManager(
         withContext(Dispatchers.IO) {
             database.close()
 
-            val dbName = "app_database"
+            val dbName = BuildKonfig.DATABASE_NAME
             val dbFile = context.getDatabasePath(dbName)
 
             if (!dbFile.parentFile!!.exists()) dbFile.parentFile!!.mkdirs()

@@ -66,7 +66,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import org.nsh07.pomodoro.di.AppInfo
+import org.nsh07.pomodoro.BuildKonfig
 import org.nsh07.pomodoro.di.FlavorUI
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.components.LicenseBottomSheet
@@ -102,8 +102,7 @@ fun AboutScreen(
     isPlus: Boolean,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    flavorUI: FlavorUI = koinInject(),
-    appInfo: AppInfo = koinInject()
+    flavorUI: FlavorUI = koinInject()
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val uriHandler = LocalUriHandler.current
@@ -203,7 +202,7 @@ fun AboutScreen(
                                     fontFamily = typography.bodyLarge.fontFamily
                                 )
                                 Text(
-                                    text = "${appInfo.versionName} (${appInfo.versionCode})",
+                                    text = "${BuildKonfig.VERSION_NAME} (${BuildKonfig.VERSION_CODE})",
                                     style = typography.labelLarge,
                                     color = colorScheme.primary
                                 )

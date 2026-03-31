@@ -56,6 +56,7 @@ actual fun rememberRingtonePickerLauncherCallback(
     alarmSoundFilePath: String?,
     onResult: (SettingsAction) -> Unit
 ): suspend () -> Unit = {
+    // TODO: copy the file to the data directory and use its path instead, to avoid dependence on a file that the user may delete
     val file = FileKit.openFilePicker(
         directory = alarmSoundFilePath?.let {
             PlatformFile(it).parent()

@@ -19,6 +19,9 @@ package org.nsh07.pomodoro.ui.statsScreen.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -136,6 +139,10 @@ fun HorizontalStackedBar(
                             else -> shapes.extraSmall
                         }
                     }
+
+                    val interactionSource = remember { MutableInteractionSource() }
+                    val isHovered by interactionSource.collectIsHoveredAsState()
+
                     Box(
                         Modifier
                             .weight(item.toFloat())
@@ -149,9 +156,10 @@ fun HorizontalStackedBar(
                                     )
                                 )
                             )
-                            .clickable { showTooltip = true }
+                            .clickable(interactionSource = interactionSource) { showTooltip = true }
+                            .hoverable(interactionSource)
                     ) {
-                        if (showTooltip) {
+                        if (showTooltip || isHovered) {
                             Popup(
                                 alignment = Alignment.TopCenter,
                                 offset = IntOffset(0, -tooltipOffset),

@@ -53,6 +53,13 @@ compose.desktop {
         mainClass = "org.nsh07.pomodoro.MainKt"
 
         nativeDistributions {
+            packageName = "Tomato"
+            packageVersion = libs.versions.app.versionName.get()
+            description = "Minimalist, data-oriented pomodoro timer"
+            copyright = "Copyright (c) 2025-2026 Nishant Mishra"
+            vendor = "Nishant Mishra"
+            licenseFile.set(project.file("../LICENSE"))
+
             targetFormats(
                 TargetFormat.AppImage,
                 TargetFormat.Deb,
@@ -60,8 +67,30 @@ compose.desktop {
                 TargetFormat.Dmg,
                 TargetFormat.Exe
             )
-            packageName = "Tomato"
-            packageVersion = libs.versions.app.versionName.get()
+
+            linux {
+                iconFile.set(project.file("src/main/resources/drawable/logo.png"))
+                debMaintainer = "nishant.28@outlook.com"
+                appRelease = libs.versions.app.versionCode.get()
+                appCategory = "TIMER"
+                rpmLicenseType = "GPLv3"
+            }
+            macOS {
+                iconFile.set(project.file("src/main/resources/drawable/logo.icns"))
+                bundleID = "org.nsh07.pomodoro"
+                appCategory = "public.app-category.productivity"
+            }
+            windows {
+                iconFile.set(project.file("src/main/resources/drawable/logo.ico"))
+                console = false
+                dirChooser = true
+                perUserInstall = true
+            }
+        }
+
+        buildTypes.release.proguard {
+            isEnabled = false
+            optimize = true
         }
     }
 }

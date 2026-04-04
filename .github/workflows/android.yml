@@ -20,7 +20,6 @@ jobs:
         with:
           java-version: '21'
           distribution: 'jetbrains'
-          cache: gradle
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew

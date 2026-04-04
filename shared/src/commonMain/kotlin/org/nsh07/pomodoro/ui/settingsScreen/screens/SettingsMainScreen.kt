@@ -56,8 +56,7 @@ import androidx.compose.ui.unit.sp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
-import org.nsh07.pomodoro.di.AppInfo
+import org.nsh07.pomodoro.BuildKonfig
 import org.nsh07.pomodoro.settingsScreens
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.SettingsNavItem
@@ -99,8 +98,7 @@ fun SettingsMainScreen(
     onAction: (SettingsAction) -> Unit,
     onNavigate: (Screen.Settings) -> Unit,
     setShowPaywall: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    appInfo: AppInfo = koinInject()
+    modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -226,7 +224,7 @@ fun SettingsMainScreen(
                         Icon(painterResource(Res.drawable.info), null)
                     },
                     supportingContent = {
-                        Text(stringResource(Res.string.app_name) + " ${appInfo.versionName}")
+                        Text(stringResource(Res.string.app_name) + " ${BuildKonfig.VERSION_NAME}")
                     },
                     trailingContent = if (!widthExpanded) {
                         { Icon(painterResource(Res.drawable.arrow_forward_big), null) }
@@ -305,8 +303,7 @@ private fun SettingsMainScreenPreview() {
             isPlus = false,
             onAction = {},
             onNavigate = {},
-            setShowPaywall = {},
-            appInfo = AppInfo(debug = true, versionName = "1.0.0", versionCode = 1L)
+            setShowPaywall = {}
         )
     }
 }

@@ -26,13 +26,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.FileLocator
+import org.nsh07.pomodoro.ui.htmlToAnnotatedString
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import tomato.shared.generated.resources.Res
@@ -79,7 +78,7 @@ fun BackupBottomSheet(
             )
         },
         titleText = stringResource(Res.string.backup),
-        labelText = AnnotatedString.fromHtml(
+        labelText = htmlToAnnotatedString(
             stringResource(
                 Res.string.backup_dialog_desc,
                 "<b>${stringResource(Res.string.settings)}$nbsp>$nbsp${
@@ -105,7 +104,7 @@ fun RestoreBottomSheet(
 ) {
     var selectedFileLocator: FileLocator by remember { mutableStateOf(FileLocator()) }
 
-    val launchFilePicker = rememberFilePickerLauncher("application/octet-stream") { locator ->
+    val launchFilePicker = rememberFilePickerLauncher("application/octet-stream", "db") { locator ->
         selectedFileLocator = locator
         resetRestoreState()
     }
@@ -124,7 +123,7 @@ fun RestoreBottomSheet(
             )
         },
         titleText = stringResource(Res.string.restore),
-        labelText = AnnotatedString.fromHtml(stringResource(Res.string.restore_dialog_desc)),
+        labelText = htmlToAnnotatedString(stringResource(Res.string.restore_dialog_desc)),
         buttonText = if (restoreState == BackupRestoreState.DONE) stringResource(Res.string.restart_app)
         else if (selectedFileLocator.isNull) stringResource(Res.string.choose_file)
         else stringResource(Res.string.restore),

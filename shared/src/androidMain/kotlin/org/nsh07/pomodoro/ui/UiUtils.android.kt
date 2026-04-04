@@ -33,13 +33,17 @@ import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.WindowInfo
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.unit.Density
 import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
@@ -151,7 +155,7 @@ actual fun rememberRequestNotificationPermissionCallback(): () -> Unit {
 actual fun rememberRingtonePickerLauncherCallback(
     alarmSoundFilePath: String?,
     onResult: (SettingsAction) -> Unit
-): () -> Unit {
+): suspend () -> Unit {
     val alamSoundString = stringResource(Res.string.alarm_sound)
 
     val ringtonePickerLauncher = rememberLauncherForActivityResult(
@@ -201,4 +205,12 @@ actual fun rememberRingtoneNameProviderCallback(): suspend (String?) -> String {
             }
         }
     }
+}
+
+actual fun Modifier.androidSystemGestureExclusion() = this.systemGestureExclusion()
+
+actual fun htmlToAnnotatedString(html: String): AnnotatedString = AnnotatedString.fromHtml(html)
+actual fun Modifier.hideCursor(): Modifier {
+    // TODO: implement this later
+    return this
 }

@@ -25,7 +25,7 @@ import org.nsh07.pomodoro.data.FileLocator
 @Composable
 actual fun rememberDirectoryPickerLauncher(
     onResult: (FileLocator) -> Unit
-): () -> Unit {
+): suspend () -> Unit {
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocumentTree()
     ) { uri ->
@@ -37,8 +37,9 @@ actual fun rememberDirectoryPickerLauncher(
 @Composable
 actual fun rememberFilePickerLauncher(
     mimeType: String,
+    fileExtension: String?,
     onResult: (FileLocator) -> Unit
-): () -> Unit {
+): suspend () -> Unit {
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
     ) { uri ->

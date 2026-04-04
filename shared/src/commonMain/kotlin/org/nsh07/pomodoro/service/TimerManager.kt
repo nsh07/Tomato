@@ -298,4 +298,16 @@ class TimerManager(
     fun resetLastSavedDuration() {
         lastSavedDuration = 0
     }
+
+    fun clear() {
+        cycles = 0
+        startTime = 0L
+        pauseTime = 0L
+        pauseDuration = 0L
+        lastSavedDuration = 0L
+
+        _timerState.update { currentState ->
+            currentState.copy(timerRunning = false)
+        }
+    }
 }

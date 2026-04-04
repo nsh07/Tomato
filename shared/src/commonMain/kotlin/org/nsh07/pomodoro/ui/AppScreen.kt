@@ -29,6 +29,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -77,7 +78,6 @@ import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass
 import org.jetbrains.compose.resources.painterResource
@@ -127,7 +127,7 @@ fun AppScreen(
     val systemBarsInsets = WindowInsets.systemBars.asPaddingValues()
     val cutoutInsets = WindowInsets.displayCutout.asPaddingValues()
 
-    val backStack = rememberNavBackStack(Screen.Timer)
+    val backStack = timerViewModel.rootBackstack
     val toolbarScrollBehavior = FloatingToolbarDefaults.exitAlwaysScrollBehavior(
         FloatingToolbarExitDirection.Bottom
     )
@@ -285,6 +285,7 @@ fun AppScreen(
         },
         modifier = modifier
     ) { contentPadding ->
+        val aodInteractionSource = remember { MutableInteractionSource() }
         SharedTransitionLayout {
             NavDisplay(
                 backStack = backStack,
@@ -311,12 +312,16 @@ fun AppScreen(
                             progress = { progress },
                             onAction = timerViewModel::onAction,
                             modifier = if (isAODEnabled) Modifier
-                                .clickable {
-                                    if (!uiState.timerRunning)
-                                        timerViewModel.onAction(TimerAction.ToggleTimer)
-                                    if (backStack.size < 2)
-                                        backStack.add(Screen.AOD)
-                                } else Modifier
+                                .clickable(
+                                    interactionSource = aodInteractionSource,
+                                    onClick = {
+                                        if (!uiState.timerRunning)
+                                            timerViewModel.onAction(TimerAction.ToggleTimer)
+                                        if (backStack.size < 2)
+                                            backStack.add(Screen.AOD)
+                                    }
+                                )
+                            else Modifier
                         )
                     }
 
@@ -326,9 +331,14 @@ fun AppScreen(
                             secureAod = settingsState.secureAod,
                             progress = { progress },
                             setTimerFrequency = setTimerFrequency,
-                            modifier = if (isAODEnabled) Modifier.clickable {
-                                if (backStack.size > 1) backStack.removeLastOrNull()
-                            } else Modifier
+                            modifier = if (isAODEnabled) Modifier
+                                .clickable(
+                                    interactionSource = aodInteractionSource,
+                                    indication = null,
+                                    onClick = { if (backStack.size > 1) backStack.removeLastOrNull() }
+                                )
+                                .hideCursor()
+                            else Modifier
                         )
                     }
 

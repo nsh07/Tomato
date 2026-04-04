@@ -134,11 +134,12 @@ or [my BuyMeACoffee page](https://coff.ee/nsh07):
 
 This app was made possible by the following libraries:
 
-- [Jetpack Navigation 3](https://developer.android.com/jetpack/androidx/releases/navigation3) -
-  Navigation
+- [FileKit](https://filekit.mintlify.app/introduction) - Cross-platform file operations for Kotlin
+  Multiplatform
+- [MaterialKolor](https://github.com/jordond/materialkolor) - Dynamic Material 3 color schemes
 - [Room](https://developer.android.com/jetpack/androidx/releases/room) - SQLite Database
-- [Vico](https://github.com/patrykandpatrick/vico) - Graphs and charts
-- [MaterialKolor](https://github.com/jordond/materialkolor)- Material 3 color schemes
+- [Vico](https://guide.vico.patrykandpatrick.com/) - Powerful and extensible multiplatform chart
+  library
 
 ### Fonts:
 

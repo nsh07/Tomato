@@ -27,8 +27,10 @@ import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.occludingVerticalHingeBounds
 import androidx.compose.material3.adaptive.separatingVerticalHingeBounds
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.WindowInfo
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -50,6 +52,10 @@ fun mergePaddingValues(
     )
 }
 
+/**
+ * A [androidx.compose.runtime.DisposableEffect] that makes the app full-screen and exits
+ * full-screen when this function exits composition
+ */
 @Composable
 expect fun AodSystemBarsHandler(
     density: Density,
@@ -90,7 +96,7 @@ expect fun rememberRequestNotificationPermissionCallback(): () -> Unit
 expect fun rememberRingtonePickerLauncherCallback(
     alarmSoundFilePath: String?,
     onResult: (SettingsAction) -> Unit
-): () -> Unit
+): suspend () -> Unit
 
 /**
  * Returns and remembers a lambda that returns the name of the current ringtone
@@ -183,3 +189,9 @@ fun calculatePaneScaffoldDirective(
         }
     )
 }
+
+expect fun Modifier.androidSystemGestureExclusion(): Modifier
+
+expect fun htmlToAnnotatedString(html: String): AnnotatedString
+
+expect fun Modifier.hideCursor(): Modifier

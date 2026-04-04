@@ -21,9 +21,10 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.DocumentsContract
-import androidx.sqlite.db.SimpleSQLiteQuery
+import androidx.room.RoomRawQuery
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.nsh07.pomodoro.BuildKonfig
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -46,9 +47,9 @@ class AndroidBackupRestoreManager(
 ) : BackupRestoreManager {
     override suspend fun performBackup(directoryLocator: FileLocator) {
         withContext(Dispatchers.IO) {
-            systemDao.checkpoint(SimpleSQLiteQuery("pragma wal_checkpoint(full)"))
+            systemDao.checkpoint(RoomRawQuery("PRAGMA wal_checkpoint(full)"))
 
-            val dbName = "app_database"
+            val dbName = BuildKonfig.DATABASE_NAME
             val dbFile = context.getDatabasePath(dbName)
 
             val documentId = DocumentsContract.getTreeDocumentId(directoryLocator.uri)
@@ -77,7 +78,7 @@ class AndroidBackupRestoreManager(
         withContext(Dispatchers.IO) {
             database.close()
 
-            val dbName = "app_database"
+            val dbName = BuildKonfig.DATABASE_NAME
             val dbFile = context.getDatabasePath(dbName)
 
             if (!dbFile.parentFile!!.exists()) dbFile.parentFile!!.mkdirs()

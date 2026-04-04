@@ -69,7 +69,7 @@ fun BackupBottomSheetTemplate(
     onDismissRequest: () -> Unit,
     onStartAction: (FileLocator) -> Unit,
     resetBackupState: () -> Unit,
-    openPicker: () -> Unit,
+    openPicker: suspend () -> Unit,
     icon: @Composable () -> Unit,
     titleText: String,
     labelText: AnnotatedString,
@@ -121,7 +121,7 @@ fun BackupBottomSheetTemplate(
                 modifier = Modifier
                     .clip(RoundedCornerShape(40.dp))
                     .clickable(
-                        onClick = { openPicker() },
+                        onClick = { scope.launch { openPicker() } },
                         enabled = backupState == BackupRestoreState.CHOOSE_FILE
                     )
                     .drawBehind { drawRect(animatedBgColor) }
@@ -196,7 +196,7 @@ fun BackupBottomSheetTemplate(
                                 resetBackupState()
                                 onDismissRequest()
                             }
-                        } else if (selectedFileLocator.isNull) openPicker()
+                        } else if (selectedFileLocator.isNull) scope.launch { openPicker() }
                         else onStartAction(selectedFileLocator)
                     },
                     enabled = backupState != BackupRestoreState.LOADING,

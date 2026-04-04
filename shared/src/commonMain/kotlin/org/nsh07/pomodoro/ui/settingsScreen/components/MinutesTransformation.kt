@@ -19,11 +19,10 @@ package org.nsh07.pomodoro.ui.settingsScreen.components
 
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldBuffer
-import androidx.core.text.isDigitsOnly
 
 class MinutesInputTransformation(val maxDigits: Int) : InputTransformation {
     override fun TextFieldBuffer.transformInput() {
-        if (!this.asCharSequence().isDigitsOnly() || this.length > maxDigits) {
+        if (!this.asCharSequence().all { it.isDigit() } || this.length > maxDigits) {
             revertAllChanges()
         }
     }

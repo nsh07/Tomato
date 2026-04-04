@@ -21,9 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 data class AppInfo(
-    val debug: Boolean,
-    val versionName: String,
-    val versionCode: Long
+    val debug: Boolean
 )
 
 class ActivityCallbacks {

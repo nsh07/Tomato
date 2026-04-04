@@ -50,7 +50,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
@@ -116,6 +115,7 @@ import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_L
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.ui.androidSystemGestureExclusion
 import org.nsh07.pomodoro.ui.rememberRequestNotificationPermissionCallback
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
@@ -824,7 +824,7 @@ fun SharedTransitionScope.TimerScreen(
                         LocalMinimumInteractiveComponentSize.current,
                         interactionSource
                     )
-                    .systemGestureExclusion()
+                    .androidSystemGestureExclusion()
             )
         },
         paneExpansionState = expansionState

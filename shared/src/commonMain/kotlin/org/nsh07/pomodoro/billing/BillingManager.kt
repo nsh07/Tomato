@@ -17,8 +17,17 @@
 
 package org.nsh07.pomodoro.billing
 
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 interface BillingManager {
     val isPlus: StateFlow<Boolean>
+}
+
+/**
+ * FOSS implementation of BillingManager
+ */
+class FossBillingManager : BillingManager {
+    override val isPlus = MutableStateFlow(true).asStateFlow()
 }

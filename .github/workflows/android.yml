@@ -20,6 +20,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'jetbrains'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -46,6 +47,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'jetbrains'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -78,6 +80,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'jetbrains'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -101,6 +104,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'jetbrains'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Package EXE
         run: ./gradlew.bat packageReleaseExe

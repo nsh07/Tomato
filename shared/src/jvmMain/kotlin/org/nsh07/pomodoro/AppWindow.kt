@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowState
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -41,8 +42,11 @@ import org.nsh07.pomodoro.utils.toColor
 fun ApplicationScope.AppWindow(
     settingsViewModel: SettingsViewModel = koinInject(),
     stateRepository: StateRepository = koinInject()
-) =
+) {
+    val windowState: WindowState = koinInject()
+
     Window(
+        state = windowState,
         onCloseRequest = ::exitApplication,
         title = "Tomato"
     ) {
@@ -81,3 +85,4 @@ fun ApplicationScope.AppWindow(
             }
         }
     }
+}

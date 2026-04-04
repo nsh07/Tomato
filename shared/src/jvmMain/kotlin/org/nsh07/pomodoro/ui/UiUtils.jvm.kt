@@ -18,16 +18,20 @@
 package org.nsh07.pomodoro.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.WindowInfo
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowState
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.name
 import io.github.vinceglb.filekit.parent
 import io.github.vinceglb.filekit.path
+import org.koin.compose.koinInject
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 
 @Composable
@@ -37,6 +41,17 @@ actual fun AodSystemBarsHandler(
     secureAod: Boolean,
     setTimerFrequency: (Float) -> Unit
 ) {
+    val windowState: WindowState = koinInject()
+
+    DisposableEffect(Unit) {
+        setTimerFrequency(1f)
+        windowState.placement = WindowPlacement.Fullscreen
+
+        onDispose {
+            setTimerFrequency(60f)
+            windowState.placement = WindowPlacement.Floating
+        }
+    }
 }
 
 actual fun Modifier.androidSystemGestureExclusion(): Modifier = this

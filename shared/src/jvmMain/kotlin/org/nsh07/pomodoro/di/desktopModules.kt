@@ -17,6 +17,9 @@
 
 package org.nsh07.pomodoro.di
 
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.WindowState
 import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import io.github.vinceglb.filekit.FileKit
@@ -68,6 +71,7 @@ val viewModels = module {
 
 val desktopModule = module {
     single<DesktopBackupRestoreManager>() bind BackupRestoreManager::class
+    single<WindowState> { create(::createWindowState) }
 }
 
 val servicesModule = module {
@@ -109,4 +113,10 @@ private fun createDatabase(): AppDatabase {
 private fun createAppInfo(): AppInfo {
     // TODO: Implement AppInfo
     return AppInfo(debug = true)
+}
+
+private fun createWindowState(): WindowState {
+    return WindowState(
+        position = WindowPosition.Aligned(alignment = Alignment.Center)
+    )
 }

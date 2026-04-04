@@ -52,6 +52,10 @@ fun mergePaddingValues(
     )
 }
 
+/**
+ * A [androidx.compose.runtime.DisposableEffect] that makes the app full-screen and exits
+ * full-screen when this function exits composition
+ */
 @Composable
 expect fun AodSystemBarsHandler(
     density: Density,

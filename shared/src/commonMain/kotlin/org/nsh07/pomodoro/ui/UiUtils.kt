@@ -193,3 +193,5 @@ fun calculatePaneScaffoldDirective(
 expect fun Modifier.androidSystemGestureExclusion(): Modifier
 
 expect fun htmlToAnnotatedString(html: String): AnnotatedString
+
+expect fun Modifier.hideCursor(): Modifier

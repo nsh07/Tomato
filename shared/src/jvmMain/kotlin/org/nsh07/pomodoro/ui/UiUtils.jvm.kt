@@ -20,6 +20,8 @@ package org.nsh07.pomodoro.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.WindowInfo
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.Density
@@ -33,6 +35,9 @@ import io.github.vinceglb.filekit.parent
 import io.github.vinceglb.filekit.path
 import org.koin.compose.koinInject
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
+import java.awt.Point
+import java.awt.Toolkit
+import java.awt.image.BufferedImage
 
 @Composable
 actual fun AodSystemBarsHandler(
@@ -44,7 +49,7 @@ actual fun AodSystemBarsHandler(
     val windowState: WindowState = koinInject()
 
     DisposableEffect(Unit) {
-        setTimerFrequency(1f)
+        setTimerFrequency(30f)
         windowState.placement = WindowPlacement.Fullscreen
 
         onDispose {
@@ -83,4 +88,16 @@ actual fun rememberRingtonePickerLauncherCallback(
 @Composable
 actual fun rememberRingtoneNameProviderCallback(): suspend (String?) -> String = { path ->
     path?.let { PlatformFile(it).name } ?: "..."
+}
+
+actual fun Modifier.hideCursor(): Modifier {
+    return pointerHoverIcon(
+        PointerIcon(
+            Toolkit.getDefaultToolkit().createCustomCursor(
+                BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB),
+                Point(0, 0),
+                "Empty Cursor"
+            )
+        )
+    )
 }

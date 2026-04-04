@@ -210,3 +210,7 @@ actual fun rememberRingtoneNameProviderCallback(): suspend (String?) -> String {
 actual fun Modifier.androidSystemGestureExclusion() = this.systemGestureExclusion()
 
 actual fun htmlToAnnotatedString(html: String): AnnotatedString = AnnotatedString.fromHtml(html)
+actual fun Modifier.hideCursor(): Modifier {
+    // TODO: implement this later
+    return this
+}

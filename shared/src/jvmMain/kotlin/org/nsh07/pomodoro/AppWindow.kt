@@ -30,12 +30,17 @@ import androidx.compose.ui.window.WindowState
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.ui.AppScreen
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.toColor
+import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.app_name
+import tomato.shared.generated.resources.logo
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -48,7 +53,8 @@ fun ApplicationScope.AppWindow(
     Window(
         state = windowState,
         onCloseRequest = ::exitApplication,
-        title = "Tomato"
+        title = stringResource(Res.string.app_name),
+        icon = painterResource(Res.drawable.logo)
     ) {
         val settingsState by settingsViewModel.settingsState.collectAsState()
         val isPlus by settingsViewModel.isPlus.collectAsState()

@@ -69,7 +69,7 @@ compose.desktop {
             )
 
             linux {
-                iconFile = project.file("src/main/logo.png")
+                iconFile = project.file("../shared/src/jvmMain/composeResources/drawable/logo.png")
                 debMaintainer = "nishant.28@outlook.com"
                 appRelease = libs.versions.app.versionCode.get()
                 appCategory = "TIMER"

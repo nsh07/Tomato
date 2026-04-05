@@ -69,19 +69,19 @@ compose.desktop {
             )
 
             linux {
-                iconFile = project.file("src/main/resources/drawable/logo.png")
+                iconFile = project.file("src/main/logo.png")
                 debMaintainer = "nishant.28@outlook.com"
                 appRelease = libs.versions.app.versionCode.get()
                 appCategory = "TIMER"
                 rpmLicenseType = "GPLv3"
             }
             macOS {
-                iconFile = project.file("src/main/resources/drawable/logo.icns")
+                iconFile = project.file("src/main/logo.icns")
                 bundleID = "org.nsh07.pomodoro"
                 appCategory = "public.app-category.productivity"
             }
             windows {
-                iconFile = project.file("src/main/resources/drawable/logo.ico")
+                iconFile = project.file("src/main/logo.ico")
                 console = false
                 dirChooser = true
                 perUserInstall = true

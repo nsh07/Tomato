@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'jetbrains'
+          distribution: 'temurin'
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Grant execute permission for gradlew
@@ -46,7 +46,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'jetbrains'
+          distribution: 'temurin'
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Grant execute permission for gradlew
@@ -79,7 +79,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'jetbrains'
+          distribution: 'temurin'
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Grant execute permission for gradlew
@@ -103,7 +103,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'jetbrains'
+          distribution: 'temurin'
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Package EXE

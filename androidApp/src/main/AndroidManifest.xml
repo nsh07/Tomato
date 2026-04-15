@@ -35,7 +35,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Tomato"
-        tools:targetApi="36">
+        tools:targetApi="37">
 
         <activity
             android:name=".MainActivity"

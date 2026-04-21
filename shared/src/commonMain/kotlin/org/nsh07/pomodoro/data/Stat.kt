@@ -36,12 +36,12 @@ import kotlin.uuid.ExperimentalUuidApi
 data class Stat(
     val date: LocalDate,
     val deviceId: String,
-    val updatedAt: Long,
     val focusTimeQ1: Long,
     val focusTimeQ2: Long,
     val focusTimeQ3: Long,
     val focusTimeQ4: Long,
-    val breakTime: Long
+    val breakTime: Long,
+    val updatedAt: Long = System.currentTimeMillis()
 ) {
     fun totalFocusTime() = focusTimeQ1 + focusTimeQ2 + focusTimeQ3 + focusTimeQ4
 }

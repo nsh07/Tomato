@@ -40,9 +40,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.nsh07.pomodoro.data.DeviceIdStore
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
+import org.nsh07.pomodoro.data.StatTime
 import org.nsh07.pomodoro.di.AppInfo
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.utils.OS
@@ -56,10 +56,8 @@ import java.util.Locale
 class StatsViewModel(
     private val statRepository: StatRepository,
     private val appInfo: AppInfo,
-    deviceIdStore: DeviceIdStore
 ) : ViewModel() {
     val backStack = mutableStateListOf<Screen.Stats>(Screen.Stats.Main)
-    val deviceId = deviceIdStore.deviceId
 
     val chartScrollStates = List(3) {
         VicoScrollState(
@@ -294,14 +292,11 @@ class StatsViewModel(
             viewModelScope.launch {
                 val today = LocalDate.now().plusDays(1)
                 var it = today.minusDays(365)
-                val id = deviceId.value
 
                 while (it.isBefore(today)) {
                     statRepository.insertStat(
-                        Stat(
-                            it,
-                            id,
-                            System.currentTimeMillis(),
+                        it,
+                        StatTime(
                             (0..30 * 60 * 1000L).random(),
                             (1 * 60 * 60 * 1000L..3 * 60 * 60 * 1000L).random(),
                             (0..3 * 60 * 60 * 1000L).random(),

@@ -29,8 +29,7 @@ import java.time.LocalTime
  * ViewModel
  */
 interface StatRepository {
-    // TODO: Use StatTime with separate optional date parameter instead
-    suspend fun insertStat(stat: Stat)
+    suspend fun insertStat(date: LocalDate, stat: StatTime)
 
     suspend fun addFocusTime(focusTime: Long)
 
@@ -59,13 +58,23 @@ class AppStatRepository(
 ) : StatRepository {
     private val deviceId = deviceIdStore.deviceId
 
-    override suspend fun insertStat(stat: Stat) = statDao.insertStat(stat)
+    override suspend fun insertStat(date: LocalDate, stat: StatTime) =
+        statDao.insertStat(
+            Stat(
+                date,
+                deviceId.value,
+                stat.focusTimeQ1,
+                stat.focusTimeQ2,
+                stat.focusTimeQ3,
+                stat.focusTimeQ4,
+                stat.breakTime
+            )
+        )
 
     override suspend fun addFocusTime(focusTime: Long) = withContext(ioDispatcher) {
         val currentDate = LocalDate.now()
         val currentTime = LocalTime.now().toSecondOfDay()
         val secondsInDay = 24 * 60 * 60
-        val updatedAt = System.currentTimeMillis()
 
         if (statDao.statExists(currentDate)) {
             when (currentTime) {
@@ -84,22 +93,22 @@ class AppStatRepository(
             when (currentTime) {
                 in 0..(secondsInDay / 4) ->
                     statDao.insertStat(
-                        Stat(currentDate, deviceId.value, updatedAt, focusTime, 0, 0, 0, 0)
+                        Stat(currentDate, deviceId.value, focusTime, 0, 0, 0, 0)
                     )
 
                 in (secondsInDay / 4)..(secondsInDay / 2) ->
                     statDao.insertStat(
-                        Stat(currentDate, deviceId.value, updatedAt, 0, focusTime, 0, 0, 0)
+                        Stat(currentDate, deviceId.value, 0, focusTime, 0, 0, 0)
                     )
 
                 in (secondsInDay / 2)..(3 * secondsInDay / 4) ->
                     statDao.insertStat(
-                        Stat(currentDate, deviceId.value, updatedAt, 0, 0, focusTime, 0, 0)
+                        Stat(currentDate, deviceId.value, 0, 0, focusTime, 0, 0)
                     )
 
                 else ->
                     statDao.insertStat(
-                        Stat(currentDate, deviceId.value, updatedAt, 0, 0, 0, focusTime, 0)
+                        Stat(currentDate, deviceId.value, 0, 0, 0, focusTime, 0)
                     )
             }
         }

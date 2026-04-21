@@ -31,9 +31,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.nsh07.pomodoro.data.DeviceIdStore
-import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
+import org.nsh07.pomodoro.data.StatTime
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.ui.Screen
@@ -45,9 +44,7 @@ class TimerViewModel(
     private val timerHelper: TimerHelper,
     private val stateRepository: StateRepository,
     private val statRepository: StatRepository,
-    deviceIdStore: DeviceIdStore
 ) : ViewModel() {
-    val deviceId = deviceIdStore.deviceId
     val rootBackstack = mutableStateListOf<Screen>(Screen.Timer)
 
     private val _time: MutableStateFlow<Long> = stateRepository.time
@@ -66,32 +63,10 @@ class TimerViewModel(
             if (lastDate != null) {
                 while (ChronoUnit.DAYS.between(lastDate, today) > 0) {
                     lastDate = lastDate?.plusDays(1)
-                    statRepository.insertStat(
-                        Stat(
-                            lastDate!!,
-                            deviceId.value,
-                            System.currentTimeMillis(),
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
-                        )
-                    )
+                    statRepository.insertStat(lastDate!!, StatTime(0, 0, 0, 0, 0))
                 }
             } else {
-                statRepository.insertStat(
-                    Stat(
-                        today,
-                        deviceId.value,
-                        System.currentTimeMillis(),
-                        0,
-                        0,
-                        0,
-                        0,
-                        0
-                    )
-                )
+                statRepository.insertStat(today, StatTime(0, 0, 0, 0, 0))
             }
 
             delay(1500)

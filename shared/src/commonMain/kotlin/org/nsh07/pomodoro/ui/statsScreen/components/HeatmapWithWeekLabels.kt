@@ -201,7 +201,8 @@ fun HeatmapWithWeekLabelsPreview() {
         buildList {
             (0..93).forEach { index ->
                 val date = startDate.plusDays(index.toLong())
-                val focusStat = Stat(date, index % 10L / 2, 0, 0, 0, 0) // Varying focus durations
+                val focusStat =
+                    Stat(date, "0", 0, index % 10L / 2, 0, 0, 0, 0) // Varying focus durations
 
                 if (date.month != date.minusDays(1).month && index > 0)
                     repeat(7) { add(null) }

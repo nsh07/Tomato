@@ -24,7 +24,7 @@ import androidx.room.TypeConverters
 
 @Database(
     entities = [IntPreference::class, BooleanPreference::class, StringPreference::class, Stat::class],
-    version = 2,
+    version = 3,
     autoMigrations = [
         AutoMigration(from = 1, to = 2)
     ]

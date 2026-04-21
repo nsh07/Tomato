@@ -29,6 +29,8 @@ import io.github.vinceglb.filekit.databasesDir
 import io.github.vinceglb.filekit.path
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import org.koin.core.module.dsl.createdAtStart
+import org.koin.core.module.dsl.withOptions
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.create
@@ -41,6 +43,8 @@ import org.nsh07.pomodoro.data.AppPreferenceRepository
 import org.nsh07.pomodoro.data.AppStatRepository
 import org.nsh07.pomodoro.data.BackupRestoreManager
 import org.nsh07.pomodoro.data.DesktopBackupRestoreManager
+import org.nsh07.pomodoro.data.DeviceIdStore
+import org.nsh07.pomodoro.data.Migration2to3
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
@@ -55,6 +59,7 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 import java.io.File
 
 val dbModule = module {
+    single<DeviceIdStore>() withOptions { createdAtStart() }
     single<AppDatabase> { create(::createDatabase) }
     single { get<AppDatabase>().preferenceDao() }
     single { get<AppDatabase>().statDao() }
@@ -101,12 +106,13 @@ val flavorUiModule = module {
     }
 }
 
-private fun createDatabase(): AppDatabase {
+private fun createDatabase(deviceIdStore: DeviceIdStore): AppDatabase {
     val dbFile = File(FileKit.databasesDir.path, BuildKonfig.DATABASE_NAME)
     return Room
         .databaseBuilder<AppDatabase>(name = dbFile.absolutePath)
         .setDriver(BundledSQLiteDriver())
         .setQueryCoroutineContext(Dispatchers.IO)
+        .addMigrations(Migration2to3(deviceIdStore::getDeviceId))
         .build()
 }
 

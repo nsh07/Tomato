@@ -29,6 +29,7 @@ import java.time.LocalTime
  * ViewModel
  */
 interface StatRepository {
+    // TODO: Use StatTime with separate optional date parameter instead
     suspend fun insertStat(stat: Stat)
 
     suspend fun addFocusTime(focusTime: Long)
@@ -53,14 +54,18 @@ interface StatRepository {
  */
 class AppStatRepository(
     private val statDao: StatDao,
-    private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
+    deviceIdStore: DeviceIdStore
 ) : StatRepository {
+    private val deviceId = deviceIdStore.deviceId
+
     override suspend fun insertStat(stat: Stat) = statDao.insertStat(stat)
 
     override suspend fun addFocusTime(focusTime: Long) = withContext(ioDispatcher) {
         val currentDate = LocalDate.now()
         val currentTime = LocalTime.now().toSecondOfDay()
         val secondsInDay = 24 * 60 * 60
+        val updatedAt = System.currentTimeMillis()
 
         if (statDao.statExists(currentDate)) {
             when (currentTime) {
@@ -79,22 +84,22 @@ class AppStatRepository(
             when (currentTime) {
                 in 0..(secondsInDay / 4) ->
                     statDao.insertStat(
-                        Stat(currentDate, focusTime, 0, 0, 0, 0)
+                        Stat(currentDate, deviceId.value, updatedAt, focusTime, 0, 0, 0, 0)
                     )
 
                 in (secondsInDay / 4)..(secondsInDay / 2) ->
                     statDao.insertStat(
-                        Stat(currentDate, 0, focusTime, 0, 0, 0)
+                        Stat(currentDate, deviceId.value, updatedAt, 0, focusTime, 0, 0, 0)
                     )
 
                 in (secondsInDay / 2)..(3 * secondsInDay / 4) ->
                     statDao.insertStat(
-                        Stat(currentDate, 0, 0, focusTime, 0, 0)
+                        Stat(currentDate, deviceId.value, updatedAt, 0, 0, focusTime, 0, 0)
                     )
 
                 else ->
                     statDao.insertStat(
-                        Stat(currentDate, 0, 0, 0, focusTime, 0)
+                        Stat(currentDate, deviceId.value, updatedAt, 0, 0, 0, focusTime, 0)
                     )
             }
         }
@@ -102,10 +107,11 @@ class AppStatRepository(
 
     override suspend fun addBreakTime(breakTime: Long) = withContext(ioDispatcher) {
         val currentDate = LocalDate.now()
+        val updatedAt = System.currentTimeMillis()
         if (statDao.statExists(currentDate)) {
             statDao.addBreakTime(currentDate, breakTime)
         } else {
-            statDao.insertStat(Stat(currentDate, 0, 0, 0, 0, breakTime))
+            statDao.insertStat(Stat(currentDate, deviceId.value, updatedAt, 0, 0, 0, 0, breakTime))
         }
     }
 

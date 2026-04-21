@@ -206,6 +206,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
         val history = listOf(
             Stat(
                 date = LocalDate.of(2026, 3, 12),
+                deviceId = "0",
                 focusTimeQ1 = 1617943 + 7200000,
                 focusTimeQ2 = 5704591,
                 focusTimeQ3 = 556490,
@@ -214,6 +215,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             ),
             Stat(
                 date = LocalDate.of(2026, 3, 13),
+                deviceId = "0",
                 focusTimeQ1 = 1128282 + 7200000,
                 focusTimeQ2 = 4590524,
                 focusTimeQ3 = 7747202,
@@ -222,6 +224,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             ),
             Stat(
                 date = LocalDate.of(2026, 3, 14),
+                deviceId = "0",
                 focusTimeQ1 = 1418079 + 7200000,
                 focusTimeQ2 = 8141785,
                 focusTimeQ3 = 5208864,
@@ -230,6 +233,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             ),
             Stat(
                 date = LocalDate.of(2026, 3, 15),
+                deviceId = "0",
                 focusTimeQ1 = 38960 + 7200000,
                 focusTimeQ2 = 9544172,
                 focusTimeQ3 = 2216626,
@@ -238,6 +242,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             ),
             Stat(
                 date = LocalDate.of(2026, 3, 16),
+                deviceId = "0",
                 focusTimeQ1 = 948108 + 7200000,
                 focusTimeQ2 = 7715257,
                 focusTimeQ3 = 648629,
@@ -246,6 +251,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             ),
             Stat(
                 date = LocalDate.of(2026, 3, 17),
+                deviceId = "0",
                 focusTimeQ1 = 1673932 + 7200000,
                 focusTimeQ2 = 7368028,
                 focusTimeQ3 = 6028910,
@@ -254,6 +260,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             ),
             Stat(
                 date = LocalDate.of(2026, 3, 18),
+                deviceId = "0",
                 focusTimeQ1 = 435688 + 7200000,
                 focusTimeQ2 = 9487983,
                 focusTimeQ3 = 248276,
@@ -262,6 +269,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             ),
             Stat(
                 date = LocalDate.of(2026, 3, 19),
+                deviceId = "0",
                 focusTimeQ1 = 1579291 + 7200000,
                 focusTimeQ2 = 3743344,
                 focusTimeQ3 = 3383617,
@@ -270,6 +278,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             ),
             Stat(
                 date = LocalDate.of(2026, 3, 20),
+                deviceId = "0",
                 focusTimeQ1 = 522247 + 7200000,
                 focusTimeQ2 = 7156785,
                 focusTimeQ3 = 5190730,
@@ -278,6 +287,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             ),
             Stat(
                 date = LocalDate.of(2026, 3, 21),
+                deviceId = "0",
                 focusTimeQ1 = 310048 + 7200000,
                 focusTimeQ2 = 5901959,
                 focusTimeQ3 = 441673,
@@ -286,6 +296,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             ),
             Stat(
                 date = LocalDate.of(2026, 3, 22),
+                deviceId = "0",
                 focusTimeQ1 = 1200000 + 7200000,
                 focusTimeQ2 = 4000000,
                 focusTimeQ3 = 3000000,
@@ -294,6 +305,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             ),
             Stat(
                 date = LocalDate.of(2026, 3, 23),
+                deviceId = "0",
                 focusTimeQ1 = 500000 + 7200000,
                 focusTimeQ2 = 8000000,
                 focusTimeQ3 = 1000000,
@@ -302,6 +314,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             ),
             Stat(
                 date = LocalDate.of(2026, 3, 24),
+                deviceId = "0",
                 focusTimeQ1 = 2000000 + 7200000,
                 focusTimeQ2 = 2000000,
                 focusTimeQ3 = 2000000,
@@ -310,6 +323,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             ),
             Stat(
                 date = LocalDate.of(2026, 3, 25),
+                deviceId = "0",
                 focusTimeQ1 = 0 + 7200000,
                 focusTimeQ2 = 10000000,
                 focusTimeQ3 = 0,
@@ -318,6 +332,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             ),
             Stat(
                 date = LocalDate.of(2026, 3, 26),
+                deviceId = "0",
                 focusTimeQ1 = 3000000 + 7200000,
                 focusTimeQ2 = 3000000,
                 focusTimeQ3 = 3000000,

@@ -84,7 +84,7 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
     ) {
         val statRepository: StatRepository = get()
         val stat = statRepository.getTodayStat().first()
-            ?: Stat(LocalDate.now(), 0, 0, 0, 0, 0)
+            ?: Stat(LocalDate.now(), "0", 0, 0, 0, 0, 0)
 
         provideContent {
             key(LocalSize.current) {
@@ -205,6 +205,7 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
                     Content(
                         Stat(
                             date = LocalDate.of(2026, 3, 12),
+                            deviceId = "0",
                             focusTimeQ1 = 1617943,
                             focusTimeQ2 = 5704591,
                             focusTimeQ3 = 556490,

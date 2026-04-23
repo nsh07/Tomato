@@ -75,19 +75,20 @@ class AppStatRepository(
         val currentDate = LocalDate.now()
         val currentTime = LocalTime.now().toSecondOfDay()
         val secondsInDay = 24 * 60 * 60
+        val updatedAt = System.currentTimeMillis()
 
         if (statDao.statExists(currentDate)) {
             when (currentTime) {
                 in 0..(secondsInDay / 4) ->
-                    statDao.addFocusTimeQ1(currentDate, focusTime)
+                    statDao.addFocusTimeQ1(currentDate, deviceId.value, focusTime, updatedAt)
 
                 in (secondsInDay / 4)..(secondsInDay / 2) ->
-                    statDao.addFocusTimeQ2(currentDate, focusTime)
+                    statDao.addFocusTimeQ2(currentDate, deviceId.value, focusTime, updatedAt)
 
                 in (secondsInDay / 2)..(3 * secondsInDay / 4) ->
-                    statDao.addFocusTimeQ3(currentDate, focusTime)
+                    statDao.addFocusTimeQ3(currentDate, deviceId.value, focusTime, updatedAt)
 
-                else -> statDao.addFocusTimeQ4(currentDate, focusTime)
+                else -> statDao.addFocusTimeQ4(currentDate, deviceId.value, focusTime, updatedAt)
             }
         } else {
             when (currentTime) {
@@ -118,7 +119,7 @@ class AppStatRepository(
         val currentDate = LocalDate.now()
         val updatedAt = System.currentTimeMillis()
         if (statDao.statExists(currentDate)) {
-            statDao.addBreakTime(currentDate, breakTime)
+            statDao.addBreakTime(currentDate, deviceId.value, breakTime, updatedAt)
         } else {
             statDao.insertStat(Stat(currentDate, deviceId.value, updatedAt, 0, 0, 0, 0, breakTime))
         }

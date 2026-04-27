@@ -21,6 +21,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -28,6 +29,7 @@ import java.time.LocalDate
 interface StatDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertStat(stat: Stat)
+
 
     @Query("UPDATE stat SET focusTimeQ1 = focusTimeQ1 + :focusTime, updatedAt = :updatedAt WHERE date = :date AND deviceId = :deviceId")
     suspend fun addFocusTimeQ1(date: LocalDate, deviceId: String, focusTime: Long, updatedAt: Long)
@@ -81,6 +83,9 @@ interface StatDao {
     )
     fun getLastNDaysStats(n: Int): Flow<List<Stat>>
 
+    @Query("SELECT * FROM stat")
+    suspend fun getAllRows(): List<Stat>
+
     @Query(
         """
         SELECT
@@ -117,4 +122,17 @@ interface StatDao {
 
     @Query("DELETE FROM stat")
     suspend fun clearAll()
+
+    @Query("SELECT * FROM stat WHERE date = :date AND deviceId = :deviceId")
+    suspend fun getStatByDateAndDevice(date: LocalDate, deviceId: String): Stat?
+
+    @Transaction
+    suspend fun insertStatsIfNewer(stats: List<Stat>) {
+        stats.forEach { stat ->
+            val existing = getStatByDateAndDevice(stat.date, stat.deviceId)
+            if (existing == null || stat.updatedAt > existing.updatedAt) {
+                insertStat(stat)
+            }
+        }
+    }
 }

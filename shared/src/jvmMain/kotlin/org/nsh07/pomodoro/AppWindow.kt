@@ -102,8 +102,7 @@ fun ApplicationScope.AppWindow(
                     title = stringResource(Res.string.app_name),
                     icon = painterResource(Res.drawable.logo),
                     undecorated = customWindowDecorsEnabled,
-                    transparent = customWindowDecorsEnabled,
-                    alwaysOnTop = BuildKonfig.DEBUG
+                    transparent = customWindowDecorsEnabled
                 ) {
                     if (isMacOS && settingsState.customWindowDecor) {
                         window.rootPane.apply {

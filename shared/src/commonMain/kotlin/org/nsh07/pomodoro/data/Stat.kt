@@ -19,21 +19,27 @@ package org.nsh07.pomodoro.data
 
 import androidx.compose.runtime.Immutable
 import androidx.room.Entity
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import java.time.LocalDate
-import kotlin.uuid.ExperimentalUuidApi
 
 /**
  * Data class for storing the user's statistics in the app's database. This class stores the focus
  * durations for the 4 quarters of a day (00:00 - 12:00, 12:00 - 16:00, 16:00 - 20:00, 20:00 - 00:00)
  * separately for later analysis (e.g. for showing which parts of the day are most productive).
  */
-@OptIn(ExperimentalUuidApi::class)
 @Immutable
+@Serializable
 @Entity(
     tableName = "stat",
     primaryKeys = ["date", "deviceId"]
 )
 data class Stat(
+    @Serializable(with = LocalDateSerializer::class)
     val date: LocalDate,
     val deviceId: String,
     val focusTimeQ1: Long,
@@ -53,3 +59,16 @@ data class StatTime(
     val focusTimeQ4: Long,
     val breakTime: Long,
 )
+
+private class LocalDateSerializer : KSerializer<LocalDate> {
+    override val descriptor = PrimitiveSerialDescriptor(
+        "java.time.LocalDate",
+        PrimitiveKind.STRING
+    )
+
+    override fun serialize(encoder: Encoder, value: LocalDate) =
+        encoder.encodeString(value.toString())
+
+    override fun deserialize(decoder: Decoder): LocalDate =
+        LocalDate.parse(decoder.decodeString())
+}

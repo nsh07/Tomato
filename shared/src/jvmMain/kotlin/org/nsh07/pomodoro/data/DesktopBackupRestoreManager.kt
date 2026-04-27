@@ -20,10 +20,13 @@ package org.nsh07.pomodoro.data
 import androidx.room.RoomRawQuery
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.cacheDir
 import io.github.vinceglb.filekit.databasesDir
 import io.github.vinceglb.filekit.path
+import io.github.vinceglb.filekit.writeString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import org.nsh07.pomodoro.BuildKonfig
 import java.io.File
 import kotlin.system.exitProcess
@@ -31,8 +34,12 @@ import kotlin.time.Clock
 
 class DesktopBackupRestoreManager(
     private val database: AppDatabase,
-    private val systemDao: SystemDao
+    private val statDao: StatDao,
+    private val systemDao: SystemDao,
+    deviceIdStore: DeviceIdStore
 ) : BackupRestoreManager {
+    val deviceId = deviceIdStore.deviceId
+
     override suspend fun performBackup(directory: PlatformFile) {
         withContext(Dispatchers.IO) {
             systemDao.checkpoint(RoomRawQuery("PRAGMA wal_checkpoint(full)"))
@@ -60,6 +67,37 @@ class DesktopBackupRestoreManager(
 
             val inputFile = File(file.path)
             inputFile.copyTo(dbFile, overwrite = true)
+        }
+    }
+
+    override suspend fun exportSyncFile(): PlatformFile {
+        val stats = statDao.getAllRows()
+
+        val payload = SyncPayload(
+            schemaVersion = DB_SCHEMA_VERSION,
+            exportedAt = System.currentTimeMillis(),
+            deviceId = deviceId.value,
+            stats = stats
+        )
+
+        val outputFile =
+            PlatformFile(FileKit.cacheDir, "tomato-backup-${Clock.System.now()}.tomatoSync")
+
+        withContext(Dispatchers.IO) {
+            val content = Json.encodeToString(payload)
+            outputFile.writeString(content)
+        }
+
+        return outputFile
+    }
+
+    override suspend fun importSyncFile(file: PlatformFile?) {
+        if (file == null) return
+        withContext(Dispatchers.IO) {
+            val bytes = File(file.path).readBytes()
+            val content = bytes.decodeToString()
+            val payload = Json.decodeFromString<SyncPayload>(content)
+            statDao.insertStatsIfNewer(payload.stats)
         }
     }
 

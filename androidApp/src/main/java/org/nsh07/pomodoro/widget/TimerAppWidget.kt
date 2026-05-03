@@ -189,8 +189,14 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
                                 actionParametersOf(key to TimerService.Actions.TOGGLE)
                             )
                         },
-                        backgroundColor = if (breakMode) colors.tertiary else colors.primary,
-                        contentColor = if (breakMode) colors.onTertiary else colors.onPrimary
+                        backgroundColor =
+                            if (breakMode)
+                                colors.tertiary
+                            else colors.primary,
+                        contentColor =
+                            if (breakMode)
+                                colors.onTertiary
+                            else colors.onPrimary
                     )
                 }
             }

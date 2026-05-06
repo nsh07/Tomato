@@ -148,4 +148,5 @@
     <string name="cancel">Скасувати</string>
     <string name="open_tomato">Відкрити Tomato</string>
     <string name="quit_tomato">Вийти з Tomato</string>
+    <string name="advanced">Розширені</string>
 </resources>

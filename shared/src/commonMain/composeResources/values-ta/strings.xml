@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -13,8 +14,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  -->
-<resources xmlns:tools="http://schemas.android.com/tools">
+  --><resources xmlns:tools="http://schemas.android.com/tools">
     <string name="about">பற்றி</string>
     <string name="alarm">அலாரம்</string>
     <string name="alarm_desc">டைமர் முடிந்ததும் அலாரத்தினை ஒலிக்கவும்</string>
@@ -144,4 +144,5 @@
     <string name="infinite_focus">கால வரையற்ற ஃபோகஸ்</string>
     <string name="settings_infinite_focus_tip">எல்லையற்ற ஃபோகஸ் முறையை தொடங்க டைமர் கடிகாரத்தை சில நொடிகள் அழுத்தவும்</string>
     <string name="cancel">ரத்து செய்</string>
+    <string name="quit_tomato">நிறுத்து</string>
 </resources>

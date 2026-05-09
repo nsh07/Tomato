@@ -145,4 +145,7 @@
     <string name="infinite_focus">Endloser Fokus</string>
     <string name="settings_infinite_focus_tip">Drücke lange den Timer um den Endlos Modus zu aktivieren</string>
     <string name="cancel">Abbrechen</string>
+    <string name="open_tomato">Öffne Tomato</string>
+    <string name="quit_tomato">Schließe Tomato</string>
+    <string name="advanced">Erweitert</string>
 </resources>

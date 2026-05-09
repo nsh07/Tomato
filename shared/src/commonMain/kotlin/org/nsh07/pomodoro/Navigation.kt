@@ -39,8 +39,10 @@ import tomato.shared.generated.resources.timer
 import tomato.shared.generated.resources.timer_filled
 import tomato.shared.generated.resources.vibrate
 import tomato.shared.generated.resources.widgets
+import org.nsh07.pomodoro.utils.OS
+import org.nsh07.pomodoro.utils.currentOS
 
-val settingsScreens = listOf(
+val settingsScreens = listOfNotNull(
     SettingsNavItem(
         Screen.Settings.Timer,
         Res.drawable.timer_filled,
@@ -64,10 +66,10 @@ val settingsScreens = listOf(
         Res.string.appearance,
         listOf(Res.string.theme, Res.string.color_scheme, Res.string.black_theme)
     ),
-    SettingsNavItem(
+    if (currentOS == OS.ANDROID) SettingsNavItem(
         Screen.Settings.Widgets,
         Res.drawable.clocks,
         Res.string.widgets,
         listOf(Res.string.opacity, Res.string.background_role)
-    )
+    ) else null
 )

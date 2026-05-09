@@ -51,7 +51,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.WavySlider
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -84,6 +83,7 @@ import tomato.shared.generated.resources.background_role
 import tomato.shared.generated.resources.check
 import tomato.shared.generated.resources.clear
 import tomato.shared.generated.resources.opacity
+import tomato.shared.generated.resources.palette
 import tomato.shared.generated.resources.settings
 import tomato.shared.generated.resources.widgets
 
@@ -189,7 +189,7 @@ fun WidgetsSettings(
                             colors = listItemColors,
                             modifier = Modifier.clip(cardShape)
                         )
-                        WavySlider(
+                        Slider(
                             state = opacitySliderState,
                             enabled = isPlus,
                             modifier = Modifier

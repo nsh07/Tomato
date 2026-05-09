@@ -94,14 +94,15 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
         val secondaryButtonColor = if (!breakMode) colors.tertiary else colors.primary
         val onSecondaryButtonColor = if (!breakMode) colors.onTertiary else colors.onPrimary
 
-        val backgroundColor = when (backgroundRole) {
+        val backgroundRoleColor = when (backgroundRole) {
             "surface" -> colors.surface
             "surfaceVariant" -> colors.surfaceVariant
             "primaryContainer" -> colors.primaryContainer
             "secondaryContainer" -> colors.secondaryContainer
             "tertiaryContainer" -> colors.tertiaryContainer
+            "accent2_800" -> ColorProvider(Color(0xFF3B4D3C)) // Placeholder for accent2_800 dark role
             else -> colors.surface
-        }.getColor(context).copy(alpha = opacity)
+        }
 
         Box(
             modifier = GlanceModifier
@@ -120,8 +121,9 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
                         .size(circleSize)
                         .background(
                             ImageProvider(R.drawable.rounded_full),
-                            colorFilter = ColorFilter.tint(ColorProvider(backgroundColor))
+                            colorFilter = ColorFilter.tint(backgroundRoleColor)
                         )
+                        .background(ColorProvider(Color.Black.copy(alpha = 1f - opacity)))
                 ) {
                     val clockHeight = (circleSize.value * 0.25f)
                     if (timerState.alarmRinging) {
@@ -144,7 +146,7 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
 
                 if (!timerState.alarmRinging) {
                     Row(
-                        GlanceModifier
+                        modifier = GlanceModifier
                             .background(
                                 ImageProvider(R.drawable.rounded_24dp),
                                 colorFilter = ColorFilter.tint(secondaryButtonColor)

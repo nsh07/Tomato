@@ -283,10 +283,12 @@ fun RoleDotsList(
         "surfaceVariant" to colorScheme.surfaceVariant,
         "primaryContainer" to colorScheme.primaryContainer,
         "secondaryContainer" to colorScheme.secondaryContainer,
-        "tertiaryContainer" to colorScheme.tertiaryContainer
+        "tertiaryContainer" to colorScheme.tertiaryContainer,
+        "accent2_800" to Color(0xFF3B4D3C) // Approximation for dark theme accent2_800
     )
 
     LazyRow(
+        contentPadding = PaddingValues(end = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
     ) {
@@ -295,7 +297,7 @@ fun RoleDotsList(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(40.dp)
                     .clip(CircleShape)
                     .background(animateColorAsState(if (enabled) color else color.copy(alpha = 0.3f)).value)
                     .clickable(enabled = enabled) { onRoleSelected(role) }
@@ -304,8 +306,8 @@ fun RoleDotsList(
                     Icon(
                         painterResource(Res.drawable.check),
                         contentDescription = null,
-                        tint = if (color == colorScheme.surface || color == colorScheme.surfaceVariant) colorScheme.primary else colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(16.dp)
+                        tint = if (role == "surface" || role == "surfaceVariant") colorScheme.primary else Color.White,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
             }

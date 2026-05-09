@@ -106,25 +106,27 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
         val context = LocalContext.current
         val size = LocalSize.current
         val scope = rememberCoroutineScope()
-        val backgroundColor = when (backgroundRole) {
+        val backgroundRoleColor = when (backgroundRole) {
             "surface" -> colors.surface
             "surfaceVariant" -> colors.surfaceVariant
             "primaryContainer" -> colors.primaryContainer
             "secondaryContainer" -> colors.secondaryContainer
             "tertiaryContainer" -> colors.tertiaryContainer
+            "accent2_800" -> ColorProvider(Color(0xFF3B4D3C))
             else -> colors.surface
-        }.getColor(context).copy(alpha = opacity)
+        }
 
         Box(
             contentAlignment = Alignment.TopEnd,
             modifier = GlanceModifier
                 .then(
-                    if (Build.VERSION.SDK_INT >= 31) GlanceModifier.background(ColorProvider(backgroundColor))
+                    if (Build.VERSION.SDK_INT >= 31) GlanceModifier.background(backgroundRoleColor)
                     else GlanceModifier.background(
                         ImageProvider(R.drawable.rounded_24dp),
-                        colorFilter = ColorFilter.tint(ColorProvider(backgroundColor))
+                        colorFilter = ColorFilter.tint(backgroundRoleColor)
                     )
                 )
+                .background(ColorProvider(Color.Black.copy(alpha = 1f - opacity)))
                 .padding(16.dp)
                 .clickable(actionStartActivity<MainActivity>())
         ) {

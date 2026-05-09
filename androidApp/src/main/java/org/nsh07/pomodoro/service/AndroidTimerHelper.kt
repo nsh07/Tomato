@@ -71,4 +71,10 @@ class AndroidTimerHelper(private val context: Context) : TimerHelper {
             e.printStackTrace()
         }
     }
+
+    override fun updateWidgets() {
+        androidx.glance.appwidget.updateAll(context, org.nsh07.pomodoro.widget.TimerAppWidget())
+        androidx.glance.appwidget.updateAll(context, org.nsh07.pomodoro.widget.TodayAppWidget())
+        androidx.glance.appwidget.updateAll(context, org.nsh07.pomodoro.widget.HistoryAppWidget())
+    }
 }

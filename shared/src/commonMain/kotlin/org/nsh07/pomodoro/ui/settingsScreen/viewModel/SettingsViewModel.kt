@@ -381,6 +381,7 @@ class SettingsViewModel(
                 "widget_opacity",
                 (widgetOpacitySliderState.value * 100).toInt()
             )
+            timerHelper.updateWidgets()
         }
     }
 
@@ -393,6 +394,7 @@ class SettingsViewModel(
                 "widget_opacity",
                 (opacity * 100).toInt()
             )
+            timerHelper.updateWidgets()
         }
     }
 
@@ -405,6 +407,7 @@ class SettingsViewModel(
                 "widget_background_role",
                 role
             )
+            timerHelper.updateWidgets()
         }
     }
 

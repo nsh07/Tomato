@@ -94,15 +94,17 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
         val secondaryButtonColor = if (!breakMode) colors.tertiary else colors.primary
         val onSecondaryButtonColor = if (!breakMode) colors.onTertiary else colors.onPrimary
 
-        val backgroundRoleColor = when (backgroundRole) {
+        val backgroundRoleColorProvider = when (backgroundRole) {
             "surface" -> colors.surface
             "surfaceVariant" -> colors.surfaceVariant
             "primaryContainer" -> colors.primaryContainer
             "secondaryContainer" -> colors.secondaryContainer
             "tertiaryContainer" -> colors.tertiaryContainer
-            "accent2_800" -> ColorProvider(Color(0xFF3B4D3C)) // Placeholder for accent2_800 dark role
+            "accent2_800" -> ColorProvider(Color(0xFF3B4D3C))
             else -> colors.surface
         }
+
+        val finalBackgroundColor = ColorProvider(backgroundRoleColorProvider.getColor(context).copy(alpha = opacity))
 
         Box(
             modifier = GlanceModifier
@@ -114,16 +116,18 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
                 .clickable(actionStartActivity<MainActivity>()),
             contentAlignment = Alignment.Center
         ) {
-            Box(contentAlignment = Alignment.TopEnd) {
+            Box(
+                modifier = GlanceModifier.size(circleSize),
+                contentAlignment = Alignment.TopEnd
+            ) {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = GlanceModifier
-                        .size(circleSize)
+                        .fillMaxSize()
                         .background(
                             ImageProvider(R.drawable.rounded_full),
-                            colorFilter = ColorFilter.tint(backgroundRoleColor)
+                            colorFilter = ColorFilter.tint(finalBackgroundColor)
                         )
-                        .background(ColorProvider(Color.Black.copy(alpha = 1f - opacity)))
                 ) {
                     val clockHeight = (circleSize.value * 0.25f)
                     if (timerState.alarmRinging) {
@@ -177,7 +181,7 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
 
                 Box(
                     contentAlignment = Alignment.BottomStart,
-                    modifier = GlanceModifier.size(circleSize)
+                    modifier = GlanceModifier.fillMaxSize()
                 ) {
                     SquareIconButton(
                         imageProvider =

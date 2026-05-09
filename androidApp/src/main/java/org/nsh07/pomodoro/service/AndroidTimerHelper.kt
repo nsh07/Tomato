@@ -20,7 +20,14 @@ package org.nsh07.pomodoro.service
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.glance.appwidget.updateAll
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
+import org.nsh07.pomodoro.widget.HistoryAppWidget
+import org.nsh07.pomodoro.widget.TimerAppWidget
+import org.nsh07.pomodoro.widget.TodayAppWidget
 
 /**
  * Helper class that holds a reference to [Context] and helps call [Context.startService] in
@@ -73,8 +80,14 @@ class AndroidTimerHelper(private val context: Context) : TimerHelper {
     }
 
     override fun updateWidgets() {
-        androidx.glance.appwidget.updateAll(context, org.nsh07.pomodoro.widget.TimerAppWidget())
-        androidx.glance.appwidget.updateAll(context, org.nsh07.pomodoro.widget.TodayAppWidget())
-        androidx.glance.appwidget.updateAll(context, org.nsh07.pomodoro.widget.HistoryAppWidget())
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                TimerAppWidget().updateAll(context)
+                TodayAppWidget().updateAll(context)
+                HistoryAppWidget().updateAll(context)
+            } catch (e: Exception) {
+                Log.e("AndroidTimerHelper", "Error updating widgets: ${e.message}")
+            }
+        }
     }
 }

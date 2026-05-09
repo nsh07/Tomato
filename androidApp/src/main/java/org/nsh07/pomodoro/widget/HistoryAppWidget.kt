@@ -111,7 +111,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
         val size = LocalSize.current
         val scope = rememberCoroutineScope()
         val roundedCornersSupported = Build.VERSION.SDK_INT >= 31
-        val backgroundRoleColor = when (backgroundRole) {
+        val backgroundRoleColorProvider = when (backgroundRole) {
             "surface" -> colors.surface
             "surfaceVariant" -> colors.surfaceVariant
             "primaryContainer" -> colors.primaryContainer
@@ -121,18 +121,19 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
             else -> colors.surface
         }
 
+        val finalBackgroundColor = ColorProvider(backgroundRoleColorProvider.getColor(context).copy(alpha = opacity))
+
         Column(
             modifier =
                 GlanceModifier
                     .fillMaxSize()
                     .then(
-                        if (roundedCornersSupported) GlanceModifier.background(backgroundRoleColor)
+                        if (roundedCornersSupported) GlanceModifier.background(finalBackgroundColor)
                         else GlanceModifier.background(
                             ImageProvider(R.drawable.rounded_24dp),
-                            colorFilter = ColorFilter.tint(backgroundRoleColor)
+                            colorFilter = ColorFilter.tint(finalBackgroundColor)
                         )
                     )
-                    .background(ColorProvider(Color.Black.copy(alpha = 1f - opacity)))
                     .clickable(actionStartActivity<MainActivity>())
         ) {
             TitleBar(

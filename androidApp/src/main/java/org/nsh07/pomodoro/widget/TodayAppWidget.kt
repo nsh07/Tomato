@@ -95,26 +95,34 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
             val settingsState by stateRepository.settingsState.collectAsState()
             key(LocalSize.current) {
                 GlanceTheme {
-                    Content(stat, settingsState.transparentWidgets)
+                    Content(stat, settingsState.widgetOpacity, settingsState.widgetBackgroundRole)
                 }
             }
         }
     }
 
     @Composable
-    private fun Content(stat: Stat, transparentWidgets: Boolean) {
+    private fun Content(stat: Stat, opacity: Float, backgroundRole: String) {
         val context = LocalContext.current
         val size = LocalSize.current
         val scope = rememberCoroutineScope()
-        val widgetBackground = if (transparentWidgets) ColorProvider(Color.Transparent) else colors.widgetBackground
+        val backgroundColor = when (backgroundRole) {
+            "surface" -> colors.surface
+            "surfaceVariant" -> colors.surfaceVariant
+            "primaryContainer" -> colors.primaryContainer
+            "secondaryContainer" -> colors.secondaryContainer
+            "tertiaryContainer" -> colors.tertiaryContainer
+            else -> colors.surface
+        }.getColor(context).copy(alpha = opacity)
+
         Box(
             contentAlignment = Alignment.TopEnd,
             modifier = GlanceModifier
                 .then(
-                    if (Build.VERSION.SDK_INT >= 31) GlanceModifier.background(widgetBackground)
+                    if (Build.VERSION.SDK_INT >= 31) GlanceModifier.background(ColorProvider(backgroundColor))
                     else GlanceModifier.background(
                         ImageProvider(R.drawable.rounded_24dp),
-                        colorFilter = ColorFilter.tint(widgetBackground)
+                        colorFilter = ColorFilter.tint(ColorProvider(backgroundColor))
                     )
                 )
                 .padding(16.dp)
@@ -218,7 +226,8 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
                             focusTimeQ4 = 1200498,
                             breakTime = 3939448
                         ),
-                        transparentWidgets = false
+                        opacity = 1.0f,
+                        backgroundRole = "surface"
                     )
                 }
             }

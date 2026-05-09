@@ -78,13 +78,13 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
             val timerState by stateRepository.timerState.collectAsState()
             val settingsState by stateRepository.settingsState.collectAsState()
             GlanceTheme {
-                Content(timerState, settingsState.transparentWidgets)
+                Content(timerState, settingsState.widgetOpacity, settingsState.widgetBackgroundRole)
             }
         }
     }
 
     @Composable
-    private fun Content(timerState: TimerState, transparentWidgets: Boolean) {
+    private fun Content(timerState: TimerState, opacity: Float, backgroundRole: String) {
         val size = LocalSize.current
         val context = LocalContext.current
         val circleSize = minOf(256.dp, size.width - 8.dp, size.height - 8.dp)
@@ -93,6 +93,15 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
 
         val secondaryButtonColor = if (!breakMode) colors.tertiary else colors.primary
         val onSecondaryButtonColor = if (!breakMode) colors.onTertiary else colors.onPrimary
+
+        val backgroundColor = when (backgroundRole) {
+            "surface" -> colors.surface
+            "surfaceVariant" -> colors.surfaceVariant
+            "primaryContainer" -> colors.primaryContainer
+            "secondaryContainer" -> colors.secondaryContainer
+            "tertiaryContainer" -> colors.tertiaryContainer
+            else -> colors.surface
+        }.getColor(context).copy(alpha = opacity)
 
         Box(
             modifier = GlanceModifier
@@ -109,12 +118,9 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
                     contentAlignment = Alignment.Center,
                     modifier = GlanceModifier
                         .size(circleSize)
-                        .then(
-                            if (transparentWidgets) GlanceModifier
-                            else GlanceModifier.background(
-                                ImageProvider(R.drawable.rounded_full),
-                                colorFilter = ColorFilter.tint(colors.widgetBackground)
-                            )
+                        .background(
+                            ImageProvider(R.drawable.rounded_full),
+                            colorFilter = ColorFilter.tint(ColorProvider(backgroundColor))
                         )
                 ) {
                     val clockHeight = (circleSize.value * 0.25f)
@@ -211,7 +217,8 @@ class TimerAppWidget : GlanceAppWidget(), KoinComponent {
             Box(GlanceModifier.background(Color.White)) {
                 Content(
                     timerState = TimerState(),
-                    transparentWidgets = false
+                    opacity = 1.0f,
+                    backgroundRole = "surface"
                 )
             }
         }

@@ -129,10 +129,16 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
         val secureAod = preferenceRepository.getBooleanPreference("secure_aod")
             ?: preferenceRepository.saveBooleanPreference("secure_aod", defaults.secureAod)
 
-        val transparentWidgets = preferenceRepository.getBooleanPreference("transparent_widgets")
-            ?: preferenceRepository.saveBooleanPreference(
-                "transparent_widgets",
-                defaults.transparentWidgets
+        val widgetOpacity = (preferenceRepository.getIntPreference("widget_opacity")
+            ?: preferenceRepository.saveIntPreference(
+                "widget_opacity",
+                (defaults.widgetOpacity * 100).toInt()
+            )).toFloat() / 100f
+
+        val widgetBackgroundRole = preferenceRepository.getStringPreference("widget_background_role")
+            ?: preferenceRepository.saveStringPreference(
+                "widget_background_role",
+                defaults.widgetBackgroundRole
             )
 
         val vibrationOnDuration = (preferenceRepository.getIntPreference("vibration_on_duration")
@@ -178,7 +184,8 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
                 singleProgressBar = singleProgressBar,
                 autostartNextSession = autostartNextSession,
                 secureAod = secureAod,
-                transparentWidgets = transparentWidgets,
+                widgetOpacity = widgetOpacity,
+                widgetBackgroundRole = widgetBackgroundRole,
                 vibrationOnDuration = vibrationOnDuration,
                 vibrationOffDuration = vibrationOffDuration,
                 vibrationAmplitude = vibrationAmplitude,

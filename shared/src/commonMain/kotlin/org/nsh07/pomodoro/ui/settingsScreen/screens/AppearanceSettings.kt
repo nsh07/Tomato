@@ -77,8 +77,6 @@ import tomato.shared.generated.resources.check
 import tomato.shared.generated.resources.clear
 import tomato.shared.generated.resources.contrast
 import tomato.shared.generated.resources.settings
-import tomato.shared.generated.resources.transparent_widgets
-import tomato.shared.generated.resources.transparent_widgets_desc
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -216,51 +214,7 @@ fun AppearanceSettings(
                         },
                         colors = listItemColors,
                         enabled = isPlus,
-                        shapes = segmentedListItemShapes(2, 4)
-                    )
-                }
-
-                item {
-                    val item = SettingsSwitchItem(
-                        checked = settingsState.transparentWidgets,
-                        icon = Res.drawable.clear,
-                        label = Res.string.transparent_widgets,
-                        description = Res.string.transparent_widgets_desc,
-                        onClick = { onAction(SettingsAction.SaveTransparentWidgets(it)) }
-                    )
-                    SegmentedListItem(
-                        onClick = { item.onClick(!item.checked) },
-                        leadingContent = {
-                            Icon(painterResource(item.icon), contentDescription = null)
-                        },
-                        content = { Text(stringResource(item.label)) },
-                        supportingContent = { Text(stringResource(item.description)) },
-                        trailingContent = {
-                            Switch(
-                                checked = item.checked,
-                                onCheckedChange = { item.onClick(it) },
-                                enabled = isPlus,
-                                thumbContent = {
-                                    if (item.checked) {
-                                        Icon(
-                                            painter = painterResource(Res.drawable.check),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                        )
-                                    } else {
-                                        Icon(
-                                            painter = painterResource(Res.drawable.clear),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                        )
-                                    }
-                                },
-                                colors = switchColors
-                            )
-                        },
-                        colors = listItemColors,
-                        enabled = isPlus,
-                        shapes = segmentedListItemShapes(3, 4)
+                        shapes = segmentedListItemShapes(2, 3)
                     )
                 }
 

@@ -97,7 +97,8 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
                     Content(
                         history,
                         history.maxBy { it.totalFocusTime() }.totalFocusTime(),
-                        settingsState.transparentWidgets
+                        settingsState.widgetOpacity,
+                        settingsState.widgetBackgroundRole
                     )
                 }
             }
@@ -105,12 +106,21 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
     }
 
     @Composable
-    private fun Content(history: List<Stat>, maxFocus: Long, transparentWidgets: Boolean) {
+    private fun Content(history: List<Stat>, maxFocus: Long, opacity: Float, backgroundRole: String) {
         val context = LocalContext.current
         val size = LocalSize.current
         val scope = rememberCoroutineScope()
         val roundedCornersSupported = Build.VERSION.SDK_INT >= 31
-        val widgetBackground = if (transparentWidgets) ColorProvider(Color.Transparent) else colors.widgetBackground
+        val backgroundColor = when (backgroundRole) {
+            "surface" -> colors.surface
+            "surfaceVariant" -> colors.surfaceVariant
+            "primaryContainer" -> colors.primaryContainer
+            "secondaryContainer" -> colors.secondaryContainer
+            "tertiaryContainer" -> colors.tertiaryContainer
+            else -> colors.surface
+        }.getColor(context).copy(alpha = opacity)
+        val widgetBackground = ColorProvider(backgroundColor)
+
         Column(
             modifier =
                 GlanceModifier
@@ -344,7 +354,8 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
                     Content(
                         history = history,
                         maxFocus = history.maxBy { it.totalFocusTime() }.totalFocusTime(),
-                        transparentWidgets = false
+                        opacity = 1.0f,
+                        backgroundRole = "surface"
                     )
                 }
             }

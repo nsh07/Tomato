@@ -29,7 +29,8 @@ sealed interface SettingsAction {
     data class SaveSingleProgressBar(val enabled: Boolean) : SettingsAction
     data class SaveAutostartNextSession(val enabled: Boolean) : SettingsAction
     data class SaveSecureAod(val enabled: Boolean) : SettingsAction
-    data class SaveTransparentWidgets(val enabled: Boolean) : SettingsAction
+    data class SaveWidgetOpacity(val opacity: Float) : SettingsAction
+    data class SaveWidgetBackgroundRole(val role: String) : SettingsAction
     data class SaveAlarmSound(val uri: String?) : SettingsAction
     data class SaveTheme(val theme: String) : SettingsAction
     data class SaveColorScheme(val color: Color) : SettingsAction

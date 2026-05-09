@@ -118,8 +118,10 @@
     <string name="stop_alarm_question">Stop Alarm?</string>
     <string name="system_default">System</string>
     <string name="theme">Theme</string>
-    <string name="transparent_widgets">Transparent widgets</string>
-    <string name="transparent_widgets_desc">Remove background from widgets</string>
+    <string name="widgets">Widgets</string>
+    <string name="widgets_desc">Customize the appearance of home screen widgets</string>
+    <string name="opacity">Opacity</string>
+    <string name="background_role">Background role</string>
     <string name="timer">Timer</string>
     <string name="timer_progress">Timer progress</string>
     <string name="timer_reset_message">Timer reset</string>

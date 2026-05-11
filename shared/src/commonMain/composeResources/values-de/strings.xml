@@ -141,11 +141,11 @@
     <string name="milliseconds_format">%1$d ms</string>
     <string name="daily_focus_goal">Tägliches Fokus Ziel</string>
     <string name="vibration_pattern">Vibrations Muster</string>
-    <string name="infinite">Endlos</string>
-    <string name="infinite_focus">Endloser Fokus</string>
-    <string name="settings_infinite_focus_tip">Drücke lange den Timer um den Endlos Modus zu aktivieren</string>
+    <string name="infinite">Unendlich</string>
+    <string name="infinite_focus">Unbegrenzter Fokus</string>
+    <string name="settings_infinite_focus_tip">Drücke lange auf den Timer um den Endlos-Modus zu aktivieren</string>
     <string name="cancel">Abbrechen</string>
-    <string name="open_tomato">Öffne Tomato</string>
-    <string name="quit_tomato">Schließe Tomato</string>
+    <string name="open_tomato">Tomato öffnen</string>
+    <string name="quit_tomato">Tomato beenden</string>
     <string name="advanced">Erweitert</string>
 </resources>

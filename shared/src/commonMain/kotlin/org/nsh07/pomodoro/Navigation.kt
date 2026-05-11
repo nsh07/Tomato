@@ -65,11 +65,5 @@ val settingsScreens = listOfNotNull(
         Res.drawable.palette,
         Res.string.appearance,
         listOf(Res.string.theme, Res.string.color_scheme, Res.string.black_theme)
-    ),
-    if (currentOS == OS.ANDROID) SettingsNavItem(
-        Screen.Settings.Widgets,
-        Res.drawable.clocks,
-        Res.string.widgets,
-        listOf(Res.string.opacity, Res.string.background_role)
-    ) else null
+    )
 )

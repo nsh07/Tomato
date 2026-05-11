@@ -49,7 +49,6 @@ import org.nsh07.pomodoro.ui.settingsScreen.screens.AboutScreen
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.SettingsMainScreen
-import org.nsh07.pomodoro.ui.settingsScreen.screens.WidgetsSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.TimerSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.BackupRestoreScreen
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
@@ -93,13 +92,6 @@ fun SettingsScreenRoot(
             viewModel.sessionsSliderState.valueRange
         )
     ) { viewModel.sessionsSliderState }
-
-    val widgetOpacitySliderState = rememberSaveable(
-        saver = SliderState.Saver(
-            viewModel.widgetOpacitySliderState.onValueChangeFinished,
-            viewModel.widgetOpacitySliderState.valueRange
-        )
-    ) { viewModel.widgetOpacitySliderState }
 
     val directionMultiplier = if (LocalLayoutDirection.current == LayoutDirection.Ltr) 1 else -1
 
@@ -199,21 +191,6 @@ fun SettingsScreenRoot(
                     shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                     longBreakTimeInputFieldState = longBreakTimeInputFieldState,
                     sessionsSliderState = sessionsSliderState,
-                    onAction = viewModel::onAction,
-                    setShowPaywall = setShowPaywall,
-                    onBack = backStack::onBack,
-                    modifier = modifier,
-                )
-            }
-
-            entry<Screen.Settings.Widgets>(
-                metadata = detailPane()
-            ) {
-                WidgetsSettings(
-                    settingsState = settingsState,
-                    contentPadding = contentPadding,
-                    isPlus = isPlus,
-                    opacitySliderState = widgetOpacitySliderState,
                     onAction = viewModel::onAction,
                     setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,

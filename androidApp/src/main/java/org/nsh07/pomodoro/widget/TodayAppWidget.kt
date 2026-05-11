@@ -40,6 +40,7 @@ import androidx.glance.LocalSize
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
@@ -69,7 +70,7 @@ import org.nsh07.pomodoro.MainActivity
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
-import org.nsh07.pomodoro.data.StateRepository
+import org.nsh07.pomodoro.data.WidgetConfigurationDao
 import org.nsh07.pomodoro.ui.theme.lightScheme
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.utils.millisecondsToMinutes
@@ -87,46 +88,54 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
         id: GlanceId
     ) {
         val statRepository: StatRepository = get()
-        val stateRepository: StateRepository = get()
+        val widgetConfigurationDao: WidgetConfigurationDao = get()
+        val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
+
+        // Fetch once so the very first frame already has the saved config (no flash of defaults),
+        // then observe the Flow so any subsequent save recomposes immediately.
+        val initialConfig = widgetConfigurationDao.getConfiguration(appWidgetId)
+        val configFlow = widgetConfigurationDao.getConfigurationFlow(appWidgetId)
+
         val stat = statRepository.getTodayStat().first()
             ?: Stat(LocalDate.now(), 0, 0, 0, 0, 0)
 
         provideContent {
-            val settingsState by stateRepository.settingsState.collectAsState()
+            val config by configFlow.collectAsState(initial = initialConfig)
+            val opacity = config?.opacity ?: 1.0f
+            val backgroundRole = config?.backgroundRole ?: "onSecondary"
+            val foregroundRole = config?.foregroundRole ?: "primary"
+            val headerRole = config?.headerRole ?: "onPrimary"
             key(LocalSize.current) {
                 GlanceTheme {
-                    Content(stat, settingsState.widgetOpacity, settingsState.widgetBackgroundRole)
+                    Content(stat, opacity, backgroundRole, foregroundRole, headerRole)
                 }
             }
         }
     }
 
     @Composable
-    private fun Content(stat: Stat, opacity: Float, backgroundRole: String) {
+    private fun Content(
+        stat: Stat,
+        opacity: Float,
+        backgroundRole: String,
+        foregroundRole: String,
+        headerRole: String
+    ) {
         val context = LocalContext.current
         val size = LocalSize.current
         val scope = rememberCoroutineScope()
-        val backgroundRoleColorProvider = when (backgroundRole) {
-            "surface" -> colors.surface
-            "surfaceVariant" -> colors.surfaceVariant
-            "primaryContainer" -> colors.primaryContainer
-            "secondaryContainer" -> colors.secondaryContainer
-            "tertiaryContainer" -> colors.tertiaryContainer
-            "accent2_800" -> ColorProvider(Color(0xFF3B4D3C))
-            else -> colors.surface
-        }
 
-        val finalBackgroundColor = ColorProvider(backgroundRoleColorProvider.getColor(context).copy(alpha = opacity))
+        val backgroundRoleColorProvider = getWidgetColorProvider(backgroundRole)
+        val foregroundRoleColorProvider = getWidgetColorProvider(foregroundRole)
+        val headerRoleColorProvider = getWidgetColorProvider(headerRole)
 
         Box(
             contentAlignment = Alignment.TopEnd,
             modifier = GlanceModifier
-                .then(
-                    if (Build.VERSION.SDK_INT >= 31) GlanceModifier.background(finalBackgroundColor)
-                    else GlanceModifier.background(
-                        ImageProvider(R.drawable.rounded_24dp),
-                        colorFilter = ColorFilter.tint(finalBackgroundColor)
-                    )
+                .background(
+                    imageProvider = ImageProvider(R.drawable.rounded_24dp),
+                    colorFilter = ColorFilter.tint(backgroundRoleColorProvider),
+                    alpha = opacity
                 )
                 .padding(16.dp)
                 .clickable(actionStartActivity<MainActivity>())
@@ -135,7 +144,7 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
                 Text(
                     context.getString(R.string.focus),
                     style = TextStyle(
-                        color = colors.onSurface,
+                        color = headerRoleColorProvider,
                         fontSize = typography.titleMedium.fontSize
                     )
                 )
@@ -147,7 +156,7 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
                         context.getString(R.string.hours_and_minutes_format)
                     ),
                     typography.displaySmall.fontSize.value,
-                    colors.onSurface,
+                    foregroundRoleColorProvider,
                     fontWeight = FontWeight.Bold,
                     isClock = true,
                     modifier = GlanceModifier.padding(top = 8.dp)
@@ -181,7 +190,7 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
                                             context.getString(R.string.hours_and_minutes_format)
                                         ),
                                         typography.bodyLarge.fontSize.value,
-                                        colors.onSurfaceVariant,
+                                        foregroundRoleColorProvider,
                                         fontWeight = FontWeight.Bold
                                     )
                                 }
@@ -191,7 +200,8 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
                     Spacer(GlanceModifier.height(8.dp))
                     HorizontalStackedBarGlance(
                         values = values,
-                        width = size.width - 32.dp
+                        width = size.width - 32.dp,
+                        color = foregroundRoleColorProvider
                     )
                 }
             }
@@ -200,7 +210,7 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
                 Image(
                     provider = ImageProvider(R.drawable.refresh),
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(colors.onSurface),
+                    colorFilter = ColorFilter.tint(headerRoleColorProvider),
                     modifier = GlanceModifier
                         .cornerRadius(12.dp)
                         .clickable {
@@ -208,6 +218,41 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
                         }
                 )
             }
+        }
+    }
+
+    @Composable
+    private fun getWidgetColorProvider(role: String): ColorProvider {
+        return when (role) {
+            "black" -> ColorProvider(Color.Black)
+            "primary" -> colors.primary
+            "onPrimary" -> colors.onPrimary
+            "primaryContainer" -> colors.primaryContainer
+            "onPrimaryContainer" -> colors.onPrimaryContainer
+            "secondary" -> colors.secondary
+            "onSecondary" -> colors.onSecondary
+            "secondaryContainer" -> colors.secondaryContainer
+            "onSecondaryContainer" -> colors.onSecondaryContainer
+            "tertiary" -> colors.tertiary
+            "onTertiary" -> colors.onTertiary
+            "tertiaryContainer" -> colors.tertiaryContainer
+            "onTertiaryContainer" -> colors.onTertiaryContainer
+            "error" -> colors.error
+            "onError" -> colors.onError
+            "errorContainer" -> colors.errorContainer
+            "onErrorContainer" -> colors.onErrorContainer
+            "surface" -> colors.surface
+            "onSurface" -> colors.onSurface
+            "surfaceVariant" -> colors.surfaceVariant
+            "onSurfaceVariant" -> colors.onSurfaceVariant
+            "outline" -> colors.outline
+            "background" -> colors.background
+            "onBackground" -> colors.onBackground
+            "inverseSurface" -> colors.inverseSurface
+            "inverseOnSurface" -> colors.inverseOnSurface
+            "inversePrimary" -> colors.inversePrimary
+            "white" -> ColorProvider(Color.White)
+            else -> colors.surface
         }
     }
 
@@ -230,7 +275,9 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
                             breakTime = 3939448
                         ),
                         opacity = 1.0f,
-                        backgroundRole = "surface"
+                        backgroundRole = "onSecondary",
+                        foregroundRole = "primary",
+                        headerRole = "onPrimary"
                     )
                 }
             }

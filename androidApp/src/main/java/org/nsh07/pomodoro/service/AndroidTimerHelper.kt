@@ -17,9 +17,11 @@
 
 package org.nsh07.pomodoro.service
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.updateAll
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -87,6 +89,30 @@ class AndroidTimerHelper(private val context: Context) : TimerHelper {
                 HistoryAppWidget().updateAll(context)
             } catch (e: Exception) {
                 Log.e("AndroidTimerHelper", "Error updating widgets: ${e.message}")
+            }
+        }
+    }
+
+    override fun updateWidget(appWidgetId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val appWidgetManager = AppWidgetManager.getInstance(context)
+                val info = appWidgetManager.getAppWidgetInfo(appWidgetId)
+                val className = info?.provider?.className ?: ""
+                
+                val widget = when {
+                    className.contains("TimerWidgetReceiver") -> TimerAppWidget()
+                    className.contains("TodayWidgetReceiver") -> TodayAppWidget()
+                    className.contains("HistoryWidgetReceiver") -> HistoryAppWidget()
+                    else -> null
+                }
+                
+                widget?.let {
+                    val glanceId = GlanceAppWidgetManager(context).getGlanceIdBy(appWidgetId)
+                    it.update(context, glanceId)
+                }
+            } catch (e: Exception) {
+                Log.e("AndroidTimerHelper", "Error updating widget $appWidgetId: ${e.message}")
             }
         }
     }

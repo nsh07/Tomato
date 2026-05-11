@@ -22,4 +22,5 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 interface TimerHelper {
     fun onAction(action: TimerAction)
     fun updateWidgets()
+    fun updateWidget(appWidgetId: Int)
 }

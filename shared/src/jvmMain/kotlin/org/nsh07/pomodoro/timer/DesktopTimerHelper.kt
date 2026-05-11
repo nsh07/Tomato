@@ -86,6 +86,10 @@ class DesktopTimerHelper(
         // No-op for desktop
     }
 
+    override fun updateWidget(appWidgetId: Int) {
+        // No-op for desktop
+    }
+
     private fun toggleTimer() {
         timerManager.toggleTimer(
             scope = timerScope,

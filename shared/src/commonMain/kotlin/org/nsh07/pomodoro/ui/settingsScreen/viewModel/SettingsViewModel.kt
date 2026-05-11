@@ -92,14 +92,6 @@ class SettingsViewModel(
         )
     }
 
-    val widgetOpacitySliderState by lazy {
-        SliderState(
-            value = _settingsState.value.widgetOpacity,
-            valueRange = 0f..1f,
-            onValueChangeFinished = ::updateWidgetOpacity
-        )
-    }
-
     private var focusFlowCollectionJob: Job? = null
     private var shortBreakFlowCollectionJob: Job? = null
     private var longBreakFlowCollectionJob: Job? = null
@@ -114,8 +106,6 @@ class SettingsViewModel(
             is SettingsAction.SaveSingleProgressBar -> saveSingleProgressBar(action.enabled)
             is SettingsAction.SaveAutostartNextSession -> saveAutostartNextSession(action.enabled)
             is SettingsAction.SaveSecureAod -> saveSecureAod(action.enabled)
-            is SettingsAction.SaveWidgetOpacity -> saveWidgetOpacity(action.opacity)
-            is SettingsAction.SaveWidgetBackgroundRole -> saveWidgetBackgroundRole(action.role)
             is SettingsAction.SaveColorScheme -> saveColorScheme(action.color)
             is SettingsAction.SaveTheme -> saveTheme(action.theme)
             is SettingsAction.SaveBlackTheme -> saveBlackTheme(action.enabled)
@@ -367,47 +357,6 @@ class SettingsViewModel(
                 "secure_aod",
                 secureAod
             )
-        }
-    }
-
-    private fun updateWidgetOpacity() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _settingsState.update { currentState ->
-                currentState.copy(
-                    widgetOpacity = widgetOpacitySliderState.value
-                )
-            }
-            preferenceRepository.saveIntPreference(
-                "widget_opacity",
-                (widgetOpacitySliderState.value * 100).toInt()
-            )
-            timerHelper.updateWidgets()
-        }
-    }
-
-    private fun saveWidgetOpacity(opacity: Float) {
-        viewModelScope.launch {
-            _settingsState.update { currentState ->
-                currentState.copy(widgetOpacity = opacity)
-            }
-            preferenceRepository.saveIntPreference(
-                "widget_opacity",
-                (opacity * 100).toInt()
-            )
-            timerHelper.updateWidgets()
-        }
-    }
-
-    private fun saveWidgetBackgroundRole(role: String) {
-        viewModelScope.launch {
-            _settingsState.update { currentState ->
-                currentState.copy(widgetBackgroundRole = role)
-            }
-            preferenceRepository.saveStringPreference(
-                "widget_background_role",
-                role
-            )
-            timerHelper.updateWidgets()
         }
     }
 

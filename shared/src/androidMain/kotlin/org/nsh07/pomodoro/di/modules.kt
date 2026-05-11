@@ -19,17 +19,19 @@ package org.nsh07.pomodoro.di
 
 import android.content.Context
 import androidx.room.Room
+import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.create
 import org.koin.plugin.module.dsl.single
-import org.koin.plugin.module.dsl.viewModel
 import org.nsh07.pomodoro.BuildKonfig
 import org.nsh07.pomodoro.data.AndroidBackupRestoreManager
 import org.nsh07.pomodoro.data.AppDatabase
 import org.nsh07.pomodoro.data.BackupRestoreManager
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreViewModel
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
+import org.nsh07.pomodoro.ui.settingsScreen.viewModel.WidgetConfigurationViewModel
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 
@@ -38,13 +40,21 @@ val dbModule = module {
     single { get<AppDatabase>().preferenceDao() }
     single { get<AppDatabase>().statDao() }
     single { get<AppDatabase>().systemDao() }
+    single { get<AppDatabase>().widgetConfigurationDao() }
 }
 
 val viewModels = module {
-    viewModel<BackupRestoreViewModel>()
-    viewModel<TimerViewModel>()
-    viewModel<SettingsViewModel>()
-    viewModel<StatsViewModel>()
+    viewModelOf(::BackupRestoreViewModel)
+    viewModelOf(::TimerViewModel)
+    viewModelOf(::SettingsViewModel)
+    viewModelOf(::StatsViewModel)
+    viewModel { params ->
+        WidgetConfigurationViewModel(
+            appWidgetId = params.get(),
+            widgetConfigurationDao = get(),
+            timerHelper = get()
+        )
+    }
 }
 
 val androidModule = module {

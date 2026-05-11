@@ -23,10 +23,13 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [IntPreference::class, BooleanPreference::class, StringPreference::class, Stat::class],
-    version = 2,
+    entities = [IntPreference::class, BooleanPreference::class, StringPreference::class, Stat::class, WidgetConfiguration::class],
+    version = 5,
     autoMigrations = [
-        AutoMigration(from = 1, to = 2)
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3),
+        AutoMigration(from = 3, to = 4),
+        AutoMigration(from = 4, to = 5)
     ]
 )
 @TypeConverters(Converters::class)
@@ -34,4 +37,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun preferenceDao(): PreferenceDao
     abstract fun statDao(): StatDao
     abstract fun systemDao(): SystemDao
+    abstract fun widgetConfigurationDao(): WidgetConfigurationDao
 }

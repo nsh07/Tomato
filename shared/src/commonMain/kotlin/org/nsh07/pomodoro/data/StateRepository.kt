@@ -129,18 +129,6 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
         val secureAod = preferenceRepository.getBooleanPreference("secure_aod")
             ?: preferenceRepository.saveBooleanPreference("secure_aod", defaults.secureAod)
 
-        val widgetOpacity = (preferenceRepository.getIntPreference("widget_opacity")
-            ?: preferenceRepository.saveIntPreference(
-                "widget_opacity",
-                (defaults.widgetOpacity * 100).toInt()
-            )).toFloat() / 100f
-
-        val widgetBackgroundRole = preferenceRepository.getStringPreference("widget_background_role")
-            ?: preferenceRepository.saveStringPreference(
-                "widget_background_role",
-                defaults.widgetBackgroundRole
-            )
-
         val vibrationOnDuration = (preferenceRepository.getIntPreference("vibration_on_duration")
             ?: preferenceRepository.saveIntPreference(
                 "vibration_on_duration",
@@ -165,6 +153,11 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
                 defaults.customWindowDecor
             )
 
+        val desktopBgOpacity =
+            (preferenceRepository.getIntPreference("desktop_bg_opacity")
+                ?: preferenceRepository.saveIntPreference("desktop_bg_opacity", 100)
+            ).toFloat() / 100f
+
         settingsState.update { currentState ->
             currentState.copy(
                 focusTime = focusTime,
@@ -184,8 +177,6 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
                 singleProgressBar = singleProgressBar,
                 autostartNextSession = autostartNextSession,
                 secureAod = secureAod,
-                widgetOpacity = widgetOpacity,
-                widgetBackgroundRole = widgetBackgroundRole,
                 vibrationOnDuration = vibrationOnDuration,
                 vibrationOffDuration = vibrationOffDuration,
                 vibrationAmplitude = vibrationAmplitude,

@@ -17,6 +17,7 @@
 
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:configure="org.nsh07.pomodoro.widget.WidgetConfigurationActivity"
     android:description="@string/today_widget_desc"
     android:maxResizeWidth="624dp"
     android:maxResizeHeight="132dp"
@@ -30,4 +31,5 @@
     android:targetCellHeight="2"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen|keyguard"
+    android:widgetFeatures="reconfigurable"
     tools:targetApi="37" />

@@ -24,23 +24,17 @@ import tomato.shared.generated.resources.alarm
 import tomato.shared.generated.resources.alarm_sound
 import tomato.shared.generated.resources.always_on_display
 import tomato.shared.generated.resources.appearance
-import tomato.shared.generated.resources.background_role
 import tomato.shared.generated.resources.black_theme
-import tomato.shared.generated.resources.clocks
 import tomato.shared.generated.resources.color_scheme
 import tomato.shared.generated.resources.dnd
 import tomato.shared.generated.resources.durations
 import tomato.shared.generated.resources.media_volume_for_alarm
-import tomato.shared.generated.resources.opacity
 import tomato.shared.generated.resources.palette
 import tomato.shared.generated.resources.sound
 import tomato.shared.generated.resources.theme
 import tomato.shared.generated.resources.timer
 import tomato.shared.generated.resources.timer_filled
 import tomato.shared.generated.resources.vibrate
-import tomato.shared.generated.resources.widgets
-import org.nsh07.pomodoro.utils.OS
-import org.nsh07.pomodoro.utils.currentOS
 
 val settingsScreens = listOfNotNull(
     SettingsNavItem(

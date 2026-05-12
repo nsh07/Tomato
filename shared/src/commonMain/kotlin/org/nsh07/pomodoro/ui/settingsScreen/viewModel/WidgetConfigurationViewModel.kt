@@ -25,8 +25,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.nsh07.pomodoro.data.WidgetConfiguration
-import org.nsh07.pomodoro.data.WidgetConfigurationDao
 import org.nsh07.pomodoro.service.TimerHelper
 
 enum class WidgetType {
@@ -47,7 +45,6 @@ data class WidgetConfigurationState(
 
 class WidgetConfigurationViewModel(
     private val appWidgetId: Int,
-    private val widgetConfigurationDao: WidgetConfigurationDao,
     private val timerHelper: TimerHelper
 ) : ViewModel() {
 
@@ -63,21 +60,21 @@ class WidgetConfigurationViewModel(
 
     init {
         viewModelScope.launch {
-            val config = widgetConfigurationDao.getConfiguration(appWidgetId)
-            if (config != null) {
-                _state.update {
-                    it.copy(
-                        opacity = config.opacity,
-                        backgroundRole = config.backgroundRole,
-                        foregroundRole = config.foregroundRole,
-                        headerRole = config.headerRole,
-                        skipButtonRole = config.skipButtonRole,
-                        onSkipButtonRole = config.onSkipButtonRole,
-                        barCornerRadius = config.barCornerRadius
-                    )
-                }
-                opacitySliderState.value = config.opacity
-            }
+//            val config = widgetConfigurationDao.getConfiguration(appWidgetId)
+//            if (config != null) {
+//                _state.update {
+//                    it.copy(
+//                        opacity = config.opacity,
+//                        backgroundRole = config.backgroundRole,
+//                        foregroundRole = config.foregroundRole,
+//                        headerRole = config.headerRole,
+//                        skipButtonRole = config.skipButtonRole,
+//                        onSkipButtonRole = config.onSkipButtonRole,
+//                        barCornerRadius = config.barCornerRadius
+//                    )
+//                }
+//                opacitySliderState.value = config.opacity
+//            }
         }
     }
 
@@ -122,21 +119,21 @@ class WidgetConfigurationViewModel(
     }
 
     private fun saveSettings() {
-        viewModelScope.launch {
-            val s = _state.value
-            val config = WidgetConfiguration(
-                appWidgetId,
-                s.opacity,
-                s.backgroundRole,
-                s.foregroundRole,
-                s.headerRole,
-                s.skipButtonRole,
-                s.onSkipButtonRole,
-                s.barCornerRadius
-            )
-            widgetConfigurationDao.insertConfiguration(config)
-            timerHelper.updateWidget(appWidgetId)
-        }
+//        viewModelScope.launch {
+//            val s = _state.value
+//            val config = WidgetConfiguration(
+//                appWidgetId,
+//                s.opacity,
+//                s.backgroundRole,
+//                s.foregroundRole,
+//                s.headerRole,
+//                s.skipButtonRole,
+//                s.onSkipButtonRole,
+//                s.barCornerRadius
+//            )
+//            widgetConfigurationDao.insertConfiguration(config)
+//            timerHelper.updateWidget(appWidgetId)
+//        }
     }
 
     /**
@@ -145,19 +142,19 @@ class WidgetConfigurationViewModel(
      * pending slider value is written.
      */
     fun saveAllSettings() {
-        viewModelScope.launch {
-            val s = _state.value
-            val config = WidgetConfiguration(
-                appWidgetId,
-                opacitySliderState.value,
-                s.backgroundRole,
-                s.foregroundRole,
-                s.headerRole,
-                s.skipButtonRole,
-                s.onSkipButtonRole,
-                s.barCornerRadius
-            )
-            widgetConfigurationDao.insertConfiguration(config)
-        }
+//        viewModelScope.launch {
+//            val s = _state.value
+//            val config = WidgetConfiguration(
+//                appWidgetId,
+//                opacitySliderState.value,
+//                s.backgroundRole,
+//                s.foregroundRole,
+//                s.headerRole,
+//                s.skipButtonRole,
+//                s.onSkipButtonRole,
+//                s.barCornerRadius
+//            )
+//            widgetConfigurationDao.insertConfiguration(config)
+//        }
     }
 }

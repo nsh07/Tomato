@@ -21,8 +21,6 @@ import android.content.Context
 import android.os.Build
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
@@ -40,8 +38,8 @@ import androidx.glance.LocalSize
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
+import androidx.glance.appwidget.components.TitleBar
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.appwidget.updateAll
@@ -56,15 +54,11 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
-import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.material3.ColorProviders
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import androidx.glance.text.FontWeight
-import androidx.glance.text.Text
-import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -73,7 +67,6 @@ import org.nsh07.pomodoro.MainActivity
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
-import org.nsh07.pomodoro.data.WidgetConfigurationDao
 import org.nsh07.pomodoro.ui.theme.lightScheme
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.widget.TomatoWidgetSize.Width4
@@ -88,104 +81,58 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
         id: GlanceId
     ) {
         val statRepository: StatRepository = get()
-        val widgetConfigurationDao: WidgetConfigurationDao = get()
-        val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
-
-        // Fetch once so the very first frame already has the saved config (no flash of defaults),
-        // then observe the Flow so any subsequent save recomposes immediately.
-        val initialConfig = widgetConfigurationDao.getConfiguration(appWidgetId)
-        val configFlow = widgetConfigurationDao.getConfigurationFlow(appWidgetId)
-
         val history = statRepository.getLastNDaysStats(30).first().reversed()
 
         provideContent {
-            val config by configFlow.collectAsState(initial = initialConfig)
-            val opacity = config?.opacity ?: 1.0f
-            val backgroundRole = config?.backgroundRole ?: "onSecondary"
-            val foregroundRole = config?.foregroundRole ?: "primary"
-            val headerRole = config?.headerRole ?: "onPrimary"
-            val barCornerRadius = config?.barCornerRadius ?: 16
             val size = LocalSize.current
             val history = history.takeLast(((size.width.value - 32) / 24).toInt())
             key(size) {
                 GlanceTheme {
-                    Content(
-                        history,
-                        history.maxBy { it.totalFocusTime() }.totalFocusTime(),
-                        opacity,
-                        backgroundRole,
-                        foregroundRole,
-                        headerRole,
-                        barCornerRadius
-                    )
+                    Content(history, history.maxBy { it.totalFocusTime() }.totalFocusTime())
                 }
             }
         }
     }
 
     @Composable
-    private fun Content(
-        history: List<Stat>,
-        maxFocus: Long,
-        opacity: Float,
-        backgroundRole: String,
-        foregroundRole: String,
-        headerRole: String,
-        barCornerRadius: Int
-    ) {
+    private fun Content(history: List<Stat>, maxFocus: Long) {
         val context = LocalContext.current
         val size = LocalSize.current
         val scope = rememberCoroutineScope()
-
-        val backgroundRoleColorProvider = getWidgetColorProvider(backgroundRole)
-        val foregroundRoleColorProvider = getWidgetColorProvider(foregroundRole)
-        val headerRoleColorProvider = getWidgetColorProvider(headerRole)
-
+        val roundedCornersSupported = Build.VERSION.SDK_INT >= 31
         Column(
             modifier =
                 GlanceModifier
                     .fillMaxSize()
-                    .background(
-                        imageProvider = ImageProvider(R.drawable.rounded_24dp),
-                        colorFilter = ColorFilter.tint(backgroundRoleColorProvider),
-                        alpha = opacity
+                    .then(
+                        if (roundedCornersSupported) GlanceModifier.background(colors.widgetBackground)
+                        else GlanceModifier.background(
+                            ImageProvider(R.drawable.rounded_24dp),
+                            colorFilter = ColorFilter.tint(colors.widgetBackground)
+                        )
                     )
                     .clickable(actionStartActivity<MainActivity>())
         ) {
-            // Custom Title Bar implementation to ensure icon tinting
-            Row(
-                modifier = GlanceModifier.fillMaxWidth().padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    provider = ImageProvider(R.drawable.tomato_logo_notification),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(headerRoleColorProvider),
-                    modifier = GlanceModifier.size(24.dp)
-                )
-                Spacer(GlanceModifier.width(8.dp))
-                Text(
-                    text = context.getString(R.string.focus_history),
-                    style = TextStyle(
-                        color = headerRoleColorProvider,
-                        fontSize = typography.titleSmall.fontSize,
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-                Spacer(GlanceModifier.defaultWeight())
-                if (size.width >= Width4) {
-                    Image(
-                        provider = ImageProvider(R.drawable.refresh),
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(headerRoleColorProvider),
-                        modifier = GlanceModifier
-                            .cornerRadius(12.dp)
-                            .clickable {
-                                scope.launch { this@HistoryAppWidget.updateAll(context) }
-                            }
-                    )
-                }
-            }
+            TitleBar(
+                startIcon = ImageProvider(R.drawable.tomato_logo_notification),
+                title = context.getString(R.string.focus_history),
+                actions = {
+                    if (size.width >= Width4) {
+                        Box(GlanceModifier.padding(horizontal = 16.dp)) {
+                            Image(
+                                provider = ImageProvider(R.drawable.refresh),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(colors.onSurface),
+                                modifier = GlanceModifier
+                                    .cornerRadius(24.dp)
+                                    .clickable {
+                                        scope.launch { this@HistoryAppWidget.updateAll(context) }
+                                    }
+                            )
+                        }
+                    }
+                },
+            )
 
             Column(
                 GlanceModifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
@@ -198,7 +145,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
                             context.getString(R.string.hours_and_minutes_format)
                         ) + " ",
                         typography.headlineSmall.fontSize.value,
-                        headerRoleColorProvider,
+                        colors.onSurface,
                         fontWeight = FontWeight.Bold
                     )
 
@@ -207,7 +154,7 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
                             context,
                             context.getString(R.string.focus_per_day_avg),
                             typography.bodyMedium.fontSize.value,
-                            headerRoleColorProvider,
+                            colors.onSurfaceVariant,
                             isClock = false,
                             modifier = GlanceModifier.padding(bottom = 2.8.dp)
                         )
@@ -232,8 +179,16 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
                                             .height(
                                                 (84 * (it.totalFocusTime().toFloat() / maxFocus)).dp
                                             )
-                                            .background(foregroundRoleColorProvider)
-                                            .cornerRadius(barCornerRadius.dp)
+                                            .then(
+                                                if (roundedCornersSupported)
+                                                    GlanceModifier
+                                                        .background(colors.primary)
+                                                        .cornerRadius(16.dp)
+                                                else GlanceModifier.background(
+                                                    ImageProvider(R.drawable.rounded_16dp),
+                                                    colorFilter = ColorFilter.tint(colors.primary)
+                                                )
+                                            )
                                     )
                                 }
                             }
@@ -244,38 +199,143 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
         }
     }
 
+    @OptIn(ExperimentalGlancePreviewApi::class)
+    @Preview(widthDp = 400, heightDp = 216)
     @Composable
-    private fun getWidgetColorProvider(role: String): ColorProvider {
-        return when (role) {
-            "black" -> ColorProvider(Color.Black)
-            "primary" -> colors.primary
-            "onPrimary" -> colors.onPrimary
-            "primaryContainer" -> colors.primaryContainer
-            "onPrimaryContainer" -> colors.onPrimaryContainer
-            "secondary" -> colors.secondary
-            "onSecondary" -> colors.onSecondary
-            "secondaryContainer" -> colors.secondaryContainer
-            "onSecondaryContainer" -> colors.onSecondaryContainer
-            "tertiary" -> colors.tertiary
-            "onTertiary" -> colors.onTertiary
-            "tertiaryContainer" -> colors.tertiaryContainer
-            "onTertiaryContainer" -> colors.onTertiaryContainer
-            "error" -> colors.error
-            "onError" -> colors.onError
-            "errorContainer" -> colors.errorContainer
-            "onErrorContainer" -> colors.onErrorContainer
-            "surface" -> colors.surface
-            "onSurface" -> colors.onSurface
-            "surfaceVariant" -> colors.surfaceVariant
-            "onSurfaceVariant" -> colors.onSurfaceVariant
-            "outline" -> colors.outline
-            "background" -> colors.background
-            "onBackground" -> colors.onBackground
-            "inverseSurface" -> colors.inverseSurface
-            "inverseOnSurface" -> colors.inverseOnSurface
-            "inversePrimary" -> colors.inversePrimary
-            "white" -> ColorProvider(Color.White)
-            else -> colors.surface
+    private fun ContentPreview() {
+        val history = listOf(
+            Stat(
+                date = LocalDate.of(2026, 3, 12),
+                focusTimeQ1 = 1617943 + 7200000,
+                focusTimeQ2 = 5704591,
+                focusTimeQ3 = 556490,
+                focusTimeQ4 = 1200498,
+                breakTime = 3939448
+            ),
+            Stat(
+                date = LocalDate.of(2026, 3, 13),
+                focusTimeQ1 = 1128282 + 7200000,
+                focusTimeQ2 = 4590524,
+                focusTimeQ3 = 7747202,
+                focusTimeQ4 = 1119272,
+                breakTime = 311887
+            ),
+            Stat(
+                date = LocalDate.of(2026, 3, 14),
+                focusTimeQ1 = 1418079 + 7200000,
+                focusTimeQ2 = 8141785,
+                focusTimeQ3 = 5208864,
+                focusTimeQ4 = 2793210,
+                breakTime = 2873581
+            ),
+            Stat(
+                date = LocalDate.of(2026, 3, 15),
+                focusTimeQ1 = 38960 + 7200000,
+                focusTimeQ2 = 9544172,
+                focusTimeQ3 = 2216626,
+                focusTimeQ4 = 1424242,
+                breakTime = 4635775
+            ),
+            Stat(
+                date = LocalDate.of(2026, 3, 16),
+                focusTimeQ1 = 948108 + 7200000,
+                focusTimeQ2 = 7715257,
+                focusTimeQ3 = 648629,
+                focusTimeQ4 = 319655,
+                breakTime = 1710029
+            ),
+            Stat(
+                date = LocalDate.of(2026, 3, 17),
+                focusTimeQ1 = 1673932 + 7200000,
+                focusTimeQ2 = 7368028,
+                focusTimeQ3 = 6028910,
+                focusTimeQ4 = 2134210,
+                breakTime = 2811766
+            ),
+            Stat(
+                date = LocalDate.of(2026, 3, 18),
+                focusTimeQ1 = 435688 + 7200000,
+                focusTimeQ2 = 9487983,
+                focusTimeQ3 = 248276,
+                focusTimeQ4 = 913853,
+                breakTime = 162869
+            ),
+            Stat(
+                date = LocalDate.of(2026, 3, 19),
+                focusTimeQ1 = 1579291 + 7200000,
+                focusTimeQ2 = 3743344,
+                focusTimeQ3 = 3383617,
+                focusTimeQ4 = 3424645,
+                breakTime = 3443552
+            ),
+            Stat(
+                date = LocalDate.of(2026, 3, 20),
+                focusTimeQ1 = 522247 + 7200000,
+                focusTimeQ2 = 7156785,
+                focusTimeQ3 = 5190730,
+                focusTimeQ4 = 3086522,
+                breakTime = 3768831
+            ),
+            Stat(
+                date = LocalDate.of(2026, 3, 21),
+                focusTimeQ1 = 310048 + 7200000,
+                focusTimeQ2 = 5901959,
+                focusTimeQ3 = 441673,
+                focusTimeQ4 = 3562958,
+                breakTime = 5470220
+            ),
+            Stat(
+                date = LocalDate.of(2026, 3, 22),
+                focusTimeQ1 = 1200000 + 7200000,
+                focusTimeQ2 = 4000000,
+                focusTimeQ3 = 3000000,
+                focusTimeQ4 = 1000000,
+                breakTime = 2000000
+            ),
+            Stat(
+                date = LocalDate.of(2026, 3, 23),
+                focusTimeQ1 = 500000 + 7200000,
+                focusTimeQ2 = 8000000,
+                focusTimeQ3 = 1000000,
+                focusTimeQ4 = 500000,
+                breakTime = 1000000
+            ),
+            Stat(
+                date = LocalDate.of(2026, 3, 24),
+                focusTimeQ1 = 2000000 + 7200000,
+                focusTimeQ2 = 2000000,
+                focusTimeQ3 = 2000000,
+                focusTimeQ4 = 2000000,
+                breakTime = 3000000
+            ),
+            Stat(
+                date = LocalDate.of(2026, 3, 25),
+                focusTimeQ1 = 0 + 7200000,
+                focusTimeQ2 = 10000000,
+                focusTimeQ3 = 0,
+                focusTimeQ4 = 0,
+                breakTime = 500000
+            ),
+            Stat(
+                date = LocalDate.of(2026, 3, 26),
+                focusTimeQ1 = 3000000 + 7200000,
+                focusTimeQ2 = 3000000,
+                focusTimeQ3 = 3000000,
+                focusTimeQ4 = 3000000,
+                breakTime = 4000000
+            )
+        )
+        GlanceTheme(colors = ColorProviders(lightScheme)) {
+            Box(GlanceModifier.background(Color.White)) {
+                Box(
+                    GlanceModifier.cornerRadius(32.dp)
+                ) {
+                    Content(
+                        history = history,
+                        maxFocus = history.maxBy { it.totalFocusTime() }.totalFocusTime()
+                    )
+                }
+            }
         }
     }
 }

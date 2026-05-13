@@ -15,7 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.ui.settingsScreen.viewModel
+package org.nsh07.pomodoro.widget.config
 
 import androidx.compose.material3.SliderState
 import androidx.compose.runtime.Immutable
@@ -44,7 +44,6 @@ data class WidgetConfigurationState(
 )
 
 class WidgetConfigurationViewModel(
-    private val appWidgetId: Int,
     private val timerHelper: TimerHelper
 ) : ViewModel() {
 
@@ -83,46 +82,46 @@ class WidgetConfigurationViewModel(
     }
 
     fun updateOpacityInstant(opacity: Float) {
-        opacitySliderState.value = opacity
-        _state.update { it.copy(opacity = opacity) }
-        saveSettings()
+//        opacitySliderState.value = opacity
+//        _state.update { it.copy(opacity = opacity) }
+//        saveSettings()
     }
 
     fun setBackgroundRole(role: String) {
-        _state.update { it.copy(backgroundRole = role) }
-        saveSettings()
+//        _state.update { it.copy(backgroundRole = role) }
+//        saveSettings()
     }
 
     fun setForegroundRole(role: String) {
-        _state.update { it.copy(foregroundRole = role) }
-        saveSettings()
+//        _state.update { it.copy(foregroundRole = role) }
+//        saveSettings()
     }
 
     fun setHeaderRole(role: String) {
-        _state.update { it.copy(headerRole = role) }
-        saveSettings()
+//        _state.update { it.copy(headerRole = role) }
+//        saveSettings()
     }
 
     fun setSkipButtonRole(role: String) {
-        _state.update { it.copy(skipButtonRole = role) }
-        saveSettings()
+//        _state.update { it.copy(skipButtonRole = role) }
+//        saveSettings()
     }
 
     fun setOnSkipButtonRole(role: String) {
-        _state.update { it.copy(onSkipButtonRole = role) }
-        saveSettings()
+//        _state.update { it.copy(onSkipButtonRole = role) }
+//        saveSettings()
     }
 
     fun setBarCornerRadius(radius: Int) {
-        _state.update { it.copy(barCornerRadius = radius) }
-        saveSettings()
+//        _state.update { it.copy(barCornerRadius = radius) }
+//        saveSettings()
     }
 
-    private fun saveSettings() {
+    private fun saveSettings(id: Int) {
 //        viewModelScope.launch {
 //            val s = _state.value
 //            val config = WidgetConfiguration(
-//                appWidgetId,
+//                id,
 //                s.opacity,
 //                s.backgroundRole,
 //                s.foregroundRole,
@@ -132,7 +131,7 @@ class WidgetConfigurationViewModel(
 //                s.barCornerRadius
 //            )
 //            widgetConfigurationDao.insertConfiguration(config)
-//            timerHelper.updateWidget(appWidgetId)
+//            timerHelper.updateWidget(id)
 //        }
     }
 
@@ -141,11 +140,11 @@ class WidgetConfigurationViewModel(
      * database. Call this before finishing the configuration activity to guarantee that any
      * pending slider value is written.
      */
-    fun saveAllSettings() {
+    fun saveAllSettings(id: Int) {
 //        viewModelScope.launch {
 //            val s = _state.value
 //            val config = WidgetConfiguration(
-//                appWidgetId,
+//                id,
 //                opacitySliderState.value,
 //                s.backgroundRole,
 //                s.foregroundRole,

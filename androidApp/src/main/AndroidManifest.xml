@@ -49,7 +49,7 @@
         </activity>
 
         <activity
-            android:name=".widget.WidgetConfigurationActivity"
+            android:name=".widget.config.WidgetConfigurationActivity"
             android:exported="true"
             android:theme="@style/Theme.Tomato.WidgetConfig">
             <intent-filter>

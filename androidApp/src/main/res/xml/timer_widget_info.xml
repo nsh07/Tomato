@@ -17,7 +17,7 @@
 
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:configure="org.nsh07.pomodoro.widget.WidgetConfigurationActivity"
+    android:configure="org.nsh07.pomodoro.widget.config.WidgetConfigurationActivity"
     android:maxResizeWidth="624dp"
     android:maxResizeHeight="422dp"
     android:minWidth="109dp"

@@ -30,7 +30,6 @@ import org.nsh07.pomodoro.data.AppDatabase
 import org.nsh07.pomodoro.data.BackupRestoreManager
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreViewModel
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
-import org.nsh07.pomodoro.ui.settingsScreen.viewModel.WidgetConfigurationViewModel
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 
@@ -46,7 +45,6 @@ val viewModels = module {
     viewModel<TimerViewModel>()
     viewModel<SettingsViewModel>()
     viewModel<StatsViewModel>()
-    viewModel<WidgetConfigurationViewModel>()
 }
 
 val androidModule = module {

@@ -15,9 +15,8 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro.ui.settingsScreen.screens
+package org.nsh07.pomodoro.widget.config
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -52,7 +51,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import kotlin.math.roundToInt
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -62,13 +60,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
-import org.nsh07.pomodoro.ui.settingsScreen.viewModel.WidgetConfigurationViewModel
-import org.nsh07.pomodoro.ui.settingsScreen.viewModel.WidgetType
+import org.koin.compose.viewmodel.koinViewModel
+import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
@@ -79,23 +77,15 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.topBarWindowInsets
-import tomato.shared.generated.resources.Res
-import tomato.shared.generated.resources.background_role
-import tomato.shared.generated.resources.check
-import tomato.shared.generated.resources.clear
-import tomato.shared.generated.resources.clocks
-import tomato.shared.generated.resources.opacity
-import tomato.shared.generated.resources.palette
-import tomato.shared.generated.resources.refresh
-import tomato.shared.generated.resources.restart
-import tomato.shared.generated.resources.widgets
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun WidgetConfigurationScreen(
-    viewModel: WidgetConfigurationViewModel,
+    isPlus: Boolean,
     onDone: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: WidgetConfigurationViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -120,12 +110,17 @@ fun WidgetConfigurationScreen(
                     windowInsets = topBarWindowInsets(),
                     title = {
                         Text(
-                            stringResource(Res.string.widgets),
+                            stringResource(R.string.widgets),
                             fontFamily = LocalAppFonts.current.topBarTitle
                         )
                     },
                     subtitle = {
-                        Text("Configure ${state.widgetType.name.lowercase().replaceFirstChar { it.uppercase() }} Instance")
+                        Text(
+                            "Configure ${
+                                state.widgetType.name.lowercase()
+                                    .replaceFirstChar { it.uppercase() }
+                            } Instance"
+                        )
                     },
                     colors = barColors.copy(containerColor = barColors.containerColor.copy(alpha = 0.8f)),
                     scrollBehavior = scrollBehavior
@@ -180,13 +175,18 @@ fun WidgetConfigurationScreen(
                 }
 
                 item {
-                    Column(Modifier.background(listItemColors.containerColor.copy(alpha = 0.9f), topListItemShape)) {
+                    Column(
+                        Modifier.background(
+                            listItemColors.containerColor.copy(alpha = 0.9f),
+                            topListItemShape
+                        )
+                    ) {
                         ListItem(
                             leadingContent = {
-                                Icon(painterResource(Res.drawable.clear), null)
+                                Icon(painterResource(R.drawable.clear), null)
                             },
                             headlineContent = {
-                                Text(stringResource(Res.string.opacity))
+                                Text(stringResource(R.string.opacity))
                             },
                             supportingContent = {
                                 Text("${(state.opacity * 100).toInt()}%")
@@ -208,13 +208,18 @@ fun WidgetConfigurationScreen(
                 }
 
                 item {
-                    Column(Modifier.background(listItemColors.containerColor.copy(alpha = 0.9f), middleListItemShape)) {
+                    Column(
+                        Modifier.background(
+                            listItemColors.containerColor.copy(alpha = 0.9f),
+                            middleListItemShape
+                        )
+                    ) {
                         ListItem(
                             leadingContent = {
-                                Icon(painterResource(Res.drawable.palette), null)
+                                Icon(painterResource(R.drawable.palette), null)
                             },
                             headlineContent = {
-                                Text(stringResource(Res.string.background_role))
+                                Text(stringResource(R.string.background_role))
                             },
                             supportingContent = {
                                 Text(state.backgroundRole)
@@ -229,16 +234,25 @@ fun WidgetConfigurationScreen(
                         RoleDotsList(
                             selectedRole = state.backgroundRole,
                             onRoleSelected = { viewModel.setBackgroundRole(it) },
-                            modifier = Modifier.padding(start = (16 * 2 + 24).dp, end = 16.dp, bottom = 12.dp)
+                            modifier = Modifier.padding(
+                                start = (16 * 2 + 24).dp,
+                                end = 16.dp,
+                                bottom = 12.dp
+                            )
                         )
                     }
                 }
 
                 item {
-                    Column(Modifier.background(listItemColors.containerColor.copy(alpha = 0.9f), middleListItemShape)) {
+                    Column(
+                        Modifier.background(
+                            listItemColors.containerColor.copy(alpha = 0.9f),
+                            middleListItemShape
+                        )
+                    ) {
                         ListItem(
                             leadingContent = {
-                                Icon(painterResource(Res.drawable.palette), null)
+                                Icon(painterResource(R.drawable.palette), null)
                             },
                             headlineContent = {
                                 Text("Foreground Role")
@@ -256,7 +270,11 @@ fun WidgetConfigurationScreen(
                         RoleDotsList(
                             selectedRole = state.foregroundRole,
                             onRoleSelected = { viewModel.setForegroundRole(it) },
-                            modifier = Modifier.padding(start = (16 * 2 + 24).dp, end = 16.dp, bottom = 12.dp)
+                            modifier = Modifier.padding(
+                                start = (16 * 2 + 24).dp,
+                                end = 16.dp,
+                                bottom = 12.dp
+                            )
                         )
                     }
                 }
@@ -271,7 +289,7 @@ fun WidgetConfigurationScreen(
                     ) {
                         ListItem(
                             leadingContent = {
-                                Icon(painterResource(Res.drawable.palette), null)
+                                Icon(painterResource(R.drawable.palette), null)
                             },
                             headlineContent = {
                                 Text(if (state.widgetType == WidgetType.TIMER) "Start Button Foreground" else "Header Role")
@@ -289,17 +307,26 @@ fun WidgetConfigurationScreen(
                         RoleDotsList(
                             selectedRole = state.headerRole,
                             onRoleSelected = { viewModel.setHeaderRole(it) },
-                            modifier = Modifier.padding(start = (16 * 2 + 24).dp, end = 16.dp, bottom = 12.dp)
+                            modifier = Modifier.padding(
+                                start = (16 * 2 + 24).dp,
+                                end = 16.dp,
+                                bottom = 12.dp
+                            )
                         )
                     }
                 }
 
                 if (state.widgetType == WidgetType.TIMER) {
                     item {
-                        Column(Modifier.background(listItemColors.containerColor.copy(alpha = 0.9f), middleListItemShape)) {
+                        Column(
+                            Modifier.background(
+                                listItemColors.containerColor.copy(alpha = 0.9f),
+                                middleListItemShape
+                            )
+                        ) {
                             ListItem(
                                 leadingContent = {
-                                    Icon(painterResource(Res.drawable.palette), null)
+                                    Icon(painterResource(R.drawable.palette), null)
                                 },
                                 headlineContent = {
                                     Text("Skip Button Background")
@@ -317,16 +344,25 @@ fun WidgetConfigurationScreen(
                             RoleDotsList(
                                 selectedRole = state.skipButtonRole,
                                 onRoleSelected = { viewModel.setSkipButtonRole(it) },
-                                modifier = Modifier.padding(start = (16 * 2 + 24).dp, end = 16.dp, bottom = 12.dp)
+                                modifier = Modifier.padding(
+                                    start = (16 * 2 + 24).dp,
+                                    end = 16.dp,
+                                    bottom = 12.dp
+                                )
                             )
                         }
                     }
 
                     item {
-                        Column(Modifier.background(listItemColors.containerColor.copy(alpha = 0.9f), bottomListItemShape)) {
+                        Column(
+                            Modifier.background(
+                                listItemColors.containerColor.copy(alpha = 0.9f),
+                                bottomListItemShape
+                            )
+                        ) {
                             ListItem(
                                 leadingContent = {
-                                    Icon(painterResource(Res.drawable.palette), null)
+                                    Icon(painterResource(R.drawable.palette), null)
                                 },
                                 headlineContent = {
                                     Text("Skip Button Foreground")
@@ -344,7 +380,11 @@ fun WidgetConfigurationScreen(
                             RoleDotsList(
                                 selectedRole = state.onSkipButtonRole,
                                 onRoleSelected = { viewModel.setOnSkipButtonRole(it) },
-                                modifier = Modifier.padding(start = (16 * 2 + 24).dp, end = 16.dp, bottom = 12.dp)
+                                modifier = Modifier.padding(
+                                    start = (16 * 2 + 24).dp,
+                                    end = 16.dp,
+                                    bottom = 12.dp
+                                )
                             )
                         }
                     }
@@ -352,10 +392,15 @@ fun WidgetConfigurationScreen(
 
                 if (state.widgetType == WidgetType.HISTORY) {
                     item {
-                        Column(Modifier.background(listItemColors.containerColor.copy(alpha = 0.9f), bottomListItemShape)) {
+                        Column(
+                            Modifier.background(
+                                listItemColors.containerColor.copy(alpha = 0.9f),
+                                bottomListItemShape
+                            )
+                        ) {
                             ListItem(
                                 leadingContent = {
-                                    Icon(painterResource(Res.drawable.restart), null)
+                                    Icon(painterResource(R.drawable.restart), null)
                                 },
                                 headlineContent = {
                                     Text("Bar Corner Radius")
@@ -425,69 +470,155 @@ fun WidgetPreviewCard(
 
                     // Skip / restart button group (top-end) — independent colors
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd) {
-                        Box(Modifier.padding(8.dp).size(32.dp).background(skipButtonColor, CircleShape), contentAlignment = Alignment.Center) {
-                            Icon(painterResource(Res.drawable.clear), null, tint = onSkipButtonColor, modifier = Modifier.size(16.dp))
+                        Box(
+                            Modifier
+                                .padding(8.dp)
+                                .size(32.dp)
+                                .background(skipButtonColor, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.clear),
+                                null,
+                                tint = onSkipButtonColor,
+                                modifier = Modifier.size(16.dp)
+                            )
                         }
                     }
                     // Play / pause button (bottom-start) — foregroundRole bg, headerRole fg
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomStart) {
-                        Box(Modifier.padding(8.dp).size(40.dp).background(foregroundColor, RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) {
-                            Icon(painterResource(Res.drawable.restart), null, tint = headerColor, modifier = Modifier.size(24.dp))
+                        Box(
+                            Modifier
+                                .padding(8.dp)
+                                .size(40.dp)
+                                .background(foregroundColor, RoundedCornerShape(12.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.restart),
+                                null,
+                                tint = headerColor,
+                                modifier = Modifier.size(24.dp)
+                            )
                         }
                     }
                 }
             }
+
             WidgetType.TODAY -> {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(120.dp)
-                        .background(backgroundColor.copy(alpha = opacity), RoundedCornerShape(24.dp))
+                        .background(
+                            backgroundColor.copy(alpha = opacity),
+                            RoundedCornerShape(24.dp)
+                        )
                         .padding(16.dp)
                 ) {
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("Today", style = typography.labelSmall, color = headerColor, fontWeight = FontWeight.Bold)
+                            Text(
+                                "Today",
+                                style = typography.labelSmall,
+                                color = headerColor,
+                                fontWeight = FontWeight.Bold
+                            )
                             Spacer(Modifier.weight(1f))
-                            Icon(painterResource(Res.drawable.refresh), null, tint = headerColor, modifier = Modifier.size(16.dp))
+                            Icon(
+                                painterResource(R.drawable.refresh),
+                                null,
+                                tint = headerColor,
+                                modifier = Modifier.size(16.dp)
+                            )
                         }
-                        Text("02:45", style = typography.headlineMedium, color = foregroundColor, fontFamily = LocalAppFonts.current.topBarTitle)
+                        Text(
+                            "02:45",
+                            style = typography.headlineMedium,
+                            color = foregroundColor,
+                            fontFamily = LocalAppFonts.current.topBarTitle
+                        )
                         Spacer(Modifier.height(8.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             repeat(4) { i ->
-                                Box(Modifier.weight(1f).height(8.dp).background(foregroundColor.copy(alpha = 0.5f + i * 0.1f), RoundedCornerShape(2.dp)))
+                                Box(
+                                    Modifier
+                                        .weight(1f)
+                                        .height(8.dp)
+                                        .background(
+                                            foregroundColor.copy(alpha = 0.5f + i * 0.1f),
+                                            RoundedCornerShape(2.dp)
+                                        )
+                                )
                             }
                         }
                     }
                 }
             }
+
             WidgetType.HISTORY -> {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(160.dp)
-                        .background(backgroundColor.copy(alpha = opacity), RoundedCornerShape(24.dp))
+                        .background(
+                            backgroundColor.copy(alpha = opacity),
+                            RoundedCornerShape(24.dp)
+                        )
                         .padding(16.dp)
                 ) {
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(painterResource(Res.drawable.clocks), null, tint = headerColor, modifier = Modifier.size(16.dp))
+                            Icon(
+                                painterResource(R.drawable.clocks),
+                                null,
+                                tint = headerColor,
+                                modifier = Modifier.size(16.dp)
+                            )
                             Spacer(Modifier.width(8.dp))
-                            Text("Focus History", style = typography.labelSmall, color = headerColor, fontWeight = FontWeight.Bold)
+                            Text(
+                                "Focus History",
+                                style = typography.labelSmall,
+                                color = headerColor,
+                                fontWeight = FontWeight.Bold
+                            )
                             Spacer(Modifier.weight(1f))
-                            Icon(painterResource(Res.drawable.refresh), null, tint = headerColor, modifier = Modifier.size(16.dp))
+                            Icon(
+                                painterResource(R.drawable.refresh),
+                                null,
+                                tint = headerColor,
+                                modifier = Modifier.size(16.dp)
+                            )
                         }
                         Spacer(Modifier.height(8.dp))
-                        Text("04:20", style = typography.headlineSmall, color = headerColor, fontWeight = FontWeight.Bold)
+                        Text(
+                            "04:20",
+                            style = typography.headlineSmall,
+                            color = headerColor,
+                            fontWeight = FontWeight.Bold
+                        )
                         Spacer(Modifier.height(16.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.Bottom, modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.Bottom,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
                             repeat(15) { i ->
-                                Box(Modifier.weight(1f).height((10 + (i % 5) * 10).dp).background(foregroundColor, RoundedCornerShape(barCornerRadius.dp)))
+                                Box(
+                                    Modifier
+                                        .weight(1f)
+                                        .height((10 + (i % 5) * 10).dp)
+                                        .background(
+                                            foregroundColor,
+                                            RoundedCornerShape(barCornerRadius.dp)
+                                        )
+                                )
                             }
                         }
                     }
                 }
             }
+
             else -> {
                 Text("Select a widget type", color = Color.White)
             }
@@ -579,13 +710,26 @@ fun RoleDotsList(
             ) {
                 if (isSelected) {
                     Icon(
-                        painterResource(Res.drawable.check),
+                        painterResource(R.drawable.check),
                         contentDescription = null,
-                        tint = if (role in listOf("surface", "surfaceVariant", "background", "white",
-                            "primaryContainer", "secondaryContainer", "tertiaryContainer", "errorContainer",
-                            "onPrimary", "onSecondary", "onTertiary", "onError",
-                            "inverseSurface", "inverseOnSurface", "inversePrimary"
-                        )) colorScheme.primary else Color.White,
+                        tint = if (role in listOf(
+                                "surface",
+                                "surfaceVariant",
+                                "background",
+                                "white",
+                                "primaryContainer",
+                                "secondaryContainer",
+                                "tertiaryContainer",
+                                "errorContainer",
+                                "onPrimary",
+                                "onSecondary",
+                                "onTertiary",
+                                "onError",
+                                "inverseSurface",
+                                "inverseOnSurface",
+                                "inversePrimary"
+                            )
+                        ) colorScheme.primary else Color.White,
                         modifier = Modifier.size(20.dp)
                     )
                 }

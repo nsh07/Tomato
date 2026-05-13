@@ -33,6 +33,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.create
 import org.koin.plugin.module.dsl.single
+import org.koin.plugin.module.dsl.viewModel
 import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.AppPreferenceRepository
@@ -44,6 +45,7 @@ import org.nsh07.pomodoro.service.AndroidTimerHelper
 import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.service.TimerManager
 import org.nsh07.pomodoro.service.addTimerActions
+import org.nsh07.pomodoro.widget.config.WidgetConfigurationViewModel
 
 val servicesModule = module {
     single<CoroutineDispatcher> { Dispatchers.IO }
@@ -60,6 +62,7 @@ val servicesModule = module {
     single { create(::createNotificationCompatBuilder) }
 
     single<ActivityCallbacks>()
+    viewModel<WidgetConfigurationViewModel>()
 }
 
 private fun createAppInfo(): AppInfo = AppInfo(BuildConfig.DEBUG)

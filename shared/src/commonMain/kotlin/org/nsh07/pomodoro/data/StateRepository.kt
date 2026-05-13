@@ -153,11 +153,6 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
                 defaults.customWindowDecor
             )
 
-        val desktopBgOpacity =
-            (preferenceRepository.getIntPreference("desktop_bg_opacity")
-                ?: preferenceRepository.saveIntPreference("desktop_bg_opacity", 100)
-            ).toFloat() / 100f
-
         settingsState.update { currentState ->
             currentState.copy(
                 focusTime = focusTime,

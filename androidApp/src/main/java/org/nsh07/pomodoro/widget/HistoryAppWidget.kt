@@ -203,7 +203,22 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
     @Preview(widthDp = 400, heightDp = 216)
     @Composable
     private fun ContentPreview() {
-        val history = listOf(
+        GlanceTheme(colors = ColorProviders(lightScheme)) {
+            Box(GlanceModifier.background(Color.White)) {
+                Box(
+                    GlanceModifier.cornerRadius(32.dp)
+                ) {
+                    Content(
+                        history = previewHistoryData,
+                        maxFocus = previewHistoryData.maxBy { it.totalFocusTime() }.totalFocusTime()
+                    )
+                }
+            }
+        }
+    }
+
+    companion object {
+        val previewHistoryData = listOf(
             Stat(
                 date = LocalDate.of(2026, 3, 12),
                 focusTimeQ1 = 1617943 + 7200000,
@@ -325,17 +340,5 @@ class HistoryAppWidget : GlanceAppWidget(), KoinComponent {
                 breakTime = 4000000
             )
         )
-        GlanceTheme(colors = ColorProviders(lightScheme)) {
-            Box(GlanceModifier.background(Color.White)) {
-                Box(
-                    GlanceModifier.cornerRadius(32.dp)
-                ) {
-                    Content(
-                        history = history,
-                        maxFocus = history.maxBy { it.totalFocusTime() }.totalFocusTime()
-                    )
-                }
-            }
-        }
     }
 }

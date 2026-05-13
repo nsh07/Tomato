@@ -24,20 +24,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -45,12 +42,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -62,14 +57,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import org.koin.compose.viewmodel.koinViewModel
 import org.nsh07.pomodoro.R
-import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
-import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
@@ -89,14 +80,6 @@ fun WidgetConfigurationScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-
-    @Suppress("DEPRECATION")
-    val widthExpanded = currentWindowAdaptiveInfo()
-        .windowSizeClass
-        .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
-
-    val barColors = if (widthExpanded) detailPaneTopBarColors
-    else topBarColors
 
     Box(
         contentAlignment = Alignment.Center,
@@ -122,7 +105,6 @@ fun WidgetConfigurationScreen(
                             } Instance"
                         )
                     },
-                    colors = barColors.copy(containerColor = barColors.containerColor.copy(alpha = 0.8f)),
                     scrollBehavior = scrollBehavior
                 )
             },
@@ -160,12 +142,12 @@ fun WidgetConfigurationScreen(
                 item {
                     WidgetPreviewCard(
                         opacity = state.opacity,
-                        backgroundRole = state.backgroundRole,
-                        foregroundRole = state.foregroundRole,
-                        headerRole = state.headerRole,
-                        skipButtonRole = state.skipButtonRole,
-                        onSkipButtonRole = state.onSkipButtonRole,
-                        barCornerRadius = state.barCornerRadius,
+//                        backgroundRole = state.backgroundRole,
+//                        foregroundRole = state.foregroundRole,
+//                        headerRole = state.headerRole,
+//                        skipButtonRole = state.skipButtonRole,
+//                        onSkipButtonRole = state.onSkipButtonRole,
+//                        barCornerRadius = state.barCornerRadius,
                         widgetType = state.widgetType
                     )
                 }
@@ -436,187 +418,56 @@ fun WidgetConfigurationScreen(
 @Composable
 fun WidgetPreviewCard(
     opacity: Float,
-    backgroundRole: String,
-    foregroundRole: String,
-    headerRole: String,
-    skipButtonRole: String,
-    onSkipButtonRole: String,
-    barCornerRadius: Int,
-    widgetType: WidgetType,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    background: Color = colorScheme.surfaceContainer,
+    onSurface: Color = colorScheme.onSurface,
+    onSurfaceVariant: Color = colorScheme.onSurfaceVariant,
+    tertiary: Color = colorScheme.tertiary,
+    primary: Color = colorScheme.primary,
+    onTertiary: Color = colorScheme.onTertiary,
+    onPrimary: Color = colorScheme.onPrimary,
+    widgetType: WidgetType
 ) {
-    val backgroundColor = getRoleColor(backgroundRole)
-    val foregroundColor = getRoleColor(foregroundRole)
-    val headerColor = getRoleColor(headerRole)
-    val skipButtonColor = getRoleColor(skipButtonRole)
-    val onSkipButtonColor = getRoleColor(onSkipButtonRole)
-
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(220.dp)
-            .padding(16.dp),
+            .padding(8.dp),
         contentAlignment = Alignment.Center
     ) {
         when (widgetType) {
             WidgetType.TIMER -> {
-                Box(
-                    modifier = Modifier
-                        .size(160.dp)
-                        .background(backgroundColor.copy(alpha = opacity), CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    GlancePreviewText("25:00", foregroundColor)
-
-                    // Skip / restart button group (top-end) — independent colors
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd) {
-                        Box(
-                            Modifier
-                                .padding(8.dp)
-                                .size(32.dp)
-                                .background(skipButtonColor, CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.clear),
-                                null,
-                                tint = onSkipButtonColor,
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
-                    }
-                    // Play / pause button (bottom-start) — foregroundRole bg, headerRole fg
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomStart) {
-                        Box(
-                            Modifier
-                                .padding(8.dp)
-                                .size(40.dp)
-                                .background(foregroundColor, RoundedCornerShape(12.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.restart),
-                                null,
-                                tint = headerColor,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    }
-                }
+                TimerWidgetPreview(
+                    opacity = opacity,
+                    background = background,
+                    tertiary = tertiary,
+                    onTertiary = onTertiary,
+                    primary = primary,
+                    onPrimary = onPrimary,
+                    modifier = Modifier.size(200.dp)
+                )
             }
 
             WidgetType.TODAY -> {
-                Box(
+                TodayAppWidgetPreview(
+                    background = background,
+                    onSurface = onSurface,
+                    onSurfaceVariant = onSurfaceVariant,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(120.dp)
-                        .background(
-                            backgroundColor.copy(alpha = opacity),
-                            RoundedCornerShape(24.dp)
-                        )
-                        .padding(16.dp)
-                ) {
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                "Today",
-                                style = typography.labelSmall,
-                                color = headerColor,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(Modifier.weight(1f))
-                            Icon(
-                                painterResource(R.drawable.refresh),
-                                null,
-                                tint = headerColor,
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
-                        Text(
-                            "02:45",
-                            style = typography.headlineMedium,
-                            color = foregroundColor,
-                            fontFamily = LocalAppFonts.current.topBarTitle
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                            repeat(4) { i ->
-                                Box(
-                                    Modifier
-                                        .weight(1f)
-                                        .height(8.dp)
-                                        .background(
-                                            foregroundColor.copy(alpha = 0.5f + i * 0.1f),
-                                            RoundedCornerShape(2.dp)
-                                        )
-                                )
-                            }
-                        }
-                    }
-                }
+                        .height(200.dp)
+                )
             }
 
             WidgetType.HISTORY -> {
-                Box(
+                HistoryWidgetPreview(
+                    background = background,
+                    onSurface = onSurface,
+                    onSurfaceVariant = onSurfaceVariant,
+                    primary = primary,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(160.dp)
-                        .background(
-                            backgroundColor.copy(alpha = opacity),
-                            RoundedCornerShape(24.dp)
-                        )
-                        .padding(16.dp)
-                ) {
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                painterResource(R.drawable.clocks),
-                                null,
-                                tint = headerColor,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                "Focus History",
-                                style = typography.labelSmall,
-                                color = headerColor,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(Modifier.weight(1f))
-                            Icon(
-                                painterResource(R.drawable.refresh),
-                                null,
-                                tint = headerColor,
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            "04:20",
-                            style = typography.headlineSmall,
-                            color = headerColor,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(Modifier.height(16.dp))
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            verticalAlignment = Alignment.Bottom,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            repeat(15) { i ->
-                                Box(
-                                    Modifier
-                                        .weight(1f)
-                                        .height((10 + (i % 5) * 10).dp)
-                                        .background(
-                                            foregroundColor,
-                                            RoundedCornerShape(barCornerRadius.dp)
-                                        )
-                                )
-                            }
-                        }
-                    }
-                }
+                        .height(200.dp)
+                )
             }
 
             else -> {
@@ -624,16 +475,6 @@ fun WidgetPreviewCard(
             }
         }
     }
-}
-
-@Composable
-fun GlancePreviewText(text: String, color: Color) {
-    Text(
-        text = text,
-        style = typography.displaySmall,
-        fontFamily = LocalAppFonts.current.topBarTitle,
-        color = color
-    )
 }
 
 @Composable

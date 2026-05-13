@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -13,8 +14,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  -->
-<resources>
+  --><resources>
     <string name="alarm">Alarm</string>
     <string name="alarm_desc">Zadzwoni alarm, gdy timer zostanie ukończony</string>
     <string name="alarm_sound">Dźwięk alarmu</string>
@@ -100,4 +100,32 @@
     <string name="dnd_permission_message">Włącz pozwolenie dla %1$s</string>
     <string name="duration">Długość</string>
     <string name="focus_history">Historia skupienia</string>
+    <string name="focus_break_ratio">Stosunek skupienia-przerwy</string>
+    <string name="focus_breakdown">Podział uwagi</string>
+    <string name="focus_breakdown_desc">Średnie okresy skupienia w różnych porach dnia</string>
+    <string name="focus_history_calendar">Kalendarz historii skupienia</string>
+    <string name="gap">Interwał</string>
+    <string name="less">Mniej</string>
+    <string name="lifetime">Dożywotnio</string>
+    <string name="media_volume_for_alarm">Tryb słuchawek</string>
+    <string name="open_tomato">Otwórz Tomato</string>
+    <string name="quit_tomato">Wyjdź z Tomato</string>
+    <string name="reset_data">Usuń statystyki</string>
+    <string name="reset_data_dialog_text">Wszystkie zapisane statystyki zostaną usunięte nie odwracalnie. To nie może być cofnięte.</string>
+    <string name="reset_data_dialog_title">Usunąć wszystkie statystyki?</string>
+    <string name="secure_aod">Bezpieczny AOD</string>
+    <string name="session_only_progress">Uproszczony postęp</string>
+    <string name="total">Całkowite</string>
+    <string name="undo">Cofnij</string>
+    <string name="vibration_strength">Siła</string>
+    <string name="daily_focus_goal">Codzienny cel skupienia</string>
+    <string name="milliseconds_format">%1$dms</string>
+    <string name="choose_folder">Wybierz folder</string>
+    <string name="choose_file">Wybierz plik</string>
+    <string name="restart_app">Uruchom ponownie aplikacje</string>
+    <string name="vibration_pattern">Styl wibracji</string>
+    <string name="infinite">Nieskończoność</string>
+    <string name="infinite_focus">Nieskończone skupienie</string>
+    <string name="cancel">Anuluj</string>
+    <string name="advanced">Zaawansowane</string>
 </resources>

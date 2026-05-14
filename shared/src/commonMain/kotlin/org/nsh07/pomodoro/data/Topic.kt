@@ -23,7 +23,6 @@ import androidx.room.PrimaryKey
 
 /**
  * Entity representing a Topic with its own timer settings.
- * If a setting is null, it inherits from the global settings.
  */
 @Entity(tableName = "topic")
 data class Topic(
@@ -31,12 +30,12 @@ data class Topic(
     val id: String, // name in lowercase, spaces replaced with underscores
     val name: String,
     val color: Color,
-    val focusTime: Long?,
-    val shortBreakTime: Long?,
-    val longBreakTime: Long?,
-    val sessionLength: Int?,
-    val autoStartNextSession: Boolean?,
-    val dndEnabled: Boolean?
+    val focusTime: Long,
+    val shortBreakTime: Long,
+    val longBreakTime: Long,
+    val sessionLength: Int,
+    val autoStartNextSession: Boolean,
+    val dndEnabled: Boolean
 ) {
     companion object {
         val defaultTopic = Topic(

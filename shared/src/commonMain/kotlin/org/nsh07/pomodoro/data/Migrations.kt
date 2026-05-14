@@ -30,17 +30,18 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
                 `id` TEXT NOT NULL, 
                 `name` TEXT NOT NULL, 
                 `color` INTEGER NOT NULL, 
-                `focusTime` INTEGER, 
-                `shortBreakTime` INTEGER, 
-                `longBreakTime` INTEGER, 
-                `sessionLength` INTEGER, 
-                `autoStartNextSession` INTEGER, 
-                `dndEnabled` INTEGER, 
+                `focusTime` INTEGER NOT NULL, 
+                `shortBreakTime` INTEGER NOT NULL, 
+                `longBreakTime` INTEGER NOT NULL, 
+                `sessionLength` INTEGER NOT NULL, 
+                `autoStartNextSession` INTEGER NOT NULL, 
+                `dndEnabled` INTEGER NOT NULL, 
                 PRIMARY KEY(`id`)
             )
             """.trimIndent()
         )
 
+        // Seed default topic with current global settings or hardcoded defaults if preferences don't exist
         connection.execSQL(
             """
             INSERT OR IGNORE INTO `topic` 
@@ -49,12 +50,12 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
                 'default', 
                 'Default', 
                 ${Color.White.value.toLong()}, 
-                (SELECT value FROM int_preference WHERE key = 'focus_time'),
-                (SELECT value FROM int_preference WHERE key = 'short_break_time'),
-                (SELECT value FROM int_preference WHERE key = 'long_break_time'),
-                (SELECT value FROM int_preference WHERE key = 'session_length'),
-                (SELECT value FROM boolean_preference WHERE key = 'autostart_next_session'),
-                (SELECT value FROM boolean_preference WHERE key = 'dnd_enabled')
+                COALESCE((SELECT value FROM int_preference WHERE key = 'focus_time'), 1500000),
+                COALESCE((SELECT value FROM int_preference WHERE key = 'short_break_time'), 300000),
+                COALESCE((SELECT value FROM int_preference WHERE key = 'long_break_time'), 900000),
+                COALESCE((SELECT value FROM int_preference WHERE key = 'session_length'), 4),
+                COALESCE((SELECT value FROM boolean_preference WHERE key = 'autostart_next_session'), 0),
+                COALESCE((SELECT value FROM boolean_preference WHERE key = 'dnd_enabled'), 0)
             )
             """.trimIndent()
         )
@@ -87,5 +88,9 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
 
         connection.execSQL("DROP TABLE `stat`")
         connection.execSQL("ALTER TABLE `new_stat` RENAME TO `stat`")
+
+        // Clean up migrated settings from global preference tables
+        connection.execSQL("DELETE FROM int_preference WHERE key IN ('focus_time', 'short_break_time', 'long_break_time', 'session_length')")
+        connection.execSQL("DELETE FROM boolean_preference WHERE key IN ('autostart_next_session', 'dnd_enabled')")
     }
 }

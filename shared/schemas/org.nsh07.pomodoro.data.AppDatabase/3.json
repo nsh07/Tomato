@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "0f476bcab7f3e0c4064745935b19bcdc",
+    "identityHash": "7efb7aa0ad0dfb9d9d152b3534f1b498",
     "entities": [
       {
         "tableName": "int_preference",
@@ -157,7 +157,7 @@
       },
       {
         "tableName": "topic",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `color` INTEGER NOT NULL, `focusTime` INTEGER, `shortBreakTime` INTEGER, `longBreakTime` INTEGER, `sessionLength` INTEGER, `autoStartNextSession` INTEGER, `dndEnabled` INTEGER, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `color` INTEGER NOT NULL, `focusTime` INTEGER NOT NULL, `shortBreakTime` INTEGER NOT NULL, `longBreakTime` INTEGER NOT NULL, `sessionLength` INTEGER NOT NULL, `autoStartNextSession` INTEGER NOT NULL, `dndEnabled` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -180,32 +180,38 @@
           {
             "fieldPath": "focusTime",
             "columnName": "focusTime",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "shortBreakTime",
             "columnName": "shortBreakTime",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "longBreakTime",
             "columnName": "longBreakTime",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "sessionLength",
             "columnName": "sessionLength",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "autoStartNextSession",
             "columnName": "autoStartNextSession",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "dndEnabled",
             "columnName": "dndEnabled",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -218,7 +224,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0f476bcab7f3e0c4064745935b19bcdc')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7efb7aa0ad0dfb9d9d152b3534f1b498')"
     ]
   }
 }

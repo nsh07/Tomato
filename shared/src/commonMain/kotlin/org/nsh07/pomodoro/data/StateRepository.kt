@@ -24,7 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.service.TimerStateSnapshot
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -35,7 +34,7 @@ import org.nsh07.pomodoro.utils.millisecondsToStr
 class StateRepository(private val preferenceRepository: PreferenceRepository) {
     val timerState = MutableStateFlow(TimerState())
     val settingsState = MutableStateFlow(SettingsState())
-    val currentTopic = MutableStateFlow(defaultTopic)
+    val currentTopicId = MutableStateFlow("default")
 
     val time = MutableStateFlow(25 * 60 * 1000L)
     var timerFrequency: Float = 60f
@@ -56,18 +55,17 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
     suspend fun reloadSettings() {
         val defaults = SettingsState()
 
-        val currentTopic = currentTopic.value
+        val topicId = currentTopicId.value
 
+        // Helper to load setting with topic-specific key
         suspend fun loadIntSetting(key: String, defaultValue: Int): Int {
-            return preferenceRepository.getIntPreference("${key}_${currentTopic.id}")
-                ?: preferenceRepository.getIntPreference("${key}_default")
-                ?: preferenceRepository.saveIntPreference("${key}_default", defaultValue)
+            return preferenceRepository.getIntPreference("${key}_$topicId")
+                ?: preferenceRepository.saveIntPreference("${key}_$topicId", defaultValue)
         }
 
         suspend fun loadBooleanSetting(key: String, defaultValue: Boolean): Boolean {
-            return preferenceRepository.getBooleanPreference("${key}_${currentTopic.id}")
-                ?: preferenceRepository.getBooleanPreference("${key}_default")
-                ?: preferenceRepository.saveBooleanPreference("${key}_default", defaultValue)
+            return preferenceRepository.getBooleanPreference("${key}_$topicId")
+                ?: preferenceRepository.saveBooleanPreference("${key}_$topicId", defaultValue)
         }
 
         val focusTime = loadIntSetting("focus_time", defaults.focusTime.toInt()).toLong()

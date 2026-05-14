@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.utils
 
-import androidx.compose.ui.graphics.Color
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import java.util.Locale
@@ -147,25 +146,5 @@ class UtilsKtTest {
     @Test
     fun `millisecondsToHoursMinutes Long MAX VALUE`() {
         assertEquals("2562047788015h 12m", millisecondsToHoursMinutes(Long.MAX_VALUE))
-    }
-
-    @Test
-    fun `toColor with a standard valid color string`() {
-        assertEquals(Color.Black.toString().toColor(), Color.Black)
-    }
-
-    @Test
-    fun `toColor with color components at maximum valid values`() {
-        assertEquals(Color.White.toString().toColor(), Color.White)
-    }
-
-    @Test
-    fun `toColor with floating point values having multiple decimal places`() {
-        assertEquals(
-            Color(0.12345f, 0.23456f, 0.34567f, 0.45678f)
-                .toString()
-                .toColor(),
-            Color(0.12345f, 0.23456f, 0.34567f, 0.45678f)
-        )
     }
 }

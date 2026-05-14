@@ -24,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.service.TimerStateSnapshot
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -34,6 +35,8 @@ import org.nsh07.pomodoro.utils.millisecondsToStr
 class StateRepository(private val preferenceRepository: PreferenceRepository) {
     val timerState = MutableStateFlow(TimerState())
     val settingsState = MutableStateFlow(SettingsState())
+    val currentTopic = MutableStateFlow(defaultTopic)
+
     val time = MutableStateFlow(25 * 60 * 1000L)
     var timerFrequency: Float = 60f
     var colorScheme: ColorScheme = lightColorScheme()
@@ -52,34 +55,34 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
 
     suspend fun reloadSettings() {
         val defaults = SettingsState()
-        val focusTime =
-            preferenceRepository.getIntPreference("focus_time")?.toLong()
-                ?: preferenceRepository.saveIntPreference(
-                    "focus_time",
-                    defaults.focusTime.toInt()
-                ).toLong()
+
+        val currentTopic = currentTopic.value
+
+        suspend fun loadIntSetting(key: String, defaultValue: Int): Int {
+            return preferenceRepository.getIntPreference("${key}_${currentTopic.id}")
+                ?: preferenceRepository.getIntPreference("${key}_default")
+                ?: preferenceRepository.saveIntPreference("${key}_default", defaultValue)
+        }
+
+        suspend fun loadBooleanSetting(key: String, defaultValue: Boolean): Boolean {
+            return preferenceRepository.getBooleanPreference("${key}_${currentTopic.id}")
+                ?: preferenceRepository.getBooleanPreference("${key}_default")
+                ?: preferenceRepository.saveBooleanPreference("${key}_default", defaultValue)
+        }
+
+        val focusTime = loadIntSetting("focus_time", defaults.focusTime.toInt()).toLong()
         val shortBreakTime =
-            preferenceRepository.getIntPreference("short_break_time")?.toLong()
-                ?: preferenceRepository.saveIntPreference(
-                    "short_break_time",
-                    defaults.shortBreakTime.toInt()
-                ).toLong()
+            loadIntSetting("short_break_time", defaults.shortBreakTime.toInt()).toLong()
         val longBreakTime =
-            preferenceRepository.getIntPreference("long_break_time")?.toLong()
-                ?: preferenceRepository.saveIntPreference(
-                    "long_break_time",
-                    defaults.longBreakTime.toInt()
-                ).toLong()
+            loadIntSetting("long_break_time", defaults.longBreakTime.toInt()).toLong()
+        val sessionLength = loadIntSetting("session_length", defaults.sessionLength)
+        val dndEnabled = loadBooleanSetting("dnd_enabled", defaults.dndEnabled)
+        val autostartNextSession =
+            loadBooleanSetting("autostart_next_session", defaults.autostartNextSession)
+
         val focusGoal = preferenceRepository.getIntPreference("focus_goal")?.toLong()
             ?: preferenceRepository.saveIntPreference("focus_goal", defaults.focusGoal.toInt())
                 .toLong()
-
-        val sessionLength =
-            preferenceRepository.getIntPreference("session_length")
-                ?: preferenceRepository.saveIntPreference(
-                    "session_length",
-                    defaults.sessionLength
-                )
 
         val alarmSoundUri = (
                 preferenceRepository.getStringPreference("alarm_sound")
@@ -107,8 +110,6 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
                 "vibrate_enabled",
                 defaults.vibrateEnabled
             )
-        val dndEnabled = preferenceRepository.getBooleanPreference("dnd_enabled")
-            ?: preferenceRepository.saveBooleanPreference("dnd_enabled", defaults.dndEnabled)
         val mediaVolumeForAlarm =
             preferenceRepository.getBooleanPreference("media_volume_for_alarm")
                 ?: preferenceRepository.saveBooleanPreference(
@@ -120,12 +121,6 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
                 "single_progress_bar",
                 defaults.singleProgressBar
             )
-        val autostartNextSession =
-            preferenceRepository.getBooleanPreference("autostart_next_session")
-                ?: preferenceRepository.saveBooleanPreference(
-                    "autostart_next_session",
-                    defaults.autostartNextSession
-                )
         val secureAod = preferenceRepository.getBooleanPreference("secure_aod")
             ?: preferenceRepository.saveBooleanPreference("secure_aod", defaults.secureAod)
 

@@ -37,4 +37,18 @@ data class Topic(
     val sessionLength: Int?,
     val autoStartNextSession: Boolean?,
     val dndEnabled: Boolean?
-)
+) {
+    companion object {
+        val defaultTopic = Topic(
+            id = "default",
+            name = "Default",
+            color = Color.White,
+            focusTime = 25 * 60 * 1000L,
+            shortBreakTime = 5 * 60 * 1000L,
+            longBreakTime = 15 * 60 * 1000L,
+            sessionLength = 4,
+            autoStartNextSession = false,
+            dndEnabled = false
+        )
+    }
+}

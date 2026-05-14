@@ -94,6 +94,7 @@ val servicesModule = module {
     single<TimerManager> { TimerManager(get(), get()) { System.nanoTime() / 1_000_000L } }
 
     single<ActivityCallbacks>()
+    single<AppTopicRepository>() bind TopicRepository::class
 }
 
 val flavorModule = module {

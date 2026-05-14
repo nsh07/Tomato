@@ -239,9 +239,10 @@ private fun FocusHistoryCalendarPreview() {
                 val random = Random.nextInt() % 3
 
                 if (random == 0) Stat(
-                    date, 0, 0, 0, 0, 0
+                    date, "default", 0, 0, 0, 0, 0
                 ) else Stat(
                     date = date,
+                    topicId = "default",
                     focusTimeQ1 = quarterTime,
                     focusTimeQ2 = quarterTime,
                     focusTimeQ3 = quarterTime,

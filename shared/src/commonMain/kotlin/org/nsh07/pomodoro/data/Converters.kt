@@ -17,10 +17,11 @@
 
 package org.nsh07.pomodoro.data
 
+import androidx.compose.ui.graphics.Color
 import androidx.room.TypeConverter
 import java.time.LocalDate
 
-class Converters {
+class LocalDateConverter {
     @TypeConverter
     fun localDateToString(localDate: LocalDate?): String? {
         return localDate?.toString()
@@ -29,5 +30,17 @@ class Converters {
     @TypeConverter
     fun stringToLocalDate(date: String?): LocalDate? {
         return if (date != null) LocalDate.parse(date) else null
+    }
+}
+
+class ComposeColorConverter {
+    @TypeConverter
+    fun fromColor(color: Color): Long {
+        return color.value.toLong()
+    }
+
+    @TypeConverter
+    fun toColor(value: Long): Color {
+        return Color(value.toULong())
     }
 }

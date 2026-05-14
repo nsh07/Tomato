@@ -17,22 +17,24 @@
 
 package org.nsh07.pomodoro.data
 
-import androidx.room.AutoMigration
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.compose.ui.graphics.Color
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Database(
-    entities = [IntPreference::class, BooleanPreference::class, StringPreference::class, Stat::class, Topic::class],
-    version = 3,
-    autoMigrations = [
-        AutoMigration(from = 1, to = 2)
-    ]
+/**
+ * Entity representing a Topic with its own timer settings.
+ * If a setting is null, it inherits from the global settings.
+ */
+@Entity(tableName = "topic")
+data class Topic(
+    @PrimaryKey
+    val id: String, // name in lowercase, spaces replaced with underscores
+    val name: String,
+    val color: Color,
+    val focusTime: Long?,
+    val shortBreakTime: Long?,
+    val longBreakTime: Long?,
+    val sessionLength: Int?,
+    val autoStartNextSession: Boolean?,
+    val dndEnabled: Boolean?
 )
-@TypeConverters(LocalDateConverter::class, ComposeColorConverter::class)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun preferenceDao(): PreferenceDao
-    abstract fun statDao(): StatDao
-    abstract fun topicDao(): TopicDao
-    abstract fun systemDao(): SystemDao
-}

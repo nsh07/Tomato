@@ -170,12 +170,15 @@ class TimerManager(
     suspend fun saveTimeToDb() {
         saveLock.withLock {
             val elapsedTime = _timerState.value.totalTime - time
+            val topicId = _settingsState.value.currentTopicId
             when (_timerState.value.timerMode) {
                 TimerMode.FOCUS -> statRepository.addFocusTime(
+                    topicId,
                     (elapsedTime - lastSavedDuration).coerceAtLeast(0L)
                 )
 
                 else -> statRepository.addBreakTime(
+                    topicId,
                     (elapsedTime - lastSavedDuration).coerceAtLeast(0L)
                 )
             }

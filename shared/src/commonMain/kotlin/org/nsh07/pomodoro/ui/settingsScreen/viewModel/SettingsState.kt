@@ -51,5 +51,7 @@ data class SettingsState(
 
     val alarmSoundUri: String? = getDefaultAlarmTone(),
 
-    val customWindowDecor: Boolean = currentOS != OS.WINDOWS
+    val customWindowDecor: Boolean = currentOS != OS.WINDOWS,
+
+    val currentTopicId: String = "default"
 )

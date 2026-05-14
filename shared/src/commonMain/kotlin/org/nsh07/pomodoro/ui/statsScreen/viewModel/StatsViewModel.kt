@@ -289,6 +289,7 @@ class StatsViewModel(
     fun generateSampleData() {
         if (appInfo.debug) {
             viewModelScope.launch {
+                // TODO: add sample data for multiple topics
                 val today = LocalDate.now().plusDays(1)
                 var it = today.minusDays(365)
 
@@ -296,6 +297,7 @@ class StatsViewModel(
                     statRepository.insertStat(
                         Stat(
                             it,
+                            "default",
                             (0..30 * 60 * 1000L).random(),
                             (1 * 60 * 60 * 1000L..3 * 60 * 60 * 1000L).random(),
                             (0..3 * 60 * 60 * 1000L).random(),

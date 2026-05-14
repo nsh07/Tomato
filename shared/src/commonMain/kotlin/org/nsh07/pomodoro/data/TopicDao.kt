@@ -17,22 +17,28 @@
 
 package org.nsh07.pomodoro.data
 
-import androidx.room.AutoMigration
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
-@Database(
-    entities = [IntPreference::class, BooleanPreference::class, StringPreference::class, Stat::class, Topic::class],
-    version = 3,
-    autoMigrations = [
-        AutoMigration(from = 1, to = 2)
-    ]
-)
-@TypeConverters(LocalDateConverter::class, ComposeColorConverter::class)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun preferenceDao(): PreferenceDao
-    abstract fun statDao(): StatDao
-    abstract fun topicDao(): TopicDao
-    abstract fun systemDao(): SystemDao
+@Dao
+interface TopicDao {
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertTopic(topic: Topic): Long
+
+    @Update
+    suspend fun updateTopic(topic: Topic)
+
+    @Delete
+    suspend fun deleteTopic(topic: Topic)
+
+    @Query("SELECT * FROM topic ORDER BY name ASC")
+    fun getAllTopics(): Flow<List<Topic>>
+
+    @Query("SELECT * FROM topic WHERE id = :id")
+    suspend fun getTopicById(id: String): Topic?
 }

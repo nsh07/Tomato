@@ -18,12 +18,16 @@
 package org.nsh07.pomodoro.di
 
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import androidx.sqlite.execSQL
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.databasesDir
 import io.github.vinceglb.filekit.path
@@ -39,11 +43,14 @@ import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.data.AppDatabase
 import org.nsh07.pomodoro.data.AppPreferenceRepository
 import org.nsh07.pomodoro.data.AppStatRepository
+import org.nsh07.pomodoro.data.AppTopicRepository
 import org.nsh07.pomodoro.data.BackupRestoreManager
 import org.nsh07.pomodoro.data.DesktopBackupRestoreManager
+import org.nsh07.pomodoro.data.MIGRATION_2_3
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
+import org.nsh07.pomodoro.data.TopicRepository
 import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.service.TimerManager
 import org.nsh07.pomodoro.timer.DesktopTimerHelper
@@ -58,6 +65,7 @@ val dbModule = module {
     single<AppDatabase> { create(::createDatabase) }
     single { get<AppDatabase>().preferenceDao() }
     single { get<AppDatabase>().statDao() }
+    single { get<AppDatabase>().topicDao() }
     single { get<AppDatabase>().systemDao() }
 }
 
@@ -79,6 +87,7 @@ val servicesModule = module {
 
     single<AppInfo> { create(::createAppInfo) }
     single<AppStatRepository>() bind StatRepository::class
+    single<AppTopicRepository>() bind TopicRepository::class
     single<AppPreferenceRepository>() bind PreferenceRepository::class
     single<StateRepository>()
     single<DesktopTimerHelper>() bind TimerHelper::class
@@ -107,6 +116,29 @@ private fun createDatabase(): AppDatabase {
         .databaseBuilder<AppDatabase>(name = dbFile.absolutePath)
         .setDriver(BundledSQLiteDriver())
         .setQueryCoroutineContext(Dispatchers.IO)
+        .addMigrations(MIGRATION_2_3)
+        .addCallback(object : RoomDatabase.Callback() {
+            override fun onCreate(connection: SQLiteConnection) {
+                super.onCreate(connection)
+                connection.execSQL(
+                    """
+                    INSERT OR IGNORE INTO `topic` 
+                        (`id`, `name`, `color`, `focusTime`, `shortBreakTime`, `longBreakTime`, `sessionLength`, `autoStartNextSession`, `dndEnabled`)
+                    VALUES (
+                        'default', 
+                        'Default', 
+                        ${Color.White.value.toLong()}, 
+                        (SELECT value FROM int_preference WHERE key = 'focus_time'),
+                        (SELECT value FROM int_preference WHERE key = 'short_break_time'),
+                        (SELECT value FROM int_preference WHERE key = 'long_break_time'),
+                        (SELECT value FROM int_preference WHERE key = 'session_length'),
+                        (SELECT value FROM boolean_preference WHERE key = 'autostart_next_session'),
+                        (SELECT value FROM boolean_preference WHERE key = 'dnd_enabled')
+                    )
+                    """.trimIndent()
+                )
+            }
+        })
         .build()
 }
 

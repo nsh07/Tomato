@@ -29,23 +29,39 @@ interface StatDao {
     @Insert(onConflict = REPLACE)
     suspend fun insertStat(stat: Stat)
 
-    @Query("UPDATE stat SET focusTimeQ1 = focusTimeQ1 + :focusTime WHERE date = :date")
-    suspend fun addFocusTimeQ1(date: LocalDate, focusTime: Long)
+    @Query("UPDATE stat SET focusTimeQ1 = focusTimeQ1 + :focusTime WHERE date = :date AND topicId = :topicId")
+    suspend fun addFocusTimeQ1(date: LocalDate, topicId: String, focusTime: Long)
 
-    @Query("UPDATE stat SET focusTimeQ2 = focusTimeQ2 + :focusTime WHERE date = :date")
-    suspend fun addFocusTimeQ2(date: LocalDate, focusTime: Long)
+    @Query("UPDATE stat SET focusTimeQ2 = focusTimeQ2 + :focusTime WHERE date = :date AND topicId = :topicId")
+    suspend fun addFocusTimeQ2(date: LocalDate, topicId: String, focusTime: Long)
 
-    @Query("UPDATE stat SET focusTimeQ3 = focusTimeQ3 + :focusTime WHERE date = :date")
-    suspend fun addFocusTimeQ3(date: LocalDate, focusTime: Long)
+    @Query("UPDATE stat SET focusTimeQ3 = focusTimeQ3 + :focusTime WHERE date = :date AND topicId = :topicId")
+    suspend fun addFocusTimeQ3(date: LocalDate, topicId: String, focusTime: Long)
 
-    @Query("UPDATE stat SET focusTimeQ4 = focusTimeQ4 + :focusTime WHERE date = :date")
-    suspend fun addFocusTimeQ4(date: LocalDate, focusTime: Long)
+    @Query("UPDATE stat SET focusTimeQ4 = focusTimeQ4 + :focusTime WHERE date = :date AND topicId = :topicId")
+    suspend fun addFocusTimeQ4(date: LocalDate, topicId: String, focusTime: Long)
 
-    @Query("UPDATE stat SET breakTime = breakTime + :breakTime WHERE date = :date")
-    suspend fun addBreakTime(date: LocalDate, breakTime: Long)
+    @Query("UPDATE stat SET breakTime = breakTime + :breakTime WHERE date = :date AND topicId = :topicId")
+    suspend fun addBreakTime(date: LocalDate, topicId: String, breakTime: Long)
+
+    @Query(
+        """
+        SELECT 
+            date,
+            'merged' as topicId,
+            SUM(focusTimeQ1) as focusTimeQ1,
+            SUM(focusTimeQ2) as focusTimeQ2,
+            SUM(focusTimeQ3) as focusTimeQ3,
+            SUM(focusTimeQ4) as focusTimeQ4, 
+            SUM(breakTime) as breakTime
+        FROM stat WHERE date = :date
+        GROUP BY date
+        """
+    )
+    fun getStat(date: LocalDate): Flow<Stat?>
 
     @Query("SELECT * FROM stat WHERE date = :date")
-    fun getStat(date: LocalDate): Flow<Stat?>
+    fun getStatsByDate(date: LocalDate): Flow<List<Stat>>
 
     @Query("SELECT * FROM stat ORDER BY date DESC LIMIT :n")
     fun getLastNDaysStats(n: Int): Flow<List<Stat>>
@@ -58,21 +74,29 @@ interface StatDao {
                 "    CAST(AVG(focusTimeQ4) AS INTEGER) AS focusTimeQ4," +
                 "    CAST(AVG(breakTime) AS INTEGER) AS breakTime " +
                 "FROM (" +
-                "    SELECT * FROM stat" +
-                "    ORDER BY date DESC" +
+                "    SELECT " +
+                "        date, " +
+                "        SUM(focusTimeQ1) as focusTimeQ1, " +
+                "        SUM(focusTimeQ2) as focusTimeQ2, " +
+                "        SUM(focusTimeQ3) as focusTimeQ3, " +
+                "        SUM(focusTimeQ4) as focusTimeQ4, " +
+                "        SUM(breakTime) as breakTime " +
+                "    FROM stat " +
+                "    GROUP BY date " +
+                "    ORDER BY date DESC " +
                 "    LIMIT :n" +
-                ")" +
+                ") " +
                 "WHERE focusTimeQ1 > 0 OR focusTimeQ2 > 0 OR focusTimeQ3 > 0 OR focusTimeQ4 > 0"
     )
     fun getLastNDaysAvgStats(n: Int): Flow<StatTime?>
 
-    @Query("SELECT EXISTS (SELECT * FROM stat WHERE date = :date)")
-    suspend fun statExists(date: LocalDate): Boolean
+    @Query("SELECT EXISTS (SELECT * FROM stat WHERE date = :date AND topicId = :topicId)")
+    suspend fun statExists(date: LocalDate, topicId: String): Boolean
 
     @Query("SELECT date FROM stat ORDER BY date DESC LIMIT 1")
     suspend fun getLastDate(): LocalDate?
 
-    @Query("SELECT SUM(focusTimeQ1 + focusTimeQ2 + focusTimeQ3 + focusTimeQ4) FROM STAT")
+    @Query("SELECT SUM(focusTimeQ1 + focusTimeQ2 + focusTimeQ3 + focusTimeQ4) FROM stat")
     fun getAllTimeTotalFocusTime(): Flow<Long?>
 
     @Query("DELETE FROM stat")

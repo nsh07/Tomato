@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.room.TypeConverter
 import java.time.LocalDate
 
-class LocalDateConverter {
+object LocalDateConverter {
     @TypeConverter
     fun localDateToString(localDate: LocalDate?): String? {
         return localDate?.toString()
@@ -33,7 +33,7 @@ class LocalDateConverter {
     }
 }
 
-class ComposeColorConverter {
+object ComposeColorConverter {
     @TypeConverter
     fun fromColor(color: Color): Long {
         return color.value.toLong()

@@ -26,7 +26,7 @@ import org.nsh07.pomodoro.utils.getDefaultAlarmTone
 @Immutable
 data class SettingsState(
     val theme: String = "auto",
-    val colorScheme: String = Color.White.toString(),
+    val colorScheme: Color = Color.White,
     val blackTheme: Boolean = false,
     val aodEnabled: Boolean = false,
     val alarmEnabled: Boolean = true,

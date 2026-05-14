@@ -279,9 +279,9 @@ class SettingsViewModel(
     private fun saveColorScheme(colorScheme: Color) {
         viewModelScope.launch {
             _settingsState.update { currentState ->
-                currentState.copy(colorScheme = colorScheme.toString())
+                currentState.copy(colorScheme = colorScheme)
             }
-            preferenceRepository.saveStringPreference("color_scheme", colorScheme.toString())
+            preferenceRepository.saveColorPreference("color_scheme", colorScheme)
         }
     }
 

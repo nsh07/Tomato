@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.data
 
+import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -42,6 +43,8 @@ interface PreferenceRepository {
      */
     suspend fun saveStringPreference(key: String, value: String): String
 
+    suspend fun saveColorPreference(key: String, value: Color): Color
+
     /**
      * Retrieves an integer preference key-value pair from the database.
      */
@@ -61,6 +64,8 @@ interface PreferenceRepository {
      * Retrieves a string preference key-value pair from the database.
      */
     suspend fun getStringPreference(key: String): String?
+
+    suspend fun getColorPreference(key: String): Color?
 
     /**
      * Retrieves a string preference key-value pair as a flow from the database.
@@ -83,7 +88,7 @@ class AppPreferenceRepository(
 ) : PreferenceRepository {
     override suspend fun saveIntPreference(key: String, value: Int): Int =
         withContext(ioDispatcher) {
-            preferenceDao.insertIntPreference(IntPreference(key, value))
+            preferenceDao.insertIntPreference(IntPreference(key, value.toLong()))
             value
         }
 
@@ -99,8 +104,19 @@ class AppPreferenceRepository(
             value
         }
 
+    override suspend fun saveColorPreference(key: String, value: Color): Color =
+        withContext(ioDispatcher) {
+            preferenceDao.insertIntPreference(
+                IntPreference(
+                    key,
+                    ComposeColorConverter.fromColor(value)
+                )
+            )
+            value
+        }
+
     override suspend fun getIntPreference(key: String): Int? = withContext(ioDispatcher) {
-        preferenceDao.getIntPreference(key)
+        preferenceDao.getIntPreference(key)?.toInt()
     }
 
     override suspend fun getBooleanPreference(key: String): Boolean? = withContext(ioDispatcher) {
@@ -112,6 +128,10 @@ class AppPreferenceRepository(
 
     override suspend fun getStringPreference(key: String): String? = withContext(ioDispatcher) {
         preferenceDao.getStringPreference(key)
+    }
+
+    override suspend fun getColorPreference(key: String): Color? = withContext(ioDispatcher) {
+        preferenceDao.getIntPreference(key)?.let { ComposeColorConverter.toColor(it) }
     }
 
     override fun getStringPreferenceFlow(key: String): Flow<String> =

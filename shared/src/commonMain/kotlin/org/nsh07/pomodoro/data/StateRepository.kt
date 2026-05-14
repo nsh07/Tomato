@@ -91,8 +91,8 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
 
         val theme = preferenceRepository.getStringPreference("theme")
             ?: preferenceRepository.saveStringPreference("theme", defaults.theme)
-        val colorSchemeStr = preferenceRepository.getStringPreference("color_scheme")
-            ?: preferenceRepository.saveStringPreference("color_scheme", defaults.colorScheme)
+        val colorScheme = preferenceRepository.getColorPreference("color_scheme")
+            ?: preferenceRepository.saveColorPreference("color_scheme", defaults.colorScheme)
         val blackTheme = preferenceRepository.getBooleanPreference("black_theme")
             ?: preferenceRepository.saveBooleanPreference("black_theme", defaults.blackTheme)
         val aodEnabled = preferenceRepository.getBooleanPreference("aod_enabled")
@@ -161,7 +161,7 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
                 focusGoal = focusGoal,
                 sessionLength = sessionLength,
                 theme = theme,
-                colorScheme = colorSchemeStr,
+                colorScheme = colorScheme,
                 alarmSoundUri = alarmSoundUri,
                 blackTheme = blackTheme,
                 aodEnabled = aodEnabled,

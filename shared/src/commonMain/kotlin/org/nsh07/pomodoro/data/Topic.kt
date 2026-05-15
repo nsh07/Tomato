@@ -17,7 +17,10 @@
 
 package org.nsh07.pomodoro.data
 
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.ui.graphics.Color
+import androidx.graphics.shapes.RoundedPolygon
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -30,6 +33,7 @@ data class Topic(
     val id: String, // name in lowercase, spaces replaced with underscores
     val name: String,
     val color: Color,
+    val shape: TopicShape,
     val focusTime: Long,
     val shortBreakTime: Long,
     val longBreakTime: Long,
@@ -42,6 +46,7 @@ data class Topic(
             id = "default",
             name = "Default",
             color = Color.White,
+            shape = TopicShape.COOKIE_12_SIDED,
             focusTime = 25 * 60 * 1000L,
             shortBreakTime = 5 * 60 * 1000L,
             longBreakTime = 15 * 60 * 1000L,
@@ -49,5 +54,53 @@ data class Topic(
             autostartNextSession = false,
             dndEnabled = false
         )
+    }
+}
+
+enum class TopicShape {
+    CIRCLE, SQUARE, SLANTED, ARCH, FAN, ARROW, SEMI_CIRCLE, OVAL, PILL, TRIANGLE, DIAMOND,
+    CLAM_SHELL, PENTAGON, GEM, SUNNY, VERY_SUNNY, COOKIE_4_SIDED, COOKIE_6_SIDED, COOKIE_7_SIDED,
+    COOKIE_9_SIDED, COOKIE_12_SIDED, GHOSTISH, CLOVER_4_LEAF, CLOVER_8_LEAF, BURST, SOFT_BURST,
+    BOOM, SOFT_BOOM, FLOWER, PUFFY, PUFFY_DIAMOND, PIXEL_CIRCLE, PIXEL_TRIANGLE, BUN, HEART;
+
+    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
+    fun toRoundedPolygon(): RoundedPolygon {
+        return when (this) {
+            CIRCLE -> MaterialShapes.Circle
+            SQUARE -> MaterialShapes.Square
+            SLANTED -> MaterialShapes.Slanted
+            ARCH -> MaterialShapes.Arch
+            FAN -> MaterialShapes.Fan
+            ARROW -> MaterialShapes.Arrow
+            SEMI_CIRCLE -> MaterialShapes.SemiCircle
+            OVAL -> MaterialShapes.Oval
+            PILL -> MaterialShapes.Pill
+            TRIANGLE -> MaterialShapes.Triangle
+            DIAMOND -> MaterialShapes.Diamond
+            CLAM_SHELL -> MaterialShapes.ClamShell
+            PENTAGON -> MaterialShapes.Pentagon
+            GEM -> MaterialShapes.Gem
+            SUNNY -> MaterialShapes.Sunny
+            VERY_SUNNY -> MaterialShapes.VerySunny
+            COOKIE_4_SIDED -> MaterialShapes.Cookie4Sided
+            COOKIE_6_SIDED -> MaterialShapes.Cookie6Sided
+            COOKIE_7_SIDED -> MaterialShapes.Cookie7Sided
+            COOKIE_9_SIDED -> MaterialShapes.Cookie9Sided
+            COOKIE_12_SIDED -> MaterialShapes.Cookie12Sided
+            GHOSTISH -> MaterialShapes.Ghostish
+            CLOVER_4_LEAF -> MaterialShapes.Clover4Leaf
+            CLOVER_8_LEAF -> MaterialShapes.Clover8Leaf
+            BURST -> MaterialShapes.Burst
+            SOFT_BURST -> MaterialShapes.SoftBurst
+            BOOM -> MaterialShapes.Boom
+            SOFT_BOOM -> MaterialShapes.SoftBoom
+            FLOWER -> MaterialShapes.Flower
+            PUFFY -> MaterialShapes.Puffy
+            PUFFY_DIAMOND -> MaterialShapes.PuffyDiamond
+            PIXEL_CIRCLE -> MaterialShapes.PixelCircle
+            PIXEL_TRIANGLE -> MaterialShapes.PixelTriangle
+            BUN -> MaterialShapes.Bun
+            HEART -> MaterialShapes.Heart
+        }
     }
 }

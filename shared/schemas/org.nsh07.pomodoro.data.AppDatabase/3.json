@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "86eab7e1fb91eac37023656f365d0a82",
+    "identityHash": "70186f81b432ac30b2e29038e8c5ba85",
     "entities": [
       {
         "tableName": "int_preference",
@@ -157,7 +157,7 @@
       },
       {
         "tableName": "topic",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `color` INTEGER NOT NULL, `focusTime` INTEGER NOT NULL, `shortBreakTime` INTEGER NOT NULL, `longBreakTime` INTEGER NOT NULL, `sessionLength` INTEGER NOT NULL, `autostartNextSession` INTEGER NOT NULL, `dndEnabled` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `color` INTEGER NOT NULL, `shape` TEXT NOT NULL, `focusTime` INTEGER NOT NULL, `shortBreakTime` INTEGER NOT NULL, `longBreakTime` INTEGER NOT NULL, `sessionLength` INTEGER NOT NULL, `autostartNextSession` INTEGER NOT NULL, `dndEnabled` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -175,6 +175,12 @@
             "fieldPath": "color",
             "columnName": "color",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shape",
+            "columnName": "shape",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -224,7 +230,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '86eab7e1fb91eac37023656f365d0a82')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '70186f81b432ac30b2e29038e8c5ba85')"
     ]
   }
 }

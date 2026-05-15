@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.room.migration.Migration
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
+import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 
 val MIGRATION_2_3 = object : Migration(2, 3) {
     override fun migrate(connection: SQLiteConnection) {
@@ -29,7 +30,8 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
             CREATE TABLE IF NOT EXISTS `topic` (
                 `id` TEXT NOT NULL, 
                 `name` TEXT NOT NULL, 
-                `color` INTEGER NOT NULL, 
+                `color` INTEGER NOT NULL,
+                `shape` TEXT NOT NULL,
                 `focusTime` INTEGER NOT NULL, 
                 `shortBreakTime` INTEGER NOT NULL, 
                 `longBreakTime` INTEGER NOT NULL, 
@@ -45,11 +47,12 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
         connection.execSQL(
             """
             INSERT OR IGNORE INTO `topic` 
-                (`id`, `name`, `color`, `focusTime`, `shortBreakTime`, `longBreakTime`, `sessionLength`, `autostartNextSession`, `dndEnabled`)
+                (`id`, `name`, `color`, `shape`, `focusTime`, `shortBreakTime`, `longBreakTime`, `sessionLength`, `autostartNextSession`, `dndEnabled`)
             VALUES (
                 'default', 
                 'Default', 
-                ${Color.White.value.toLong()}, 
+                ${Color.White.value.toLong()},
+                '${defaultTopic.shape.name}',
                 COALESCE((SELECT value FROM int_preference WHERE key = 'focus_time'), 1500000),
                 COALESCE((SELECT value FROM int_preference WHERE key = 'short_break_time'), 300000),
                 COALESCE((SELECT value FROM int_preference WHERE key = 'long_break_time'), 900000),

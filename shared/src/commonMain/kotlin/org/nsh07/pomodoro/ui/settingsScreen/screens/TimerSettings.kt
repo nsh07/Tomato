@@ -120,7 +120,6 @@ import org.nsh07.pomodoro.ui.topBarWindowInsets
 import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import tomato.shared.generated.resources.Res
-import tomato.shared.generated.resources.add
 import tomato.shared.generated.resources.always_on_display
 import tomato.shared.generated.resources.always_on_display_desc
 import tomato.shared.generated.resources.aod
@@ -136,13 +135,13 @@ import tomato.shared.generated.resources.clocks
 import tomato.shared.generated.resources.daily_focus_goal
 import tomato.shared.generated.resources.dnd
 import tomato.shared.generated.resources.dnd_desc
-import tomato.shared.generated.resources.edit
 import tomato.shared.generated.resources.flag
 import tomato.shared.generated.resources.focus
 import tomato.shared.generated.resources.hours_and_minutes_format
 import tomato.shared.generated.resources.info
 import tomato.shared.generated.resources.long_break
 import tomato.shared.generated.resources.mobile_lock_portrait
+import tomato.shared.generated.resources.new_label
 import tomato.shared.generated.resources.pomodoro_info
 import tomato.shared.generated.resources.secure_aod
 import tomato.shared.generated.resources.secure_aod_desc
@@ -289,23 +288,16 @@ fun TimerSettings(
                                 SplitButtonDefaults.LeadingButton(
                                     onClick = {},
                                     content = {
-                                        Icon(painterResource(Res.drawable.edit), null)
-                                        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
                                         AnimatedContent(editingTopic.name) { Text(it) }
                                     },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = buttonColor,
-//                                        contentColor = contentColorFor(buttonColor)
-                                    )
+                                    colors = ButtonDefaults.buttonColors(containerColor = buttonColor)
                                 )
                             },
                             trailingButton = {
                                 SplitButtonDefaults.TrailingButton(
                                     checked = expanded,
                                     onCheckedChange = { expanded = it },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = buttonColor
-                                    )
+                                    colors = ButtonDefaults.buttonColors(containerColor = buttonColor)
                                 ) {
                                     val rotation: Float by animateFloatAsState(
                                         targetValue = if (expanded) 180f else 0f,
@@ -341,6 +333,12 @@ fun TimerSettings(
                                                 onAction(SettingsAction.SetEditingTopic(topic))
                                             },
                                             text = { Text(topic.name) },
+//                                            leadingIcon = {
+//                                                Icon(
+//                                                    painterResource(Res.drawable.label),
+//                                                    null
+//                                                )
+//                                            },
                                             shapes = MenuDefaults.itemShape(index, topics.size),
                                             colors = MenuDefaults.selectableItemVibrantColors()
                                         )
@@ -361,7 +359,7 @@ fun TimerSettings(
                                         text = { Text("Add new topic") },
                                         leadingIcon = {
                                             Icon(
-                                                painterResource(Res.drawable.add),
+                                                painterResource(Res.drawable.new_label),
                                                 null
                                             )
                                         },

@@ -153,4 +153,5 @@
     <string name="settings_infinite_focus_tip">Long press the timer clock to enable infinite focus mode</string>
     <string name="cancel">Cancel</string>
     <string name="advanced">Advanced</string>
+    <string name="topics">Topics</string>
 </resources>

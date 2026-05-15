@@ -50,6 +50,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.SettingsMainScreen
 import org.nsh07.pomodoro.ui.settingsScreen.screens.TimerSettings
+import org.nsh07.pomodoro.ui.settingsScreen.screens.TopicsSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.BackupRestoreScreen
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
@@ -201,6 +202,12 @@ fun SettingsScreenRoot(
                     onBack = backStack::onBack,
                     modifier = modifier,
                 )
+            }
+
+            entry<Screen.Settings.Topics>(
+                metadata = detailPane()
+            ) {
+                TopicsSettings()
             }
         },
         modifier = Modifier.background(topBarColors.containerColor)

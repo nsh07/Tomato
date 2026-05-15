@@ -124,7 +124,7 @@ private fun createDatabase(): AppDatabase {
                 connection.execSQL(
                     """
                     INSERT OR IGNORE INTO `topic` 
-                        (`id`, `name`, `color`, `focusTime`, `shortBreakTime`, `longBreakTime`, `sessionLength`, `autoStartNextSession`, `dndEnabled`)
+                        (`id`, `name`, `color`, `focusTime`, `shortBreakTime`, `longBreakTime`, `sessionLength`, `autostartNextSession`, `dndEnabled`)
                     VALUES (
                         'default', 
                         'Default', 

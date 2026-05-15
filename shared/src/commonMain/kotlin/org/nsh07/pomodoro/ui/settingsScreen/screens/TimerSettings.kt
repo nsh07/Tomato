@@ -19,7 +19,9 @@ package org.nsh07.pomodoro.ui.settingsScreen.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -42,6 +44,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuGroup
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
@@ -51,12 +57,16 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderState
+import androidx.compose.material3.SplitButtonDefaults
+import androidx.compose.material3.SplitButtonLayout
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -72,14 +82,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEachIndexed
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
+import com.materialkolor.ktx.harmonize
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.data.Topic
+import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.rememberRequestDndPermissionCallback
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
@@ -99,14 +115,17 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.topBarWindowInsets
 import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.add
 import tomato.shared.generated.resources.always_on_display
 import tomato.shared.generated.resources.always_on_display_desc
 import tomato.shared.generated.resources.aod
 import tomato.shared.generated.resources.arrow_back
+import tomato.shared.generated.resources.arrow_down
 import tomato.shared.generated.resources.auto_start_next_timer
 import tomato.shared.generated.resources.auto_start_next_timer_desc
 import tomato.shared.generated.resources.autoplay
@@ -117,6 +136,7 @@ import tomato.shared.generated.resources.clocks
 import tomato.shared.generated.resources.daily_focus_goal
 import tomato.shared.generated.resources.dnd
 import tomato.shared.generated.resources.dnd_desc
+import tomato.shared.generated.resources.edit
 import tomato.shared.generated.resources.flag
 import tomato.shared.generated.resources.focus
 import tomato.shared.generated.resources.hours_and_minutes_format
@@ -148,12 +168,15 @@ fun TimerSettings(
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
     sessionsSliderState: SliderState,
+    topics: List<Topic>,
+    editingTopic: Topic,
     onAction: (SettingsAction) -> Unit,
     setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val colorScheme = colorScheme
 
     val widthExpanded = currentWindowAdaptiveInfo()
         .windowSizeClass
@@ -162,9 +185,9 @@ fun TimerSettings(
     val requestDndPermissionCallback = rememberRequestDndPermissionCallback()
 
     val switchItems = remember(
-        settingsState.dndEnabled,
+        editingTopic.dndEnabled,
         settingsState.aodEnabled,
-        settingsState.autostartNextSession,
+        editingTopic.autostartNextSession,
         settingsState.secureAod,
         isPlus,
         serviceRunning
@@ -172,14 +195,14 @@ fun TimerSettings(
         listOf(
             listOf(
                 SettingsSwitchItem(
-                    checked = settingsState.autostartNextSession,
+                    checked = editingTopic.autostartNextSession,
                     icon = Res.drawable.autoplay,
                     label = Res.string.auto_start_next_timer,
                     description = Res.string.auto_start_next_timer_desc,
                     onClick = { onAction(SettingsAction.SaveAutostartNextSession(it)) }
                 ),
                 SettingsSwitchItem(
-                    checked = settingsState.dndEnabled,
+                    checked = editingTopic.dndEnabled,
                     enabled = !serviceRunning,
                     icon = Res.drawable.dnd,
                     label = Res.string.dnd,
@@ -248,6 +271,106 @@ fun TimerSettings(
 
                                 )
                             }
+                    },
+                    actions = {
+                        var expanded by remember { mutableStateOf(false) }
+                        val buttonColor by animateColorAsState(
+                            editingTopic.color.let {
+                                if (it != Color.White) {
+                                    it.harmonize(
+                                        colorScheme.primary,
+                                        true
+                                    )
+                                } else colorScheme.primary
+                            }
+                        )
+                        SplitButtonLayout(
+                            leadingButton = {
+                                SplitButtonDefaults.LeadingButton(
+                                    onClick = {},
+                                    content = {
+                                        Icon(painterResource(Res.drawable.edit), null)
+                                        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                                        AnimatedContent(editingTopic.name) { Text(it) }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = buttonColor,
+//                                        contentColor = contentColorFor(buttonColor)
+                                    )
+                                )
+                            },
+                            trailingButton = {
+                                SplitButtonDefaults.TrailingButton(
+                                    checked = expanded,
+                                    onCheckedChange = { expanded = it },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = buttonColor
+                                    )
+                                ) {
+                                    val rotation: Float by animateFloatAsState(
+                                        targetValue = if (expanded) 180f else 0f,
+                                        label = "Trailing Icon Rotation"
+                                    )
+                                    Icon(
+                                        painterResource(Res.drawable.arrow_down),
+                                        modifier =
+                                            Modifier.size(SplitButtonDefaults.TrailingIconSize)
+                                                .graphicsLayer {
+                                                    this.rotationZ = rotation
+                                                },
+                                        contentDescription = null
+                                    )
+                                }
+                            }
+                        )
+
+                        DropdownMenuPopup(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuGroup(
+                                shapes = MenuDefaults.groupShape(0, 2),
+                                containerColor = MenuDefaults.groupVibrantContainerColor
+                            ) {
+                                topics.fastForEachIndexed { index, topic ->
+                                    Box {
+                                        DropdownMenuItem(
+                                            checked = topic.id == editingTopic.id,
+                                            onCheckedChange = {
+                                                expanded = false
+                                                onAction(SettingsAction.SetEditingTopic(topic))
+                                            },
+                                            text = { Text(topic.name) },
+                                            shapes = MenuDefaults.itemShape(index, topics.size),
+                                            colors = MenuDefaults.selectableItemVibrantColors()
+                                        )
+                                    }
+                                }
+                            }
+
+                            Spacer(Modifier.height(MenuDefaults.GroupSpacing))
+
+                            DropdownMenuGroup(
+                                shapes = MenuDefaults.groupShape(1, 2),
+                                containerColor = MenuDefaults.groupVibrantContainerColor
+                            ) {
+                                MaterialShapes.Bun
+                                Box {
+                                    DropdownMenuItem(
+                                        onClick = {},
+                                        text = { Text("Add new topic") },
+                                        leadingIcon = {
+                                            Icon(
+                                                painterResource(Res.drawable.add),
+                                                null
+                                            )
+                                        },
+                                        shape = MenuDefaults.trailingItemShape,
+                                        colors = MenuDefaults.selectableItemVibrantColors()
+                                    )
+                                }
+                            }
+                        }
                     },
                     colors = barColors,
                     scrollBehavior = scrollBehavior
@@ -656,17 +779,26 @@ private fun TimerSettingsPreview() {
         valueRange = 1f..10f,
         steps = 8
     )
-    TimerSettings(
-        isPlus = false,
-        serviceRunning = false,
-        settingsState = remember { SettingsState() },
-        contentPadding = PaddingValues(),
-        focusTimeInputFieldState = focusTimeInputFieldState,
-        shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
-        longBreakTimeInputFieldState = longBreakTimeInputFieldState,
-        sessionsSliderState = sessionsSliderState,
-        onAction = {},
-        setShowPaywall = {},
-        onBack = {}
-    )
+    TomatoTheme(dynamicColor = false) {
+        TimerSettings(
+            isPlus = false,
+            serviceRunning = false,
+            settingsState = remember { SettingsState() },
+            contentPadding = PaddingValues(),
+            focusTimeInputFieldState = focusTimeInputFieldState,
+            shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
+            longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+            sessionsSliderState = sessionsSliderState,
+            topics = listOf(
+                defaultTopic,
+                defaultTopic.copy(id = "physics", name = "Physics"),
+                defaultTopic.copy(id = "math", name = "Math"),
+                defaultTopic.copy(id = "chemistry", name = "Chemistry")
+            ),
+            editingTopic = defaultTopic.copy(id = "math", name = "Math"),
+            onAction = {},
+            setShowPaywall = {},
+            onBack = {}
+        )
+    }
 }

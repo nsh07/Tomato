@@ -182,6 +182,9 @@ fun SettingsScreenRoot(
             entry<Screen.Settings.Timer>(
                 metadata = detailPane()
             ) {
+                val topics by viewModel.allTopics.collectAsStateWithLifecycle()
+                val editingTopic by viewModel.editingTopic.collectAsStateWithLifecycle()
+
                 TimerSettings(
                     isPlus = isPlus,
                     serviceRunning = serviceRunning,
@@ -191,6 +194,8 @@ fun SettingsScreenRoot(
                     shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                     longBreakTimeInputFieldState = longBreakTimeInputFieldState,
                     sessionsSliderState = sessionsSliderState,
+                    topics = topics,
+                    editingTopic = editingTopic,
                     onAction = viewModel::onAction,
                     setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,

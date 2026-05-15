@@ -34,7 +34,7 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
                 `shortBreakTime` INTEGER NOT NULL, 
                 `longBreakTime` INTEGER NOT NULL, 
                 `sessionLength` INTEGER NOT NULL, 
-                `autoStartNextSession` INTEGER NOT NULL, 
+                `autostartNextSession` INTEGER NOT NULL, 
                 `dndEnabled` INTEGER NOT NULL, 
                 PRIMARY KEY(`id`)
             )
@@ -45,7 +45,7 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
         connection.execSQL(
             """
             INSERT OR IGNORE INTO `topic` 
-                (`id`, `name`, `color`, `focusTime`, `shortBreakTime`, `longBreakTime`, `sessionLength`, `autoStartNextSession`, `dndEnabled`)
+                (`id`, `name`, `color`, `focusTime`, `shortBreakTime`, `longBreakTime`, `sessionLength`, `autostartNextSession`, `dndEnabled`)
             VALUES (
                 'default', 
                 'Default', 

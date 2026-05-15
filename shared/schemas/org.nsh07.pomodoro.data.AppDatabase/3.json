@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "7efb7aa0ad0dfb9d9d152b3534f1b498",
+    "identityHash": "86eab7e1fb91eac37023656f365d0a82",
     "entities": [
       {
         "tableName": "int_preference",
@@ -157,7 +157,7 @@
       },
       {
         "tableName": "topic",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `color` INTEGER NOT NULL, `focusTime` INTEGER NOT NULL, `shortBreakTime` INTEGER NOT NULL, `longBreakTime` INTEGER NOT NULL, `sessionLength` INTEGER NOT NULL, `autoStartNextSession` INTEGER NOT NULL, `dndEnabled` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `color` INTEGER NOT NULL, `focusTime` INTEGER NOT NULL, `shortBreakTime` INTEGER NOT NULL, `longBreakTime` INTEGER NOT NULL, `sessionLength` INTEGER NOT NULL, `autostartNextSession` INTEGER NOT NULL, `dndEnabled` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -202,8 +202,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "autoStartNextSession",
-            "columnName": "autoStartNextSession",
+            "fieldPath": "autostartNextSession",
+            "columnName": "autostartNextSession",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -224,7 +224,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7efb7aa0ad0dfb9d9d152b3534f1b498')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '86eab7e1fb91eac37023656f365d0a82')"
     ]
   }
 }

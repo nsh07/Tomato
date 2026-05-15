@@ -24,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.service.TimerStateSnapshot
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -31,10 +32,13 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import org.nsh07.pomodoro.utils.getDefaultAlarmTone
 import org.nsh07.pomodoro.utils.millisecondsToStr
 
-class StateRepository(private val preferenceRepository: PreferenceRepository) {
+class StateRepository(
+    private val preferenceRepository: PreferenceRepository,
+    private val topicRepository: TopicRepository
+) {
     val timerState = MutableStateFlow(TimerState())
     val settingsState = MutableStateFlow(SettingsState())
-    val currentTopicId = MutableStateFlow("default")
+    val currentTopic = MutableStateFlow(defaultTopic)
 
     val time = MutableStateFlow(25 * 60 * 1000L)
     var timerFrequency: Float = 60f
@@ -55,28 +59,7 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
     suspend fun reloadSettings() {
         val defaults = SettingsState()
 
-        val topicId = currentTopicId.value
-
-        // Helper to load setting with topic-specific key
-        suspend fun loadIntSetting(key: String, defaultValue: Int): Int {
-            return preferenceRepository.getIntPreference("${key}_$topicId")
-                ?: preferenceRepository.saveIntPreference("${key}_$topicId", defaultValue)
-        }
-
-        suspend fun loadBooleanSetting(key: String, defaultValue: Boolean): Boolean {
-            return preferenceRepository.getBooleanPreference("${key}_$topicId")
-                ?: preferenceRepository.saveBooleanPreference("${key}_$topicId", defaultValue)
-        }
-
-        val focusTime = loadIntSetting("focus_time", defaults.focusTime.toInt()).toLong()
-        val shortBreakTime =
-            loadIntSetting("short_break_time", defaults.shortBreakTime.toInt()).toLong()
-        val longBreakTime =
-            loadIntSetting("long_break_time", defaults.longBreakTime.toInt()).toLong()
-        val sessionLength = loadIntSetting("session_length", defaults.sessionLength)
-        val dndEnabled = loadBooleanSetting("dnd_enabled", defaults.dndEnabled)
-        val autostartNextSession =
-            loadBooleanSetting("autostart_next_session", defaults.autostartNextSession)
+        currentTopic.update { topicRepository.getTopicById(currentTopic.value.id)!! }
 
         val focusGoal = preferenceRepository.getIntPreference("focus_goal")?.toLong()
             ?: preferenceRepository.saveIntPreference("focus_goal", defaults.focusGoal.toInt())
@@ -147,12 +130,13 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
             )
 
         settingsState.update { currentState ->
+            val topic = currentTopic.value
             currentState.copy(
-                focusTime = focusTime,
-                shortBreakTime = shortBreakTime,
-                longBreakTime = longBreakTime,
+                focusTime = topic.focusTime,
+                shortBreakTime = topic.shortBreakTime,
+                longBreakTime = topic.longBreakTime,
                 focusGoal = focusGoal,
-                sessionLength = sessionLength,
+                sessionLength = topic.sessionLength,
                 theme = theme,
                 colorScheme = colorScheme,
                 alarmSoundUri = alarmSoundUri,
@@ -160,10 +144,10 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
                 aodEnabled = aodEnabled,
                 alarmEnabled = alarmEnabled,
                 vibrateEnabled = vibrateEnabled,
-                dndEnabled = dndEnabled,
+                dndEnabled = topic.dndEnabled,
                 mediaVolumeForAlarm = mediaVolumeForAlarm,
                 singleProgressBar = singleProgressBar,
-                autostartNextSession = autostartNextSession,
+                autostartNextSession = topic.autostartNextSession,
                 secureAod = secureAod,
                 vibrationOnDuration = vibrationOnDuration,
                 vibrationOffDuration = vibrationOffDuration,

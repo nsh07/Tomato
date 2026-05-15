@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
 import androidx.compose.runtime.mutableStateListOf
@@ -76,10 +77,10 @@ class SettingsViewModel(
     private val _settingsState = stateRepository.settingsState
     val settingsState = _settingsState.asStateFlow()
 
-    private val _currentTopicId = stateRepository.currentTopicId
+    private val _currentTopic = stateRepository.currentTopic
 
-    private val _editingTopicId = MutableStateFlow(_currentTopicId.value)
-    val editingTopicId = _editingTopicId.asStateFlow()
+    private val _editingTopic = MutableStateFlow(_currentTopic.value)
+    val editingTopic = _editingTopic.asStateFlow()
 
     val focusTimeTextFieldState by lazy {
         TextFieldState((_settingsState.value.focusTime / 60000).toString())
@@ -99,6 +100,14 @@ class SettingsViewModel(
             onValueChangeFinished = ::updateSessionLength
         )
     }
+
+    val allTopics = topicRepository
+        .getAllTopics()
+        .map { list ->
+            list.sortedBy { it.name }
+        }
+        .flowOn(Dispatchers.IO)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private var focusFlowCollectionJob: Job? = null
     private var shortBreakFlowCollectionJob: Job? = null
@@ -125,14 +134,20 @@ class SettingsViewModel(
             is SettingsAction.SaveVibrationOffDuration -> saveVibrationOffDuration(action.duration)
             is SettingsAction.SaveVibrationAmplitude -> saveVibrationAmplitude(action.amplitude)
 
+            is SettingsAction.SetEditingTopic -> setEditingTopic(action.topic)
+
             is SettingsAction.AskEraseData -> askEraseData()
             is SettingsAction.CancelEraseData -> cancelEraseData()
             is SettingsAction.EraseData -> deleteStats()
         }
     }
 
-    fun setEditingTopicId(topicId: String) {
-        _editingTopicId.value = topicId
+    fun setEditingTopic(topic: Topic) {
+        _editingTopic.update { topic }
+        focusTimeTextFieldState.setTextAndPlaceCursorAtEnd((topic.focusTime / (60 * 1000)).toString())
+        shortBreakTimeTextFieldState.setTextAndPlaceCursorAtEnd((topic.shortBreakTime / (60 * 1000)).toString())
+        longBreakTimeTextFieldState.setTextAndPlaceCursorAtEnd((topic.longBreakTime / (60 * 1000)).toString())
+        sessionsSliderState.value = topic.sessionLength.toFloat()
     }
 
     private fun cancelEraseData() {
@@ -153,23 +168,17 @@ class SettingsViewModel(
 
     private fun updateSessionLength() {
         viewModelScope.launch(Dispatchers.IO) {
-            val topicId = _editingTopicId.value
             val value = sessionsSliderState.value.toInt()
 
-            if (topicId == _currentTopicId.value) {
+            _editingTopic.update { topic -> topic.copy(sessionLength = value) }
+            val topic = _editingTopic.value
+            if (topic.id == _currentTopic.value.id) {
                 _settingsState.update { currentState ->
-                    currentState.copy(
-                        sessionLength = preferenceRepository.saveIntPreference(
-                            "session_length_$topicId",
-                            value
-                        )
-                    )
+                    currentState.copy(sessionLength = value)
                 }
                 refreshTimer()
-            } else {
-                preferenceRepository.saveIntPreference("session_length_$topicId", value)
             }
-            updateTopicInDb(topicId) { it.copy(sessionLength = value) }
+            topicRepository.updateTopic(topic.copy(sessionLength = value))
         }
     }
 
@@ -190,19 +199,17 @@ class SettingsViewModel(
                 .debounce(500)
                 .collect {
                     if (it.isNotEmpty()) {
-                        val topicId = _editingTopicId.value
                         val value = it.toString().toLong() * 60 * 1000
-                        if (topicId == _currentTopicId.value) {
+
+                        _editingTopic.update { topic -> topic.copy(focusTime = value) }
+                        val topic = _editingTopic.value
+                        if (topic.id == _currentTopic.value.id) {
                             _settingsState.update { currentState ->
                                 currentState.copy(focusTime = value)
                             }
                             refreshTimer()
                         }
-                        preferenceRepository.saveIntPreference(
-                            "focus_time_$topicId",
-                            value.toInt()
-                        )
-                        updateTopicInDb(topicId) { t -> t.copy(focusTime = value) }
+                        topicRepository.updateTopic(topic)
                     }
                 }
         }
@@ -211,19 +218,17 @@ class SettingsViewModel(
                 .debounce(500)
                 .collect {
                     if (it.isNotEmpty()) {
-                        val topicId = _editingTopicId.value
                         val value = it.toString().toLong() * 60 * 1000
-                        if (topicId == _currentTopicId.value) {
+
+                        _editingTopic.update { topic -> topic.copy(shortBreakTime = value) }
+                        val topic = _editingTopic.value
+                        if (topic.id == _currentTopic.value.id) {
                             _settingsState.update { currentState ->
                                 currentState.copy(shortBreakTime = value)
                             }
                             refreshTimer()
                         }
-                        preferenceRepository.saveIntPreference(
-                            "short_break_time_$topicId",
-                            value.toInt()
-                        )
-                        updateTopicInDb(topicId) { t -> t.copy(shortBreakTime = value) }
+                        topicRepository.updateTopic(topic)
                     }
                 }
         }
@@ -232,19 +237,17 @@ class SettingsViewModel(
                 .debounce(500)
                 .collect {
                     if (it.isNotEmpty()) {
-                        val topicId = _editingTopicId.value
                         val value = it.toString().toLong() * 60 * 1000
-                        if (topicId == _currentTopicId.value) {
+
+                        _editingTopic.update { topic -> topic.copy(longBreakTime = value) }
+                        val topic = _editingTopic.value
+                        if (topic.id == _currentTopic.value.id) {
                             _settingsState.update { currentState ->
                                 currentState.copy(longBreakTime = value)
                             }
                             refreshTimer()
                         }
-                        preferenceRepository.saveIntPreference(
-                            "long_break_time_$topicId",
-                            value.toInt()
-                        )
-                        updateTopicInDb(topicId) { t -> t.copy(longBreakTime = value) }
+                        topicRepository.updateTopic(topic)
                     }
                 }
         }
@@ -295,14 +298,15 @@ class SettingsViewModel(
 
     private fun saveDndEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            val topicId = _editingTopicId.value
-            if (topicId == _currentTopicId.value) {
+            _editingTopic.update { it.copy(dndEnabled = enabled) }
+
+            val topic = _editingTopic.value
+            if (topic.id == _currentTopic.value.id) {
                 _settingsState.update { currentState ->
                     currentState.copy(dndEnabled = enabled)
                 }
             }
-            preferenceRepository.saveBooleanPreference("dnd_enabled_$topicId", enabled)
-            updateTopicInDb(topicId) { it.copy(dndEnabled = enabled) }
+            topicRepository.updateTopic(topic)
         }
     }
 
@@ -377,17 +381,15 @@ class SettingsViewModel(
 
     private fun saveAutostartNextSession(autostartNextSession: Boolean) {
         viewModelScope.launch {
-            val topicId = _editingTopicId.value
-            if (topicId == _currentTopicId.value) {
+            _editingTopic.update { it.copy(autostartNextSession = autostartNextSession) }
+
+            val topic = _editingTopic.value
+            if (topic.id == _currentTopic.value.id) {
                 _settingsState.update { currentState ->
                     currentState.copy(autostartNextSession = autostartNextSession)
                 }
             }
-            preferenceRepository.saveBooleanPreference(
-                "autostart_next_session_$topicId",
-                autostartNextSession
-            )
-            updateTopicInDb(topicId) { it.copy(autoStartNextSession = autostartNextSession) }
+            topicRepository.updateTopic(topic)
         }
     }
 
@@ -457,12 +459,6 @@ class SettingsViewModel(
                     totalFocusCount = settingsState.sessionLength
                 )
             }
-        }
-    }
-
-    private suspend fun updateTopicInDb(topicId: String, transform: (Topic) -> Topic) {
-        topicRepository.getTopicById(topicId)?.let { topic ->
-            topicRepository.updateTopic(transform(topic))
         }
     }
 }

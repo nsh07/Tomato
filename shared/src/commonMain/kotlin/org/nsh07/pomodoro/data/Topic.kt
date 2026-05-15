@@ -34,7 +34,7 @@ data class Topic(
     val shortBreakTime: Long,
     val longBreakTime: Long,
     val sessionLength: Int,
-    val autoStartNextSession: Boolean,
+    val autostartNextSession: Boolean,
     val dndEnabled: Boolean
 ) {
     companion object {
@@ -46,7 +46,7 @@ data class Topic(
             shortBreakTime = 5 * 60 * 1000L,
             longBreakTime = 15 * 60 * 1000L,
             sessionLength = 4,
-            autoStartNextSession = false,
+            autostartNextSession = false,
             dndEnabled = false
         )
     }

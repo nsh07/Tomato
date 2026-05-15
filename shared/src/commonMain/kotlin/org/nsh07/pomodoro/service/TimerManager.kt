@@ -170,7 +170,7 @@ class TimerManager(
     suspend fun saveTimeToDb() {
         saveLock.withLock {
             val elapsedTime = _timerState.value.totalTime - time
-            val topicId = stateRepository.currentTopicId.value
+            val topicId = stateRepository.currentTopic.value.id
             when (_timerState.value.timerMode) {
                 TimerMode.FOCUS -> statRepository.addFocusTime(
                     topicId,

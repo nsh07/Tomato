@@ -19,6 +19,7 @@ package org.nsh07.pomodoro.ui.statsScreen.viewModel
 
 import androidx.compose.animation.core.spring
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.util.fastMaxBy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -42,6 +43,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
+import org.nsh07.pomodoro.data.Topic
+import org.nsh07.pomodoro.data.TopicRepository
+import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.di.AppInfo
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.utils.OS
@@ -54,6 +58,7 @@ import java.util.Locale
 
 class StatsViewModel(
     private val statRepository: StatRepository,
+    private val topicRepository: TopicRepository,
     private val appInfo: AppInfo,
 ) : ViewModel() {
     val backStack = mutableStateListOf<Screen.Stats>(Screen.Stats.Main)
@@ -289,23 +294,92 @@ class StatsViewModel(
     fun generateSampleData() {
         if (appInfo.debug) {
             viewModelScope.launch {
-                // TODO: add sample data for multiple topics
-                val today = LocalDate.now().plusDays(1)
-                var it = today.minusDays(365)
-
-                while (it.isBefore(today)) {
-                    statRepository.insertStat(
-                        Stat(
-                            it,
-                            "default",
-                            (0..30 * 60 * 1000L).random(),
-                            (1 * 60 * 60 * 1000L..3 * 60 * 60 * 1000L).random(),
-                            (0..3 * 60 * 60 * 1000L).random(),
-                            (0..1 * 60 * 60 * 1000L).random(),
-                            (0..100 * 60 * 1000L).random()
-                        )
+                val sampleTopics = listOf(
+                    Topic.defaultTopic,
+                    Topic.defaultTopic.copy(
+                        id = "work",
+                        name = "Work",
+                        color = Color(0xFF2196F3),
+                        shape = TopicShape.SQUARE
+                    ),
+                    Topic.defaultTopic.copy(
+                        id = "study",
+                        name = "Study",
+                        color = Color(0xFF4CAF50),
+                        shape = TopicShape.TRIANGLE
+                    ),
+                    Topic.defaultTopic.copy(
+                        id = "fitness",
+                        name = "Fitness",
+                        color = Color(0xFFF44336),
+                        shape = TopicShape.CIRCLE
+                    ),
+                    Topic.defaultTopic.copy(
+                        id = "coding",
+                        name = "Coding",
+                        color = Color(0xFF9C27B0),
+                        shape = TopicShape.DIAMOND
+                    ),
+                    Topic.defaultTopic.copy(
+                        id = "reading",
+                        name = "Reading",
+                        color = Color(0xFFFF9800),
+                        shape = TopicShape.PENTAGON
+                    ),
+                    Topic.defaultTopic.copy(
+                        id = "meditation",
+                        name = "Meditation",
+                        color = Color(0xFF00BCD4),
+                        shape = TopicShape.SUNNY
+                    ),
+                    Topic.defaultTopic.copy(
+                        id = "gaming",
+                        name = "Gaming",
+                        color = Color(0xFF795548),
+                        shape = TopicShape.BOOM
+                    ),
+                    Topic.defaultTopic.copy(
+                        id = "chores",
+                        name = "Chores",
+                        color = Color(0xFF607D8B),
+                        shape = TopicShape.FLOWER
+                    ),
+                    Topic.defaultTopic.copy(
+                        id = "music",
+                        name = "Music",
+                        color = Color(0xFFFFE082),
+                        shape = TopicShape.HEART
+                    ),
+                    Topic.defaultTopic.copy(
+                        id = "travel",
+                        name = "Travel",
+                        color = Color(0xFF8BC34A),
+                        shape = TopicShape.PILL
                     )
-                    it = it.plusDays(1)
+                )
+
+                sampleTopics.forEach { topic ->
+                    topicRepository.insertTopic(topic)
+
+                    val today = LocalDate.now().plusDays(1)
+                    var it = today.minusDays(365)
+
+                    while (it.isBefore(today)) {
+                        if ((0..10).random() > 2) {
+                            statRepository.insertStat(
+                                Stat(
+                                    it,
+                                    topic.id,
+                                    (0..30 * 60 * 1000L).random(),
+                                    (1 * 60 * 60 * 1000L..3 * 60 * 60 * 1000L).random(),
+                                    (0..3 * 60 * 60 * 1000L).random(),
+                                    (0..1 * 60 * 60 * 1000L).random(),
+                                    (0..100 * 60 * 1000L).random()
+                                )
+                            )
+                        }
+                        it = it.plusDays(1)
+                    }
                 }
             }
         }

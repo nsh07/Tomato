@@ -19,6 +19,8 @@ package org.nsh07.pomodoro.data
 
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
+import androidx.compose.material3.toShape
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.graphics.shapes.RoundedPolygon
 import androidx.room.Entity
@@ -103,4 +105,8 @@ enum class TopicShape {
             HEART -> MaterialShapes.Heart
         }
     }
+
+    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
+    @Composable
+    fun toShape(startAngle: Int = 0) = this.toRoundedPolygon().toShape(startAngle)
 }

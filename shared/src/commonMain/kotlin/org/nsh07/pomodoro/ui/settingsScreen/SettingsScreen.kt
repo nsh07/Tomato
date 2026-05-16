@@ -207,7 +207,13 @@ fun SettingsScreenRoot(
             entry<Screen.Settings.Topics>(
                 metadata = detailPane()
             ) {
-                TopicsSettings()
+                val topics by viewModel.allTopics.collectAsStateWithLifecycle()
+
+                TopicsSettings(
+                    topics = topics,
+                    contentPadding = contentPadding,
+                    onBack = backStack::onBack
+                )
             }
         },
         modifier = Modifier.background(topBarColors.containerColor)

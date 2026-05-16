@@ -276,10 +276,7 @@ fun TimerSettings(
                         val buttonColor by animateColorAsState(
                             editingTopic.color.let {
                                 if (it != Color.White) {
-                                    it.harmonize(
-                                        colorScheme.primary,
-                                        true
-                                    )
+                                    it.harmonize(colorScheme.primary, true)
                                 } else colorScheme.primary
                             }
                         )

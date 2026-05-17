@@ -208,11 +208,14 @@ fun SettingsScreenRoot(
                 metadata = detailPane()
             ) {
                 val topics by viewModel.allTopics.collectAsStateWithLifecycle()
+                val editingTopic by viewModel.editingTopic.collectAsStateWithLifecycle()
 
                 TopicsSettings(
                     topics = topics,
+                    editingTopic = editingTopic,
                     contentPadding = contentPadding,
-                    onBack = backStack::onBack
+                    onBack = backStack::onBack,
+                    onAction = viewModel::onAction
                 )
             }
         },

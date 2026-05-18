@@ -144,4 +144,7 @@
     <string name="infinite_focus">Concentración infinita</string>
     <string name="settings_infinite_focus_tip">Mantén presionado el reloj del temporizador para activar el modo de concentración infinita</string>
     <string name="cancel">Cancelar</string>
+    <string name="advanced">Avanzado</string>
+    <string name="open_tomato">Abrir Tomato</string>
+    <string name="quit_tomato">Cerrar Tomato</string>
 </resources>

@@ -15,6 +15,8 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:OptIn(ExperimentalFoundationStyleApi::class)
+
 package org.nsh07.pomodoro.ui.settingsScreen.screens
 
 import androidx.compose.animation.SharedTransitionLayout
@@ -31,6 +33,12 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
+import androidx.compose.foundation.style.MutableStyleState
+import androidx.compose.foundation.style.Style
+import androidx.compose.foundation.style.StyleScope
+import androidx.compose.foundation.style.StyleStateKey
+import androidx.compose.foundation.style.styleable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconToggleButton
@@ -88,6 +96,21 @@ import tomato.shared.generated.resources.edit
 import tomato.shared.generated.resources.google_sans_flex
 import tomato.shared.generated.resources.minutes_format
 import tomato.shared.generated.resources.settings
+
+val selectedKey = StyleStateKey(false)
+var MutableStyleState.selected
+    get() = this[selectedKey]
+    set(value) {
+        this[selectedKey] = value
+    }
+
+fun StyleScope.topicSelected(value: Style) {
+    state(selectedKey, value) { key, state -> state[key] }
+}
+
+fun StyleScope.topicUnselected(value: Style) {
+    state(selectedKey, value) { key, state -> !state[key] }
+}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -190,7 +213,12 @@ fun TopicsSettings(
                         .padding(horizontal = 16.dp)
                 ) {
                     itemsIndexed(topics, key = { _, topic -> topic.id }) { index, topic ->
-                        val selected = editingTopic.id == topic.id
+                        val selected = topic.id == editingTopic.id
+                        val shape = topic.shape.toShape()
+
+                        val styleState = remember { MutableStyleState(null) }
+                        styleState.selected = selected
+
                         val primary = remember(topic.color) {
                             topic.color.let {
                                 if (it == Color.White) colorScheme.primary
@@ -256,26 +284,22 @@ fun TopicsSettings(
                                 Box(
                                     contentAlignment = Alignment.Center,
                                     modifier = Modifier
-                                        .padding(vertical = 4.dp)
-                                        .size(72.dp)
-                                        .background(
-                                            animateColorAsState(
-                                                if (!selected) primaryContainer
-                                                else primary
-                                            ).value,
-                                            CircleShape
-                                        )
+                                        .styleable(styleState) {
+                                            externalPaddingVertical(4.dp)
+                                            size(72.dp)
+                                            shape(CircleShape)
+                                            topicSelected { animate { background(primary) } }
+                                            topicUnselected { animate { background(primaryContainer) } }
+                                        }
                                 ) {
                                     Box(
                                         Modifier
-                                            .size(40.dp)
-                                            .background(
-                                                animateColorAsState(
-                                                    if (!selected) primary
-                                                    else onPrimary
-                                                ).value,
-                                                topic.shape.toShape()
-                                            )
+                                            .styleable(styleState) {
+                                                size(40.dp)
+                                                shape(shape)
+                                                topicSelected { animate { background(onPrimary) } }
+                                                topicUnselected { animate { background(primary) } }
+                                            }
                                     )
                                 }
                             },

@@ -213,6 +213,11 @@ fun SettingsScreenRoot(
                 TopicsSettings(
                     topics = topics,
                     editingTopic = editingTopic,
+                    serviceRunning = serviceRunning,
+                    focusTimeInputFieldState = focusTimeInputFieldState,
+                    shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
+                    longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                    sessionsSliderState = sessionsSliderState,
                     contentPadding = contentPadding,
                     onBack = backStack::onBack,
                     onAction = viewModel::onAction

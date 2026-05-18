@@ -19,9 +19,12 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +35,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
 import androidx.compose.foundation.style.MutableStyleState
@@ -39,6 +43,7 @@ import androidx.compose.foundation.style.Style
 import androidx.compose.foundation.style.StyleScope
 import androidx.compose.foundation.style.StyleStateKey
 import androidx.compose.foundation.style.styleable
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconToggleButton
@@ -52,9 +57,11 @@ import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedListItem
+import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -80,6 +87,7 @@ import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.ui.mergePaddingValues
+import org.nsh07.pomodoro.ui.settingsScreen.components.TopicTimerSettings
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
@@ -98,7 +106,8 @@ import tomato.shared.generated.resources.minutes_format
 import tomato.shared.generated.resources.settings
 
 val selectedKey = StyleStateKey(false)
-var MutableStyleState.selected
+
+var MutableStyleState.selected: Boolean
     get() = this[selectedKey]
     set(value) {
         this[selectedKey] = value
@@ -108,15 +117,16 @@ fun StyleScope.topicSelected(value: Style) {
     state(selectedKey, value) { key, state -> state[key] }
 }
 
-fun StyleScope.topicUnselected(value: Style) {
-    state(selectedKey, value) { key, state -> !state[key] }
-}
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TopicsSettings(
     topics: List<Topic>,
     editingTopic: Topic,
+    serviceRunning: Boolean,
+    focusTimeInputFieldState: TextFieldState,
+    shortBreakTimeInputFieldState: TextFieldState,
+    longBreakTimeInputFieldState: TextFieldState,
+    sessionsSliderState: SliderState,
     contentPadding: PaddingValues,
     onBack: () -> Unit,
     onAction: (SettingsAction) -> Unit,
@@ -203,11 +213,13 @@ fun TopicsSettings(
         ) { innerPadding ->
             val insets = mergePaddingValues(innerPadding, contentPadding)
             val minFormat = stringResource(Res.string.minutes_format)
+            val lazyColumnState = rememberLazyListState()
 
             SharedTransitionLayout {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                     contentPadding = insets,
+                    state = lazyColumnState,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 16.dp)
@@ -268,9 +280,7 @@ fun TopicsSettings(
 
                         SegmentedListItem(
                             checked = selected,
-                            onCheckedChange = {
-                                onAction(SettingsAction.SetEditingTopic(topic))
-                            },
+                            onCheckedChange = { onAction(SettingsAction.SetEditingTopic(topic)) },
                             shapes = segmentedListItemShapes(
                                 index,
                                 topics.size
@@ -288,8 +298,8 @@ fun TopicsSettings(
                                             externalPaddingVertical(4.dp)
                                             size(72.dp)
                                             shape(CircleShape)
+                                            background(primaryContainer)
                                             topicSelected { animate { background(primary) } }
-                                            topicUnselected { animate { background(primaryContainer) } }
                                         }
                                 ) {
                                     Box(
@@ -297,8 +307,8 @@ fun TopicsSettings(
                                             .styleable(styleState) {
                                                 size(40.dp)
                                                 shape(shape)
+                                                background(primary)
                                                 topicSelected { animate { background(onPrimary) } }
-                                                topicUnselected { animate { background(primary) } }
                                             }
                                     )
                                 }
@@ -345,6 +355,10 @@ fun TopicsSettings(
                                         modifier = Modifier.size(IconButtonDefaults.mediumIconSize)
                                     )
                                 }
+                            },
+                            modifier = Modifier.styleable(styleState) {
+                                externalPaddingTop(0.dp)
+                                topicSelected { animate { externalPaddingTop(2.dp) } }
                             }
                         ) {
                             Text(
@@ -354,6 +368,23 @@ fun TopicsSettings(
                                     if (!selected) colorScheme.onSurface
                                     else onPrimaryContainer
                                 ).value
+                            )
+                        }
+
+                        AnimatedVisibility(
+                            selected,
+                            enter = expandVertically(motionScheme.slowSpatialSpec()),
+                            exit = shrinkVertically(motionScheme.slowSpatialSpec())
+                        ) {
+                            TopicTimerSettings(
+                                topic = topic,
+                                serviceRunning = serviceRunning,
+                                focusTimeInputFieldState = focusTimeInputFieldState,
+                                shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
+                                longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                                sessionsSliderState = sessionsSliderState,
+                                onAction = onAction,
+                                modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)
                             )
                         }
                     }
@@ -373,6 +404,11 @@ fun TopicsSettingsPreview() {
         TopicsSettings(
             topics = sampleTopics,
             editingTopic = editingTopic,
+            serviceRunning = false,
+            focusTimeInputFieldState = TextFieldState("25"),
+            shortBreakTimeInputFieldState = TextFieldState("5"),
+            longBreakTimeInputFieldState = TextFieldState("15"),
+            sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
             contentPadding = PaddingValues(0.dp),
             onBack = {},
             onAction = { editingTopic = (it as SettingsAction.SetEditingTopic).topic }
@@ -386,10 +422,15 @@ fun TopicsSettingsDarkPreview() {
     var editingTopic by remember {
         mutableStateOf(sampleTopics[5])
     }
-    TomatoTheme(dynamicColor = false, darkTheme = true) {
+    TomatoTheme(darkTheme = true, dynamicColor = false) {
         TopicsSettings(
             topics = sampleTopics,
             editingTopic = editingTopic,
+            serviceRunning = false,
+            focusTimeInputFieldState = TextFieldState("25"),
+            shortBreakTimeInputFieldState = TextFieldState("5"),
+            longBreakTimeInputFieldState = TextFieldState("15"),
+            sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
             contentPadding = PaddingValues(0.dp),
             onBack = {},
             onAction = { editingTopic = (it as SettingsAction.SetEditingTopic).topic }

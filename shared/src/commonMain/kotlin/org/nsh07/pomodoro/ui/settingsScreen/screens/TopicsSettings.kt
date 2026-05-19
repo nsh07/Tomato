@@ -84,7 +84,6 @@ import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.Topic
-import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.components.TopicTimerSettings
@@ -439,65 +438,136 @@ fun TopicsSettingsDarkPreview() {
 }
 
 val sampleTopics = listOf(
-    defaultTopic,
-    defaultTopic.copy(
+    Topic(
+        id = "default",
+        name = "Default",
+        color = Color.White,
+        shape = TopicShape.COOKIE_12_SIDED,
+        focusTime = 25 * 60000L,
+        shortBreakTime = 5 * 60000L,
+        longBreakTime = 15 * 60000L,
+        sessionLength = 4,
+        autostartNextSession = false,
+        dndEnabled = false
+    ),
+    Topic(
         id = "work",
         name = "Work",
         color = Color(0xFF2196F3),
-        shape = TopicShape.SQUARE
+        shape = TopicShape.SQUARE,
+        focusTime = 50 * 60000L,
+        shortBreakTime = 10 * 60000L,
+        longBreakTime = 30 * 60000L,
+        sessionLength = 3,
+        autostartNextSession = true,
+        dndEnabled = true
     ),
-    defaultTopic.copy(
+    Topic(
         id = "study",
         name = "Study",
         color = Color(0xFF4CAF50),
-        shape = TopicShape.TRIANGLE
+        shape = TopicShape.TRIANGLE,
+        focusTime = 45 * 60000L,
+        shortBreakTime = 5 * 60000L,
+        longBreakTime = 20 * 60000L,
+        sessionLength = 4,
+        autostartNextSession = false,
+        dndEnabled = true
     ),
-    defaultTopic.copy(
+    Topic(
         id = "fitness",
         name = "Fitness",
         color = Color(0xFFF44336),
-        shape = TopicShape.CIRCLE
+        shape = TopicShape.CIRCLE,
+        focusTime = 30 * 60000L,
+        shortBreakTime = 2 * 60000L,
+        longBreakTime = 10 * 60000L,
+        sessionLength = 6,
+        autostartNextSession = true,
+        dndEnabled = false
     ),
-    defaultTopic.copy(
+    Topic(
         id = "coding",
         name = "Coding",
         color = Color(0xFF9C27B0),
-        shape = TopicShape.DIAMOND
+        shape = TopicShape.DIAMOND,
+        focusTime = 60 * 60000L,
+        shortBreakTime = 10 * 60000L,
+        longBreakTime = 40 * 60000L,
+        sessionLength = 2,
+        autostartNextSession = false,
+        dndEnabled = true
     ),
-    defaultTopic.copy(
+    Topic(
         id = "reading",
         name = "Reading",
         color = Color(0xFFFF9800),
-        shape = TopicShape.PENTAGON
+        shape = TopicShape.PENTAGON,
+        focusTime = 20 * 60000L,
+        shortBreakTime = 3 * 60000L,
+        longBreakTime = 15 * 60000L,
+        sessionLength = 5,
+        autostartNextSession = true,
+        dndEnabled = false
     ),
-    defaultTopic.copy(
+    Topic(
         id = "meditation",
         name = "Meditation",
         color = Color(0xFF00BCD4),
-        shape = TopicShape.SUNNY
+        shape = TopicShape.SUNNY,
+        focusTime = 15 * 60000L,
+        shortBreakTime = 0,
+        longBreakTime = 0,
+        sessionLength = 1,
+        autostartNextSession = false,
+        dndEnabled = true
     ),
-    defaultTopic.copy(
+    Topic(
         id = "gaming",
         name = "Gaming",
         color = Color(0xFF795548),
-        shape = TopicShape.BOOM
+        shape = TopicShape.BOOM,
+        focusTime = 120 * 60000L,
+        shortBreakTime = 15 * 60000L,
+        longBreakTime = 60 * 60000L,
+        sessionLength = 2,
+        autostartNextSession = false,
+        dndEnabled = false
     ),
-    defaultTopic.copy(
+    Topic(
         id = "chores",
         name = "Chores",
         color = Color(0xFF607D8B),
-        shape = TopicShape.FLOWER
+        shape = TopicShape.FLOWER,
+        focusTime = 10 * 60000L,
+        shortBreakTime = 2 * 60000L,
+        longBreakTime = 5 * 60000L,
+        sessionLength = 10,
+        autostartNextSession = true,
+        dndEnabled = false
     ),
-    defaultTopic.copy(
+    Topic(
         id = "music",
         name = "Music",
         color = Color(0xFFFFE082),
-        shape = TopicShape.HEART
+        shape = TopicShape.HEART,
+        focusTime = 35 * 60000L,
+        shortBreakTime = 5 * 60000L,
+        longBreakTime = 15 * 60000L,
+        sessionLength = 4,
+        autostartNextSession = false,
+        dndEnabled = false
     ),
-    defaultTopic.copy(
+    Topic(
         id = "travel",
         name = "Travel",
         color = Color(0xFF8BC34A),
-        shape = TopicShape.PILL
+        shape = TopicShape.PILL,
+        focusTime = 40 * 60000L,
+        shortBreakTime = 8 * 60000L,
+        longBreakTime = 25 * 60000L,
+        sessionLength = 3,
+        autostartNextSession = true,
+        dndEnabled = true
     )
 )

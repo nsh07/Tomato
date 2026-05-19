@@ -21,7 +21,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -84,6 +83,7 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -96,6 +96,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
@@ -109,6 +110,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
+import com.materialkolor.ktx.harmonize
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -165,21 +167,33 @@ fun SharedTransitionScope.TimerMainPane(
     val motionScheme = motionScheme
     val scope = rememberCoroutineScope()
     val haptic = LocalHapticFeedback.current
+    val defaultTopic = currentTopic.id == "default"
+    val cc = currentTopic.color
 
-    val color by animateColorAsState(
-        if (timerState.timerMode == TimerMode.FOCUS) colorScheme.primary
-        else colorScheme.tertiary,
+    val fraction by animateFloatAsState(
+        targetValue = if (timerState.timerMode == TimerMode.FOCUS) 1f else 0f,
         animationSpec = motionScheme.slowEffectsSpec()
     )
-    val onColor by animateColorAsState(
-        if (timerState.timerMode == TimerMode.FOCUS) colorScheme.onPrimary
-        else colorScheme.onTertiary,
-        animationSpec = motionScheme.slowEffectsSpec()
+
+    val color = lerp(
+        cc.harmonizeIf(colorScheme.tertiary, defaultTopic),
+        cc.harmonizeIf(colorScheme.primary, defaultTopic),
+        fraction
     )
-    val colorContainer by animateColorAsState(
-        if (timerState.timerMode == TimerMode.FOCUS) colorScheme.secondaryContainer
-        else colorScheme.tertiaryContainer,
-        animationSpec = motionScheme.slowEffectsSpec()
+    val onColor = lerp(
+        cc.harmonizeIf(colorScheme.onTertiary, defaultTopic),
+        cc.harmonizeIf(colorScheme.onPrimary, defaultTopic),
+        fraction
+    )
+    val colorContainer = lerp(
+        cc.harmonizeIf(colorScheme.tertiaryContainer, defaultTopic),
+        cc.harmonizeIf(colorScheme.secondaryContainer, defaultTopic),
+        fraction
+    )
+    val onColorContainer = lerp(
+        cc.harmonizeIf(colorScheme.onTertiaryContainer, defaultTopic),
+        cc.harmonizeIf(colorScheme.onSecondaryContainer, defaultTopic),
+        fraction
     )
 
     val clockFontSize by animateFloatAsState(
@@ -244,7 +258,7 @@ fun SharedTransitionScope.TimerMainPane(
                                             fontFamily = LocalAppFonts.current.topBarTitle,
                                             fontSize = 32.sp,
                                             lineHeight = 32.sp,
-                                            color = colorScheme.primary
+                                            color = color
                                         ),
                                         textAlign = TextAlign.Center
                                     )
@@ -256,7 +270,7 @@ fun SharedTransitionScope.TimerMainPane(
                                     fontFamily = LocalAppFonts.current.topBarTitle,
                                     fontSize = 32.sp,
                                     lineHeight = 32.sp,
-                                    color = colorScheme.tertiary
+                                    color = color
                                 ),
                                 textAlign = TextAlign.Center
                             )
@@ -343,7 +357,7 @@ fun SharedTransitionScope.TimerMainPane(
                         Box(
                             Modifier
                                 .size(IconButtonDefaults.largeIconSize)
-                                .background(colorScheme.primary, currentTopic.shape.toShape())
+                                .background(color, currentTopic.shape.toShape())
                         )
                     }
                 },
@@ -607,7 +621,8 @@ fun SharedTransitionScope.TimerMainPane(
                                         }
                                     },
                                     colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                        containerColor = colorContainer
+                                        containerColor = colorContainer,
+                                        contentColor = onColorContainer
                                     ),
                                     shapes = IconButtonDefaults.shapes(),
                                     interactionSource = interactionSources[1],
@@ -647,7 +662,8 @@ fun SharedTransitionScope.TimerMainPane(
                                         haptic.performHapticFeedback(HapticFeedbackType.VirtualKey)
                                     },
                                     colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                        containerColor = colorContainer
+                                        containerColor = colorContainer,
+                                        contentColor = onColorContainer
                                     ),
                                     shapes = IconButtonDefaults.shapes(),
                                     interactionSource = interactionSources[2],
@@ -780,3 +796,7 @@ fun TimerMainPanePreview() {
         }
     }
 }
+
+@Stable
+fun Color.harmonizeIf(other: Color, condition: Boolean, matchSaturation: Boolean = true) =
+    if (!condition) this.harmonize(other, matchSaturation) else other

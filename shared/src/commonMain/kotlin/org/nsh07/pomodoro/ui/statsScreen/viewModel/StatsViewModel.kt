@@ -292,7 +292,7 @@ class StatsViewModel(
     fun generateSampleData() {
         if (appInfo.debug) {
             viewModelScope.launch {
-                sampleTopics.forEach { topic ->
+                sampleTopics.take(5).forEach { topic ->
                     topicRepository.insertTopic(topic)
 
                     val today = LocalDate.now().plusDays(1)

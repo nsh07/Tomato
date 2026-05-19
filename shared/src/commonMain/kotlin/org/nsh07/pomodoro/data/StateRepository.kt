@@ -173,4 +173,18 @@ class StateRepository(
             }
         }
     }
+
+    fun setTopic(topic: Topic) {
+        currentTopic.update { topic }
+        settingsState.update {
+            it.copy(
+                focusTime = topic.focusTime,
+                shortBreakTime = topic.shortBreakTime,
+                longBreakTime = topic.longBreakTime,
+                sessionLength = topic.sessionLength,
+                dndEnabled = topic.dndEnabled,
+                autostartNextSession = topic.autostartNextSession
+            )
+        }
+    }
 }

@@ -62,7 +62,7 @@ class AndroidTimerHelper(private val context: Context) : TimerHelper {
                         context.startService(it)
                     }
 
-                is TimerAction.SetInfiniteFocus -> {
+                else -> {
                     Log.e("StartService", "Invalid action: $action")
                 }
             }

@@ -76,7 +76,7 @@ class DesktopTimerHelper(
 
             TimerAction.UndoReset -> timerManager.undoReset()
 
-            is TimerAction.SetInfiniteFocus -> {
+            else -> {
                 System.err.println("Invalid action: $action")
             }
         }

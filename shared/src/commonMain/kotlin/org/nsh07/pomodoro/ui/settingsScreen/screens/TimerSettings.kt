@@ -42,9 +42,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuGroup
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
@@ -54,12 +51,10 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.SplitButtonDefaults
@@ -85,7 +80,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEachIndexed
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import com.materialkolor.ktx.harmonize
 import org.jetbrains.compose.resources.painterResource
@@ -127,7 +121,6 @@ import tomato.shared.generated.resources.flag
 import tomato.shared.generated.resources.hours_and_minutes_format
 import tomato.shared.generated.resources.info
 import tomato.shared.generated.resources.mobile_lock_portrait
-import tomato.shared.generated.resources.new_label
 import tomato.shared.generated.resources.pomodoro_info
 import tomato.shared.generated.resources.secure_aod
 import tomato.shared.generated.resources.secure_aod_desc
@@ -269,60 +262,6 @@ fun TimerSettings(
                                 }
                             }
                         )
-
-                        DropdownMenuPopup(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            DropdownMenuGroup(
-                                shapes = MenuDefaults.groupShape(0, 2),
-                                containerColor = MenuDefaults.groupVibrantContainerColor
-                            ) {
-                                topics.fastForEachIndexed { index, topic ->
-                                    Box {
-                                        DropdownMenuItem(
-                                            checked = topic.id == editingTopic.id,
-                                            onCheckedChange = {
-                                                expanded = false
-                                                onAction(SettingsAction.SetEditingTopic(topic))
-                                            },
-                                            text = { Text(topic.name) },
-//                                            leadingIcon = {
-//                                                Icon(
-//                                                    painterResource(Res.drawable.label),
-//                                                    null
-//                                                )
-//                                            },
-                                            shapes = MenuDefaults.itemShape(index, topics.size),
-                                            colors = MenuDefaults.selectableItemVibrantColors()
-                                        )
-                                    }
-                                }
-                            }
-
-                            Spacer(Modifier.height(MenuDefaults.GroupSpacing))
-
-                            DropdownMenuGroup(
-                                shapes = MenuDefaults.groupShape(1, 2),
-                                containerColor = MenuDefaults.groupVibrantContainerColor
-                            ) {
-                                MaterialShapes.Bun
-                                Box {
-                                    DropdownMenuItem(
-                                        onClick = {},
-                                        text = { Text("Add new topic") },
-                                        leadingIcon = {
-                                            Icon(
-                                                painterResource(Res.drawable.new_label),
-                                                null
-                                            )
-                                        },
-                                        shape = MenuDefaults.trailingItemShape,
-                                        colors = MenuDefaults.selectableItemVibrantColors()
-                                    )
-                                }
-                            }
-                        }
                     },
                     colors = barColors,
                     scrollBehavior = scrollBehavior

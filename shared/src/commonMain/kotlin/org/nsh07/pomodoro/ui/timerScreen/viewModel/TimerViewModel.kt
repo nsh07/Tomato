@@ -50,6 +50,8 @@ class TimerViewModel(
     private val _time: MutableStateFlow<Long> = stateRepository.time
     val timerState: StateFlow<TimerState> = stateRepository.timerState.asStateFlow()
 
+    val currentTopic = stateRepository.currentTopic.asStateFlow()
+
     val progress = _time.combine(stateRepository.timerState) { remainingTime, uiState ->
         (uiState.totalTime.toFloat() - remainingTime) / uiState.totalTime
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0f)
@@ -79,14 +81,24 @@ class TimerViewModel(
     }
 
     fun onAction(action: TimerAction) {
-        if (action !is TimerAction.SetInfiniteFocus) timerHelper.onAction(action)
-        else {
-            stateRepository.timerState.update {
-                it.copy(
-                    infiniteFocus = action.value
-                )
+        when (action) {
+            is TimerAction.SetInfiniteFocus -> {
+                stateRepository.timerState.update {
+                    it.copy(
+                        infiniteFocus = action.value
+                    )
+                }
+                onAction(TimerAction.ResetTimer)
             }
-            onAction(TimerAction.ResetTimer)
+
+            is TimerAction.SetTopic -> {
+                if (!timerState.value.serviceRunning) {
+                    stateRepository.setTopic(action.topic)
+                    onAction(TimerAction.ResetTimer)
+                }
+            }
+
+            else -> timerHelper.onAction(action)
         }
     }
 }

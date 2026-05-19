@@ -438,7 +438,7 @@ fun TopicsSettingsDarkPreview() {
     }
 }
 
-private val sampleTopics = listOf(
+val sampleTopics = listOf(
     defaultTopic,
     defaultTopic.copy(
         id = "work",

@@ -36,7 +36,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.ui.androidSystemGestureExclusion
+import org.nsh07.pomodoro.ui.settingsScreen.screens.sampleTopics
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
@@ -50,6 +52,8 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 @Composable
 fun SharedTransitionScope.TimerScreen(
     timerState: TimerState,
+    topics: List<Topic>,
+    currentTopic: Topic,
     settingsState: SettingsState,
     isPlus: Boolean,
     contentPadding: PaddingValues,
@@ -69,6 +73,8 @@ fun SharedTransitionScope.TimerScreen(
             AnimatedPane {
                 TimerMainPane(
                     timerState = timerState,
+                    currentTopic = currentTopic,
+                    topics = topics,
                     isPlus = isPlus,
                     contentPadding = contentPadding,
                     progress = progress,
@@ -116,7 +122,9 @@ fun TimerScreenPreview() {
         Surface {
             SharedTransitionLayout {
                 TimerScreen(
-                    timerState,
+                    timerState = timerState,
+                    topics = sampleTopics,
+                    currentTopic = sampleTopics[5],
                     SettingsState(),
                     isPlus = true,
                     contentPadding = PaddingValues(),

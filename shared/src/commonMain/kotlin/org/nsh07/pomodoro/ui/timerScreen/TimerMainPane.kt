@@ -32,6 +32,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -53,17 +54,22 @@ import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
+import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -100,12 +106,15 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastForEachIndexed
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.ui.rememberRequestNotificationPermissionCallback
+import org.nsh07.pomodoro.ui.settingsScreen.screens.sampleTopics
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
@@ -118,7 +127,9 @@ import tomato.shared.generated.resources.app_name
 import tomato.shared.generated.resources.app_name_plus
 import tomato.shared.generated.resources.focus
 import tomato.shared.generated.resources.infinite_focus
+import tomato.shared.generated.resources.label
 import tomato.shared.generated.resources.long_break
+import tomato.shared.generated.resources.new_label
 import tomato.shared.generated.resources.pause
 import tomato.shared.generated.resources.pause_large
 import tomato.shared.generated.resources.play
@@ -143,6 +154,8 @@ import tomato.shared.generated.resources.up_next
 @Composable
 fun SharedTransitionScope.TimerMainPane(
     timerState: TimerState,
+    topics: List<Topic>,
+    currentTopic: Topic,
     isPlus: Boolean,
     contentPadding: PaddingValues,
     progress: () -> Float,
@@ -261,7 +274,79 @@ fun SharedTransitionScope.TimerMainPane(
                         }
                     }
                 },
-                subtitle = {},
+                subtitle = {
+                    AnimatedContent(currentTopic.name) {
+                        Text(it)
+                    }
+                },
+                actions = {
+                    var expanded by remember { mutableStateOf(false) }
+                    FilledTonalIconToggleButton(
+                        checked = expanded,
+                        onCheckedChange = { expanded = it },
+                        shapes = IconButtonDefaults.toggleableShapes()
+                    ) { Icon(painterResource(Res.drawable.label), null) }
+
+                    DropdownMenuPopup(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        DropdownMenuGroup(
+                            shapes = MenuDefaults.groupShape(0, 2),
+                            containerColor = MenuDefaults.groupStandardContainerColor
+                        ) {
+                            topics.fastForEachIndexed { index, topic ->
+                                Box {
+                                    DropdownMenuItem(
+                                        checked = topic.id == currentTopic.id,
+                                        onCheckedChange = {
+                                            expanded = false
+                                            onAction(TimerAction.SetTopic(topic))
+                                        },
+                                        text = { Text(topic.name) },
+                                        shapes = MenuDefaults.itemShape(index, topics.size),
+                                        colors = MenuDefaults.selectableItemColors()
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(Modifier.height(MenuDefaults.GroupSpacing))
+
+                        DropdownMenuGroup(
+                            shapes = MenuDefaults.groupShape(1, 2),
+                            containerColor = MenuDefaults.groupStandardContainerColor
+                        ) {
+                            MaterialShapes.Bun
+                            Box {
+                                DropdownMenuItem(
+                                    onClick = {},
+                                    text = { Text("Add new topic") },
+                                    leadingIcon = {
+                                        Icon(
+                                            painterResource(Res.drawable.new_label),
+                                            null
+                                        )
+                                    },
+                                    shape = MenuDefaults.trailingItemShape,
+                                    colors = MenuDefaults.itemColors()
+                                )
+                            }
+                        }
+                    }
+                },
+                navigationIcon = {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.size(IconButtonDefaults.smallContainerSize())
+                    ) {
+                        Box(
+                            Modifier
+                                .size(IconButtonDefaults.largeIconSize)
+                                .background(colorScheme.primary, currentTopic.shape.toShape())
+                        )
+                    }
+                },
                 titleHorizontalAlignment = CenterHorizontally,
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 scrollBehavior = scrollBehavior
@@ -681,7 +766,9 @@ fun TimerMainPanePreview() {
                     if (it)
                         CompositionLocalProvider(LocalNavAnimatedContentScope provides this) {
                             TimerMainPane(
-                                timerState,
+                                timerState = timerState,
+                                topics = sampleTopics,
+                                currentTopic = sampleTopics[5],
                                 isPlus = true,
                                 contentPadding = PaddingValues(),
                                 { 0.3f },

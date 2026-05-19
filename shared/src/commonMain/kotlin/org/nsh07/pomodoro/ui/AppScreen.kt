@@ -309,8 +309,13 @@ fun AppScreen(
                 },
                 entryProvider = entryProvider {
                     entry<Screen.Timer> {
+                        val topics by settingsViewModel.allTopics.collectAsStateWithLifecycle()
+                        val currentTopic by timerViewModel.currentTopic.collectAsStateWithLifecycle()
+
                         TimerScreen(
                             timerState = uiState,
+                            topics = topics,
+                            currentTopic = currentTopic,
                             settingsState = settingsState,
                             isPlus = isPlus,
                             contentPadding = contentPadding,

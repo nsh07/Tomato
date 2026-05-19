@@ -19,7 +19,6 @@ package org.nsh07.pomodoro.ui.statsScreen.viewModel
 
 import androidx.compose.animation.core.spring
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.util.fastMaxBy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -43,11 +42,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
-import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.data.TopicRepository
-import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.di.AppInfo
 import org.nsh07.pomodoro.ui.Screen
+import org.nsh07.pomodoro.ui.settingsScreen.screens.sampleTopics
 import org.nsh07.pomodoro.utils.OS
 import org.nsh07.pomodoro.utils.currentOS
 import java.time.DayOfWeek
@@ -294,70 +292,6 @@ class StatsViewModel(
     fun generateSampleData() {
         if (appInfo.debug) {
             viewModelScope.launch {
-                val sampleTopics = listOf(
-                    Topic.defaultTopic,
-                    Topic.defaultTopic.copy(
-                        id = "work",
-                        name = "Work",
-                        color = Color(0xFF2196F3),
-                        shape = TopicShape.SQUARE
-                    ),
-                    Topic.defaultTopic.copy(
-                        id = "study",
-                        name = "Study",
-                        color = Color(0xFF4CAF50),
-                        shape = TopicShape.TRIANGLE
-                    ),
-                    Topic.defaultTopic.copy(
-                        id = "fitness",
-                        name = "Fitness",
-                        color = Color(0xFFF44336),
-                        shape = TopicShape.CIRCLE
-                    ),
-                    Topic.defaultTopic.copy(
-                        id = "coding",
-                        name = "Coding",
-                        color = Color(0xFF9C27B0),
-                        shape = TopicShape.DIAMOND
-                    ),
-                    Topic.defaultTopic.copy(
-                        id = "reading",
-                        name = "Reading",
-                        color = Color(0xFFFF9800),
-                        shape = TopicShape.PENTAGON
-                    ),
-                    Topic.defaultTopic.copy(
-                        id = "meditation",
-                        name = "Meditation",
-                        color = Color(0xFF00BCD4),
-                        shape = TopicShape.SUNNY
-                    ),
-                    Topic.defaultTopic.copy(
-                        id = "gaming",
-                        name = "Gaming",
-                        color = Color(0xFF795548),
-                        shape = TopicShape.BOOM
-                    ),
-                    Topic.defaultTopic.copy(
-                        id = "chores",
-                        name = "Chores",
-                        color = Color(0xFF607D8B),
-                        shape = TopicShape.FLOWER
-                    ),
-                    Topic.defaultTopic.copy(
-                        id = "music",
-                        name = "Music",
-                        color = Color(0xFFFFE082),
-                        shape = TopicShape.HEART
-                    ),
-                    Topic.defaultTopic.copy(
-                        id = "travel",
-                        name = "Travel",
-                        color = Color(0xFF8BC34A),
-                        shape = TopicShape.PILL
-                    )
-                )
-
                 sampleTopics.forEach { topic ->
                     topicRepository.insertTopic(topic)
 

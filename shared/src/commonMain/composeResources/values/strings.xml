@@ -154,4 +154,5 @@
     <string name="cancel">Cancel</string>
     <string name="advanced">Advanced</string>
     <string name="topics">Topics</string>
+    <string name="create_new_topic">Create new topic</string>
 </resources>

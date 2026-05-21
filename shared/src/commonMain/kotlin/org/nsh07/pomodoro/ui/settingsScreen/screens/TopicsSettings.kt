@@ -19,17 +19,26 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.animateBounds
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -37,6 +46,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
 import androidx.compose.foundation.style.MutableStyleState
 import androidx.compose.foundation.style.Style
@@ -46,11 +56,14 @@ import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.shapes
@@ -62,6 +75,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberSliderState
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -73,14 +87,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.lerp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import com.materialkolor.ktx.harmonize
-import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.Topic
@@ -97,10 +108,11 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.topBarWindowInsets
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.add
 import tomato.shared.generated.resources.arrow_back
 import tomato.shared.generated.resources.back
+import tomato.shared.generated.resources.create_new_topic
 import tomato.shared.generated.resources.edit
-import tomato.shared.generated.resources.google_sans_flex
 import tomato.shared.generated.resources.minutes_format
 import tomato.shared.generated.resources.settings
 
@@ -112,7 +124,7 @@ var MutableStyleState.selected: Boolean
         this[selectedKey] = value
     }
 
-fun StyleScope.topicSelected(value: Style) {
+fun StyleScope.selected(value: Style) {
     state(selectedKey, value) { key, state -> state[key] }
 }
 
@@ -133,31 +145,16 @@ fun TopicsSettings(
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val colorScheme = colorScheme
+    val motionScheme = motionScheme
+    val shapes = shapes
+    val topBarTitle = LocalAppFonts.current.topBarTitle
 
     val unselectedFont = typography.titleLargeEmphasized.copy(
-        fontFamily = FontFamily(
-            Font(
-                Res.font.google_sans_flex,
-                variationSettings = FontVariation.Settings(
-                    FontVariation.weight(600),
-                    FontVariation.width(100f),
-                    FontVariation.Setting("ROND", 100f)
-                )
-            )
-        )
+        fontFamily = typography.bodyLarge.fontFamily
     )
 
     val selectedFont = typography.titleLargeEmphasized.copy(
-        fontFamily = FontFamily(
-            Font(
-                Res.font.google_sans_flex,
-                variationSettings = FontVariation.Settings(
-                    FontVariation.weight(900),
-                    FontVariation.width(112.5f),
-                    FontVariation.Setting("ROND", 35f)
-                )
-            )
-        )
+        fontFamily = topBarTitle
     )
 
     val widthExpanded = currentWindowAdaptiveInfo()
@@ -180,7 +177,7 @@ fun TopicsSettings(
                     title = {
                         Text(
                             "Topics",
-                            fontFamily = LocalAppFonts.current.topBarTitle
+                            fontFamily = topBarTitle
                         )
                     },
                     subtitle = {
@@ -213,6 +210,7 @@ fun TopicsSettings(
             val insets = mergePaddingValues(innerPadding, contentPadding)
             val minFormat = stringResource(Res.string.minutes_format)
             val lazyColumnState = rememberLazyListState()
+            var creatingTopic by remember { mutableStateOf(false) }
 
             SharedTransitionLayout {
                 LazyColumn(
@@ -223,8 +221,105 @@ fun TopicsSettings(
                         .fillMaxSize()
                         .padding(horizontal = 16.dp)
                 ) {
+                    item {
+                        val styleState = remember { MutableStyleState(null) }
+                        styleState.selected = creatingTopic
+
+                        Box(
+                            modifier = Modifier
+                                .styleable(styleState) {
+                                    shape(RoundedCornerShape(40.dp))
+                                    clip(true)
+                                    background(colorScheme.primary)
+                                    selected { animate { background(colorScheme.surfaceBright) } }
+                                }
+                                .animateBounds(
+                                    lookaheadScope = this@SharedTransitionLayout,
+                                    boundsTransform = BoundsTransform { _, _ ->
+                                        motionScheme.slowSpatialSpec()
+                                    }
+                                )
+                                .clickable { creatingTopic = !creatingTopic },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            val newTopicText = stringResource(Res.string.create_new_topic)
+                            AnimatedContent(creatingTopic) {
+                                if (!it) Row(
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(16.dp)
+                                ) {
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier
+                                            .styleable {
+                                                size(40.dp)
+                                                shape(CircleShape)
+                                                background(colorScheme.onPrimary)
+                                            }
+                                    ) {
+                                        val shape = MaterialShapes.Boom.toShape()
+                                        Box(
+                                            Modifier.styleable {
+                                                size(22.dp)
+                                                shape(shape)
+                                                background(colorScheme.onPrimaryContainer)
+                                            }
+                                        )
+                                    }
+                                    Text(
+                                        newTopicText,
+                                        style = typography.bodyLargeEmphasized,
+                                        color = colorScheme.onPrimary,
+                                        modifier = Modifier
+                                            .sharedBounds(
+                                                rememberSharedContentState(newTopicText),
+                                                this@AnimatedContent
+                                            )
+                                            .weight(1f)
+                                    )
+                                    FilledIconButton(
+                                        onClick = { creatingTopic = true },
+                                        shapes = IconButtonDefaults.shapes(),
+                                        colors = IconButtonDefaults.filledIconButtonColors(
+                                            containerColor = colorScheme.primaryContainer
+                                        ),
+                                        modifier = Modifier.size(
+                                            IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)
+                                        )
+                                    ) { Icon(painterResource(Res.drawable.add), null) }
+                                }
+                                else Column(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(24.dp)
+                                ) {
+                                    Text(
+                                        newTopicText,
+                                        style = typography.titleLargeEmphasized,
+                                        fontFamily = topBarTitle,
+                                        modifier = Modifier
+                                            .sharedBounds(
+                                                rememberSharedContentState(newTopicText),
+                                                this@AnimatedContent
+                                            )
+                                    )
+                                    Spacer(Modifier.height(400.dp))
+                                }
+                            }
+                        }
+                    }
+                    item {
+                        HorizontalDivider(
+                            thickness = 4.dp,
+                            color = colorScheme.primary,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp)
+                        )
+                    }
                     itemsIndexed(topics, key = { _, topic -> topic.id }) { index, topic ->
-                        val selected = topic.id == editingTopic.id
+                        val selected = topic.id == editingTopic.id && !creatingTopic
                         val shape = topic.shape.toShape()
 
                         val styleState = remember { MutableStyleState(null) }
@@ -298,7 +393,7 @@ fun TopicsSettings(
                                             size(72.dp)
                                             shape(CircleShape)
                                             background(primaryContainer)
-                                            topicSelected { animate { background(primary) } }
+                                            selected { animate { background(primary) } }
                                         }
                                 ) {
                                     Box(
@@ -307,7 +402,7 @@ fun TopicsSettings(
                                                 size(40.dp)
                                                 shape(shape)
                                                 background(primary)
-                                                topicSelected { animate { background(onPrimary) } }
+                                                selected { animate { background(onPrimary) } }
                                             }
                                     )
                                 }
@@ -357,7 +452,7 @@ fun TopicsSettings(
                             },
                             modifier = Modifier.styleable(styleState) {
                                 externalPaddingTop(0.dp)
-                                topicSelected { animate { externalPaddingTop(2.dp) } }
+                                selected { animate { externalPaddingTop(2.dp) } }
                             }
                         ) {
                             Text(

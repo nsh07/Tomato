@@ -50,6 +50,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
@@ -98,6 +99,7 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
@@ -410,7 +412,8 @@ fun TimerSettings(
                 item { Spacer(Modifier.height(12.dp)) }
 
                 itemsIndexed(switchItems[0]) { index, item ->
-                    ListItem(
+                    SegmentedListItem(
+                        onClick = { item.onClick(!item.checked) },
                         leadingContent = {
                             Icon(
                                 painterResource(item.icon),
@@ -418,7 +421,7 @@ fun TimerSettings(
                                 modifier = Modifier.padding(top = 4.dp)
                             )
                         },
-                        headlineContent = { Text(stringResource(item.label)) },
+                        content = { Text(stringResource(item.label)) },
                         supportingContent = { Text(stringResource(item.description)) },
                         trailingContent = {
                             Switch(
@@ -444,20 +447,15 @@ fun TimerSettings(
                             )
                         },
                         colors = listItemColors,
-                        modifier = Modifier.clip(
-                            when (index) {
-                                0 -> topListItemShape
-                                switchItems[0].size - 1 -> bottomListItemShape
-                                else -> middleListItemShape
-                            }
-                        )
+                        shapes = segmentedListItemShapes(index, switchItems[0].size)
                     )
                 }
 
                 if (isPlus) {
                     item { Spacer(Modifier.height(12.dp)) }
                     itemsIndexed(switchItems[1]) { index, item ->
-                        ListItem(
+                        SegmentedListItem(
+                            onClick = { item.onClick(!item.checked) },
                             leadingContent = {
                                 Icon(
                                     painterResource(item.icon),
@@ -465,7 +463,7 @@ fun TimerSettings(
                                     modifier = Modifier.padding(top = 4.dp)
                                 )
                             },
-                            headlineContent = { Text(stringResource(item.label)) },
+                            content = { Text(stringResource(item.label)) },
                             supportingContent = { Text(stringResource(item.description)) },
                             trailingContent = {
                                 Switch(
@@ -491,13 +489,7 @@ fun TimerSettings(
                                 )
                             },
                             colors = listItemColors,
-                            modifier = Modifier.clip(
-                                when (index) {
-                                    0 -> topListItemShape
-                                    switchItems[1].size - 1 -> bottomListItemShape
-                                    else -> middleListItemShape
-                                }
-                            )
+                            shapes = segmentedListItemShapes(index, switchItems[1].size)
                         )
                     }
                 }
@@ -505,11 +497,18 @@ fun TimerSettings(
                 if (androidSdkVersionAtLeast(36)) {
                     item { Spacer(Modifier.height(12.dp)) }
                     item {
-                        ListItem(
+                        SegmentedListItem(
+                            onClick = {
+                                onAction(
+                                    SettingsAction.SaveSingleProgressBar(
+                                        !settingsState.singleProgressBar
+                                    )
+                                )
+                            },
                             leadingContent = {
                                 Icon(painterResource(Res.drawable.view_day), null)
                             },
-                            headlineContent = { Text(stringResource(Res.string.session_only_progress)) },
+                            content = { Text(stringResource(Res.string.session_only_progress)) },
                             supportingContent = {
                                 var expanded by remember { mutableStateOf(false) }
                                 Text(
@@ -551,7 +550,8 @@ fun TimerSettings(
                                 )
                             },
                             colors = listItemColors,
-                            modifier = Modifier.clip(cardShape)
+                            shapes = segmentedListItemShapes(0, 1),
+                            enabled = !serviceRunning
                         )
                     }
                 }
@@ -561,7 +561,8 @@ fun TimerSettings(
                         PlusDivider(setShowPaywall)
                     }
                     itemsIndexed(switchItems[1]) { index, item ->
-                        ListItem(
+                        SegmentedListItem(
+                            onClick = { item.onClick(!item.checked) },
                             leadingContent = {
                                 Icon(
                                     painterResource(item.icon),
@@ -569,7 +570,7 @@ fun TimerSettings(
                                     modifier = Modifier.padding(top = 4.dp)
                                 )
                             },
-                            headlineContent = { Text(stringResource(item.label)) },
+                            content = { Text(stringResource(item.label)) },
                             supportingContent = { Text(stringResource(item.description)) },
                             trailingContent = {
                                 Switch(
@@ -595,13 +596,7 @@ fun TimerSettings(
                                 )
                             },
                             colors = listItemColors,
-                            modifier = Modifier.clip(
-                                when (index) {
-                                    0 -> topListItemShape
-                                    switchItems[1].size - 1 -> bottomListItemShape
-                                    else -> middleListItemShape
-                                }
-                            )
+                            shapes = segmentedListItemShapes(index, switchItems[1].size)
                         )
                     }
                 }

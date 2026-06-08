@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -13,8 +14,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  -->
-<resources>
+  --><resources>
     <string name="start">Démarrer</string>
     <string name="stop">Pause</string>
     <string name="focus">Concentration</string>
@@ -85,13 +85,13 @@
     <string name="choose_language">Choisissez la langue</string>
     <string name="rate_on_google_play">Noter sur Google Play</string>
     <string name="selected">Selectionné</string>
-    <string name="help_with_translation">Aider à traduire Tomato</string>
+    <string name="help_with_translation">Aidez à traduire Tomato</string>
     <string name="timer_settings_reset_info">Réinitialiser le timer pour pouvoir changer les paramètres</string>
     <string name="bmc_desc">Soutenez-moi avec un petit don</string>
     <string name="tomato_plus_desc">Personnalisez plus avec Tomato+</string>
-    <string name="about">A propos</string>
+    <string name="about">À propos</string>
     <string name="help_with_translation_desc">Traduire Tomato dans votre langue</string>
-    <string name="rate_on_google_play_desc">Vous avez aimé l\u0027appli? Écrivez un avis!</string>
+    <string name="rate_on_google_play_desc">Vous avez aimé l'appli ? Écrivez un avis !</string>
     <string name="license">Licence</string>
     <string name="media_volume_for_alarm">Mode casque</string>
     <string name="session_only_progress">Progrès simplifié</string>
@@ -146,4 +146,7 @@
     <string name="infinite">Infini</string>
     <string name="infinite_focus">Concentration infinie</string>
     <string name="settings_infinite_focus_tip">Appuyez longuement sur l\u0027horloge du minuteur pour activer le mode de concentration infinie</string>
+    <string name="open_tomato">Ouvrir Tomato</string>
+    <string name="quit_tomato">Quitter Tomato</string>
+    <string name="advanced">Avancé</string>
 </resources>

@@ -20,7 +20,7 @@
     <string name="focus">Fokus</string>
     <string name="short_break">Kurze Pause</string>
     <string name="long_break">Lange Pause</string>
-    <string name="exit">Abbrechen</string>
+    <string name="exit">Schließen</string>
     <string name="skip">Überspringen</string>
     <string name="stop_alarm">Alarm beenden</string>
     <string name="min_remaining_notification">%1$s min verbleibend</string>

@@ -146,5 +146,5 @@
     <string name="cancel">Cancelar</string>
     <string name="advanced">Avanzado</string>
     <string name="open_tomato">Abrir Tomato</string>
-    <string name="quit_tomato">Cerrar Tomato</string>
+    <string name="quit_tomato">Quitar Tomato</string>
 </resources>

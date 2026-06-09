@@ -17,7 +17,7 @@
   --><resources>
     <string name="start">Inizia</string>
     <string name="stop">Ferma</string>
-    <string name="focus">Concentrati</string>
+    <string name="focus">Tempo di concentrazione</string>
     <string name="short_break">Pausa breve</string>
     <string name="long_break">Pausa lunga</string>
     <string name="exit">Esci</string>
@@ -51,7 +51,7 @@
     <string name="pomodoro_info">Una sessione è una sequenza di intervalli pomodoro che include intervalli di concentrazione, di pausa breve, e di pausa lunga. L\u0027ultima pausa di una sessione è sempre una pausa lunga.</string>
     <string name="stats">Statistiche</string>
     <string name="today">Oggi</string>
-    <string name="break_">Pausa</string>
+    <string name="break_">Tempo di pausa</string>
     <string name="last_week">Ultima settimana</string>
     <string name="focus_per_day_avg">concentrazione al giorno (media)</string>
     <string name="more_info">Più informazioni</string>
@@ -77,7 +77,7 @@
     <string name="language">Lingua</string>
     <string name="choose_language">Scegli la lingua</string>
     <string name="durations">Durate</string>
-    <string name="dnd_desc">Attiva la modalità non disturbare quando avvii un timer di concentrazione.</string>
+    <string name="dnd_desc">Attiva la modalità non disturbare quando avvii un timer di concentrazione</string>
     <string name="tomato_foss" translatable="false">Tomato FOSS</string>
     <string name="rate_on_google_play">Valuta su Google Play</string>
     <string name="selected">Selezionato</string>
@@ -94,8 +94,8 @@
     <string name="focus_breakdown_desc">Durata media della concentrazione nei diversi momenti della giornata</string>
     <string name="about">Info</string>
     <string name="focus_breakdown">Distribuzione della concentrazione</string>
-    <string name="focus_history">Storico della concentrazione</string>
-    <string name="focus_history_calendar">Calendario della concentrazione</string>
+    <string name="focus_history">Storico concentrazione</string>
+    <string name="focus_history_calendar">Calendario dei livelli di concentrazione</string>
     <string name="focus_history_calendar_desc">Storico della concentrazione dell'ultimo mese. I giorni del mese precedente sono evidenziati con un colore diverso. Tocca una data per ulteriori informazioni.</string>
     <string name="focus_history_desc">Dettaglio della concentrazione per ogni giorno dell'ultima settimana. Tocca il grafico di un giorno per ulteriori informazioni.</string>
     <string name="focus_history_heatmap">Mappa cromatica della concentrazione</string>
@@ -119,7 +119,7 @@
     <string name="reset_data_dialog_text">Tutte le statistiche salvate verranno eliminate definitivamente. L’operazione non può essere annullata.</string>
     <string name="reset_data_dialog_title">Azzerare tutte le statistiche?</string>
     <string name="secure_aod">Modalità AOD sicura</string>
-    <string name="secure_aod_desc">Blocca automaticamente il dispositivo dopo un intervallo di inattività, mantenendo l’AOD visibile.</string>
+    <string name="secure_aod_desc">Blocca automaticamente il dispositivo dopo un intervallo di inattività, mantenendo l’AOD visibile</string>
     <string name="session_only_progress">Progresso semplificato</string>
     <string name="session_only_progress_desc">Mostra nelle notifiche solo il progresso del timer corrente, anziché l’intera sessione.</string>
     <string name="show_chart">Mostra grafico</string>
@@ -145,7 +145,7 @@
     <string name="vibration_pattern">Schema di vibrazione</string>
     <string name="infinite">Illimitato</string>
     <string name="infinite_focus">Concentrazione illimitata</string>
-    <string name="settings_infinite_focus_tip">Tieni premuto l’orologio del timer per attivare la modalità di concentrazione illimitata.</string>
-    <string name="cancel">Annulla</string>
+    <string name="settings_infinite_focus_tip">Tieni premuto l’orologio del timer per attivare la modalità di concentrazione illimitata</string>
+    <string name="cancel">Chiudi</string>
     <string name="advanced">Avanzate</string>
 </resources>

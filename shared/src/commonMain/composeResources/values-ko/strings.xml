@@ -17,7 +17,7 @@
   --><resources xmlns:tools="http://schemas.android.com/tools">
     <string name="about">정보</string>
     <string name="alarm">알람</string>
-    <string name="alarm_desc">타이머가 끝나면 알람을 울립니다.</string>
+    <string name="alarm_desc">타이머가 끝나면 알람을 울립니다</string>
     <string name="back">뒤로</string>
     <string name="black_theme">블랙 테마</string>
     <string name="black_theme_desc">순수 검정색인 다크 테마를 사용합니다</string>

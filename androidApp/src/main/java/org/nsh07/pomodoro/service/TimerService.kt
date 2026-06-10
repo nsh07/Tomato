@@ -27,6 +27,8 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.IBinder
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -100,6 +102,11 @@ class TimerService : Service(), KoinComponent {
 
     private var autoAlarmStopScope: Job? = null
 
+    private val alarmManager by lazy { getSystemService(ALARM_SERVICE) as AlarmManager }
+    private val alarmIntent by lazy {
+        val intent = Intent(this, TimerService::class.java).apply { action = Actions.WAKE_UP.toString() }
+        PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+    }
     private var alarm: MediaPlayer? = null
     private val vibrator by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -127,8 +134,8 @@ class TimerService : Service(), KoinComponent {
     override fun onDestroy() {
         stateRepository.timerState.update { it.copy(serviceRunning = false) }
         updateQSTile()
-        runBlocking {
-            job.cancel()
+        job.cancel()
+        CoroutineScope(Dispatchers.IO + kotlinx.coroutines.NonCancellable).launch {
             saveTimeToDb()
             lastSavedDuration = 0
             setDoNotDisturb(false)
@@ -170,6 +177,8 @@ class TimerService : Service(), KoinComponent {
             Actions.STOP_ALARM.toString() -> stopAlarm()
 
             Actions.UPDATE_ALARM_TONE.toString() -> updateAlarmTone()
+
+            Actions.WAKE_UP.toString() -> { /* Wakes up the service from Doze mode */ }
         }
         return super.onStartCommand(intent, flags, startId)
     }
@@ -186,6 +195,7 @@ class TimerService : Service(), KoinComponent {
             _timerState.update { currentState ->
                 currentState.copy(timerRunning = false)
             }
+            alarmManager.cancel(alarmIntent)
             pauseTime = SystemClock.elapsedRealtime()
         } else {
             if (_timerState.value.timerMode == TimerMode.FOCUS) setDoNotDisturb(true)
@@ -195,6 +205,28 @@ class TimerService : Service(), KoinComponent {
             )
             _timerState.update { it.copy(timerRunning = true) }
             if (pauseTime != 0L) pauseDuration += SystemClock.elapsedRealtime() - pauseTime
+
+            val settingsStateNow = _settingsState.value
+            val timerStateNow = _timerState.value
+            val focusTimeNow = if (!timerStateNow.infiniteFocus) settingsStateNow.focusTime else Long.MAX_VALUE
+            val timeRemainingNow = when (timerStateNow.timerMode) {
+                TimerMode.FOCUS -> focusTimeNow - (SystemClock.elapsedRealtime() - (if (startTime == 0L) SystemClock.elapsedRealtime() else startTime) - pauseDuration)
+                TimerMode.SHORT_BREAK -> settingsStateNow.shortBreakTime - (SystemClock.elapsedRealtime() - (if (startTime == 0L) SystemClock.elapsedRealtime() else startTime) - pauseDuration)
+                else -> settingsStateNow.longBreakTime - (SystemClock.elapsedRealtime() - (if (startTime == 0L) SystemClock.elapsedRealtime() else startTime) - pauseDuration)
+            }
+            
+            if (timeRemainingNow > 0 && (!timerStateNow.infiniteFocus || timerStateNow.timerMode != TimerMode.FOCUS)) {
+                val triggerTime = SystemClock.elapsedRealtime() + timeRemainingNow
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+                        alarmManager.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerTime, alarmIntent)
+                    } else {
+                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerTime, alarmIntent)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
 
             var iterations = -1
             var notificationUpdateCounter = -1
@@ -395,6 +427,7 @@ class TimerService : Service(), KoinComponent {
     }
 
     private suspend fun resetTimer() {
+        alarmManager.cancel(alarmIntent)
         val settingsState = _settingsState.value
         val timerState = _timerState.value
 
@@ -444,6 +477,7 @@ class TimerService : Service(), KoinComponent {
     }
 
     private suspend fun skipTimer(fromButton: Boolean = false) {
+        alarmManager.cancel(alarmIntent)
         val settingsState = _settingsState.value
         saveTimeToDb()
         updateProgressSegments()
@@ -646,6 +680,6 @@ class TimerService : Service(), KoinComponent {
     }
 
     enum class Actions {
-        TOGGLE, SKIP, RESET, UNDO_RESET, STOP_ALARM, UPDATE_ALARM_TONE
+        TOGGLE, SKIP, RESET, UNDO_RESET, STOP_ALARM, UPDATE_ALARM_TONE, WAKE_UP
     }
 }

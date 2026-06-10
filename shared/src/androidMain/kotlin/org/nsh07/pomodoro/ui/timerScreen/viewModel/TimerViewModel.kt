@@ -58,9 +58,10 @@ class TimerViewModel(
 
             // Fills dates between today and lastDate with 0s to ensure continuous history
             if (lastDate != null) {
-                while (ChronoUnit.DAYS.between(lastDate, today) > 0) {
-                    lastDate = lastDate?.plusDays(1)
-                    statRepository.insertStat(Stat(lastDate!!, 0, 0, 0, 0, 0))
+                var currentDate: LocalDate = lastDate
+                while (ChronoUnit.DAYS.between(currentDate, today) > 0) {
+                    currentDate = currentDate.plusDays(1)
+                    statRepository.insertStat(Stat(currentDate, 0, 0, 0, 0, 0))
                 }
             } else {
                 statRepository.insertStat(Stat(today, 0, 0, 0, 0, 0))

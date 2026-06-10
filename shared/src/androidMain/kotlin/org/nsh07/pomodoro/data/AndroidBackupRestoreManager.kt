@@ -45,15 +45,16 @@ class AndroidBackupRestoreManager(
     private val context: Context
 ) : BackupRestoreManager {
     override suspend fun performBackup(directoryLocator: FileLocator) {
+        val uri = directoryLocator.uri ?: return
         withContext(Dispatchers.IO) {
             systemDao.checkpoint(SimpleSQLiteQuery("pragma wal_checkpoint(full)"))
 
             val dbName = "app_database"
             val dbFile = context.getDatabasePath(dbName)
 
-            val documentId = DocumentsContract.getTreeDocumentId(directoryLocator.uri)
+            val documentId = DocumentsContract.getTreeDocumentId(uri)
             val parentDocumentUri =
-                DocumentsContract.buildDocumentUriUsingTree(directoryLocator.uri, documentId)
+                DocumentsContract.buildDocumentUriUsingTree(uri, documentId)
 
             val fileUri = DocumentsContract.createDocument(
                 context.contentResolver,
@@ -73,19 +74,19 @@ class AndroidBackupRestoreManager(
     }
 
     override suspend fun performRestore(fileLocator: FileLocator) {
-        if (fileLocator.isNull) return
+        val uri = fileLocator.uri ?: return
         withContext(Dispatchers.IO) {
             database.close()
 
             val dbName = "app_database"
             val dbFile = context.getDatabasePath(dbName)
 
-            if (!dbFile.parentFile!!.exists()) dbFile.parentFile!!.mkdirs()
+            dbFile.parentFile?.let { if (!it.exists()) it.mkdirs() }
 
             File("${dbFile.path}-wal").delete()
             File("${dbFile.path}-shm").delete()
 
-            context.contentResolver.openInputStream(fileLocator.uri!!)?.use { input ->
+            context.contentResolver.openInputStream(uri)?.use { input ->
                 FileOutputStream(dbFile).use { output ->
                     input.copyTo(output)
                 }

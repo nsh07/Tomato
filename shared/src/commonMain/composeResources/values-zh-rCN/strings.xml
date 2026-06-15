@@ -125,7 +125,7 @@
     <string name="focus_breakdown">专注分布</string>
     <string name="focus_history_heatmap_desc">过去一年的专注历史。颜色越深代表专注时长越长。天数按月份分组，点击日期可查看更多信息。</string>
     <string name="gap">间隔</string>
-    <string name="lifetime">永远</string>
+    <string name="lifetime">永久</string>
     <string name="reset_data">重置统计数据</string>
     <string name="vibration_strength">振动强度</string>
     <string name="daily_focus_goal">每日焦点目标</string>
@@ -145,4 +145,7 @@
     <string name="infinite_focus">无限专注时长</string>
     <string name="settings_infinite_focus_tip">长按计时器时钟来启用无限专注模式</string>
     <string name="cancel">取消</string>
+    <string name="open_tomato">打开 Tomato</string>
+    <string name="quit_tomato">关闭 Tomato</string>
+    <string name="advanced">高级</string>
 </resources>

@@ -59,7 +59,7 @@
     <string name="stop_alarm_question">Ferma allarme?</string>
     <string name="stop_alarm_dialog_text">Il timer per la sessione corrente è scaduto. Tocca in qualsiasi punto per fermare la sveglia.</string>
     <string name="timer_session_count">%1$d di %2$d</string>
-    <string name="more">Altro</string>
+    <string name="more">Di più</string>
     <string name="pause">Pausa</string>
     <string name="play">Inizia</string>
     <string name="restart">Reinizia</string>
@@ -106,7 +106,7 @@
     <string name="history_widget_desc">Visualizza un grafico delle durate di concentrazione degli ultimi giorni. Il numero di giorni mostrati dipende dalle dimensioni del widget.</string>
     <string name="hours_and_minutes_format">%1$dh %2$dm</string>
     <string name="hours_format">%1$dh</string>
-    <string name="less">Mostra meno</string>
+    <string name="less">Di meno</string>
     <string name="license">Licenza</string>
     <string name="lifetime">Durata totale</string>
     <string name="media_volume_for_alarm">Modalità con cuffie</string>

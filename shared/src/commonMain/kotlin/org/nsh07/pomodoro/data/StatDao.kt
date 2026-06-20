@@ -63,7 +63,22 @@ interface StatDao {
     @Query("SELECT * FROM stat WHERE date = :date")
     fun getStatsByDate(date: LocalDate): Flow<List<Stat>>
 
-    @Query("SELECT * FROM stat ORDER BY date DESC LIMIT :n")
+    @Query(
+        """
+        SELECT 
+            date,
+            'merged' as topicId,
+            SUM(focusTimeQ1) as focusTimeQ1,
+            SUM(focusTimeQ2) as focusTimeQ2,
+            SUM(focusTimeQ3) as focusTimeQ3,
+            SUM(focusTimeQ4) as focusTimeQ4, 
+            SUM(breakTime) as breakTime
+        FROM stat
+        GROUP BY date
+        ORDER BY date DESC
+        LIMIT :n
+        """
+    )
     fun getLastNDaysStats(n: Int): Flow<List<Stat>>
 
     @Query(

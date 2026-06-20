@@ -49,8 +49,8 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
             INSERT OR IGNORE INTO `topic` 
                 (`id`, `name`, `color`, `shape`, `focusTime`, `shortBreakTime`, `longBreakTime`, `sessionLength`, `autostartNextSession`, `dndEnabled`)
             VALUES (
-                'default', 
-                'Default', 
+                '${defaultTopic.id}', 
+                '${defaultTopic.name}', 
                 ${Color.White.value.toLong()},
                 '${defaultTopic.shape.name}',
                 COALESCE((SELECT value FROM int_preference WHERE key = 'focus_time'), 1500000),
@@ -85,7 +85,7 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
         connection.execSQL(
             """
             INSERT INTO `new_stat` (`date`, `topicId`, `focusTimeQ1`, `focusTimeQ2`, `focusTimeQ3`, `focusTimeQ4`, `breakTime`)
-            SELECT `date`, 'default', `focusTimeQ1`, `focusTimeQ2`, `focusTimeQ3`, `focusTimeQ4`, `breakTime` FROM `stat`
+            SELECT `date`, '${defaultTopic.id}', `focusTimeQ1`, `focusTimeQ2`, `focusTimeQ3`, `focusTimeQ4`, `breakTime` FROM `stat`
             """.trimIndent()
         )
 

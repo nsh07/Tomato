@@ -167,7 +167,7 @@ fun SharedTransitionScope.TimerMainPane(
     val motionScheme = motionScheme
     val scope = rememberCoroutineScope()
     val haptic = LocalHapticFeedback.current
-    val defaultTopic = currentTopic.id == "default"
+    val defaultTopic = currentTopic.id == Topic.defaultTopic.id
     val cc = currentTopic.color
 
     val fraction by animateFloatAsState(

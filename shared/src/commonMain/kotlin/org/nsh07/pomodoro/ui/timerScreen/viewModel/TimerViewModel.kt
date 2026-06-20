@@ -34,16 +34,19 @@ import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
+import org.nsh07.pomodoro.data.TopicRepository
 import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.ui.Screen
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
 class TimerViewModel(
     private val timerHelper: TimerHelper,
     private val stateRepository: StateRepository,
-    private val statRepository: StatRepository
+    private val statRepository: StatRepository,
+    private val topicRepository: TopicRepository
 ) : ViewModel() {
     val rootBackstack = mutableStateListOf<Screen>(Screen.Timer)
 
@@ -58,7 +61,7 @@ class TimerViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            // TODO: account for multiple topics
+            val topicIds = topicRepository.getTopicIds()
             var lastDate = statRepository.getLastDate()
             val today = LocalDate.now()
 
@@ -66,13 +69,17 @@ class TimerViewModel(
             if (lastDate != null) {
                 while (ChronoUnit.DAYS.between(lastDate, today) > 0) {
                     lastDate = lastDate?.plusDays(1)
-                    statRepository.insertStat(Stat(lastDate!!, "default", 0, 0, 0, 0, 0))
+                    topicIds.forEach { topicId ->
+                        statRepository.insertStat(Stat(lastDate!!, topicId, 0, 0, 0, 0, 0))
+                    }
                 }
             } else {
-                statRepository.insertStat(Stat(today, "default", 0, 0, 0, 0, 0))
+                topicIds.forEach { topicId ->
+                    statRepository.insertStat(Stat(today, topicId, 0, 0, 0, 0, 0))
+                }
             }
 
-            delay(1500)
+            delay(1500.milliseconds)
 
             stateRepository.timerState.update { currentState ->
                 currentState.copy(showBrandTitle = false)

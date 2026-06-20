@@ -41,4 +41,7 @@ interface TopicDao {
 
     @Query("SELECT * FROM topic WHERE id = :id")
     suspend fun getTopicById(id: String): Topic?
+
+    @Query("SELECT id FROM topic")
+    suspend fun getTopicIds(): List<String>
 }

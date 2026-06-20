@@ -27,6 +27,7 @@ interface TopicRepository {
     suspend fun deleteTopic(topic: Topic)
     fun getAllTopics(): Flow<List<Topic>>
     suspend fun getTopicById(id: String): Topic?
+    suspend fun getTopicIds(): List<String>
 }
 
 class AppTopicRepository(
@@ -49,5 +50,9 @@ class AppTopicRepository(
 
     override suspend fun getTopicById(id: String): Topic? = withContext(ioDispatcher) {
         topicDao.getTopicById(id)
+    }
+
+    override suspend fun getTopicIds(): List<String> = withContext(ioDispatcher) {
+        topicDao.getTopicIds()
     }
 }

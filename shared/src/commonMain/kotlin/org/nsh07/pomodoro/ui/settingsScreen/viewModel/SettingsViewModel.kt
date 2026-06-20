@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.data.PreferenceRepository
@@ -50,6 +51,7 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.utils.logError
 import org.nsh07.pomodoro.utils.millisecondsToStr
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
 class SettingsViewModel(
@@ -170,15 +172,14 @@ class SettingsViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val value = sessionsSliderState.value.toInt()
 
-            _editingTopic.update { topic -> topic.copy(sessionLength = value) }
-            val topic = _editingTopic.value
+            val topic = _editingTopic.updateAndGet { it.copy(sessionLength = value) }
             if (topic.id == _currentTopic.value.id) {
                 _settingsState.update { currentState ->
                     currentState.copy(sessionLength = value)
                 }
                 refreshTimer()
             }
-            topicRepository.updateTopic(topic.copy(sessionLength = value))
+            topicRepository.updateTopic(topic)
         }
     }
 
@@ -196,13 +197,12 @@ class SettingsViewModel(
     fun runTextFieldFlowCollection() {
         focusFlowCollectionJob = viewModelScope.launch(Dispatchers.IO) {
             snapshotFlow { focusTimeTextFieldState.text }
-                .debounce(500)
+                .debounce(500.milliseconds)
                 .collect {
                     if (it.isNotEmpty()) {
                         val value = it.toString().toLong() * 60 * 1000
 
-                        _editingTopic.update { topic -> topic.copy(focusTime = value) }
-                        val topic = _editingTopic.value
+                        val topic = _editingTopic.updateAndGet { it.copy(focusTime = value) }
                         if (topic.id == _currentTopic.value.id) {
                             _settingsState.update { currentState ->
                                 currentState.copy(focusTime = value)
@@ -215,13 +215,12 @@ class SettingsViewModel(
         }
         shortBreakFlowCollectionJob = viewModelScope.launch(Dispatchers.IO) {
             snapshotFlow { shortBreakTimeTextFieldState.text }
-                .debounce(500)
+                .debounce(500.milliseconds)
                 .collect {
                     if (it.isNotEmpty()) {
                         val value = it.toString().toLong() * 60 * 1000
 
-                        _editingTopic.update { topic -> topic.copy(shortBreakTime = value) }
-                        val topic = _editingTopic.value
+                        val topic = _editingTopic.updateAndGet { it.copy(shortBreakTime = value) }
                         if (topic.id == _currentTopic.value.id) {
                             _settingsState.update { currentState ->
                                 currentState.copy(shortBreakTime = value)
@@ -234,13 +233,12 @@ class SettingsViewModel(
         }
         longBreakFlowCollectionJob = viewModelScope.launch(Dispatchers.IO) {
             snapshotFlow { longBreakTimeTextFieldState.text }
-                .debounce(500)
+                .debounce(500.milliseconds)
                 .collect {
                     if (it.isNotEmpty()) {
                         val value = it.toString().toLong() * 60 * 1000
 
-                        _editingTopic.update { topic -> topic.copy(longBreakTime = value) }
-                        val topic = _editingTopic.value
+                        val topic = _editingTopic.updateAndGet { it.copy(longBreakTime = value) }
                         if (topic.id == _currentTopic.value.id) {
                             _settingsState.update { currentState ->
                                 currentState.copy(longBreakTime = value)

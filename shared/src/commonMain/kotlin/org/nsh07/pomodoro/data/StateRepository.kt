@@ -59,7 +59,7 @@ class StateRepository(
     suspend fun reloadSettings() {
         val defaults = SettingsState()
 
-        currentTopic.update { topicRepository.getTopicById(currentTopic.value.id)!! }
+        currentTopic.update { topicRepository.getTopicById(currentTopic.value.id) ?: defaultTopic }
 
         val focusGoal = preferenceRepository.getIntPreference("focus_goal")?.toLong()
             ?: preferenceRepository.saveIntPreference("focus_goal", defaults.focusGoal.toInt())

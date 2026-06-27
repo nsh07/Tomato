@@ -40,7 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
+import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
@@ -62,7 +62,7 @@ import tomato.shared.generated.resources.up_next
 @Composable
 fun TimerSupportingPane(
     timerState: TimerState,
-    settingsState: SettingsState,
+    currentTopic: Topic,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
@@ -125,7 +125,7 @@ fun TimerSupportingPane(
                     },
                     supportingContent = {
                         Text(
-                            millisecondsToStr(settingsState.focusTime),
+                            millisecondsToStr(currentTopic.focusTime),
                             maxLines = 1
                         )
                     }
@@ -169,9 +169,9 @@ fun TimerSupportingPane(
                     supportingContent = {
                         Text(
                             if (it != timerState.totalFocusCount - 1) millisecondsToStr(
-                                settingsState.shortBreakTime
+                                currentTopic.shortBreakTime
                             )
-                            else millisecondsToStr(settingsState.longBreakTime),
+                            else millisecondsToStr(currentTopic.longBreakTime),
                             maxLines = 1
                         )
                     }
@@ -205,7 +205,7 @@ fun TimerSupportingPanePreview() {
         Surface {
             TimerSupportingPane(
                 timerState,
-                SettingsState(),
+                Topic.defaultTopic,
                 contentPadding = PaddingValues()
             )
         }

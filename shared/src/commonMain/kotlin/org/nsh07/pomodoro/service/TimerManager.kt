@@ -31,6 +31,7 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.infinite
+import kotlin.time.Duration.Companion.milliseconds
 
 class TimerManager(
     private val stateRepository: StateRepository,
@@ -38,7 +39,7 @@ class TimerManager(
     private val currentTime: () -> Long,
 ) {
     private val _timerState by lazy { stateRepository.timerState }
-    private val _settingsState by lazy { stateRepository.settingsState }
+
     private val _time = stateRepository.time
 
     /**
@@ -107,17 +108,17 @@ class TimerManager(
                     if (!_timerState.value.timerRunning) break
                     if (startTime == 0L) startTime = currentTime()
 
-                    val settingsState = _settingsState.value
+                    val currentTopic = stateRepository.currentTopic.value
                     val timerState = _timerState.value
 
                     val focusTime =
-                        if (!timerState.infiniteFocus) settingsState.focusTime else Long.MAX_VALUE
+                        if (!timerState.infiniteFocus) currentTopic.focusTime else Long.MAX_VALUE
                     time = when (_timerState.value.timerMode) {
                         TimerMode.FOCUS -> focusTime - (currentTime() - startTime - pauseDuration)
 
-                        TimerMode.SHORT_BREAK -> settingsState.shortBreakTime - (currentTime() - startTime - pauseDuration)
+                        TimerMode.SHORT_BREAK -> currentTopic.shortBreakTime - (currentTime() - startTime - pauseDuration)
 
-                        else -> settingsState.longBreakTime - (currentTime() - startTime - pauseDuration)
+                        else -> currentTopic.longBreakTime - (currentTime() - startTime - pauseDuration)
                     }
 
                     val freq = stateRepository.timerFrequency.toInt().coerceAtLeast(1)
@@ -159,7 +160,7 @@ class TimerManager(
                             saveTimeToDb()
                     }
 
-                    delay((1000f / stateRepository.timerFrequency).toLong())
+                    delay((1000f / stateRepository.timerFrequency).toLong().milliseconds)
                 }
             }
         }
@@ -191,7 +192,7 @@ class TimerManager(
         onCompletion: suspend () -> Unit,
         setDoNotDisturb: (Boolean) -> Unit
     ) {
-        val settingsState = _settingsState.value
+        val currentTopic = stateRepository.currentTopic.value
         saveTimeToDb()
 
         onStart()
@@ -201,31 +202,31 @@ class TimerManager(
         pauseTime = 0L
         pauseDuration = 0L
 
-        cycles = (cycles + 1) % (settingsState.sessionLength * 2)
+        cycles = (cycles + 1) % (currentTopic.sessionLength * 2)
 
         if (cycles % 2 == 0) {
             _timerState.update { currentState ->
                 if (currentState.timerRunning) setDoNotDisturb(true)
-                time = if (!currentState.infiniteFocus) settingsState.focusTime else Long.MAX_VALUE
+                time = if (!currentState.infiniteFocus) currentTopic.focusTime else Long.MAX_VALUE
 
                 currentState.copy(
                     timerMode = TimerMode.FOCUS,
                     timeStr = if (!currentState.infiniteFocus) millisecondsToStr(time)
                     else millisecondsToStr(0),
                     totalTime = time,
-                    nextTimerMode = if (cycles == (settingsState.sessionLength - 1) * 2) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                    nextTimeStr = if (cycles == (settingsState.sessionLength - 1) * 2) millisecondsToStr(
-                        settingsState.longBreakTime
+                    nextTimerMode = if (cycles == (currentTopic.sessionLength - 1) * 2) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
+                    nextTimeStr = if (cycles == (currentTopic.sessionLength - 1) * 2) millisecondsToStr(
+                        currentTopic.longBreakTime
                     ) else millisecondsToStr(
-                        settingsState.shortBreakTime
+                        currentTopic.shortBreakTime
                     ),
                     currentFocusCount = cycles / 2 + 1,
-                    totalFocusCount = settingsState.sessionLength
+                    totalFocusCount = currentTopic.sessionLength
                 )
             }
         } else {
-            val long = cycles == (settingsState.sessionLength * 2) - 1
-            time = if (long) settingsState.longBreakTime else settingsState.shortBreakTime
+            val long = cycles == (currentTopic.sessionLength * 2) - 1
+            time = if (long) currentTopic.longBreakTime else currentTopic.shortBreakTime
 
             _timerState.update { currentState ->
                 if (currentState.timerRunning) setDoNotDisturb(false)
@@ -236,7 +237,7 @@ class TimerManager(
                     totalTime = time,
                     nextTimerMode = TimerMode.FOCUS,
                     nextTimeStr = if (!currentState.infiniteFocus)
-                        millisecondsToStr(settingsState.focusTime)
+                        millisecondsToStr(currentTopic.focusTime)
                     else getString(Res.string.infinite)
                 )
             }
@@ -246,7 +247,7 @@ class TimerManager(
     }
 
     suspend fun resetTimer(onCompletion: () -> Unit) {
-        val settingsState = _settingsState.value
+        val currentTopic = stateRepository.currentTopic.value
         val timerState = _timerState.value
 
         timerStateSnapshot.save(
@@ -266,7 +267,7 @@ class TimerManager(
         pauseTime = 0L
         pauseDuration = 0L
 
-        time = if (!timerState.infiniteFocus) settingsState.focusTime else Long.MAX_VALUE
+        time = if (!timerState.infiniteFocus) currentTopic.focusTime else Long.MAX_VALUE
 
         _timerState.update { currentState ->
             currentState.copy(
@@ -274,10 +275,10 @@ class TimerManager(
                 timeStr = if (!currentState.infiniteFocus) millisecondsToStr(time)
                 else millisecondsToStr(0),
                 totalTime = time,
-                nextTimerMode = if (settingsState.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
-                nextTimeStr = millisecondsToStr(if (settingsState.sessionLength > 1) settingsState.shortBreakTime else settingsState.longBreakTime),
+                nextTimerMode = if (currentTopic.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
+                nextTimeStr = millisecondsToStr(if (currentTopic.sessionLength > 1) currentTopic.shortBreakTime else currentTopic.longBreakTime),
                 currentFocusCount = 1,
-                totalFocusCount = settingsState.sessionLength
+                totalFocusCount = currentTopic.sessionLength
             )
         }
 
@@ -300,17 +301,5 @@ class TimerManager(
      */
     fun resetLastSavedDuration() {
         lastSavedDuration = 0
-    }
-
-    fun clear() {
-        cycles = 0
-        startTime = 0L
-        pauseTime = 0L
-        pauseDuration = 0L
-        lastSavedDuration = 0L
-
-        _timerState.update { currentState ->
-            currentState.copy(timerRunning = false)
-        }
     }
 }

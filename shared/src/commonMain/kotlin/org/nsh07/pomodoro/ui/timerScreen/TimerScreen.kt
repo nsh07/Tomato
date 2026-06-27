@@ -39,7 +39,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.ui.androidSystemGestureExclusion
 import org.nsh07.pomodoro.ui.settingsScreen.screens.sampleTopics
-import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -54,7 +53,6 @@ fun SharedTransitionScope.TimerScreen(
     timerState: TimerState,
     topics: List<Topic>,
     currentTopic: Topic,
-    settingsState: SettingsState,
     isPlus: Boolean,
     contentPadding: PaddingValues,
     progress: () -> Float,
@@ -87,7 +85,7 @@ fun SharedTransitionScope.TimerScreen(
             AnimatedPane {
                 TimerSupportingPane(
                     timerState = timerState,
-                    settingsState = settingsState,
+                    currentTopic = currentTopic,
                     contentPadding = contentPadding
                 )
             }
@@ -125,7 +123,6 @@ fun TimerScreenPreview() {
                     timerState = timerState,
                     topics = sampleTopics,
                     currentTopic = sampleTopics[5],
-                    SettingsState(),
                     isPlus = true,
                     contentPadding = PaddingValues(),
                     { 0.3f },

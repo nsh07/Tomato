@@ -85,18 +85,18 @@ class SettingsViewModel(
     val editingTopic = _editingTopic.asStateFlow()
 
     val focusTimeTextFieldState by lazy {
-        TextFieldState((_settingsState.value.focusTime / 60000).toString())
+        TextFieldState((_currentTopic.value.focusTime / 60000).toString())
     }
     val shortBreakTimeTextFieldState by lazy {
-        TextFieldState((_settingsState.value.shortBreakTime / 60000).toString())
+        TextFieldState((_currentTopic.value.shortBreakTime / 60000).toString())
     }
     val longBreakTimeTextFieldState by lazy {
-        TextFieldState((_settingsState.value.longBreakTime / 60000).toString())
+        TextFieldState((_currentTopic.value.longBreakTime / 60000).toString())
     }
 
     val sessionsSliderState by lazy {
         SliderState(
-            value = _settingsState.value.sessionLength.toFloat(),
+            value = _currentTopic.value.sessionLength.toFloat(),
             steps = 8,
             valueRange = 1f..10f,
             onValueChangeFinished = ::updateSessionLength
@@ -174,9 +174,7 @@ class SettingsViewModel(
 
             val topic = _editingTopic.updateAndGet { it.copy(sessionLength = value) }
             if (topic.id == _currentTopic.value.id) {
-                _settingsState.update { currentState ->
-                    currentState.copy(sessionLength = value)
-                }
+                stateRepository.setTopic(topic)
                 refreshTimer()
             }
             topicRepository.updateTopic(topic)
@@ -204,9 +202,7 @@ class SettingsViewModel(
 
                         val topic = _editingTopic.updateAndGet { it.copy(focusTime = value) }
                         if (topic.id == _currentTopic.value.id) {
-                            _settingsState.update { currentState ->
-                                currentState.copy(focusTime = value)
-                            }
+                            stateRepository.setTopic(topic)
                             refreshTimer()
                         }
                         topicRepository.updateTopic(topic)
@@ -222,9 +218,7 @@ class SettingsViewModel(
 
                         val topic = _editingTopic.updateAndGet { it.copy(shortBreakTime = value) }
                         if (topic.id == _currentTopic.value.id) {
-                            _settingsState.update { currentState ->
-                                currentState.copy(shortBreakTime = value)
-                            }
+                            stateRepository.setTopic(topic)
                             refreshTimer()
                         }
                         topicRepository.updateTopic(topic)
@@ -240,9 +234,7 @@ class SettingsViewModel(
 
                         val topic = _editingTopic.updateAndGet { it.copy(longBreakTime = value) }
                         if (topic.id == _currentTopic.value.id) {
-                            _settingsState.update { currentState ->
-                                currentState.copy(longBreakTime = value)
-                            }
+                            stateRepository.setTopic(topic)
                             refreshTimer()
                         }
                         topicRepository.updateTopic(topic)
@@ -296,13 +288,9 @@ class SettingsViewModel(
 
     private fun saveDndEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            _editingTopic.update { it.copy(dndEnabled = enabled) }
-
-            val topic = _editingTopic.value
+            val topic = _editingTopic.updateAndGet { it.copy(dndEnabled = enabled) }
             if (topic.id == _currentTopic.value.id) {
-                _settingsState.update { currentState ->
-                    currentState.copy(dndEnabled = enabled)
-                }
+                stateRepository.setTopic(topic)
             }
             topicRepository.updateTopic(topic)
         }
@@ -379,13 +367,10 @@ class SettingsViewModel(
 
     private fun saveAutostartNextSession(autostartNextSession: Boolean) {
         viewModelScope.launch {
-            _editingTopic.update { it.copy(autostartNextSession = autostartNextSession) }
-
-            val topic = _editingTopic.value
+            val topic =
+                _editingTopic.updateAndGet { it.copy(autostartNextSession = autostartNextSession) }
             if (topic.id == _currentTopic.value.id) {
-                _settingsState.update { currentState ->
-                    currentState.copy(autostartNextSession = autostartNextSession)
-                }
+                stateRepository.setTopic(topic)
             }
             topicRepository.updateTopic(topic)
         }
@@ -441,20 +426,20 @@ class SettingsViewModel(
 
     private fun refreshTimer() {
         if (!serviceRunning.value) {
-            val settingsState = _settingsState.value
+            val currentTopic = _currentTopic.value
             val infFocus = stateRepository.timerState.value.infiniteFocus
 
-            if (!infFocus) time.update { settingsState.focusTime }
+            if (!infFocus) time.update { currentTopic.focusTime }
 
             if (!infFocus) stateRepository.timerState.update { currentState ->
                 currentState.copy(
                     timerMode = TimerMode.FOCUS,
                     timeStr = millisecondsToStr(time.value),
                     totalTime = time.value,
-                    nextTimerMode = if (settingsState.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
-                    nextTimeStr = millisecondsToStr(if (settingsState.sessionLength > 1) settingsState.shortBreakTime else settingsState.longBreakTime),
+                    nextTimerMode = if (currentTopic.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
+                    nextTimeStr = millisecondsToStr(if (currentTopic.sessionLength > 1) currentTopic.shortBreakTime else currentTopic.longBreakTime),
                     currentFocusCount = 1,
-                    totalFocusCount = settingsState.sessionLength
+                    totalFocusCount = currentTopic.sessionLength
                 )
             }
         }

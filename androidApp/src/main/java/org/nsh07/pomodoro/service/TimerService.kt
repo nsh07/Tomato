@@ -56,6 +56,7 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import org.nsh07.pomodoro.widget.TimerAppWidget
 import kotlin.text.Typography.middleDot
+import kotlin.time.Duration.Companion.milliseconds
 
 class TimerService : Service(), KoinComponent {
 
@@ -207,14 +208,15 @@ class TimerService : Service(), KoinComponent {
         remainingTime: Int, paused: Boolean = false, complete: Boolean = false
     ) {
         val settingsState = _settingsState.value
+        val currentTopic = stateRepository.currentTopic.value
         val timerState = _timerState.value
 
         if (complete) notificationBuilder.clearActions().addStopAlarmAction(this)
 
         val totalTime = when (timerState.timerMode) {
-            TimerMode.FOCUS -> settingsState.focusTime.toInt()
-            TimerMode.SHORT_BREAK -> settingsState.shortBreakTime.toInt()
-            else -> settingsState.longBreakTime.toInt()
+            TimerMode.FOCUS -> currentTopic.focusTime.toInt()
+            TimerMode.SHORT_BREAK -> currentTopic.shortBreakTime.toInt()
+            else -> currentTopic.longBreakTime.toInt()
         }
 
         val currentTimer = when (timerState.timerMode) {
@@ -259,7 +261,7 @@ class TimerService : Service(), KoinComponent {
                                 if (timerState.timerMode == TimerMode.FOCUS) (Long.MAX_VALUE - remainingTime).toInt()
                                 else (totalTime - remainingTime)
                             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && !settingsState.singleProgressBar) {
-                                (totalTime - remainingTime) + ((timerManager.cycles + 1) / 2) * settingsState.focusTime.toInt() + (timerManager.cycles / 2) * settingsState.shortBreakTime.toInt()
+                                (totalTime - remainingTime) + ((timerManager.cycles + 1) / 2) * currentTopic.focusTime.toInt() + (timerManager.cycles / 2) * currentTopic.shortBreakTime.toInt()
                             } else (totalTime - remainingTime)
                         )
                 )
@@ -293,27 +295,28 @@ class TimerService : Service(), KoinComponent {
 
     private fun updateProgressSegments() {
         val settingsState = _settingsState.value
+        val currentTopic = stateRepository.currentTopic.value
         notificationStyle = NotificationCompat.ProgressStyle()
             .also {
                 // Add all the Focus, Short break and long break intervals in order
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && !settingsState.singleProgressBar && !_timerState.value.infiniteFocus) {
                     // Android 16 and later supports live updates
                     // Set progress bar sections if on Baklava or later
-                    for (i in 0..<settingsState.sessionLength * 2) {
+                    for (i in 0..<currentTopic.sessionLength * 2) {
                         if (i % 2 == 0) it.addProgressSegment(
                             NotificationCompat.ProgressStyle.Segment(
-                                settingsState.focusTime.toInt()
+                                currentTopic.focusTime.toInt()
                             )
                                 .setColor(cs.primary.toArgb())
                         )
-                        else if (i != (settingsState.sessionLength * 2 - 1)) it.addProgressSegment(
+                        else if (i != (currentTopic.sessionLength * 2 - 1)) it.addProgressSegment(
                             NotificationCompat.ProgressStyle.Segment(
-                                settingsState.shortBreakTime.toInt()
+                                currentTopic.shortBreakTime.toInt()
                             ).setColor(cs.tertiary.toArgb())
                         )
                         else it.addProgressSegment(
                             NotificationCompat.ProgressStyle.Segment(
-                                settingsState.longBreakTime.toInt()
+                                currentTopic.longBreakTime.toInt()
                             ).setColor(cs.tertiary.toArgb())
                         )
                     }
@@ -321,9 +324,9 @@ class TimerService : Service(), KoinComponent {
                     it.addProgressSegment(
                         NotificationCompat.ProgressStyle.Segment(
                             when (_timerState.value.timerMode) {
-                                TimerMode.FOCUS -> settingsState.focusTime.toInt()
-                                TimerMode.SHORT_BREAK -> settingsState.shortBreakTime.toInt()
-                                else -> settingsState.longBreakTime.toInt()
+                                TimerMode.FOCUS -> currentTopic.focusTime.toInt()
+                                TimerMode.SHORT_BREAK -> currentTopic.shortBreakTime.toInt()
+                                else -> currentTopic.longBreakTime.toInt()
                             }
                         )
                     )
@@ -338,7 +341,7 @@ class TimerService : Service(), KoinComponent {
         activityCallbacks.activityTurnScreenOn(true)
 
         autoAlarmStopScope = CoroutineScope(Dispatchers.IO).launch {
-            delay(1 * 60 * 1000)
+            delay((1 * 60 * 1000).milliseconds)
             stopAlarm(fromAutoStop = true)
         }
 
@@ -374,6 +377,7 @@ class TimerService : Service(), KoinComponent {
         updateProgressSegments() // Make sure notification style is initialized
 
         val settingsState = _settingsState.value
+        val currentTopic = stateRepository.currentTopic.value
         autoAlarmStopScope?.cancel()
 
         if (settingsState.alarmEnabled) {
@@ -398,13 +402,13 @@ class TimerService : Service(), KoinComponent {
         )
         showTimerNotification(
             when (_timerState.value.timerMode) {
-                TimerMode.FOCUS -> settingsState.focusTime.toInt()
-                TimerMode.SHORT_BREAK -> settingsState.shortBreakTime.toInt()
-                else -> settingsState.longBreakTime.toInt()
+                TimerMode.FOCUS -> currentTopic.focusTime.toInt()
+                TimerMode.SHORT_BREAK -> currentTopic.shortBreakTime.toInt()
+                else -> currentTopic.longBreakTime.toInt()
             }, paused = true, complete = false
         )
 
-        if (settingsState.autostartNextSession && !fromAutoStop)  // auto start next session
+        if (currentTopic.autostartNextSession && !fromAutoStop)  // auto start next session
             toggleTimer()
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -444,7 +448,7 @@ class TimerService : Service(), KoinComponent {
     }
 
     private fun setDoNotDisturb(doNotDisturb: Boolean) {
-        if (_settingsState.value.dndEnabled && notificationManagerService.isNotificationPolicyAccessGranted()) {
+        if (stateRepository.currentTopic.value.dndEnabled && notificationManagerService.isNotificationPolicyAccessGranted()) {
             if (doNotDisturb) {
                 notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY)
             } else notificationManagerService.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)

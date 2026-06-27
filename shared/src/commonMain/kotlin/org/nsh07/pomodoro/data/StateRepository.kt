@@ -130,13 +130,8 @@ class StateRepository(
             )
 
         settingsState.update { currentState ->
-            val topic = currentTopic.value
             currentState.copy(
-                focusTime = topic.focusTime,
-                shortBreakTime = topic.shortBreakTime,
-                longBreakTime = topic.longBreakTime,
                 focusGoal = focusGoal,
-                sessionLength = topic.sessionLength,
                 theme = theme,
                 colorScheme = colorScheme,
                 alarmSoundUri = alarmSoundUri,
@@ -144,10 +139,8 @@ class StateRepository(
                 aodEnabled = aodEnabled,
                 alarmEnabled = alarmEnabled,
                 vibrateEnabled = vibrateEnabled,
-                dndEnabled = topic.dndEnabled,
                 mediaVolumeForAlarm = mediaVolumeForAlarm,
                 singleProgressBar = singleProgressBar,
-                autostartNextSession = topic.autostartNextSession,
                 secureAod = secureAod,
                 vibrationOnDuration = vibrationOnDuration,
                 vibrationOffDuration = vibrationOffDuration,
@@ -158,17 +151,17 @@ class StateRepository(
 
         if (isFirstLoad) {
             isFirstLoad = false
-            val settings = settingsState.value
-            time.update { settings.focusTime }
+            val topic = currentTopic.value
+            time.update { topic.focusTime }
             timerState.update { currentState ->
                 currentState.copy(
                     timerMode = TimerMode.FOCUS,
-                    timeStr = millisecondsToStr(settings.focusTime),
-                    totalTime = settings.focusTime,
-                    nextTimerMode = if (settings.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
-                    nextTimeStr = millisecondsToStr(if (settings.sessionLength > 1) settings.shortBreakTime else settings.longBreakTime),
+                    timeStr = millisecondsToStr(topic.focusTime),
+                    totalTime = topic.focusTime,
+                    nextTimerMode = if (topic.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
+                    nextTimeStr = millisecondsToStr(if (topic.sessionLength > 1) topic.shortBreakTime else topic.longBreakTime),
                     currentFocusCount = 1,
-                    totalFocusCount = settings.sessionLength
+                    totalFocusCount = topic.sessionLength
                 )
             }
         }
@@ -176,15 +169,5 @@ class StateRepository(
 
     fun setTopic(topic: Topic) {
         currentTopic.update { topic }
-        settingsState.update {
-            it.copy(
-                focusTime = topic.focusTime,
-                shortBreakTime = topic.shortBreakTime,
-                longBreakTime = topic.longBreakTime,
-                sessionLength = topic.sessionLength,
-                dndEnabled = topic.dndEnabled,
-                autostartNextSession = topic.autostartNextSession
-            )
-        }
     }
 }

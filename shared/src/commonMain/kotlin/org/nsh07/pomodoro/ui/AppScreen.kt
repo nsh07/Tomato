@@ -316,7 +316,6 @@ fun AppScreen(
                             timerState = uiState,
                             topics = topics,
                             currentTopic = currentTopic,
-                            settingsState = settingsState,
                             isPlus = isPlus,
                             contentPadding = contentPadding,
                             progress = { progress },

@@ -28,6 +28,7 @@ import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.service.TimerManager
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
+import kotlin.time.Duration.Companion.milliseconds
 
 class DesktopTimerHelper(
     private val timerManager: TimerManager,
@@ -121,7 +122,7 @@ class DesktopTimerHelper(
         if (settingsState.alarmEnabled) mp3Player.play()
 
         autoAlarmStopScope = CoroutineScope(Dispatchers.IO).launch {
-            delay(1 * 60 * 1000)
+            delay((1 * 60 * 1000).milliseconds)
             stopAlarm(fromAutoStop = true)
         }
     }
@@ -142,7 +143,8 @@ class DesktopTimerHelper(
 
         showTimerNotification(complete = false)
 
-        if (settingsState.autostartNextSession && !fromAutoStop)  // auto start next session
+        val currentTopic = stateRepository.currentTopic.value
+        if (currentTopic.autostartNextSession && !fromAutoStop)  // auto start next session
             toggleTimer()
     }
 }

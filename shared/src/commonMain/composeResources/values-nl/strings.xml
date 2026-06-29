@@ -85,4 +85,7 @@
     <string name="selected">Geselecteerd</string>
     <string name="help_with_translation">Helpen met vertalen</string>
     <string name="timer_settings_reset_info">Reset de timer om de instellingen aan te passen</string>
+    <string name="license">Licentie</string>
+    <string name="choose_folder">Kies een map</string>
+    <string name="choose_file">Kies een bestand</string>
 </resources>

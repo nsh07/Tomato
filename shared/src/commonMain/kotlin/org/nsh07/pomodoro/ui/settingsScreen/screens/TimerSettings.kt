@@ -19,9 +19,7 @@ package org.nsh07.pomodoro.ui.settingsScreen.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,10 +36,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
@@ -57,11 +56,11 @@ import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SliderState
-import androidx.compose.material3.SplitButtonDefaults
-import androidx.compose.material3.SplitButtonLayout
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberSliderState
@@ -74,14 +73,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
-import com.materialkolor.ktx.harmonize
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.Topic
@@ -104,15 +100,16 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import org.nsh07.pomodoro.ui.timerScreen.harmonizeIf
 import org.nsh07.pomodoro.ui.topBarWindowInsets
 import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.add
 import tomato.shared.generated.resources.always_on_display
 import tomato.shared.generated.resources.always_on_display_desc
 import tomato.shared.generated.resources.aod
 import tomato.shared.generated.resources.arrow_back
-import tomato.shared.generated.resources.arrow_down
 import tomato.shared.generated.resources.back
 import tomato.shared.generated.resources.check
 import tomato.shared.generated.resources.clear
@@ -194,78 +191,90 @@ fun TimerSettings(
     ) {
         Scaffold(
             topBar = {
-                LargeFlexibleTopAppBar(
-                    windowInsets = topBarWindowInsets(),
-                    title = {
-                        Text(
-                            stringResource(Res.string.timer),
-                            fontFamily = LocalAppFonts.current.topBarTitle
-                        )
-                    },
-                    subtitle = {
-                        Text(stringResource(Res.string.settings))
-                    },
-                    navigationIcon = {
-                        if (!widthExpanded)
-                            FilledTonalIconButton(
-                                onClick = onBack,
-                                shapes = IconButtonDefaults.shapes(),
-                                colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                    containerColor = listItemColors.containerColor
-                                )
-                            ) {
-                                Icon(
-                                    painterResource(Res.drawable.arrow_back),
-                                    stringResource(Res.string.back)
+                Column {
+                    val isDefaultTopic = editingTopic.id == defaultTopic.id
+                    val colors = ToggleButtonDefaults.toggleButtonColors(
+                        containerColor = listItemColors.containerColor,
+                        checkedContainerColor = remember(editingTopic.color) {
+                            editingTopic.color.harmonizeIf(
+                                colorScheme.secondaryContainer,
+                                isDefaultTopic
+                            )
+                        },
+                        checkedContentColor = remember(editingTopic.color) {
+                            editingTopic.color.harmonizeIf(
+                                colorScheme.onSecondaryContainer,
+                                isDefaultTopic
+                            )
+                        }
+                    )
 
-                                )
-                            }
-                    },
-                    actions = {
-                        var expanded by remember { mutableStateOf(false) }
-                        val buttonColor by animateColorAsState(
-                            editingTopic.color.let {
-                                if (it != Color.White) {
-                                    it.harmonize(colorScheme.primary, true)
-                                } else colorScheme.primary
-                            }
-                        )
-                        SplitButtonLayout(
-                            leadingButton = {
-                                SplitButtonDefaults.LeadingButton(
-                                    onClick = {},
-                                    content = {
-                                        AnimatedContent(editingTopic.name) { Text(it) }
-                                    },
-                                    colors = ButtonDefaults.buttonColors(containerColor = buttonColor)
-                                )
-                            },
-                            trailingButton = {
-                                SplitButtonDefaults.TrailingButton(
-                                    checked = expanded,
-                                    onCheckedChange = { expanded = it },
-                                    colors = ButtonDefaults.buttonColors(containerColor = buttonColor)
-                                ) {
-                                    val rotation: Float by animateFloatAsState(
-                                        targetValue = if (expanded) 180f else 0f,
-                                        label = "Trailing Icon Rotation"
+                    LargeFlexibleTopAppBar(
+                        windowInsets = topBarWindowInsets(),
+                        title = {
+                            Text(
+                                stringResource(Res.string.timer),
+                                fontFamily = LocalAppFonts.current.topBarTitle
+                            )
+                        },
+                        subtitle = {
+                            Text(stringResource(Res.string.settings))
+                        },
+                        navigationIcon = {
+                            if (!widthExpanded)
+                                FilledTonalIconButton(
+                                    onClick = onBack,
+                                    shapes = IconButtonDefaults.shapes(),
+                                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                        containerColor = listItemColors.containerColor
                                     )
+                                ) {
                                     Icon(
-                                        painterResource(Res.drawable.arrow_down),
-                                        modifier =
-                                            Modifier.size(SplitButtonDefaults.TrailingIconSize)
-                                                .graphicsLayer {
-                                                    this.rotationZ = rotation
-                                                },
-                                        contentDescription = null
+                                        painterResource(Res.drawable.arrow_back),
+                                        stringResource(Res.string.back)
+
                                     )
                                 }
+                        },
+                        colors = barColors,
+                        scrollBehavior = scrollBehavior
+                    )
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        modifier = Modifier
+                            .background(topBarColors.containerColor)
+                            .padding(bottom = 4.dp)
+                    ) {
+                        itemsIndexed(topics, key = { _, item -> item.id }) { index, topic ->
+                            ToggleButton(
+                                checked = topic.id == editingTopic.id,
+                                onCheckedChange = { onAction(SettingsAction.SetEditingTopic(topic)) },
+                                shapes = when (index) {
+                                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                                },
+                                colors = colors
+                            ) { Text(topic.name) }
+                        }
+
+                        item {
+                            ToggleButton(
+                                checked = false,
+                                onCheckedChange = { },
+                                shapes = ButtonGroupDefaults.connectedTrailingButtonShapes(),
+                                colors = colors
+                            ) {
+                                Icon(
+                                    painterResource(Res.drawable.add),
+                                    null,
+                                    Modifier.size(IconButtonDefaults.extraSmallIconSize)
+                                )
                             }
-                        )
-                    },
-                    colors = barColors,
-                    scrollBehavior = scrollBehavior
-                )
+                        }
+                    }
+                }
             },
             containerColor = barColors.containerColor,
             modifier = modifier

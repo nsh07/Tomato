@@ -17,9 +17,11 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,11 +31,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
+import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Slider
@@ -41,20 +47,25 @@ import androidx.compose.material3.SliderState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.Topic
+import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.ui.rememberRequestDndPermissionCallback
+import org.nsh07.pomodoro.ui.settingsScreen.screens.sampleTopics
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
+import org.nsh07.pomodoro.ui.theme.CustomColors.black
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
@@ -62,6 +73,8 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import org.nsh07.pomodoro.ui.timerScreen.harmonizeIf
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.auto_start_next_timer
 import tomato.shared.generated.resources.auto_start_next_timer_desc
@@ -77,7 +90,10 @@ import tomato.shared.generated.resources.session_length
 import tomato.shared.generated.resources.session_length_desc
 import tomato.shared.generated.resources.short_break
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalFoundationStyleApi::class
+)
 @Composable
 fun TopicTimerSettings(
     topic: Topic,
@@ -90,9 +106,10 @@ fun TopicTimerSettings(
     modifier: Modifier = Modifier
 ) {
     val requestDndPermissionCallback = rememberRequestDndPermissionCallback()
+    val isDefaultTopic = topic.id == defaultTopic.id
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier
     ) {
         Row(
@@ -221,8 +238,7 @@ fun TopicTimerSettings(
                     leadingContent = {
                         Icon(
                             painterResource(item.icon),
-                            contentDescription = null,
-                            modifier = Modifier.padding(top = 4.dp)
+                            contentDescription = null
                         )
                     },
                     content = { Text(stringResource(item.label)) },
@@ -255,6 +271,31 @@ fun TopicTimerSettings(
                 )
             }
         }
+
+        AnimatedVisibility(!isDefaultTopic) {
+            SegmentedListItem(
+                onClick = {},
+                leadingContent = {
+                    val fillColor = topic.color.harmonizeIf(colorScheme.primary, isDefaultTopic)
+                    val fillShape = topic.shape.toShape()
+                    Box(
+                        Modifier
+                            .size(22.dp)
+                            .styleable {
+                                background(fillColor)
+                                shape(fillShape)
+                            }
+                    )
+                },
+                shapes = segmentedListItemShapes(0, 1),
+                colors = ListItemDefaults.segmentedColors(
+                    containerColor = topic.color.harmonizeIf(if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainerHigh, isDefaultTopic),
+                    disabledContainerColor = topic.color.harmonizeIf(if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainerHigh, isDefaultTopic)
+                )
+            ) {
+                Text("Topic shape & color")
+            }
+        }
     }
 }
 
@@ -266,3 +307,41 @@ private data class SettingsSwitchItem(
     val enabled: Boolean = true,
     val onClick: (Boolean) -> Unit
 )
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun TopicTimerSettingsPreview() {
+    TomatoTheme(dynamicColor = false) {
+        Box(Modifier.background(colorScheme.surfaceContainer)) {
+            TopicTimerSettings(
+                topic = sampleTopics.random(),
+                serviceRunning = false,
+                focusTimeInputFieldState = TextFieldState("25"),
+                shortBreakTimeInputFieldState = TextFieldState("5"),
+                longBreakTimeInputFieldState = TextFieldState("15"),
+                sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
+                onAction = {}
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun TopicTimerSettingsDarkPreview() {
+    TomatoTheme(darkTheme = true, dynamicColor = false) {
+        Box(Modifier.background(colorScheme.surfaceContainer)) {
+            TopicTimerSettings(
+                topic = sampleTopics.random(),
+                serviceRunning = false,
+                focusTimeInputFieldState = TextFieldState("25"),
+                shortBreakTimeInputFieldState = TextFieldState("5"),
+                longBreakTimeInputFieldState = TextFieldState("15"),
+                sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
+                onAction = {}
+            )
+        }
+    }
+}

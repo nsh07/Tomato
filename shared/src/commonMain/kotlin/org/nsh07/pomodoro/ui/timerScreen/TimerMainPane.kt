@@ -31,7 +31,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -169,6 +168,7 @@ fun SharedTransitionScope.TimerMainPane(
     val haptic = LocalHapticFeedback.current
     val defaultTopic = currentTopic.id == Topic.defaultTopic.id
     val cc = currentTopic.color
+    val colorScheme = colorScheme
 
     val fraction by animateFloatAsState(
         targetValue = if (timerState.timerMode == TimerMode.FOCUS) 1f else 0f,
@@ -295,19 +295,68 @@ fun SharedTransitionScope.TimerMainPane(
                 },
                 actions = {
                     var expanded by remember { mutableStateOf(false) }
+                    val containerColor = remember(cc, defaultTopic, colorScheme.secondaryContainer) {
+                        cc.harmonizeIf(colorScheme.secondaryContainer, defaultTopic)
+                    }
+                    val contentColor = remember(cc, defaultTopic, colorScheme.onSecondaryContainer) {
+                        cc.harmonizeIf(colorScheme.onSecondaryContainer, defaultTopic)
+                    }
+                    val checkedContainerColor = remember(cc, defaultTopic, colorScheme.secondary) {
+                        cc.harmonizeIf(colorScheme.secondary, defaultTopic)
+                    }
+                    val checkedContentColor = remember(cc, defaultTopic, colorScheme.onSecondary) {
+                        cc.harmonizeIf(colorScheme.onSecondary, defaultTopic)
+                    }
+
+                    val menuContainerColorBase = MenuDefaults.groupStandardContainerColor
+                    val menuContainerColor = remember(cc, defaultTopic, menuContainerColorBase) {
+                        cc.harmonizeIf(menuContainerColorBase, defaultTopic)
+                    }
+                    val menuTextColor = remember(cc, defaultTopic, colorScheme.onSurface) {
+                        cc.harmonizeIf(colorScheme.onSurface, defaultTopic)
+                    }
+                    val menuIconColor = remember(cc, defaultTopic, colorScheme.onSurfaceVariant) {
+                        cc.harmonizeIf(colorScheme.onSurfaceVariant, defaultTopic)
+                    }
+                    val menuSelectedContainerColor =
+                        remember(cc, defaultTopic, colorScheme.tertiaryContainer) {
+                            cc.harmonizeIf(colorScheme.tertiaryContainer, defaultTopic)
+                        }
+                    val menuSelectedContentColor =
+                        remember(cc, defaultTopic, colorScheme.onTertiaryContainer) {
+                            cc.harmonizeIf(colorScheme.onTertiaryContainer, defaultTopic)
+                        }
+
                     FilledTonalIconToggleButton(
                         checked = expanded,
                         onCheckedChange = { expanded = it },
-                        shapes = IconButtonDefaults.toggleableShapes()
+                        shapes = IconButtonDefaults.toggleableShapes(),
+                        colors = IconButtonDefaults.filledTonalIconToggleButtonColors(
+                            containerColor = containerColor,
+                            contentColor = contentColor,
+                            checkedContainerColor = checkedContainerColor,
+                            checkedContentColor = checkedContentColor
+                        )
                     ) { Icon(painterResource(Res.drawable.label), null) }
 
                     DropdownMenuPopup(
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
                     ) {
+                        val selectableItemColors = MenuDefaults.selectableItemColors(
+                            textColor = menuTextColor,
+                            containerColor = menuContainerColor,
+                            leadingIconColor = menuIconColor,
+                            trailingIconColor = menuIconColor,
+                            selectedContainerColor = menuSelectedContainerColor,
+                            selectedTextColor = menuSelectedContentColor,
+                            selectedLeadingIconColor = menuSelectedContentColor,
+                            selectedTrailingIconColor = menuSelectedContentColor
+                        )
+
                         DropdownMenuGroup(
                             shapes = MenuDefaults.groupShape(0, 2),
-                            containerColor = MenuDefaults.groupStandardContainerColor
+                            containerColor = menuContainerColor
                         ) {
                             topics.fastForEachIndexed { index, topic ->
                                 Box {
@@ -319,7 +368,7 @@ fun SharedTransitionScope.TimerMainPane(
                                         },
                                         text = { Text(topic.name) },
                                         shapes = MenuDefaults.itemShape(index, topics.size),
-                                        colors = MenuDefaults.selectableItemColors()
+                                        colors = selectableItemColors
                                     )
                                 }
                             }
@@ -329,7 +378,7 @@ fun SharedTransitionScope.TimerMainPane(
 
                         DropdownMenuGroup(
                             shapes = MenuDefaults.groupShape(1, 2),
-                            containerColor = MenuDefaults.groupStandardContainerColor
+                            containerColor = menuContainerColor
                         ) {
                             MaterialShapes.Bun
                             Box {
@@ -343,22 +392,14 @@ fun SharedTransitionScope.TimerMainPane(
                                         )
                                     },
                                     shape = MenuDefaults.trailingItemShape,
-                                    colors = MenuDefaults.itemColors()
+                                    colors = MenuDefaults.itemColors(
+                                        textColor = menuTextColor,
+                                        leadingIconColor = menuIconColor,
+                                        trailingIconColor = menuIconColor
+                                    )
                                 )
                             }
                         }
-                    }
-                },
-                navigationIcon = {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.size(IconButtonDefaults.smallContainerSize())
-                    ) {
-                        Box(
-                            Modifier
-                                .size(IconButtonDefaults.largeIconSize)
-                                .background(color, currentTopic.shape.toShape())
-                        )
                     }
                 },
                 titleHorizontalAlignment = CenterHorizontally,

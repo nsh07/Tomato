@@ -145,6 +145,8 @@ class SettingsViewModel(
         }
     }
 
+    fun setEditingTopicToCurrent() = setEditingTopic(_currentTopic.value)
+
     fun setEditingTopic(topic: Topic) {
         _editingTopic.update { topic }
         focusTimeTextFieldState.setTextAndPlaceCursorAtEnd((topic.focusTime / (60 * 1000)).toString())
@@ -153,13 +155,18 @@ class SettingsViewModel(
         sessionsSliderState.value = topic.sessionLength.toFloat()
     }
 
+    /**
+     * Applies [transform] to the topic being edited and persists it.
+     */
+    private suspend fun editTopic(refreshesTimer: Boolean = false, transform: (Topic) -> Topic) {
+        val topic = _editingTopic.updateAndGet(transform)
+        topicRepository.updateTopic(topic)
+        if (refreshesTimer && topic.id == stateRepository.currentTopicId.value) refreshTimer(topic)
+    }
+
     private fun setEditingTopicColor(color: Color) {
         viewModelScope.launch(Dispatchers.IO) {
-            val topic = _editingTopic.updateAndGet { it.copy(color = color) }
-            if (topic.id == _currentTopic.value.id) {
-                stateRepository.setTopic(topic)
-            }
-            topicRepository.updateTopic(topic)
+            editTopic { it.copy(color = color) }
         }
     }
 
@@ -183,12 +190,7 @@ class SettingsViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val value = sessionsSliderState.value.toInt()
 
-            val topic = _editingTopic.updateAndGet { it.copy(sessionLength = value) }
-            if (topic.id == _currentTopic.value.id) {
-                stateRepository.setTopic(topic)
-                refreshTimer()
-            }
-            topicRepository.updateTopic(topic)
+            editTopic(refreshesTimer = true) { it.copy(sessionLength = value) }
         }
     }
 
@@ -211,12 +213,7 @@ class SettingsViewModel(
                     if (it.isNotEmpty()) {
                         val value = it.toString().toLong() * 60 * 1000
 
-                        val topic = _editingTopic.updateAndGet { it.copy(focusTime = value) }
-                        if (topic.id == _currentTopic.value.id) {
-                            stateRepository.setTopic(topic)
-                            refreshTimer()
-                        }
-                        topicRepository.updateTopic(topic)
+                        editTopic(refreshesTimer = true) { it.copy(focusTime = value) }
                     }
                 }
         }
@@ -227,12 +224,7 @@ class SettingsViewModel(
                     if (it.isNotEmpty()) {
                         val value = it.toString().toLong() * 60 * 1000
 
-                        val topic = _editingTopic.updateAndGet { it.copy(shortBreakTime = value) }
-                        if (topic.id == _currentTopic.value.id) {
-                            stateRepository.setTopic(topic)
-                            refreshTimer()
-                        }
-                        topicRepository.updateTopic(topic)
+                        editTopic(refreshesTimer = true) { it.copy(shortBreakTime = value) }
                     }
                 }
         }
@@ -243,12 +235,7 @@ class SettingsViewModel(
                     if (it.isNotEmpty()) {
                         val value = it.toString().toLong() * 60 * 1000
 
-                        val topic = _editingTopic.updateAndGet { it.copy(longBreakTime = value) }
-                        if (topic.id == _currentTopic.value.id) {
-                            stateRepository.setTopic(topic)
-                            refreshTimer()
-                        }
-                        topicRepository.updateTopic(topic)
+                        editTopic(refreshesTimer = true) { it.copy(longBreakTime = value) }
                     }
                 }
         }
@@ -299,11 +286,7 @@ class SettingsViewModel(
 
     private fun saveDndEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            val topic = _editingTopic.updateAndGet { it.copy(dndEnabled = enabled) }
-            if (topic.id == _currentTopic.value.id) {
-                stateRepository.setTopic(topic)
-            }
-            topicRepository.updateTopic(topic)
+            editTopic { it.copy(dndEnabled = enabled) }
         }
     }
 
@@ -378,12 +361,7 @@ class SettingsViewModel(
 
     private fun saveAutostartNextSession(autostartNextSession: Boolean) {
         viewModelScope.launch {
-            val topic =
-                _editingTopic.updateAndGet { it.copy(autostartNextSession = autostartNextSession) }
-            if (topic.id == _currentTopic.value.id) {
-                stateRepository.setTopic(topic)
-            }
-            topicRepository.updateTopic(topic)
+            editTopic { it.copy(autostartNextSession = autostartNextSession) }
         }
     }
 
@@ -435,9 +413,14 @@ class SettingsViewModel(
         }
     }
 
-    private fun refreshTimer() {
+    /**
+     * Seeds the idle timer from [currentTopic].
+     *
+     * The topic is passed in rather than read from [StateRepository.currentTopic]: that flow is
+     * fed by the database and still holds the pre-edit values when this runs.
+     */
+    private fun refreshTimer(currentTopic: Topic) {
         if (!serviceRunning.value) {
-            val currentTopic = _currentTopic.value
             val infFocus = stateRepository.timerState.value.infiniteFocus
 
             if (!infFocus) time.update { currentTopic.focusTime }

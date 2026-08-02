@@ -53,7 +53,7 @@ class TimerViewModel(
     private val _time: MutableStateFlow<Long> = stateRepository.time
     val timerState: StateFlow<TimerState> = stateRepository.timerState.asStateFlow()
 
-    val currentTopic = stateRepository.currentTopic.asStateFlow()
+    val currentTopic = stateRepository.currentTopic
 
     val progress = _time.combine(stateRepository.timerState) { remainingTime, uiState ->
         (uiState.totalTime.toFloat() - remainingTime) / uiState.totalTime
@@ -100,8 +100,10 @@ class TimerViewModel(
 
             is TimerAction.SetTopic -> {
                 if (!timerState.value.serviceRunning) {
-                    stateRepository.setTopic(action.topic)
-                    onAction(TimerAction.ResetTimer)
+                    viewModelScope.launch {
+                        stateRepository.setTopic(action.topic)
+                        onAction(TimerAction.ResetTimer)
+                    }
                 }
             }
 

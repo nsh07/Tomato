@@ -21,7 +21,14 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.lightColorScheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
@@ -32,13 +39,22 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import org.nsh07.pomodoro.utils.getDefaultAlarmTone
 import org.nsh07.pomodoro.utils.millisecondsToStr
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class StateRepository(
     private val preferenceRepository: PreferenceRepository,
     private val topicRepository: TopicRepository
 ) {
+    private val scope = CoroutineScope(Dispatchers.IO)
+
     val timerState = MutableStateFlow(TimerState())
     val settingsState = MutableStateFlow(SettingsState())
-    val currentTopic = MutableStateFlow(defaultTopic)
+
+    val currentTopicId = MutableStateFlow(defaultTopic.id)
+
+    val currentTopic: StateFlow<Topic> = currentTopicId
+        .flatMapLatest { topicRepository.observeTopicById(it) }
+        .map { it ?: defaultTopic } // the selected topic may have been deleted
+        .stateIn(scope, SharingStarted.Eagerly, defaultTopic)
 
     val time = MutableStateFlow(25 * 60 * 1000L)
     var timerFrequency: Float = 60f
@@ -51,15 +67,13 @@ class StateRepository(
     private var isFirstLoad = true
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
+        scope.launch {
             reloadSettings()
         }
     }
 
     suspend fun reloadSettings() {
         val defaults = SettingsState()
-
-        currentTopic.update { topicRepository.getTopicById(currentTopic.value.id) ?: defaultTopic }
 
         val focusGoal = preferenceRepository.getIntPreference("focus_goal")?.toLong()
             ?: preferenceRepository.saveIntPreference("focus_goal", defaults.focusGoal.toInt())
@@ -151,7 +165,7 @@ class StateRepository(
 
         if (isFirstLoad) {
             isFirstLoad = false
-            val topic = currentTopic.value
+            val topic = topicRepository.getTopicById(currentTopicId.value) ?: defaultTopic
             time.update { topic.focusTime }
             timerState.update { currentState ->
                 currentState.copy(
@@ -167,7 +181,9 @@ class StateRepository(
         }
     }
 
-    fun setTopic(topic: Topic) {
-        currentTopic.update { topic }
+    suspend fun setTopic(topic: Topic) {
+        if (currentTopicId.value == topic.id) return
+        currentTopicId.value = topic.id
+        currentTopic.first { it.id == topic.id || it.id == defaultTopic.id }
     }
 }

@@ -41,6 +41,7 @@ sealed interface SettingsAction {
     data class SaveVibrationAmplitude(val amplitude: Int) : SettingsAction
 
     data class SetEditingTopic(val topic: Topic) : SettingsAction
+    data class SetEditingTopicColor(val color: Color) : SettingsAction
 
     data object AskEraseData : SettingsAction
     data object CancelEraseData : SettingsAction

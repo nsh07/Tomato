@@ -43,6 +43,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -160,12 +161,31 @@ fun ColorSchemePickerListItem(
         )
     }
 
+    ColorPickerRow(
+        color = color,
+        colorSchemes = colorSchemes,
+        isPlus = isPlus,
+        onColorChange = onColorChange,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun ColorPickerRow(
+    color: Color,
+    colorSchemes: List<Color>,
+    isPlus: Boolean,
+    onColorChange: (Color) -> Unit,
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = animateColorAsState(listItemColors.containerColor).value,
+    horizontalPadding: Dp = 48.dp
+) {
     LazyRow(
-        contentPadding = PaddingValues(horizontal = 48.dp),
+        contentPadding = PaddingValues(horizontal = horizontalPadding),
         userScrollEnabled = isPlus,
         modifier = modifier
             .background(
-                animateColorAsState(listItemColors.containerColor).value,
+                backgroundColor,
                 shape = shapes.extraSmall.copy(topStart = CornerSize(0), topEnd = CornerSize(0))
             )
             .padding(bottom = 8.dp)

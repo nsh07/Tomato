@@ -137,6 +137,7 @@ class SettingsViewModel(
             is SettingsAction.SaveVibrationAmplitude -> saveVibrationAmplitude(action.amplitude)
 
             is SettingsAction.SetEditingTopic -> setEditingTopic(action.topic)
+            is SettingsAction.SetEditingTopicColor -> setEditingTopicColor(action.color)
 
             is SettingsAction.AskEraseData -> askEraseData()
             is SettingsAction.CancelEraseData -> cancelEraseData()
@@ -150,6 +151,16 @@ class SettingsViewModel(
         shortBreakTimeTextFieldState.setTextAndPlaceCursorAtEnd((topic.shortBreakTime / (60 * 1000)).toString())
         longBreakTimeTextFieldState.setTextAndPlaceCursorAtEnd((topic.longBreakTime / (60 * 1000)).toString())
         sessionsSliderState.value = topic.sessionLength.toFloat()
+    }
+
+    private fun setEditingTopicColor(color: Color) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val topic = _editingTopic.updateAndGet { it.copy(color = color) }
+            if (topic.id == _currentTopic.value.id) {
+                stateRepository.setTopic(topic)
+            }
+            topicRepository.updateTopic(topic)
+        }
     }
 
     private fun cancelEraseData() {

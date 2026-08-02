@@ -34,6 +34,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
 import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -41,6 +42,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderState
@@ -49,20 +51,23 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.ui.rememberRequestDndPermissionCallback
+import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.screens.sampleTopics
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.theme.CustomColors.black
@@ -107,6 +112,8 @@ fun TopicTimerSettings(
 ) {
     val requestDndPermissionCallback = rememberRequestDndPermissionCallback()
     val isDefaultTopic = topic.id == defaultTopic.id
+
+    var showColorShapeSheet by remember { mutableStateOf(false) }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -274,7 +281,8 @@ fun TopicTimerSettings(
 
         AnimatedVisibility(!isDefaultTopic) {
             SegmentedListItem(
-                onClick = {},
+                checked = showColorShapeSheet,
+                onCheckedChange = { showColorShapeSheet = it },
                 leadingContent = {
                     val fillColor = topic.color.harmonizeIf(colorScheme.primary, isDefaultTopic)
                     val fillShape = topic.shape.toShape()
@@ -289,24 +297,55 @@ fun TopicTimerSettings(
                 },
                 shapes = segmentedListItemShapes(0, 1),
                 colors = ListItemDefaults.segmentedColors(
-                    containerColor = topic.color.harmonizeIf(if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainerHigh, isDefaultTopic),
-                    disabledContainerColor = topic.color.harmonizeIf(if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainerHigh, isDefaultTopic)
+                    containerColor = topic.color.harmonizeIf(
+                        if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainerHigh,
+                        isDefaultTopic
+                    ),
+                    selectedContainerColor = topic.color.harmonizeIf(
+                        listItemColors.selectedContainerColor,
+                        isDefaultTopic
+                    )
                 )
             ) {
                 Text("Topic shape & color")
             }
         }
     }
-}
 
-private data class SettingsSwitchItem(
-    val checked: Boolean,
-    val icon: DrawableResource,
-    val label: StringResource,
-    val description: StringResource,
-    val enabled: Boolean = true,
-    val onClick: (Boolean) -> Unit
-)
+    if (showColorShapeSheet) {
+        val colorSchemes = listOf(
+            Color(0xfffeb4a7), Color(0xffffb3c0), Color(0xfffcaaff), Color(0xffb9c3ff),
+            Color(0xff62d3ff), Color(0xff44d9f1), Color(0xff52dbc9), Color(0xff78dd77),
+            Color(0xff9fd75c), Color(0xffc1d02d), Color(0xfffabd00), Color(0xffffb86e)
+        )
+
+        ModalBottomSheet(
+            onDismissRequest = { showColorShapeSheet = false }
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .padding(vertical = 16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    "Color",
+                    style = typography.labelMedium,
+                    color = colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                ColorPickerRow(
+                    topic.color,
+                    colorSchemes,
+                    isPlus = true,
+                    onColorChange = { onAction(SettingsAction.SetEditingTopicColor(it)) },
+                    backgroundColor = colorScheme.surfaceContainerLow,
+                    horizontalPadding = 16.dp
+                )
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview

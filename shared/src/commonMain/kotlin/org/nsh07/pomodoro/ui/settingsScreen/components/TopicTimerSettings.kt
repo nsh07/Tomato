@@ -79,7 +79,7 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
-import org.nsh07.pomodoro.ui.timerScreen.harmonizeIf
+import org.nsh07.pomodoro.ui.theme.harmonizeIf
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.auto_start_next_timer
 import tomato.shared.generated.resources.auto_start_next_timer_desc

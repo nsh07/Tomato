@@ -18,10 +18,17 @@
 package org.nsh07.pomodoro.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import com.materialkolor.dynamiccolor.ColorSpec
+import com.materialkolor.ktx.animateColorScheme
+import com.materialkolor.rememberDynamicColorScheme
 
 val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -99,6 +106,17 @@ val darkScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
 
+/**
+ * Whether the enclosing [TomatoTheme] is a dark theme
+ */
+val LocalDarkTheme = staticCompositionLocalOf { false }
+
+/**
+ * Whether the enclosing [TomatoTheme] is a black (AMOLED) theme. This is only ever true for dark
+ * themes.
+ */
+val LocalBlackTheme = staticCompositionLocalOf { false }
+
 @Composable
 expect fun TomatoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -107,3 +125,40 @@ expect fun TomatoTheme(
     blackTheme: Boolean = false,
     content: @Composable () -> Unit
 )
+
+/**
+ * A nested theme whose color scheme is generated from [seedColor], typically a topic's color.
+ * Typography, shapes and motion are inherited from the enclosing [TomatoTheme], so only colors
+ * change.
+ *
+ * [Color.White] means "no seed": the enclosing theme's color scheme is used as-is. This matches
+ * [TomatoTheme]'s seed color convention and the default topic's color.
+ *
+ * Color scheme changes are animated, so switching between topics cross-fades the whole subtree.
+ */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun SeededTheme(
+    seedColor: Color,
+    content: @Composable () -> Unit
+) {
+    val appScheme = colorScheme
+    val darkTheme = LocalDarkTheme.current
+    val blackTheme = LocalBlackTheme.current
+
+    val seededScheme = rememberDynamicColorScheme(
+        seedColor = when (seedColor) {
+            Color.White -> appScheme.primary
+            else -> seedColor
+        },
+        isDark = darkTheme,
+        specVersion = if (blackTheme) ColorSpec.SpecVersion.SPEC_2021 else ColorSpec.SpecVersion.SPEC_2025,
+        isAmoled = blackTheme
+    )
+
+    val scheme = animateColorScheme(
+        if (seedColor == Color.White) appScheme else seededScheme
+    )
+
+    MaterialExpressiveTheme(colorScheme = scheme, content = content)
+}

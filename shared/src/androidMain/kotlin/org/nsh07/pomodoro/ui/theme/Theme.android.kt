@@ -76,7 +76,11 @@ actual fun TomatoTheme(
         if (seedColor == Color.White && !(blackTheme && darkTheme)) colorScheme
         else dynamicColorScheme
 
-    CompositionLocalProvider(LocalAppFonts provides getAppFonts()) {
+    CompositionLocalProvider(
+        LocalAppFonts provides getAppFonts(),
+        LocalDarkTheme provides darkTheme,
+        LocalBlackTheme provides (blackTheme && darkTheme)
+    ) {
         MaterialExpressiveTheme(
             colorScheme = scheme,
             typography = typography(),

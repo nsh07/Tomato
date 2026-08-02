@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.ui.androidSystemGestureExclusion
 import org.nsh07.pomodoro.ui.settingsScreen.screens.sampleTopics
+import org.nsh07.pomodoro.ui.theme.SeededTheme
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -64,47 +65,49 @@ fun SharedTransitionScope.TimerScreen(
     )
     val expansionState = rememberPaneExpansionState()
 
-    SupportingPaneScaffold(
-        directive = navigator.scaffoldDirective,
-        scaffoldState = navigator.scaffoldState,
-        mainPane = {
-            AnimatedPane {
-                TimerMainPane(
-                    timerState = timerState,
-                    currentTopic = currentTopic,
-                    topics = topics,
-                    isPlus = isPlus,
-                    contentPadding = contentPadding,
-                    progress = progress,
-                    onAction = onAction,
-                    modifier = modifier
-                )
-            }
-        },
-        supportingPane = {
-            AnimatedPane {
-                TimerSupportingPane(
-                    timerState = timerState,
-                    currentTopic = currentTopic,
-                    contentPadding = contentPadding
-                )
-            }
-        },
-        paneExpansionDragHandle = {
-            val interactionSource =
-                remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
-            VerticalDragHandle(
-                modifier = Modifier
-                    .paneExpansionDraggable(
-                        expansionState,
-                        LocalMinimumInteractiveComponentSize.current,
-                        interactionSource
+    SeededTheme(seedColor = currentTopic.color) {
+        SupportingPaneScaffold(
+            directive = navigator.scaffoldDirective,
+            scaffoldState = navigator.scaffoldState,
+            mainPane = {
+                AnimatedPane {
+                    TimerMainPane(
+                        timerState = timerState,
+                        currentTopic = currentTopic,
+                        topics = topics,
+                        isPlus = isPlus,
+                        contentPadding = contentPadding,
+                        progress = progress,
+                        onAction = onAction,
+                        modifier = modifier
                     )
-                    .androidSystemGestureExclusion()
-            )
-        },
-        paneExpansionState = expansionState
-    )
+                }
+            },
+            supportingPane = {
+                AnimatedPane {
+                    TimerSupportingPane(
+                        timerState = timerState,
+                        currentTopic = currentTopic,
+                        contentPadding = contentPadding
+                    )
+                }
+            },
+            paneExpansionDragHandle = {
+                val interactionSource =
+                    remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                VerticalDragHandle(
+                    modifier = Modifier
+                        .paneExpansionDraggable(
+                            expansionState,
+                            LocalMinimumInteractiveComponentSize.current,
+                            interactionSource
+                        )
+                        .androidSystemGestureExclusion()
+                )
+            },
+            paneExpansionState = expansionState
+        )
+    }
 }
 
 @Preview(

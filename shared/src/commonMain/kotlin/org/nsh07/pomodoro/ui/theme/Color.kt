@@ -26,7 +26,13 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
+import com.materialkolor.ktx.harmonize
+
+@Stable
+fun Color.harmonizeIf(other: Color, condition: Boolean, matchSaturation: Boolean = true) =
+    if (!condition) this.harmonize(other, matchSaturation) else other
 
 val primaryLight = Color(0xFF4C662B)
 val onPrimaryLight = Color(0xFFFFFFFF)

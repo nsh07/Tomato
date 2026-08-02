@@ -19,6 +19,7 @@ package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
 import androidx.compose.ui.graphics.Color
 import org.nsh07.pomodoro.data.Topic
+import org.nsh07.pomodoro.data.TopicShape
 
 sealed interface SettingsAction {
     data class SaveAlarmEnabled(val enabled: Boolean) : SettingsAction
@@ -42,6 +43,7 @@ sealed interface SettingsAction {
 
     data class SetEditingTopic(val topic: Topic) : SettingsAction
     data class SetEditingTopicColor(val color: Color) : SettingsAction
+    data class SetEditingTopicShape(val shape: TopicShape) : SettingsAction
 
     data object AskEraseData : SettingsAction
     data object CancelEraseData : SettingsAction

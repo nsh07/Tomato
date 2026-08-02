@@ -45,6 +45,7 @@ import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.data.TopicRepository
+import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
@@ -138,6 +139,7 @@ class SettingsViewModel(
 
             is SettingsAction.SetEditingTopic -> setEditingTopic(action.topic)
             is SettingsAction.SetEditingTopicColor -> setEditingTopicColor(action.color)
+            is SettingsAction.SetEditingTopicShape -> setEditingTopicShape(action.shape)
 
             is SettingsAction.AskEraseData -> askEraseData()
             is SettingsAction.CancelEraseData -> cancelEraseData()
@@ -167,6 +169,12 @@ class SettingsViewModel(
     private fun setEditingTopicColor(color: Color) {
         viewModelScope.launch(Dispatchers.IO) {
             editTopic { it.copy(color = color) }
+        }
+    }
+
+    private fun setEditingTopicShape(shape: TopicShape) {
+        viewModelScope.launch(Dispatchers.IO) {
+            editTopic { it.copy(shape = shape) }
         }
     }
 

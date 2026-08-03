@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,19 +42,33 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.theme.SeededTheme
+import org.nsh07.pomodoro.ui.theme.TomatoTheme
 
 private const val shapeGridColumns = 5
 private val shapeGridRows =
@@ -92,7 +107,7 @@ fun TopicShapeColorBottomSheet(
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .padding(vertical = 16.dp)
+                    .padding(bottom = 16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
@@ -134,10 +149,13 @@ fun TopicShapeColorBottomSheet(
                             if (checked) 360f else 0f,
                             animationSpec = motionScheme.slowSpatialSpec()
                         )
+                        val strokeColor = animateColorAsState(
+                            if (checked) colorScheme.onPrimaryContainer else colorScheme.primary,
+                            animationSpec = motionScheme.defaultEffectsSpec()
+                        )
                         val shape = topicShape.toShape()
 
-                        // Only the corners lying on the grid's outer edge are fully rounded,
-                        // the ones facing a neighbouring cell stay tight
+                        // Corner rounding logic
                         val row = index / shapeGridColumns
                         val column = index % shapeGridColumns
                         val isFirstRow = row == 0
@@ -178,12 +196,30 @@ fun TopicShapeColorBottomSheet(
                                     .padding(16.dp)
                                     .fillMaxSize()
                                     .graphicsLayer { rotationZ = rotation.value }
-                                    .styleable(styleState) {
-                                        shape(shape)
-                                        border(2.dp, colorScheme.primary)
-                                        background(colorScheme.surfaceContainer)
-                                        checked {
-                                            animate { borderColor(colorScheme.onPrimaryContainer) }
+                                    .drawWithCache { // shape
+                                        val strokeWidth = 2.dp.toPx()
+                                        val outline = shape.createOutline(
+                                            Size(
+                                                size.width - strokeWidth,
+                                                size.height - strokeWidth
+                                            ),
+                                            layoutDirection,
+                                            this
+                                        )
+                                        val stroke = Stroke(
+                                            width = strokeWidth,
+                                            cap = StrokeCap.Round,
+                                            join = StrokeJoin.Round
+                                        )
+                                        onDrawBehind {
+                                            translate(strokeWidth / 2f, strokeWidth / 2f) {
+                                                drawOutline(outline, colorScheme.surfaceContainer)
+                                                drawOutline(
+                                                    outline,
+                                                    strokeColor.value,
+                                                    style = stroke
+                                                )
+                                            }
                                         }
                                     }
                             )
@@ -191,6 +227,32 @@ fun TopicShapeColorBottomSheet(
                     }
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+private fun TopicShapeColorBottomSheetPreview() {
+    var topic by remember { mutableStateOf(Topic.defaultTopic) }
+    TomatoTheme(dynamicColor = false) {
+        Surface(Modifier.fillMaxSize()) {
+            TopicShapeColorBottomSheet(
+                topic = topic,
+                setShowSheet = {},
+                onAction = { action ->
+                    when (action) {
+                        is SettingsAction.SetEditingTopicShape -> topic =
+                            topic.copy(shape = action.shape)
+
+                        is SettingsAction.SetEditingTopicColor -> topic =
+                            topic.copy(color = action.color)
+
+                        else -> Unit
+                    }
+                }
+            )
         }
     }
 }

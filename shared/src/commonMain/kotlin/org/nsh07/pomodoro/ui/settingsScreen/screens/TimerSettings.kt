@@ -246,6 +246,7 @@ fun TimerSettings(
                         modifier = Modifier
                             .background(topBarColors.containerColor)
                             .padding(bottom = 4.dp)
+                            .fillMaxWidth()
                     ) {
                         itemsIndexed(topics, key = { _, item -> item.id }) { index, topic ->
                             ToggleButton(

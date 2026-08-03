@@ -534,7 +534,7 @@ fun TopicsSettingsDarkPreview() {
 
 val sampleTopics = listOf(
     Topic(
-        id = "default",
+        id = 1,
         name = "Default",
         color = Color.White,
         shape = TopicShape.COOKIE_12_SIDED,
@@ -546,7 +546,7 @@ val sampleTopics = listOf(
         dndEnabled = false
     ),
     Topic(
-        id = "work",
+        id = 2,
         name = "Work",
         color = Color(0xFF2196F3),
         shape = TopicShape.SQUARE,
@@ -558,7 +558,7 @@ val sampleTopics = listOf(
         dndEnabled = true
     ),
     Topic(
-        id = "study",
+        id = 3,
         name = "Study",
         color = Color(0xFF4CAF50),
         shape = TopicShape.TRIANGLE,
@@ -570,7 +570,7 @@ val sampleTopics = listOf(
         dndEnabled = true
     ),
     Topic(
-        id = "fitness",
+        id = 4,
         name = "Fitness",
         color = Color(0xFFF44336),
         shape = TopicShape.CIRCLE,
@@ -582,7 +582,7 @@ val sampleTopics = listOf(
         dndEnabled = false
     ),
     Topic(
-        id = "coding",
+        id = 5,
         name = "Coding",
         color = Color(0xFF9C27B0),
         shape = TopicShape.DIAMOND,
@@ -594,7 +594,7 @@ val sampleTopics = listOf(
         dndEnabled = true
     ),
     Topic(
-        id = "reading",
+        id = 6,
         name = "Reading",
         color = Color(0xFFFF9800),
         shape = TopicShape.PENTAGON,
@@ -606,7 +606,7 @@ val sampleTopics = listOf(
         dndEnabled = false
     ),
     Topic(
-        id = "meditation",
+        id = 7,
         name = "Meditation",
         color = Color(0xFF00BCD4),
         shape = TopicShape.SUNNY,
@@ -618,7 +618,7 @@ val sampleTopics = listOf(
         dndEnabled = true
     ),
     Topic(
-        id = "gaming",
+        id = 8,
         name = "Gaming",
         color = Color(0xFF795548),
         shape = TopicShape.BOOM,
@@ -630,7 +630,7 @@ val sampleTopics = listOf(
         dndEnabled = false
     ),
     Topic(
-        id = "chores",
+        id = 9,
         name = "Chores",
         color = Color(0xFF607D8B),
         shape = TopicShape.FLOWER,
@@ -642,7 +642,7 @@ val sampleTopics = listOf(
         dndEnabled = false
     ),
     Topic(
-        id = "music",
+        id = 10,
         name = "Music",
         color = Color(0xFFFFE082),
         shape = TopicShape.HEART,
@@ -654,7 +654,7 @@ val sampleTopics = listOf(
         dndEnabled = false
     ),
     Topic(
-        id = "travel",
+        id = 11,
         name = "Travel",
         color = Color(0xFF8BC34A),
         shape = TopicShape.PILL,

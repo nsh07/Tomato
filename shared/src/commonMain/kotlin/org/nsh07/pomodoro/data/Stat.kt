@@ -44,7 +44,7 @@ import java.time.LocalDate
 )
 data class Stat(
     val date: LocalDate,
-    val topicId: String,
+    val topicId: Long,
     val focusTimeQ1: Long,
     val focusTimeQ2: Long,
     val focusTimeQ3: Long,
@@ -52,6 +52,10 @@ data class Stat(
     val breakTime: Long
 ) {
     fun totalFocusTime() = focusTimeQ1 + focusTimeQ2 + focusTimeQ3 + focusTimeQ4
+
+    companion object {
+        const val MERGED_TOPIC_ID = -1L
+    }
 }
 
 data class StatTime(

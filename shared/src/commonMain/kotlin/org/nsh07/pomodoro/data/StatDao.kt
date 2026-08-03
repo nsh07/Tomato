@@ -30,29 +30,29 @@ interface StatDao {
     suspend fun insertStat(stat: Stat)
 
     @Query("UPDATE stat SET focusTimeQ1 = focusTimeQ1 + :focusTime WHERE date = :date AND topicId = :topicId")
-    suspend fun addFocusTimeQ1(date: LocalDate, topicId: String, focusTime: Long)
+    suspend fun addFocusTimeQ1(date: LocalDate, topicId: Long, focusTime: Long)
 
     @Query("UPDATE stat SET focusTimeQ2 = focusTimeQ2 + :focusTime WHERE date = :date AND topicId = :topicId")
-    suspend fun addFocusTimeQ2(date: LocalDate, topicId: String, focusTime: Long)
+    suspend fun addFocusTimeQ2(date: LocalDate, topicId: Long, focusTime: Long)
 
     @Query("UPDATE stat SET focusTimeQ3 = focusTimeQ3 + :focusTime WHERE date = :date AND topicId = :topicId")
-    suspend fun addFocusTimeQ3(date: LocalDate, topicId: String, focusTime: Long)
+    suspend fun addFocusTimeQ3(date: LocalDate, topicId: Long, focusTime: Long)
 
     @Query("UPDATE stat SET focusTimeQ4 = focusTimeQ4 + :focusTime WHERE date = :date AND topicId = :topicId")
-    suspend fun addFocusTimeQ4(date: LocalDate, topicId: String, focusTime: Long)
+    suspend fun addFocusTimeQ4(date: LocalDate, topicId: Long, focusTime: Long)
 
     @Query("UPDATE stat SET breakTime = breakTime + :breakTime WHERE date = :date AND topicId = :topicId")
-    suspend fun addBreakTime(date: LocalDate, topicId: String, breakTime: Long)
+    suspend fun addBreakTime(date: LocalDate, topicId: Long, breakTime: Long)
 
     @Query(
         """
-        SELECT 
+        SELECT
             date,
-            'merged' as topicId,
+            -1 as topicId,
             SUM(focusTimeQ1) as focusTimeQ1,
             SUM(focusTimeQ2) as focusTimeQ2,
             SUM(focusTimeQ3) as focusTimeQ3,
-            SUM(focusTimeQ4) as focusTimeQ4, 
+            SUM(focusTimeQ4) as focusTimeQ4,
             SUM(breakTime) as breakTime
         FROM stat WHERE date = :date
         GROUP BY date
@@ -65,13 +65,13 @@ interface StatDao {
 
     @Query(
         """
-        SELECT 
+        SELECT
             date,
-            'merged' as topicId,
+            -1 as topicId,
             SUM(focusTimeQ1) as focusTimeQ1,
             SUM(focusTimeQ2) as focusTimeQ2,
             SUM(focusTimeQ3) as focusTimeQ3,
-            SUM(focusTimeQ4) as focusTimeQ4, 
+            SUM(focusTimeQ4) as focusTimeQ4,
             SUM(breakTime) as breakTime
         FROM stat
         GROUP BY date
@@ -106,7 +106,7 @@ interface StatDao {
     fun getLastNDaysAvgStats(n: Int): Flow<StatTime?>
 
     @Query("SELECT EXISTS (SELECT * FROM stat WHERE date = :date AND topicId = :topicId)")
-    suspend fun statExists(date: LocalDate, topicId: String): Boolean
+    suspend fun statExists(date: LocalDate, topicId: Long): Boolean
 
     @Query("SELECT date FROM stat ORDER BY date DESC LIMIT 1")
     suspend fun getLastDate(): LocalDate?

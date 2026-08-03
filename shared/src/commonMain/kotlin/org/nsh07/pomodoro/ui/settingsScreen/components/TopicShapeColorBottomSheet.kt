@@ -91,20 +91,12 @@ private val shapeGridRows =
     (TopicShape.entries.size + shapeGridColumns - 1) / shapeGridColumns
 
 private val topicColors = listOf(
+    Color.White,
     Color(0xfffeb4a7), Color(0xffffb3c0), Color(0xfffcaaff), Color(0xffb9c3ff),
     Color(0xff62d3ff), Color(0xff44d9f1), Color(0xff52dbc9), Color(0xff78dd77),
     Color(0xff9fd75c), Color(0xffc1d02d), Color(0xfffabd00), Color(0xffffb86e)
 )
 
-/**
- * A [Shape] whose corners animate towards those of the shape passed to [animateTo].
- *
- * A shape set through [styleable] is only used for drawing: its clip is applied by a graphics layer
- * that is refreshed when a *layer* property changes, and a shape change alone does not refresh it.
- * A cell would therefore keep clipping its ripple to the shape it was first laid out with. Clipping
- * with this shape instead keeps the cell background, its ripple and its contents in sync while the
- * shape morphs, since the corner animations are read while the layer resolves its outline.
- */
 @Stable
 private class AnimatedCornerShape(initialShape: RoundedCornerShape) : Shape {
     private var shape = initialShape
@@ -112,10 +104,6 @@ private class AnimatedCornerShape(initialShape: RoundedCornerShape) : Shape {
     private var density = Density(1f)
     private var corners: Array<Animatable<Float, AnimationVector1D>>? = null
 
-    /**
-     * Animates the corners towards those of [target]. Corners of a shape that has not been laid out
-     * yet snap instead, as corner sizes cannot be resolved without knowing the size of the shape.
-     */
     suspend fun animateTo(target: RoundedCornerShape, spec: FiniteAnimationSpec<Float>) {
         shape = target
         val corners = corners ?: return
@@ -195,7 +183,8 @@ fun TopicShapeColorBottomSheet(
                     isPlus = true,
                     onColorChange = { onAction(SettingsAction.SetEditingTopicColor(it)) },
                     backgroundColor = colorScheme.surfaceContainer,
-                    horizontalPadding = 16.dp
+                    horizontalPadding = 16.dp,
+                    dropLast = false
                 )
 
                 Text(

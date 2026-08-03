@@ -178,7 +178,8 @@ fun ColorPickerRow(
     onColorChange: (Color) -> Unit,
     modifier: Modifier = Modifier,
     backgroundColor: Color = animateColorAsState(listItemColors.containerColor).value,
-    horizontalPadding: Dp = 48.dp
+    horizontalPadding: Dp = 48.dp,
+    dropLast: Boolean = true
 ) {
     LazyRow(
         contentPadding = PaddingValues(horizontal = horizontalPadding),
@@ -190,7 +191,7 @@ fun ColorPickerRow(
             )
             .padding(bottom = 8.dp)
     ) {
-        items(colorSchemes.dropLast(1)) {
+        items(colorSchemes.dropLast(if (dropLast) 1 else 0)) {
             ColorPickerButton(
                 color = it,
                 isSelected = it == color,

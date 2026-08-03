@@ -40,11 +40,11 @@ interface TopicDao {
     fun getAllTopics(): Flow<List<Topic>>
 
     @Query("SELECT * FROM topic WHERE id = :id")
-    suspend fun getTopicById(id: String): Topic?
+    suspend fun getTopicById(id: Long): Topic?
 
     @Query("SELECT * FROM topic WHERE id = :id")
-    fun observeTopicById(id: String): Flow<Topic?>
+    fun observeTopicById(id: Long): Flow<Topic?>
 
     @Query("SELECT id FROM topic")
-    suspend fun getTopicIds(): List<String>
+    suspend fun getTopicIds(): List<Long>
 }

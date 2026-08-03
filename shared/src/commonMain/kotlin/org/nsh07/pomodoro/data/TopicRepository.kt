@@ -26,9 +26,9 @@ interface TopicRepository {
     suspend fun updateTopic(topic: Topic)
     suspend fun deleteTopic(topic: Topic)
     fun getAllTopics(): Flow<List<Topic>>
-    suspend fun getTopicById(id: String): Topic?
-    fun observeTopicById(id: String): Flow<Topic?>
-    suspend fun getTopicIds(): List<String>
+    suspend fun getTopicById(id: Long): Topic?
+    fun observeTopicById(id: Long): Flow<Topic?>
+    suspend fun getTopicIds(): List<Long>
 }
 
 class AppTopicRepository(
@@ -49,13 +49,13 @@ class AppTopicRepository(
 
     override fun getAllTopics(): Flow<List<Topic>> = topicDao.getAllTopics()
 
-    override suspend fun getTopicById(id: String): Topic? = withContext(ioDispatcher) {
+    override suspend fun getTopicById(id: Long): Topic? = withContext(ioDispatcher) {
         topicDao.getTopicById(id)
     }
 
-    override fun observeTopicById(id: String): Flow<Topic?> = topicDao.observeTopicById(id)
+    override fun observeTopicById(id: Long): Flow<Topic?> = topicDao.observeTopicById(id)
 
-    override suspend fun getTopicIds(): List<String> = withContext(ioDispatcher) {
+    override suspend fun getTopicIds(): List<Long> = withContext(ioDispatcher) {
         topicDao.getTopicIds()
     }
 }

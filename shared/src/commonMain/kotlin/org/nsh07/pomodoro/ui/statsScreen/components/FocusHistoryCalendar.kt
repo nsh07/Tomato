@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
 import org.nsh07.pomodoro.data.Stat
+import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -239,10 +240,10 @@ private fun FocusHistoryCalendarPreview() {
                 val random = Random.nextInt() % 3
 
                 if (random == 0) Stat(
-                    date, "default", 0, 0, 0, 0, 0
+                    date, Topic.DEFAULT_TOPIC_ID, 0, 0, 0, 0, 0
                 ) else Stat(
                     date = date,
-                    topicId = "default",
+                    topicId = Topic.DEFAULT_TOPIC_ID,
                     focusTimeQ1 = quarterTime,
                     focusTimeQ2 = quarterTime,
                     focusTimeQ3 = quarterTime,

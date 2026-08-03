@@ -31,9 +31,9 @@ import java.time.LocalTime
 interface StatRepository {
     suspend fun insertStat(stat: Stat)
 
-    suspend fun addFocusTime(topicId: String, focusTime: Long)
+    suspend fun addFocusTime(topicId: Long, focusTime: Long)
 
-    suspend fun addBreakTime(topicId: String, breakTime: Long)
+    suspend fun addBreakTime(topicId: Long, breakTime: Long)
 
     fun getTodayStat(): Flow<Stat?>
 
@@ -57,7 +57,7 @@ class AppStatRepository(
 ) : StatRepository {
     override suspend fun insertStat(stat: Stat) = statDao.insertStat(stat)
 
-    override suspend fun addFocusTime(topicId: String, focusTime: Long) =
+    override suspend fun addFocusTime(topicId: Long, focusTime: Long) =
         withContext(ioDispatcher) {
             val currentDate = LocalDate.now()
             val currentTime = LocalTime.now().toSecondOfDay()
@@ -101,7 +101,7 @@ class AppStatRepository(
             }
         }
 
-    override suspend fun addBreakTime(topicId: String, breakTime: Long) =
+    override suspend fun addBreakTime(topicId: Long, breakTime: Long) =
         withContext(ioDispatcher) {
             val currentDate = LocalDate.now()
             if (statDao.statExists(currentDate, topicId)) {

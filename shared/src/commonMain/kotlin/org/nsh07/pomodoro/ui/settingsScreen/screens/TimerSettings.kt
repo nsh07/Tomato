@@ -562,11 +562,11 @@ private fun TimerSettingsPreview() {
             sessionsSliderState = sessionsSliderState,
             topics = listOf(
                 defaultTopic,
-                defaultTopic.copy(id = "physics", name = "Physics"),
-                defaultTopic.copy(id = "math", name = "Math"),
-                defaultTopic.copy(id = "chemistry", name = "Chemistry")
+                defaultTopic.copy(id = 2, name = "Physics"),
+                defaultTopic.copy(id = 3, name = "Math"),
+                defaultTopic.copy(id = 4, name = "Chemistry")
             ),
-            editingTopic = defaultTopic.copy(id = "math", name = "Math"),
+            editingTopic = defaultTopic.copy(id = 3, name = "Math"),
             onAction = {},
             setShowPaywall = {},
             onBack = {}

@@ -23,16 +23,22 @@ import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.graphics.shapes.RoundedPolygon
+import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 /**
- * Entity representing a Topic with its own timer settings.
+ * Entity representing a Topic with its own timer settings. Names are unique, case-insensitively.
  */
-@Entity(tableName = "topic")
+@Entity(
+    tableName = "topic",
+    indices = [Index(value = ["name"], unique = true)]
+)
 data class Topic(
-    @PrimaryKey
-    val id: String, // name in lowercase, spaces replaced with underscores
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    @ColumnInfo(collate = ColumnInfo.NOCASE)
     val name: String,
     val color: Color,
     val shape: TopicShape,
@@ -44,8 +50,11 @@ data class Topic(
     val dndEnabled: Boolean
 ) {
     companion object {
+        /** Row id of the topic seeded when the database is created. */
+        const val DEFAULT_TOPIC_ID = 1L
+
         val defaultTopic = Topic(
-            id = "default",
+            id = DEFAULT_TOPIC_ID,
             name = "Default",
             color = Color.White,
             shape = TopicShape.COOKIE_12_SIDED,

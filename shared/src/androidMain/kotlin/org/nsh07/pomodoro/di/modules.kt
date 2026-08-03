@@ -77,7 +77,7 @@ private fun createDatabase(context: Context): AppDatabase {
                         INSERT OR IGNORE INTO `topic` 
                             (`id`, `name`, `color`, `shape`, `focusTime`, `shortBreakTime`, `longBreakTime`, `sessionLength`, `autostartNextSession`, `dndEnabled`)
                         VALUES (
-                            '${defaultTopic.id}', 
+                            ${defaultTopic.id}, 
                             '${defaultTopic.name}', 
                             ${defaultTopic.color.value.toLong()},
                             '${defaultTopic.shape.name}',

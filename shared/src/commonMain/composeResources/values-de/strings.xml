@@ -71,7 +71,7 @@
     <string name="always_on_display_desc">Tippe irgendwo, während der Timer angezeigt wird, um in den AOD-Modus zu wechseln</string>
     <string name="last_year">Dieses Jahr</string>
     <string name="appearance">Aussehen</string>
-    <string name="durations">Dauer</string>
+    <string name="durations">Zeiten</string>
     <string name="sound">Sound</string>
     <string name="dnd">Bitte nicht stören</string>
     <string name="dnd_desc">‚Bitte nicht stören‘ aktivieren, wenn ein Fokus-Timer läuft</string>

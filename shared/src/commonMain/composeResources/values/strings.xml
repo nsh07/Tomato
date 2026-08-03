@@ -155,7 +155,11 @@
     <string name="advanced">Advanced</string>
     <string name="topics">Topics</string>
     <string name="create_new_topic">Create new topic</string>
-    <string name="topic_name">Topic name</string>
+    <string name="topic_name">Name</string>
     <string name="topic_name_taken">A topic with this name already exists</string>
     <string name="add_topic">Add topic</string>
+    <string name="delete_topic">Delete topic</string>
+    <string name="delete_topic_and_stats">Delete topic and stats</string>
+    <string name="delete_topic_dialog_title">Delete topic?</string>
+    <string name="delete_topic_dialog_text">This cannot be undone. Stats associated with this topic will be moved to the default topic (%1$s). Optionally, you can delete the stats associated with this topic.</string>
 </resources>

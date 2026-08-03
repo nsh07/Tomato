@@ -35,7 +35,9 @@ import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -83,6 +85,8 @@ import tomato.shared.generated.resources.autoplay
 import tomato.shared.generated.resources.check
 import tomato.shared.generated.resources.clear
 import tomato.shared.generated.resources.clocks
+import tomato.shared.generated.resources.delete
+import tomato.shared.generated.resources.delete_topic
 import tomato.shared.generated.resources.dnd
 import tomato.shared.generated.resources.dnd_desc
 import tomato.shared.generated.resources.focus
@@ -111,6 +115,7 @@ fun TopicTimerSettings(
     val isDefaultTopic = topic.id == defaultTopic.id
 
     var showColorShapeSheet by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
     val colorScheme = colorScheme
 
     Column(
@@ -293,6 +298,21 @@ fun TopicTimerSettings(
                 )
             },
             supportingContent = { Text("Name, color and shape") },
+            trailingContent = {
+                if (!isDefaultTopic) FilledTonalIconButton(
+                    onClick = { showDeleteDialog = true },
+                    shapes = IconButtonDefaults.shapes(),
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = colorScheme.errorContainer,
+                        contentColor = colorScheme.onErrorContainer
+                    )
+                ) {
+                    Icon(
+                        painterResource(Res.drawable.delete),
+                        stringResource(Res.string.delete_topic)
+                    )
+                }
+            },
             shapes = segmentedListItemShapes(0, 1),
             colors = ListItemDefaults.segmentedColors(
                 containerColor = topic.color.harmonizeIf(
@@ -315,6 +335,24 @@ fun TopicTimerSettings(
             topics = topics,
             setShowSheet = { showColorShapeSheet = it },
             onAction = onAction
+        )
+    }
+
+    if (showDeleteDialog) {
+        val defaultTopicName = remember(topics) {
+            topics.find { it.id == defaultTopic.id }?.name ?: defaultTopic.name
+        }
+        DeleteTopicDialog(
+            defaultTopicName = defaultTopicName,
+            onDismiss = { showDeleteDialog = false },
+            onDeleteTopic = {
+                showDeleteDialog = false
+                onAction(SettingsAction.DeleteTopic(topic, deleteStats = false))
+            },
+            onDeleteTopicAndStats = {
+                showDeleteDialog = false
+                onAction(SettingsAction.DeleteTopic(topic, deleteStats = true))
+            }
         )
     }
 }

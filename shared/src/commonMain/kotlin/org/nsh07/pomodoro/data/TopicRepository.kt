@@ -25,6 +25,7 @@ interface TopicRepository {
     suspend fun insertTopic(topic: Topic): Long
     suspend fun updateTopic(topic: Topic)
     suspend fun deleteTopic(topic: Topic)
+    suspend fun deleteTopicMergingStats(topic: Topic, targetTopicId: Long)
     fun getAllTopics(): Flow<List<Topic>>
     suspend fun getTopicById(id: Long): Topic?
     fun observeTopicById(id: Long): Flow<Topic?>
@@ -46,6 +47,11 @@ class AppTopicRepository(
     override suspend fun deleteTopic(topic: Topic) = withContext(ioDispatcher) {
         topicDao.deleteTopic(topic)
     }
+
+    override suspend fun deleteTopicMergingStats(topic: Topic, targetTopicId: Long) =
+        withContext(ioDispatcher) {
+            topicDao.deleteTopicMergingStats(topic, targetTopicId)
+        }
 
     override fun getAllTopics(): Flow<List<Topic>> = topicDao.getAllTopics()
 

@@ -44,6 +44,7 @@ import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.data.Topic
+import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.data.TopicRepository
 import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.service.TimerHelper
@@ -138,6 +139,7 @@ class SettingsViewModel(
             is SettingsAction.SaveVibrationAmplitude -> saveVibrationAmplitude(action.amplitude)
 
             is SettingsAction.CreateTopic -> createTopic(action.topic)
+            is SettingsAction.DeleteTopic -> deleteTopic(action.topic, action.deleteStats)
             is SettingsAction.SetEditingTopic -> setEditingTopic(action.topic)
             is SettingsAction.SetEditingTopicName -> setEditingTopicName(action.name)
             is SettingsAction.SetEditingTopicColor -> setEditingTopicColor(action.color)
@@ -155,6 +157,22 @@ class SettingsViewModel(
         viewModelScope.launch {
             val id = topicRepository.insertTopic(topic)
             if (id != -1L) setEditingTopic(topic.copy(id = id))
+        }
+    }
+
+    private fun deleteTopic(topic: Topic, deleteStats: Boolean) {
+        if (topic.id == Topic.DEFAULT_TOPIC_ID) return
+        viewModelScope.launch(Dispatchers.IO) {
+            if (deleteStats) topicRepository.deleteTopic(topic)
+            else topicRepository.deleteTopicMergingStats(topic, Topic.DEFAULT_TOPIC_ID)
+
+            val fallback = topicRepository.getTopicById(Topic.DEFAULT_TOPIC_ID) ?: defaultTopic
+
+            if (stateRepository.currentTopicId.value == topic.id) {
+                stateRepository.setTopic(fallback)
+                refreshTimer(fallback)
+            }
+            if (_editingTopic.value.id == topic.id) setEditingTopic(fallback)
         }
     }
 

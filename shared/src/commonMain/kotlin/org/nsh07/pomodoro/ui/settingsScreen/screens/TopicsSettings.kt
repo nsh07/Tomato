@@ -35,10 +35,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -54,6 +52,9 @@ import androidx.compose.foundation.style.StyleScope
 import androidx.compose.foundation.style.StyleStateKey
 import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
@@ -72,6 +73,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberSliderState
@@ -97,20 +99,24 @@ import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.ui.mergePaddingValues
+import org.nsh07.pomodoro.ui.settingsScreen.components.TopicShapeColorPicker
 import org.nsh07.pomodoro.ui.settingsScreen.components.TopicTimerSettings
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
+import org.nsh07.pomodoro.ui.theme.SeededTheme
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.topBarWindowInsets
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.add
+import tomato.shared.generated.resources.add_topic
 import tomato.shared.generated.resources.arrow_back
 import tomato.shared.generated.resources.back
+import tomato.shared.generated.resources.cancel
 import tomato.shared.generated.resources.create_new_topic
 import tomato.shared.generated.resources.edit
 import tomato.shared.generated.resources.minutes_format
@@ -211,15 +217,23 @@ fun TopicsSettings(
             val minFormat = stringResource(Res.string.minutes_format)
             val lazyColumnState = rememberLazyListState()
             var creatingTopic by remember { mutableStateOf(false) }
+            val newTopicNameState = rememberTextFieldState()
+            var newTopicColor by remember { mutableStateOf(Color.White) }
+            var newTopicShape by remember { mutableStateOf(TopicShape.COOKIE_12_SIDED) }
+
+            fun resetNewTopic() {
+                newTopicNameState.clearText()
+                newTopicColor = Color.White
+                newTopicShape = TopicShape.COOKIE_12_SIDED
+                creatingTopic = false
+            }
 
             SharedTransitionLayout {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                     contentPadding = insets,
                     state = lazyColumnState,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp)
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     item {
                         val styleState = remember { MutableStyleState(null) }
@@ -227,11 +241,12 @@ fun TopicsSettings(
 
                         Box(
                             modifier = Modifier
+                                .padding(horizontal = if (creatingTopic) 0.dp else 16.dp)
                                 .styleable(styleState) {
                                     shape(RoundedCornerShape(40.dp))
                                     clip(true)
                                     background(colorScheme.primary)
-                                    selected { animate { background(colorScheme.surfaceBright) } }
+                                    selected { animate { background(colorScheme.surfaceContainer) } }
                                 }
                                 .animateBounds(
                                     lookaheadScope = this@SharedTransitionLayout,
@@ -289,22 +304,70 @@ fun TopicsSettings(
                                         )
                                     ) { Icon(painterResource(Res.drawable.add), null) }
                                 }
-                                else Column(
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(24.dp)
-                                ) {
-                                    Text(
-                                        newTopicText,
-                                        style = typography.titleLargeEmphasized,
-                                        fontFamily = topBarTitle,
-                                        modifier = Modifier
-                                            .sharedBounds(
-                                                rememberSharedContentState(newTopicText),
-                                                this@AnimatedContent
-                                            )
-                                    )
-                                    Spacer(Modifier.height(400.dp))
+                                else SeededTheme(newTopicColor) {
+                                    Column(
+                                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            newTopicText,
+                                            style = typography.titleLargeEmphasized,
+                                            fontFamily = topBarTitle,
+                                            modifier = Modifier
+                                                .sharedBounds(
+                                                    rememberSharedContentState(newTopicText),
+                                                    this@AnimatedContent
+                                                )
+                                                .padding(start = 16.dp, top = 24.dp, end = 16.dp)
+                                        )
+                                        val newTopicName =
+                                            newTopicNameState.text.toString().trim()
+                                        val nameTaken = remember(newTopicName, topics) {
+                                            topics.any { it.name.equals(newTopicName, true) }
+                                        }
+
+                                        TopicShapeColorPicker(
+                                            nameState = newTopicNameState,
+                                            color = newTopicColor,
+                                            shape = newTopicShape,
+                                            nameTaken = nameTaken,
+                                            onNameChange = {},
+                                            onColorChange = { newTopicColor = it },
+                                            onShapeChange = { newTopicShape = it },
+                                            containerColor = colorScheme.surfaceContainer
+                                        )
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(
+                                                8.dp,
+                                                Alignment.End
+                                            ),
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp)
+                                        ) {
+                                            TextButton(onClick = { resetNewTopic() }) {
+                                                Text(stringResource(Res.string.cancel))
+                                            }
+                                            Button(
+                                                onClick = {
+                                                    onAction(
+                                                        SettingsAction.CreateTopic(
+                                                            Topic.defaultTopic.copy(
+                                                                id = 0,
+                                                                name = newTopicName,
+                                                                color = newTopicColor,
+                                                                shape = newTopicShape
+                                                            )
+                                                        )
+                                                    )
+                                                    resetNewTopic()
+                                                },
+                                                enabled = newTopicName.isNotEmpty() && !nameTaken
+                                            ) {
+                                                Text(stringResource(Res.string.add_topic))
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -315,7 +378,7 @@ fun TopicsSettings(
                             color = colorScheme.primary,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(20.dp)
+                                .padding(horizontal = 36.dp, vertical = 20.dp)
                         )
                     }
                     itemsIndexed(topics, key = { _, topic -> topic.id }) { index, topic ->
@@ -450,10 +513,12 @@ fun TopicsSettings(
                                     )
                                 }
                             },
-                            modifier = Modifier.styleable(styleState) {
-                                externalPaddingTop(0.dp)
-                                selected { animate { externalPaddingTop(2.dp) } }
-                            }
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .styleable(styleState) {
+                                    externalPaddingTop(0.dp)
+                                    selected { animate { externalPaddingTop(2.dp) } }
+                                }
                         ) {
                             Text(
                                 topic.name,
@@ -472,13 +537,19 @@ fun TopicsSettings(
                         ) {
                             TopicTimerSettings(
                                 topic = topic,
+                                topics = topics,
                                 serviceRunning = serviceRunning,
                                 focusTimeInputFieldState = focusTimeInputFieldState,
                                 shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                                 longBreakTimeInputFieldState = longBreakTimeInputFieldState,
                                 sessionsSliderState = sessionsSliderState,
                                 onAction = onAction,
-                                modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)
+                                modifier = Modifier.padding(
+                                    start = 16.dp,
+                                    top = 8.dp,
+                                    end = 16.dp,
+                                    bottom = 2.dp
+                                )
                             )
                         }
                     }
@@ -491,12 +562,13 @@ fun TopicsSettings(
 @Preview
 @Composable
 fun TopicsSettingsPreview() {
+    var topics by remember { mutableStateOf(sampleTopics) }
     var editingTopic by remember {
         mutableStateOf(sampleTopics[5])
     }
     TomatoTheme(dynamicColor = false) {
         TopicsSettings(
-            topics = sampleTopics,
+            topics = topics,
             editingTopic = editingTopic,
             serviceRunning = false,
             focusTimeInputFieldState = TextFieldState("25"),
@@ -505,7 +577,18 @@ fun TopicsSettingsPreview() {
             sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
             contentPadding = PaddingValues(0.dp),
             onBack = {},
-            onAction = { editingTopic = (it as SettingsAction.SetEditingTopic).topic }
+            onAction = { action ->
+                when (action) {
+                    is SettingsAction.SetEditingTopic -> editingTopic = action.topic
+                    is SettingsAction.CreateTopic -> {
+                        val topic = action.topic.copy(id = topics.maxOf { it.id } + 1)
+                        topics = (topics + topic).sortedBy { it.name }
+                        editingTopic = topic
+                    }
+
+                    else -> Unit
+                }
+            }
         )
     }
 }
@@ -513,12 +596,13 @@ fun TopicsSettingsPreview() {
 @Preview
 @Composable
 fun TopicsSettingsDarkPreview() {
+    var topics by remember { mutableStateOf(sampleTopics) }
     var editingTopic by remember {
         mutableStateOf(sampleTopics[5])
     }
     TomatoTheme(darkTheme = true, dynamicColor = false) {
         TopicsSettings(
-            topics = sampleTopics,
+            topics = topics,
             editingTopic = editingTopic,
             serviceRunning = false,
             focusTimeInputFieldState = TextFieldState("25"),
@@ -527,7 +611,18 @@ fun TopicsSettingsDarkPreview() {
             sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
             contentPadding = PaddingValues(0.dp),
             onBack = {},
-            onAction = { editingTopic = (it as SettingsAction.SetEditingTopic).topic }
+            onAction = { action ->
+                when (action) {
+                    is SettingsAction.SetEditingTopic -> editingTopic = action.topic
+                    is SettingsAction.CreateTopic -> {
+                        val topic = action.topic.copy(id = topics.maxOf { it.id } + 1)
+                        topics = (topics + topic).sortedBy { it.name }
+                        editingTopic = topic
+                    }
+
+                    else -> Unit
+                }
+            }
         )
     }
 }

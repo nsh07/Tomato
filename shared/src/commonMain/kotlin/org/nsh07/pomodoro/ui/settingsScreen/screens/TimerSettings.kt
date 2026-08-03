@@ -322,6 +322,7 @@ fun TimerSettings(
                 item {
                     TopicTimerSettings(
                         topic = editingTopic,
+                        topics = topics,
                         serviceRunning = serviceRunning,
                         focusTimeInputFieldState = focusTimeInputFieldState,
                         shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,

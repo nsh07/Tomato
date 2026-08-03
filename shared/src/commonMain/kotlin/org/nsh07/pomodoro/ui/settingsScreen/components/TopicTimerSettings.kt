@@ -98,6 +98,7 @@ import tomato.shared.generated.resources.short_break
 @Composable
 fun TopicTimerSettings(
     topic: Topic,
+    topics: List<Topic>,
     serviceRunning: Boolean,
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
@@ -291,6 +292,7 @@ fun TopicTimerSettings(
                         }
                 )
             },
+            supportingContent = { Text("Name, color and shape") },
             shapes = segmentedListItemShapes(0, 1),
             colors = ListItemDefaults.segmentedColors(
                 containerColor = topic.color.harmonizeIf(
@@ -303,13 +305,14 @@ fun TopicTimerSettings(
                 )
             )
         ) {
-            Text("Topic shape & color")
+            Text("Edit topic")
         }
     }
 
     if (showColorShapeSheet) {
         TopicShapeColorBottomSheet(
             topic = topic,
+            topics = topics,
             setShowSheet = { showColorShapeSheet = it },
             onAction = onAction
         )
@@ -324,6 +327,7 @@ fun TopicTimerSettingsPreview() {
         Box(Modifier.background(colorScheme.surfaceContainer)) {
             TopicTimerSettings(
                 topic = sampleTopics.random(),
+                topics = sampleTopics,
                 serviceRunning = false,
                 focusTimeInputFieldState = TextFieldState("25"),
                 shortBreakTimeInputFieldState = TextFieldState("5"),
@@ -343,6 +347,7 @@ fun TopicTimerSettingsDarkPreview() {
         Box(Modifier.background(colorScheme.surfaceContainer)) {
             TopicTimerSettings(
                 topic = sampleTopics.random(),
+                topics = sampleTopics,
                 serviceRunning = false,
                 focusTimeInputFieldState = TextFieldState("25"),
                 shortBreakTimeInputFieldState = TextFieldState("5"),

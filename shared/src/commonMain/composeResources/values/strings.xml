@@ -155,4 +155,7 @@
     <string name="advanced">Advanced</string>
     <string name="topics">Topics</string>
     <string name="create_new_topic">Create new topic</string>
+    <string name="topic_name">Topic name</string>
+    <string name="topic_name_taken">A topic with this name already exists</string>
+    <string name="add_topic">Add topic</string>
 </resources>

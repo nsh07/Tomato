@@ -137,7 +137,9 @@ class SettingsViewModel(
             is SettingsAction.SaveVibrationOffDuration -> saveVibrationOffDuration(action.duration)
             is SettingsAction.SaveVibrationAmplitude -> saveVibrationAmplitude(action.amplitude)
 
+            is SettingsAction.CreateTopic -> createTopic(action.topic)
             is SettingsAction.SetEditingTopic -> setEditingTopic(action.topic)
+            is SettingsAction.SetEditingTopicName -> setEditingTopicName(action.name)
             is SettingsAction.SetEditingTopicColor -> setEditingTopicColor(action.color)
             is SettingsAction.SetEditingTopicShape -> setEditingTopicShape(action.shape)
 
@@ -148,6 +150,13 @@ class SettingsViewModel(
     }
 
     fun setEditingTopicToCurrent() = setEditingTopic(_currentTopic.value)
+
+    private fun createTopic(topic: Topic) {
+        viewModelScope.launch {
+            val id = topicRepository.insertTopic(topic)
+            if (id != -1L) setEditingTopic(topic.copy(id = id))
+        }
+    }
 
     fun setEditingTopic(topic: Topic) {
         _editingTopic.update { topic }
@@ -164,6 +173,12 @@ class SettingsViewModel(
         val topic = _editingTopic.updateAndGet(transform)
         topicRepository.updateTopic(topic)
         if (refreshesTimer && topic.id == stateRepository.currentTopicId.value) refreshTimer(topic)
+    }
+
+    private fun setEditingTopicName(name: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            editTopic { it.copy(name = name) }
+        }
     }
 
     private fun setEditingTopicColor(color: Color) {

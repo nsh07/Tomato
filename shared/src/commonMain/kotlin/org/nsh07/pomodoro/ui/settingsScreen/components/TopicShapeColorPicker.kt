@@ -209,7 +209,7 @@ fun TopicShapeColorPicker(
             "Color",
             style = typography.labelLarge,
             color = colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = horizontalPadding, top = 8.dp)
+            modifier = Modifier.padding(start = horizontalPadding, top = 12.dp)
         )
         ColorPickerRow(
             color,

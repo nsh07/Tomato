@@ -56,6 +56,7 @@ import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SliderState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -84,6 +85,7 @@ import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
+import org.nsh07.pomodoro.ui.settingsScreen.components.CreateTopicBottomSheet
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
 import org.nsh07.pomodoro.ui.settingsScreen.components.SliderListItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.TopicTimerSettings
@@ -113,6 +115,7 @@ import tomato.shared.generated.resources.arrow_back
 import tomato.shared.generated.resources.back
 import tomato.shared.generated.resources.check
 import tomato.shared.generated.resources.clear
+import tomato.shared.generated.resources.create_new_topic
 import tomato.shared.generated.resources.daily_focus_goal
 import tomato.shared.generated.resources.flag
 import tomato.shared.generated.resources.hours_and_minutes_format
@@ -182,6 +185,8 @@ fun TimerSettings(
 
     val barColors = if (widthExpanded) detailPaneTopBarColors
     else topBarColors
+
+    var showCreateTopicSheet by remember { mutableStateOf(false) }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -263,13 +268,13 @@ fun TimerSettings(
                         item {
                             ToggleButton(
                                 checked = false,
-                                onCheckedChange = { },
+                                onCheckedChange = { showCreateTopicSheet = true },
                                 shapes = ButtonGroupDefaults.connectedTrailingButtonShapes(),
                                 colors = colors
                             ) {
                                 Icon(
                                     painterResource(Res.drawable.add),
-                                    null,
+                                    stringResource(Res.string.create_new_topic),
                                     Modifier.size(IconButtonDefaults.extraSmallIconSize)
                                 )
                             }
@@ -536,6 +541,14 @@ fun TimerSettings(
                 item { Spacer(Modifier.height(12.dp)) }
             }
         }
+
+        if (showCreateTopicSheet) {
+            CreateTopicBottomSheet(
+                topics = topics,
+                setShowSheet = { showCreateTopicSheet = it },
+                onAction = onAction
+            )
+        }
     }
 }
 
@@ -552,25 +565,27 @@ private fun TimerSettingsPreview() {
         steps = 8
     )
     TomatoTheme(dynamicColor = false) {
-        TimerSettings(
-            isPlus = false,
-            serviceRunning = false,
-            settingsState = remember { SettingsState() },
-            contentPadding = PaddingValues(),
-            focusTimeInputFieldState = focusTimeInputFieldState,
-            shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
-            longBreakTimeInputFieldState = longBreakTimeInputFieldState,
-            sessionsSliderState = sessionsSliderState,
-            topics = listOf(
-                defaultTopic,
-                defaultTopic.copy(id = 2, name = "Physics"),
-                defaultTopic.copy(id = 3, name = "Math"),
-                defaultTopic.copy(id = 4, name = "Chemistry")
-            ),
-            editingTopic = defaultTopic.copy(id = 3, name = "Math"),
-            onAction = {},
-            setShowPaywall = {},
-            onBack = {}
-        )
+        Surface(Modifier.fillMaxSize()) {
+            TimerSettings(
+                isPlus = false,
+                serviceRunning = false,
+                settingsState = remember { SettingsState() },
+                contentPadding = PaddingValues(),
+                focusTimeInputFieldState = focusTimeInputFieldState,
+                shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
+                longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                sessionsSliderState = sessionsSliderState,
+                topics = listOf(
+                    defaultTopic,
+                    defaultTopic.copy(id = 2, name = "Physics"),
+                    defaultTopic.copy(id = 3, name = "Math"),
+                    defaultTopic.copy(id = 4, name = "Chemistry")
+                ),
+                editingTopic = defaultTopic.copy(id = 3, name = "Math"),
+                onAction = {},
+                setShowPaywall = {},
+                onBack = {}
+            )
+        }
     }
 }

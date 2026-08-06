@@ -17,9 +17,9 @@
 
 package org.nsh07.pomodoro.utils
 
-import junit.framework.TestCase.assertEquals
-import org.junit.Test
 import java.util.Locale
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class UtilsKtTest {
 
@@ -65,12 +65,16 @@ class UtilsKtTest {
 
     @Test
     fun `millisecondsToStr Eastern Arabic numerals`() {
-        Locale.setDefault(Locale.of("ar", "SA"))
-        assertEquals(
-            "٢٥:٠٠",
-            millisecondsToStr(25 * 60 * 1000)
-        )
-        Locale.setDefault(Locale.US)
+        val previous = Locale.getDefault()
+        try {
+            Locale.setDefault(Locale.forLanguageTag("ar-SA"))
+            assertEquals(
+                "٢٥:٠٠",
+                millisecondsToStr(25 * 60 * 1000)
+            )
+        } finally {
+            Locale.setDefault(previous)
+        }
     }
 
     @Test

@@ -156,7 +156,7 @@ fun AppearanceSettings(
                     ThemePickerListItem(
                         theme = settingsState.theme,
                         onThemeChange = { onAction(SettingsAction.SaveTheme(it)) },
-                        items = if (isPlus) 3 else 1,
+                        items = if (isPlus) 4 else 1,
                         index = 0
                     )
                 }
@@ -168,7 +168,7 @@ fun AppearanceSettings(
                 item {
                     ColorSchemePickerListItem(
                         color = settingsState.colorScheme.toColor(),
-                        items = 3,
+                        items = if (isPlus) 4 else 3,
                         index = if (isPlus) 1 else 0,
                         isPlus = isPlus,
                         onColorChange = { onAction(SettingsAction.SaveColorScheme(it)) },

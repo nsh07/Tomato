@@ -48,6 +48,15 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".widget.config.WidgetConfigurationActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Tomato.WidgetConfig">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
         <service
             android:name=".service.TimerService"
             android:foregroundServiceType="specialUse">

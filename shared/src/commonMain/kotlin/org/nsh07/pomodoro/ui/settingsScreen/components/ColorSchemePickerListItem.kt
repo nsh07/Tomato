@@ -142,7 +142,7 @@ fun ColorSchemePickerListItem(
             enabled = isPlus,
             shapes = ListItemDefaults.segmentedShapes(
                 1,
-                3,
+                items,
                 ListItemDefaults.shapes(
                     shape = shapes.extraSmall.copy(
                         bottomStart = CornerSize(0),

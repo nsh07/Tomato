@@ -36,7 +36,7 @@ import tomato.shared.generated.resources.timer
 import tomato.shared.generated.resources.timer_filled
 import tomato.shared.generated.resources.vibrate
 
-val settingsScreens = listOf(
+val settingsScreens = listOfNotNull(
     SettingsNavItem(
         Screen.Settings.Timer,
         Res.drawable.timer_filled,

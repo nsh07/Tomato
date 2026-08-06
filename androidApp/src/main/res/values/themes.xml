@@ -19,7 +19,15 @@
 
     <style name="Theme.Tomato" parent="android:Theme.Material.Light.NoActionBar" />
 
-    <style name="Theme.Tomato.Splash" parent="Theme.Tomato">
-        <item name="android:windowBackground">@color/ic_launcher_background</item>
+    <style name="Theme.Tomato.WidgetConfig" parent="Theme.Tomato">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowShowWallpaper">true</item>
+    </style>
+
+    <style name="Theme.Tomato.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">?android:attr/colorBackground</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.Tomato</item>
     </style>
 </resources>

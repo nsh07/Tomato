@@ -11,6 +11,7 @@ buildKonfig = "0.18.0"
 composeBom = "2026.04.00"
 composenativetray = "1.2.0"
 coreKtx = "1.18.0"
+coreSplashScreen = "1.2.0"
 espressoCore = "3.7.0"
 filekitCore = "0.13.0"
 filekitDialogsCompose = "0.13.0"
@@ -39,6 +40,7 @@ androidx-adaptive = { group = "org.jetbrains.compose.material3.adaptive", name =
 androidx-compose-adaptive-navigation3 = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation3", version.ref = "adaptive" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom-alpha", version.ref = "composeBom" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashScreen" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glance" }
 androidx-glance-appwidget-preview = { module = "androidx.glance:glance-appwidget-preview", version.ref = "glance" }

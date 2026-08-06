@@ -38,6 +38,7 @@ import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.width
+import androidx.glance.unit.ColorProvider
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.statsScreen.components.HORIZONTAL_STACKED_BAR_HEIGHT
 
@@ -51,6 +52,7 @@ fun HorizontalStackedBarGlance(
     values: List<Long>,
     width: Dp,
     modifier: GlanceModifier = GlanceModifier,
+    color: ColorProvider = colors.primary,
     rankList: List<Int> = remember(values) {
         val sortedIndices = values.indices.sortedByDescending { values[it] }
         val ranks = MutableList(values.size) { 0 }
@@ -89,7 +91,7 @@ fun HorizontalStackedBarGlance(
                                     GlanceModifier
                                         .cornerRadius(4.dp)
                                         .background(
-                                            colors.primary
+                                            color
                                                 .getColor(context)
                                                 .copy(
                                                     (1f - (rankList.getOrNull(index) ?: 0) * 0.1f)
@@ -104,7 +106,7 @@ fun HorizontalStackedBarGlance(
                                 else
                                     GlanceModifier.background(
                                         ImageProvider(R.drawable.rounded_4dp),
-                                        colorFilter = ColorFilter.tint(colors.primary),
+                                        colorFilter = ColorFilter.tint(color),
                                         alpha = (1f - (rankList.getOrNull(index) ?: 0) * 0.1f)
                                             .coerceAtLeast(0.1f)
                                     )

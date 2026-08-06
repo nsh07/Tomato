@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -15,44 +15,59 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.nsh07.pomodoro
+package org.nsh07.pomodoro.widget.config
 
-import android.os.Build
+import android.appwidget.AppWidgetManager
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.android.ext.android.inject
-import org.nsh07.pomodoro.data.StateRepository
-import org.nsh07.pomodoro.di.ActivityCallbacks
-import org.nsh07.pomodoro.ui.AppScreen
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.toColor
 
-class MainActivity : ComponentActivity() {
+class WidgetConfigurationActivity : ComponentActivity() {
+
+    private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
     private val settingsViewModel: SettingsViewModel by inject()
-    private val stateRepository: StateRepository by inject()
-    private val activityCallbacks: ActivityCallbacks by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        activityCallbacks.activityTurnScreenOn = {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                setShowWhenLocked(it)
-                setTurnScreenOn(it)
-            }
+        // Find the widget id from the intent.
+        appWidgetId = this.intent?.extras?.getInt(
+            AppWidgetManager.EXTRA_APPWIDGET_ID,
+            AppWidgetManager.INVALID_APPWIDGET_ID
+        ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
+
+        // If this activity was started with an invalid widget ID, finish with an error.
+        if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            this.finish()
+            return
         }
+
+        val viewModel: WidgetConfigurationViewModel by viewModel()
+
+        // Detect widget type
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        val info = appWidgetManager.getAppWidgetInfo(appWidgetId)
+        val className = info?.provider?.className ?: ""
+
+        val type = when {
+            className.contains("TimerWidgetReceiver") -> WidgetType.TIMER
+            className.contains("TodayWidgetReceiver") -> WidgetType.TODAY
+            className.contains("HistoryWidgetReceiver") -> WidgetType.HISTORY
+            else -> WidgetType.UNKNOWN
+        }
+        viewModel.setWidgetType(type)
 
         setContent {
             val settingsState by settingsViewModel.settingsState.collectAsStateWithLifecycle()
@@ -72,32 +87,23 @@ class MainActivity : ComponentActivity() {
                 seedColor = seed,
                 blackTheme = settingsState.blackTheme
             ) {
-                val colorScheme = colorScheme
-                LaunchedEffect(colorScheme) {
-                    stateRepository.colorScheme = colorScheme
-                }
-
-                AppScreen(
+                WidgetConfigurationScreen(
+                    viewModel = viewModel,
                     isPlus = isPlus,
-                    isAODEnabled = settingsState.aodEnabled,
-                    setTimerFrequency = {
-                        stateRepository.timerFrequency = it
+                    onDone = {
+                        viewModel.saveAllSettings(appWidgetId)
+                        val resultValue = Intent().apply {
+                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                        }
+                        this.setResult(RESULT_OK, resultValue)
+                        this.finish()
                     }
                 )
             }
         }
-    }
 
-
-    override fun onStop() {
-        super.onStop()
-        // Reduce the timer loop frequency when not visible to save battery
-        stateRepository.timerFrequency = 1f
-    }
-
-    override fun onStart() {
-        super.onStart()
-        // Increase the timer loop frequency again when visible to make the progress smoother
-        stateRepository.timerFrequency = 60f
+        // Set the result to CANCELED. This will cause the widget host to cancel
+        // out of the widget placement if the user presses the back button.
+        this.setResult(RESULT_CANCELED)
     }
 }

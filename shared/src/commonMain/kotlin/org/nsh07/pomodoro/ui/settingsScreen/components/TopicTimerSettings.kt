@@ -111,12 +111,120 @@ fun TopicTimerSettings(
     onAction: (SettingsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val requestDndPermissionCallback = rememberRequestDndPermissionCallback()
     val isDefaultTopic = topic.id == defaultTopic.id
 
     var showColorShapeSheet by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     val colorScheme = colorScheme
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier
+    ) {
+        TopicTimerProperties(
+            autostartNextSession = topic.autostartNextSession,
+            dndEnabled = topic.dndEnabled,
+            serviceRunning = serviceRunning,
+            focusTimeInputFieldState = focusTimeInputFieldState,
+            shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
+            longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+            sessionsSliderState = sessionsSliderState,
+            onAutostartNextSessionChange = {
+                onAction(SettingsAction.SaveAutostartNextSession(it))
+            },
+            onDndEnabledChange = { onAction(SettingsAction.SaveDndEnabled(it)) }
+        )
+
+        SegmentedListItem(
+            checked = showColorShapeSheet,
+            onCheckedChange = { showColorShapeSheet = it },
+            leadingContent = {
+                val fillColor = topic.color.harmonizeIf(colorScheme.primary, isDefaultTopic)
+                val fillShape = topic.shape.toShape()
+                Box(
+                    Modifier
+                        .size(22.dp)
+                        .styleable {
+                            background(fillColor)
+                            shape(fillShape)
+                        }
+                )
+            },
+            supportingContent = { Text("Name, color and shape") },
+            trailingContent = {
+                if (!isDefaultTopic) FilledTonalIconButton(
+                    onClick = { showDeleteDialog = true },
+                    shapes = IconButtonDefaults.shapes(),
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = colorScheme.errorContainer,
+                        contentColor = colorScheme.onErrorContainer
+                    )
+                ) {
+                    Icon(
+                        painterResource(Res.drawable.delete),
+                        stringResource(Res.string.delete_topic)
+                    )
+                }
+            },
+            shapes = segmentedListItemShapes(0, 1),
+            colors = ListItemDefaults.segmentedColors(
+                containerColor = topic.color.harmonizeIf(
+                    if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainerHigh,
+                    isDefaultTopic
+                ),
+                selectedContainerColor = topic.color.harmonizeIf(
+                    listItemColors.selectedContainerColor,
+                    isDefaultTopic
+                )
+            )
+        ) {
+            Text("Edit topic")
+        }
+    }
+
+    if (showColorShapeSheet) {
+        TopicShapeColorBottomSheet(
+            topic = topic,
+            topics = topics,
+            setShowSheet = { showColorShapeSheet = it },
+            onAction = onAction
+        )
+    }
+
+    if (showDeleteDialog) {
+        val defaultTopicName = remember(topics) {
+            topics.find { it.id == defaultTopic.id }?.name ?: defaultTopic.name
+        }
+        DeleteTopicDialog(
+            defaultTopicName = defaultTopicName,
+            onDismiss = { showDeleteDialog = false },
+            onDeleteTopic = {
+                showDeleteDialog = false
+                onAction(SettingsAction.DeleteTopic(topic, deleteStats = false))
+            },
+            onDeleteTopicAndStats = {
+                showDeleteDialog = false
+                onAction(SettingsAction.DeleteTopic(topic, deleteStats = true))
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun TopicTimerProperties(
+    autostartNextSession: Boolean,
+    dndEnabled: Boolean,
+    serviceRunning: Boolean,
+    focusTimeInputFieldState: TextFieldState,
+    shortBreakTimeInputFieldState: TextFieldState,
+    longBreakTimeInputFieldState: TextFieldState,
+    sessionsSliderState: SliderState,
+    onAutostartNextSessionChange: (Boolean) -> Unit,
+    onDndEnabledChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val requestDndPermissionCallback = rememberRequestDndPermissionCallback()
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -217,26 +325,27 @@ fun TopicTimerSettings(
             }
 
             val switchItems = remember(
-                topic.autostartNextSession,
-                topic.dndEnabled
+                autostartNextSession,
+                dndEnabled,
+                serviceRunning
             ) {
                 listOf(
                     SettingsSwitchItem(
-                        checked = topic.autostartNextSession,
+                        checked = autostartNextSession,
                         icon = Res.drawable.autoplay,
                         label = Res.string.auto_start_next_timer,
                         description = Res.string.auto_start_next_timer_desc,
-                        onClick = { onAction(SettingsAction.SaveAutostartNextSession(it)) }
+                        onClick = onAutostartNextSessionChange
                     ),
                     SettingsSwitchItem(
-                        checked = topic.dndEnabled,
+                        checked = dndEnabled,
                         enabled = !serviceRunning,
                         icon = Res.drawable.dnd,
                         label = Res.string.dnd,
                         description = Res.string.dnd_desc,
                         onClick = {
                             requestDndPermissionCallback(it)
-                            onAction(SettingsAction.SaveDndEnabled(it))
+                            onDndEnabledChange(it)
                         }
                     )
                 )
@@ -281,79 +390,6 @@ fun TopicTimerSettings(
                 )
             }
         }
-
-        SegmentedListItem(
-            checked = showColorShapeSheet,
-            onCheckedChange = { showColorShapeSheet = it },
-            leadingContent = {
-                val fillColor = topic.color.harmonizeIf(colorScheme.primary, isDefaultTopic)
-                val fillShape = topic.shape.toShape()
-                Box(
-                    Modifier
-                        .size(22.dp)
-                        .styleable {
-                            background(fillColor)
-                            shape(fillShape)
-                        }
-                )
-            },
-            supportingContent = { Text("Name, color and shape") },
-            trailingContent = {
-                if (!isDefaultTopic) FilledTonalIconButton(
-                    onClick = { showDeleteDialog = true },
-                    shapes = IconButtonDefaults.shapes(),
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = colorScheme.errorContainer,
-                        contentColor = colorScheme.onErrorContainer
-                    )
-                ) {
-                    Icon(
-                        painterResource(Res.drawable.delete),
-                        stringResource(Res.string.delete_topic)
-                    )
-                }
-            },
-            shapes = segmentedListItemShapes(0, 1),
-            colors = ListItemDefaults.segmentedColors(
-                containerColor = topic.color.harmonizeIf(
-                    if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainerHigh,
-                    isDefaultTopic
-                ),
-                selectedContainerColor = topic.color.harmonizeIf(
-                    listItemColors.selectedContainerColor,
-                    isDefaultTopic
-                )
-            )
-        ) {
-            Text("Edit topic")
-        }
-    }
-
-    if (showColorShapeSheet) {
-        TopicShapeColorBottomSheet(
-            topic = topic,
-            topics = topics,
-            setShowSheet = { showColorShapeSheet = it },
-            onAction = onAction
-        )
-    }
-
-    if (showDeleteDialog) {
-        val defaultTopicName = remember(topics) {
-            topics.find { it.id == defaultTopic.id }?.name ?: defaultTopic.name
-        }
-        DeleteTopicDialog(
-            defaultTopicName = defaultTopicName,
-            onDismiss = { showDeleteDialog = false },
-            onDeleteTopic = {
-                showDeleteDialog = false
-                onAction(SettingsAction.DeleteTopic(topic, deleteStats = false))
-            },
-            onDeleteTopicAndStats = {
-                showDeleteDialog = false
-                onAction(SettingsAction.DeleteTopic(topic, deleteStats = true))
-            }
-        )
     }
 }
 

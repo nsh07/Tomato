@@ -158,6 +158,7 @@
     <string name="topic_name">Name</string>
     <string name="topic_name_taken">A topic with this name already exists</string>
     <string name="add_topic">Add topic</string>
+    <string name="next">Next</string>
     <string name="delete_topic">Delete topic</string>
     <string name="delete_topic_and_stats">Delete topic and stats</string>
     <string name="delete_topic_dialog_title">Delete topic?</string>

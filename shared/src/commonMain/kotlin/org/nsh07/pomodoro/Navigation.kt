@@ -49,7 +49,7 @@ val settingsScreens = listOf(
         Screen.Settings.Topics,
         Res.drawable.label,
         Res.string.topics,
-        listOf()
+        null
     ),
     SettingsNavItem(
         Screen.Settings.Alarm,

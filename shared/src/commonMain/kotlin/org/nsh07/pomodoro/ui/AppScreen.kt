@@ -90,6 +90,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.nsh07.pomodoro.di.FlavorUI
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsScreenRoot
+import org.nsh07.pomodoro.ui.settingsScreen.components.CreateTopicBottomSheet
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
@@ -311,6 +312,16 @@ fun AppScreen(
                     entry<Screen.Timer> {
                         val topics by settingsViewModel.allTopics.collectAsStateWithLifecycle()
                         val currentTopic by timerViewModel.currentTopic.collectAsStateWithLifecycle()
+                        var showCreateTopicSheet by remember { mutableStateOf(false) }
+
+                        if (showCreateTopicSheet) {
+                            CreateTopicBottomSheet(
+                                topics = topics,
+                                setShowSheet = { showCreateTopicSheet = it },
+                                onAction = settingsViewModel::onAction,
+                                setAsCurrent = true
+                            )
+                        }
 
                         TimerScreen(
                             timerState = uiState,
@@ -320,6 +331,7 @@ fun AppScreen(
                             contentPadding = contentPadding,
                             progress = { progress },
                             onAction = timerViewModel::onAction,
+                            onAddTopic = { showCreateTopicSheet = true },
                             modifier = if (isAODEnabled) Modifier
                                 .clickable(
                                     interactionSource = aodInteractionSource,

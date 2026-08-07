@@ -41,7 +41,7 @@ sealed interface SettingsAction {
     data class SaveVibrationOffDuration(val duration: Long) : SettingsAction
     data class SaveVibrationAmplitude(val amplitude: Int) : SettingsAction
 
-    data class CreateTopic(val topic: Topic) : SettingsAction
+    data class CreateTopic(val topic: Topic, val setAsCurrent: Boolean = false) : SettingsAction
     data class DeleteTopic(val topic: Topic, val deleteStats: Boolean) : SettingsAction
     data class SetEditingTopic(val topic: Topic) : SettingsAction
     data class SetEditingTopicName(val name: String) : SettingsAction

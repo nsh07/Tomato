@@ -138,7 +138,7 @@ class SettingsViewModel(
             is SettingsAction.SaveVibrationOffDuration -> saveVibrationOffDuration(action.duration)
             is SettingsAction.SaveVibrationAmplitude -> saveVibrationAmplitude(action.amplitude)
 
-            is SettingsAction.CreateTopic -> createTopic(action.topic)
+            is SettingsAction.CreateTopic -> createTopic(action.topic, action.setAsCurrent)
             is SettingsAction.DeleteTopic -> deleteTopic(action.topic, action.deleteStats)
             is SettingsAction.SetEditingTopic -> setEditingTopic(action.topic)
             is SettingsAction.SetEditingTopicName -> setEditingTopicName(action.name)
@@ -153,10 +153,18 @@ class SettingsViewModel(
 
     fun setEditingTopicToCurrent() = setEditingTopic(_currentTopic.value)
 
-    private fun createTopic(topic: Topic) {
+    private fun createTopic(topic: Topic, setAsCurrent: Boolean) {
         viewModelScope.launch {
             val id = topicRepository.insertTopic(topic)
-            if (id != -1L) setEditingTopic(topic.copy(id = id))
+            if (id == -1L) return@launch
+
+            val created = topic.copy(id = id)
+            setEditingTopic(created)
+
+            if (setAsCurrent && !serviceRunning.value) {
+                stateRepository.setTopic(created)
+                refreshTimer(created)
+            }
         }
     }
 

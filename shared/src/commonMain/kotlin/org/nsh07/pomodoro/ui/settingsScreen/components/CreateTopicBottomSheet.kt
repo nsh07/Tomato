@@ -32,7 +32,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.ModalBottomSheet
@@ -75,7 +74,8 @@ fun CreateTopicBottomSheet(
     topics: List<Topic>,
     setShowSheet: (Boolean) -> Unit,
     onAction: (SettingsAction) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    setAsCurrent: Boolean = false
 ) {
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -101,7 +101,7 @@ fun CreateTopicBottomSheet(
     }
 
     SeededTheme(color) {
-        val colorScheme = MaterialTheme.colorScheme
+        val colorScheme = colorScheme
 
         ModalBottomSheet(
             sheetState = sheetState,
@@ -122,12 +122,13 @@ fun CreateTopicBottomSheet(
                     hideSheet {
                         onAction(
                             SettingsAction.CreateTopic(
-                                Topic.defaultTopic.copy(
+                                topic = Topic.defaultTopic.copy(
                                     id = 0,
                                     name = name,
                                     color = color,
                                     shape = shape
-                                )
+                                ),
+                                setAsCurrent = setAsCurrent
                             )
                         )
                     }
@@ -220,7 +221,7 @@ private fun CreateTopicSheetContentPreview() {
 
     TomatoTheme(dynamicColor = false) {
         SeededTheme(color) {
-            val colorScheme = MaterialTheme.colorScheme
+            val colorScheme = colorScheme
 
             Surface(color = colorScheme.surfaceContainer, modifier = Modifier.fillMaxSize()) {
                 CreateTopicSheetContent(

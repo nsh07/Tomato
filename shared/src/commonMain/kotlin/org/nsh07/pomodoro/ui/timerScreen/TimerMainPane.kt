@@ -62,7 +62,6 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.shapes
@@ -124,6 +123,7 @@ import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.app_name
 import tomato.shared.generated.resources.app_name_plus
+import tomato.shared.generated.resources.create_new_topic
 import tomato.shared.generated.resources.focus
 import tomato.shared.generated.resources.infinite_focus
 import tomato.shared.generated.resources.label
@@ -159,6 +159,7 @@ fun SharedTransitionScope.TimerMainPane(
     contentPadding: PaddingValues,
     progress: () -> Float,
     onAction: (TimerAction) -> Unit,
+    onAddTopic: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val motionScheme = motionScheme
@@ -307,11 +308,13 @@ fun SharedTransitionScope.TimerMainPane(
                         Spacer(Modifier.height(MenuDefaults.GroupSpacing))
 
                         DropdownMenuGroup(shapes = MenuDefaults.groupShape(1, 2)) {
-                            MaterialShapes.Bun
                             Box {
                                 DropdownMenuItem(
-                                    onClick = {},
-                                    text = { Text("Add new topic") },
+                                    onClick = {
+                                        expanded = false
+                                        onAddTopic()
+                                    },
+                                    text = { Text(stringResource(Res.string.create_new_topic)) },
                                     leadingIcon = {
                                         Icon(
                                             painterResource(Res.drawable.new_label),
@@ -751,6 +754,7 @@ fun TimerMainPanePreview() {
                                 isPlus = true,
                                 contentPadding = PaddingValues(),
                                 { 0.3f },
+                                {},
                                 {}
                             )
                         }

@@ -58,6 +58,7 @@ fun SharedTransitionScope.TimerScreen(
     contentPadding: PaddingValues,
     progress: () -> Float,
     onAction: (TimerAction) -> Unit,
+    onAddTopic: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val navigator = rememberSupportingPaneScaffoldNavigator(
@@ -79,6 +80,7 @@ fun SharedTransitionScope.TimerScreen(
                         contentPadding = contentPadding,
                         progress = progress,
                         onAction = onAction,
+                        onAddTopic = onAddTopic,
                         modifier = modifier
                     )
                 }
@@ -129,6 +131,7 @@ fun TimerScreenPreview() {
                     isPlus = true,
                     contentPadding = PaddingValues(),
                     { 0.3f },
+                    {},
                     {}
                 )
             }

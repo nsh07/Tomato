@@ -22,9 +22,11 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
+const val DB_SCHEMA_VERSION = 3
+
 @Database(
     entities = [IntPreference::class, BooleanPreference::class, StringPreference::class, Stat::class],
-    version = 2,
+    version = DB_SCHEMA_VERSION,
     autoMigrations = [
         AutoMigration(from = 1, to = 2)
     ]

@@ -79,6 +79,7 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
 
             implementation(libs.androidx.room.runtime)
+            implementation(libs.kotlinx.serialization.json)
 
             implementation(libs.vico.compose.m3)
             implementation(libs.material.kolor)

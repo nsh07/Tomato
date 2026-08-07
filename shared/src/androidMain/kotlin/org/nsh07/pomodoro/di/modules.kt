@@ -19,6 +19,8 @@ package org.nsh07.pomodoro.di
 
 import android.content.Context
 import androidx.room.Room
+import org.koin.core.module.dsl.createdAtStart
+import org.koin.core.module.dsl.withOptions
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.create
@@ -28,12 +30,15 @@ import org.nsh07.pomodoro.BuildKonfig
 import org.nsh07.pomodoro.data.AndroidBackupRestoreManager
 import org.nsh07.pomodoro.data.AppDatabase
 import org.nsh07.pomodoro.data.BackupRestoreManager
+import org.nsh07.pomodoro.data.DeviceIdStore
+import org.nsh07.pomodoro.data.Migration2to3
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreViewModel
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
 
 val dbModule = module {
+    single<DeviceIdStore>() withOptions { createdAtStart() }
     single<AppDatabase> { create(::createDatabase) }
     single { get<AppDatabase>().preferenceDao() }
     single { get<AppDatabase>().statDao() }
@@ -51,10 +56,16 @@ val androidModule = module {
     single<AndroidBackupRestoreManager>() bind BackupRestoreManager::class
 }
 
-private fun createDatabase(context: Context): AppDatabase {
-    return Room.databaseBuilder(
-        context,
-        AppDatabase::class.java,
-        BuildKonfig.DATABASE_NAME
-    ).build()
+private fun createDatabase(
+    context: Context,
+    deviceIdStore: DeviceIdStore
+): AppDatabase {
+    return Room
+        .databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            BuildKonfig.DATABASE_NAME
+        )
+        .addMigrations(Migration2to3(deviceIdStore::getDeviceId))
+        .build()
 }

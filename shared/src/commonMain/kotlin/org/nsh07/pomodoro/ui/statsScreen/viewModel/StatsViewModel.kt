@@ -42,6 +42,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
+import org.nsh07.pomodoro.data.StatTime
 import org.nsh07.pomodoro.di.AppInfo
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.utils.OS
@@ -294,8 +295,8 @@ class StatsViewModel(
 
                 while (it.isBefore(today)) {
                     statRepository.insertStat(
-                        Stat(
-                            it,
+                        it,
+                        StatTime(
                             (0..30 * 60 * 1000L).random(),
                             (1 * 60 * 60 * 1000L..3 * 60 * 60 * 1000L).random(),
                             (0..3 * 60 * 60 * 1000L).random(),

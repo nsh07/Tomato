@@ -18,10 +18,22 @@
 package org.nsh07.pomodoro.data
 
 import io.github.vinceglb.filekit.PlatformFile
+import kotlinx.serialization.Serializable
 
 interface BackupRestoreManager {
     suspend fun performBackup(directory: PlatformFile)
     suspend fun performRestore(file: PlatformFile?)
 
+    suspend fun exportSyncFile(): PlatformFile
+    suspend fun importSyncFile(file: PlatformFile?)
+
     fun restartApp()
 }
+
+@Serializable
+data class SyncPayload(
+    val schemaVersion: Int = DB_SCHEMA_VERSION,
+    val exportedAt: Long,
+    val deviceId: String,
+    val stats: List<Stat>
+)

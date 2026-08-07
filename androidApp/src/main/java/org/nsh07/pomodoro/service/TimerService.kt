@@ -91,7 +91,7 @@ class TimerService : Service(), KoinComponent {
 
     private val cs by lazy { stateRepository.colorScheme }
 
-    private lateinit var notificationStyle: NotificationCompat.ProgressStyle
+    private var notificationStyle = NotificationCompat.ProgressStyle()
 
     override fun onBind(intent: Intent?): IBinder? {
         return null

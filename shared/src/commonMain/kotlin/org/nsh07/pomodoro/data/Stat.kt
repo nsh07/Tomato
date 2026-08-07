@@ -19,7 +19,12 @@ package org.nsh07.pomodoro.data
 
 import androidx.compose.runtime.Immutable
 import androidx.room.Entity
-import androidx.room.PrimaryKey
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import java.time.LocalDate
 
 /**
@@ -28,15 +33,21 @@ import java.time.LocalDate
  * separately for later analysis (e.g. for showing which parts of the day are most productive).
  */
 @Immutable
-@Entity(tableName = "stat")
+@Serializable
+@Entity(
+    tableName = "stat",
+    primaryKeys = ["date", "deviceId"]
+)
 data class Stat(
-    @PrimaryKey
+    @Serializable(with = LocalDateSerializer::class)
     val date: LocalDate,
+    val deviceId: String,
     val focusTimeQ1: Long,
     val focusTimeQ2: Long,
     val focusTimeQ3: Long,
     val focusTimeQ4: Long,
-    val breakTime: Long
+    val breakTime: Long,
+    val updatedAt: Long = System.currentTimeMillis()
 ) {
     fun totalFocusTime() = focusTimeQ1 + focusTimeQ2 + focusTimeQ3 + focusTimeQ4
 }
@@ -48,3 +59,16 @@ data class StatTime(
     val focusTimeQ4: Long,
     val breakTime: Long,
 )
+
+private class LocalDateSerializer : KSerializer<LocalDate> {
+    override val descriptor = PrimitiveSerialDescriptor(
+        "java.time.LocalDate",
+        PrimitiveKind.STRING
+    )
+
+    override fun serialize(encoder: Encoder, value: LocalDate) =
+        encoder.encodeString(value.toString())
+
+    override fun deserialize(decoder: Decoder): LocalDate =
+        LocalDate.parse(decoder.decodeString())
+}

@@ -19,7 +19,8 @@ package org.nsh07.pomodoro.data
 
 import androidx.compose.runtime.Immutable
 import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.ForeignKey
+import androidx.room.Index
 import java.time.LocalDate
 
 /**
@@ -28,10 +29,22 @@ import java.time.LocalDate
  * separately for later analysis (e.g. for showing which parts of the day are most productive).
  */
 @Immutable
-@Entity(tableName = "stat")
+@Entity(
+    tableName = "stat",
+    primaryKeys = ["date", "topicId"],
+    foreignKeys = [
+        ForeignKey(
+            entity = Topic::class,
+            parentColumns = ["id"],
+            childColumns = ["topicId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index("topicId")]
+)
 data class Stat(
-    @PrimaryKey
     val date: LocalDate,
+    val topicId: Long,
     val focusTimeQ1: Long,
     val focusTimeQ2: Long,
     val focusTimeQ3: Long,
@@ -39,6 +52,10 @@ data class Stat(
     val breakTime: Long
 ) {
     fun totalFocusTime() = focusTimeQ1 + focusTimeQ2 + focusTimeQ3 + focusTimeQ4
+
+    companion object {
+        const val MERGED_TOPIC_ID = -1L
+    }
 }
 
 data class StatTime(

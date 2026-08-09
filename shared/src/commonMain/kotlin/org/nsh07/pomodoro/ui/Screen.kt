@@ -48,6 +48,9 @@ sealed class Screen : NavKey {
 
         @Serializable
         object Timer : Settings()
+
+        @Serializable
+        object Topics : Settings()
     }
 
     @Serializable
@@ -78,5 +81,5 @@ data class SettingsNavItem(
     val route: Screen.Settings,
     val icon: DrawableResource,
     val label: StringResource,
-    val innerSettings: List<StringResource>
+    val innerSettings: List<StringResource>?
 )

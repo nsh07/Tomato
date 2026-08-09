@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.utils
 
-import androidx.compose.ui.graphics.Color
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
@@ -53,30 +52,6 @@ fun millisecondsToHoursMinutes(t: Long, format: String = $$"%1$dh %2$dm"): Strin
         TimeUnit.MILLISECONDS.toHours(t),
         TimeUnit.MILLISECONDS.toMinutes(t) % TimeUnit.HOURS.toMinutes(1)
     )
-}
-
-/**
- * Extension function for [String] to convert it to a [Color]
- *
- * The base string MUST be of the format produced by [Color.toString],
- * i.e, the color black with 100% opacity in sRGB would be represented by:
- *
- *      Color(0.0, 0.0, 0.0, 1.0, sRGB IEC61966-2.1)
- *
- * The behavior of this function is undefined if the format is not followed
- */
-fun String.toColor(): Color {
-    // Sample string: Color(0.0, 0.0, 0.0, 1.0, sRGB IEC61966-2.1)
-    val comma1 = this.indexOf(',')
-    val comma2 = this.indexOf(',', comma1 + 1)
-    val comma3 = this.indexOf(',', comma2 + 1)
-    val comma4 = this.indexOf(',', comma3 + 1)
-
-    val r = this.substringAfter('(').substringBefore(',').toFloat()
-    val g = this.slice(comma1 + 1..<comma2).toFloat()
-    val b = this.slice(comma2 + 1..<comma3).toFloat()
-    val a = this.slice(comma3 + 1..<comma4).toFloat()
-    return Color(r, g, b, a)
 }
 
 fun <T> MutableList<T>.onBack() {

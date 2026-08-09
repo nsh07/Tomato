@@ -84,7 +84,7 @@ fun MinuteInputField(
                     .size(width, 100.dp)
                     .background(
                         animateColorAsState(
-                            if (text.isNotEmpty())
+                            if (text.isValidMinutesInput())
                                 listItemColors.containerColor
                             else colorScheme.errorContainer,
                             motionScheme.defaultEffectsSpec()

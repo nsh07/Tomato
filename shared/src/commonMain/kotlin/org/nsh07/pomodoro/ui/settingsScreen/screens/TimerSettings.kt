@@ -22,7 +22,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,11 +36,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
@@ -53,13 +52,16 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
+import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberSliderState
@@ -73,20 +75,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.data.Topic
+import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.ui.mergePaddingValues
-import org.nsh07.pomodoro.ui.rememberRequestDndPermissionCallback
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
-import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputField
-import org.nsh07.pomodoro.ui.settingsScreen.components.MinutesInputTransformation3Digits
+import org.nsh07.pomodoro.ui.settingsScreen.components.CreateTopicBottomSheet
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
 import org.nsh07.pomodoro.ui.settingsScreen.components.SliderListItem
+import org.nsh07.pomodoro.ui.settingsScreen.components.TopicTimerSettings
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
@@ -99,40 +101,33 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
+import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import org.nsh07.pomodoro.ui.theme.harmonizeIf
 import org.nsh07.pomodoro.ui.topBarWindowInsets
 import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.add
 import tomato.shared.generated.resources.always_on_display
 import tomato.shared.generated.resources.always_on_display_desc
 import tomato.shared.generated.resources.aod
 import tomato.shared.generated.resources.arrow_back
-import tomato.shared.generated.resources.auto_start_next_timer
-import tomato.shared.generated.resources.auto_start_next_timer_desc
-import tomato.shared.generated.resources.autoplay
 import tomato.shared.generated.resources.back
 import tomato.shared.generated.resources.check
 import tomato.shared.generated.resources.clear
-import tomato.shared.generated.resources.clocks
+import tomato.shared.generated.resources.create_new_topic
 import tomato.shared.generated.resources.daily_focus_goal
-import tomato.shared.generated.resources.dnd
-import tomato.shared.generated.resources.dnd_desc
 import tomato.shared.generated.resources.flag
-import tomato.shared.generated.resources.focus
 import tomato.shared.generated.resources.hours_and_minutes_format
 import tomato.shared.generated.resources.info
-import tomato.shared.generated.resources.long_break
 import tomato.shared.generated.resources.mobile_lock_portrait
 import tomato.shared.generated.resources.pomodoro_info
 import tomato.shared.generated.resources.secure_aod
 import tomato.shared.generated.resources.secure_aod_desc
-import tomato.shared.generated.resources.session_length
-import tomato.shared.generated.resources.session_length_desc
 import tomato.shared.generated.resources.session_only_progress
 import tomato.shared.generated.resources.session_only_progress_desc
 import tomato.shared.generated.resources.settings
 import tomato.shared.generated.resources.settings_infinite_focus_tip
-import tomato.shared.generated.resources.short_break
 import tomato.shared.generated.resources.timer
 import tomato.shared.generated.resources.timer_settings_reset_info
 import tomato.shared.generated.resources.view_day
@@ -148,71 +143,50 @@ fun TimerSettings(
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
     sessionsSliderState: SliderState,
+    topics: List<Topic>,
+    editingTopic: Topic,
     onAction: (SettingsAction) -> Unit,
     setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val colorScheme = colorScheme
 
     val widthExpanded = currentWindowAdaptiveInfo()
         .windowSizeClass
         .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
 
-    val requestDndPermissionCallback = rememberRequestDndPermissionCallback()
-
     val switchItems = remember(
-        settingsState.dndEnabled,
         settingsState.aodEnabled,
-        settingsState.autostartNextSession,
         settingsState.secureAod,
         isPlus,
         serviceRunning
     ) {
         listOf(
-            listOf(
-                SettingsSwitchItem(
-                    checked = settingsState.autostartNextSession,
-                    icon = Res.drawable.autoplay,
-                    label = Res.string.auto_start_next_timer,
-                    description = Res.string.auto_start_next_timer_desc,
-                    onClick = { onAction(SettingsAction.SaveAutostartNextSession(it)) }
-                ),
-                SettingsSwitchItem(
-                    checked = settingsState.dndEnabled,
-                    enabled = !serviceRunning,
-                    icon = Res.drawable.dnd,
-                    label = Res.string.dnd,
-                    description = Res.string.dnd_desc,
-                    onClick = {
-                        requestDndPermissionCallback(it)
-                        onAction(SettingsAction.SaveDndEnabled(it))
-                    }
-                )
+            SettingsSwitchItem(
+                checked = settingsState.aodEnabled,
+                enabled = isPlus,
+                icon = Res.drawable.aod,
+                label = Res.string.always_on_display,
+                description = Res.string.always_on_display_desc,
+                onClick = { onAction(SettingsAction.SaveAodEnabled(it)) }
             ),
-            listOf(
-                SettingsSwitchItem(
-                    checked = settingsState.aodEnabled,
-                    enabled = isPlus,
-                    icon = Res.drawable.aod,
-                    label = Res.string.always_on_display,
-                    description = Res.string.always_on_display_desc,
-                    onClick = { onAction(SettingsAction.SaveAodEnabled(it)) }
-                ),
-                SettingsSwitchItem(
-                    checked = settingsState.secureAod && isPlus,
-                    enabled = isPlus && settingsState.aodEnabled,
-                    icon = Res.drawable.mobile_lock_portrait,
-                    label = Res.string.secure_aod,
-                    description = Res.string.secure_aod_desc,
-                    onClick = { onAction(SettingsAction.SaveSecureAod(it)) }
-                )
+            SettingsSwitchItem(
+                checked = settingsState.secureAod && isPlus,
+                enabled = isPlus && settingsState.aodEnabled,
+                icon = Res.drawable.mobile_lock_portrait,
+                label = Res.string.secure_aod,
+                description = Res.string.secure_aod_desc,
+                onClick = { onAction(SettingsAction.SaveSecureAod(it)) }
             )
         )
     }
 
     val barColors = if (widthExpanded) detailPaneTopBarColors
     else topBarColors
+
+    var showCreateTopicSheet by remember { mutableStateOf(false) }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -222,36 +196,91 @@ fun TimerSettings(
     ) {
         Scaffold(
             topBar = {
-                LargeFlexibleTopAppBar(
-                    windowInsets = topBarWindowInsets(),
-                    title = {
-                        Text(
-                            stringResource(Res.string.timer),
-                            fontFamily = LocalAppFonts.current.topBarTitle
-                        )
-                    },
-                    subtitle = {
-                        Text(stringResource(Res.string.settings))
-                    },
-                    navigationIcon = {
-                        if (!widthExpanded)
-                            FilledTonalIconButton(
-                                onClick = onBack,
-                                shapes = IconButtonDefaults.shapes(),
-                                colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                    containerColor = listItemColors.containerColor
-                                )
+                Column {
+                    val isDefaultTopic = editingTopic.id == defaultTopic.id
+                    val colors = ToggleButtonDefaults.toggleButtonColors(
+                        containerColor = listItemColors.containerColor,
+                        checkedContainerColor = remember(editingTopic.color) {
+                            editingTopic.color.harmonizeIf(
+                                colorScheme.secondaryContainer,
+                                isDefaultTopic
+                            )
+                        },
+                        checkedContentColor = remember(editingTopic.color) {
+                            editingTopic.color.harmonizeIf(
+                                colorScheme.onSecondaryContainer,
+                                isDefaultTopic
+                            )
+                        }
+                    )
+
+                    LargeFlexibleTopAppBar(
+                        windowInsets = topBarWindowInsets(),
+                        title = {
+                            Text(
+                                stringResource(Res.string.timer),
+                                fontFamily = LocalAppFonts.current.topBarTitle
+                            )
+                        },
+                        subtitle = {
+                            Text(stringResource(Res.string.settings))
+                        },
+                        navigationIcon = {
+                            if (!widthExpanded)
+                                FilledTonalIconButton(
+                                    onClick = onBack,
+                                    shapes = IconButtonDefaults.shapes(),
+                                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                        containerColor = listItemColors.containerColor
+                                    )
+                                ) {
+                                    Icon(
+                                        painterResource(Res.drawable.arrow_back),
+                                        stringResource(Res.string.back)
+
+                                    )
+                                }
+                        },
+                        colors = barColors,
+                        scrollBehavior = scrollBehavior
+                    )
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        modifier = Modifier
+                            .background(topBarColors.containerColor)
+                            .padding(bottom = 4.dp)
+                            .fillMaxWidth()
+                    ) {
+                        itemsIndexed(topics, key = { _, item -> item.id }) { index, topic ->
+                            ToggleButton(
+                                checked = topic.id == editingTopic.id,
+                                onCheckedChange = { onAction(SettingsAction.SetEditingTopic(topic)) },
+                                shapes = when (index) {
+                                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                                },
+                                colors = colors
+                            ) { Text(topic.name) }
+                        }
+
+                        item {
+                            ToggleButton(
+                                checked = false,
+                                onCheckedChange = { showCreateTopicSheet = true },
+                                shapes = ButtonGroupDefaults.connectedTrailingButtonShapes(),
+                                colors = colors
                             ) {
                                 Icon(
-                                    painterResource(Res.drawable.arrow_back),
-                                    stringResource(Res.string.back)
-
+                                    painterResource(Res.drawable.add),
+                                    stringResource(Res.string.create_new_topic),
+                                    Modifier.size(IconButtonDefaults.extraSmallIconSize)
                                 )
                             }
-                    },
-                    colors = barColors,
-                    scrollBehavior = scrollBehavior
-                )
+                        }
+                    }
+                }
             },
             containerColor = barColors.containerColor,
             modifier = modifier
@@ -296,103 +325,19 @@ fun TimerSettings(
                     Spacer(Modifier.height(14.dp))
                 }
                 item {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState())
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(2.dp)
-                        ) {
-                            Text(
-                                stringResource(Res.string.focus),
-                                style = typography.titleSmallEmphasized
-                            )
-                            MinuteInputField(
-                                state = focusTimeInputFieldState,
-                                enabled = !serviceRunning,
-                                shape = RoundedCornerShape(
-                                    topStart = topListItemShape.topStart,
-                                    bottomStart = topListItemShape.topStart,
-                                    topEnd = topListItemShape.bottomStart,
-                                    bottomEnd = topListItemShape.bottomStart
-                                ),
-                                inputTransformation = MinutesInputTransformation3Digits,
-                                imeAction = ImeAction.Next
-                            )
-                        }
-                        Spacer(Modifier.width(2.dp))
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(2.dp)
-                        ) {
-                            Text(
-                                stringResource(Res.string.short_break),
-                                style = typography.titleSmallEmphasized
-                            )
-                            MinuteInputField(
-                                state = shortBreakTimeInputFieldState,
-                                enabled = !serviceRunning,
-                                shape = RoundedCornerShape(middleListItemShape.topStart),
-                                imeAction = ImeAction.Next
-                            )
-                        }
-                        Spacer(Modifier.width(2.dp))
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(2.dp)
-                        ) {
-                            Text(
-                                stringResource(Res.string.long_break),
-                                style = typography.titleSmallEmphasized
-                            )
-                            MinuteInputField(
-                                state = longBreakTimeInputFieldState,
-                                enabled = !serviceRunning,
-                                shape = RoundedCornerShape(
-                                    topStart = bottomListItemShape.topStart,
-                                    bottomStart = bottomListItemShape.topStart,
-                                    topEnd = bottomListItemShape.bottomStart,
-                                    bottomEnd = bottomListItemShape.bottomStart
-                                ),
-                                imeAction = ImeAction.Done
-                            )
-                        }
-                    }
+                    TopicTimerSettings(
+                        topic = editingTopic,
+                        topics = topics,
+                        serviceRunning = serviceRunning,
+                        focusTimeInputFieldState = focusTimeInputFieldState,
+                        shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
+                        longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                        sessionsSliderState = sessionsSliderState,
+                        onAction = onAction
+                    )
+                    Spacer(Modifier.height(14.dp))
                 }
-                item {
-                    Spacer(Modifier.height(12.dp))
-                }
-                item {
-                    Column(Modifier.background(listItemColors.containerColor, topListItemShape)) {
-                        ListItem(
-                            leadingContent = {
-                                Icon(painterResource(Res.drawable.clocks), null)
-                            },
-                            headlineContent = {
-                                Text(stringResource(Res.string.session_length))
-                            },
-                            supportingContent = {
-                                Text(
-                                    stringResource(
-                                        Res.string.session_length_desc,
-                                        sessionsSliderState.value.toInt()
-                                    )
-                                )
-                            },
-                            colors = listItemColors,
-                            modifier = Modifier.clip(cardShape)
-                        )
-                        Slider(
-                            state = sessionsSliderState,
-                            enabled = !serviceRunning,
-                            modifier = Modifier
-                                .padding(start = (16 * 2 + 24).dp, end = 16.dp, bottom = 12.dp)
-                        )
-                    }
-                }
+
                 item {
                     val hmf = stringResource(Res.string.hours_and_minutes_format)
                     SliderListItem(
@@ -402,7 +347,7 @@ fun TimerSettings(
                         label = stringResource(Res.string.daily_focus_goal),
                         trailingLabel = { millisecondsToHoursMinutes(it.toLong(), hmf) },
                         icon = { Icon(painterResource(Res.drawable.flag), null) },
-                        shape = bottomListItemShape
+                        shape = shapes.large
                     ) {
                         with(it.toLong()) {
                             onAction(SettingsAction.SaveFocusGoal(this - (this % (30 * 60 * 1000))))
@@ -411,54 +356,9 @@ fun TimerSettings(
                 }
                 item { Spacer(Modifier.height(12.dp)) }
 
-                itemsIndexed(switchItems[0]) { index, item ->
-                    ListItem(
-                        leadingContent = {
-                            Icon(
-                                painterResource(item.icon),
-                                contentDescription = null,
-                                modifier = Modifier.padding(top = 4.dp)
-                            )
-                        },
-                        headlineContent = { Text(stringResource(item.label)) },
-                        supportingContent = { Text(stringResource(item.description)) },
-                        trailingContent = {
-                            Switch(
-                                checked = item.checked,
-                                enabled = item.enabled,
-                                onCheckedChange = { item.onClick(it) },
-                                thumbContent = {
-                                    if (item.checked) {
-                                        Icon(
-                                            painter = painterResource(Res.drawable.check),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                        )
-                                    } else {
-                                        Icon(
-                                            painter = painterResource(Res.drawable.clear),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                        )
-                                    }
-                                },
-                                colors = switchColors
-                            )
-                        },
-                        colors = listItemColors,
-                        modifier = Modifier.clip(
-                            when (index) {
-                                0 -> topListItemShape
-                                switchItems[0].size - 1 -> bottomListItemShape
-                                else -> middleListItemShape
-                            }
-                        )
-                    )
-                }
-
                 if (isPlus) {
                     item { Spacer(Modifier.height(12.dp)) }
-                    itemsIndexed(switchItems[1]) { index, item ->
+                    itemsIndexed(switchItems) { index, item ->
                         ListItem(
                             leadingContent = {
                                 Icon(
@@ -496,7 +396,7 @@ fun TimerSettings(
                             modifier = Modifier.clip(
                                 when (index) {
                                     0 -> topListItemShape
-                                    switchItems[1].size - 1 -> bottomListItemShape
+                                    switchItems.size - 1 -> bottomListItemShape
                                     else -> middleListItemShape
                                 }
                             )
@@ -562,7 +462,7 @@ fun TimerSettings(
                     item {
                         PlusDivider(setShowPaywall)
                     }
-                    itemsIndexed(switchItems[1]) { index, item ->
+                    itemsIndexed(switchItems) { index, item ->
                         ListItem(
                             leadingContent = {
                                 Icon(
@@ -600,7 +500,7 @@ fun TimerSettings(
                             modifier = Modifier.clip(
                                 when (index) {
                                     0 -> topListItemShape
-                                    switchItems[1].size - 1 -> bottomListItemShape
+                                    switchItems.size - 1 -> bottomListItemShape
                                     else -> middleListItemShape
                                 }
                             )
@@ -641,6 +541,14 @@ fun TimerSettings(
                 item { Spacer(Modifier.height(12.dp)) }
             }
         }
+
+        if (showCreateTopicSheet) {
+            CreateTopicBottomSheet(
+                topics = topics,
+                setShowSheet = { showCreateTopicSheet = it },
+                onAction = onAction
+            )
+        }
     }
 }
 
@@ -656,17 +564,28 @@ private fun TimerSettingsPreview() {
         valueRange = 1f..10f,
         steps = 8
     )
-    TimerSettings(
-        isPlus = false,
-        serviceRunning = false,
-        settingsState = remember { SettingsState() },
-        contentPadding = PaddingValues(),
-        focusTimeInputFieldState = focusTimeInputFieldState,
-        shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
-        longBreakTimeInputFieldState = longBreakTimeInputFieldState,
-        sessionsSliderState = sessionsSliderState,
-        onAction = {},
-        setShowPaywall = {},
-        onBack = {}
-    )
+    TomatoTheme(dynamicColor = false) {
+        Surface(Modifier.fillMaxSize()) {
+            TimerSettings(
+                isPlus = false,
+                serviceRunning = false,
+                settingsState = remember { SettingsState() },
+                contentPadding = PaddingValues(),
+                focusTimeInputFieldState = focusTimeInputFieldState,
+                shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
+                longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                sessionsSliderState = sessionsSliderState,
+                topics = listOf(
+                    defaultTopic,
+                    defaultTopic.copy(id = 2, name = "Physics"),
+                    defaultTopic.copy(id = 3, name = "Math"),
+                    defaultTopic.copy(id = 4, name = "Chemistry")
+                ),
+                editingTopic = defaultTopic.copy(id = 3, name = "Math"),
+                onAction = {},
+                setShowPaywall = {},
+                onBack = {}
+            )
+        }
+    }
 }

@@ -31,6 +31,8 @@ class MinutesInputTransformation(val maxDigits: Int) : InputTransformation {
 val MinutesInputTransformation2Digits = MinutesInputTransformation(2)
 val MinutesInputTransformation3Digits = MinutesInputTransformation(3)
 
+fun CharSequence.isValidMinutesInput(): Boolean = (toString().toLongOrNull() ?: 0L) > 0L
+
 /*
 This OutputTransformation results in a crash with some keyboard apps, so I'm not using it right now
 I might start using this later when this issue is resolved upstream in Compose

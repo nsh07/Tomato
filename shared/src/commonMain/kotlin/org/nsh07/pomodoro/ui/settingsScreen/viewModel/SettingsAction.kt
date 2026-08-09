@@ -18,6 +18,8 @@
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
 import androidx.compose.ui.graphics.Color
+import org.nsh07.pomodoro.data.Topic
+import org.nsh07.pomodoro.data.TopicShape
 
 sealed interface SettingsAction {
     data class SaveAlarmEnabled(val enabled: Boolean) : SettingsAction
@@ -38,6 +40,13 @@ sealed interface SettingsAction {
     data class SaveVibrationOnDuration(val duration: Long) : SettingsAction
     data class SaveVibrationOffDuration(val duration: Long) : SettingsAction
     data class SaveVibrationAmplitude(val amplitude: Int) : SettingsAction
+
+    data class CreateTopic(val topic: Topic, val setAsCurrent: Boolean = false) : SettingsAction
+    data class DeleteTopic(val topic: Topic, val deleteStats: Boolean) : SettingsAction
+    data class SetEditingTopic(val topic: Topic) : SettingsAction
+    data class SetEditingTopicName(val name: String) : SettingsAction
+    data class SetEditingTopicColor(val color: Color) : SettingsAction
+    data class SetEditingTopicShape(val shape: TopicShape) : SettingsAction
 
     data object AskEraseData : SettingsAction
     data object CancelEraseData : SettingsAction

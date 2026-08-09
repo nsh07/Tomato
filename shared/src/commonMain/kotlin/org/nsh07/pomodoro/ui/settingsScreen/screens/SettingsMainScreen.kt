@@ -146,14 +146,17 @@ fun SettingsMainScreen(
                     leadingContent = {
                         Icon(painterResource(item.icon), null)
                     },
-                    supportingContent = {
-                        val innerStrings = item.innerSettings.map { stringResource(it) }
-                        val joinedText = remember(innerStrings) { innerStrings.joinToString(", ") }
-                        Text(
-                            joinedText,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                    supportingContent = item.innerSettings?.let { innerSettings ->
+                        {
+                            val innerStrings = innerSettings.map { stringResource(it) }
+                            val joinedText =
+                                remember(innerStrings) { innerStrings.joinToString(", ") }
+                            Text(
+                                joinedText,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     },
                     trailingContent = if (!widthExpanded) {
                         { Icon(painterResource(Res.drawable.arrow_forward_big), null) }
@@ -180,14 +183,17 @@ fun SettingsMainScreen(
                     leadingContent = {
                         Icon(painterResource(item.icon), null)
                     },
-                    supportingContent = {
-                        val innerStrings = item.innerSettings.map { stringResource(it) }
-                        val joinedText = remember(innerStrings) { innerStrings.joinToString(", ") }
-                        Text(
-                            joinedText,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                    supportingContent = item.innerSettings?.let { innerSettings ->
+                        {
+                            val innerStrings = innerSettings.map { stringResource(it) }
+                            val joinedText =
+                                remember(innerStrings) { innerStrings.joinToString(", ") }
+                            Text(
+                                joinedText,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     },
                     trailingContent = if (!widthExpanded) {
                         { Icon(painterResource(Res.drawable.arrow_forward_big), null) }

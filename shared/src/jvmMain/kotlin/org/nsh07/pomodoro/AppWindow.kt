@@ -55,7 +55,6 @@ import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.OS
 import org.nsh07.pomodoro.utils.currentOS
-import org.nsh07.pomodoro.utils.toColor
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.app_name
 import tomato.shared.generated.resources.logo
@@ -121,7 +120,7 @@ fun ApplicationScope.AppWindow(
                         else -> isSystemInDarkTheme()
                     }
 
-                    val seed = settingsState.colorScheme.toColor()
+                    val seed = settingsState.colorScheme
 
                     TomatoTheme(
                         darkTheme = darkTheme,

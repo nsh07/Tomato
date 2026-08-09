@@ -42,8 +42,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
+import org.nsh07.pomodoro.data.TopicRepository
 import org.nsh07.pomodoro.di.AppInfo
 import org.nsh07.pomodoro.ui.Screen
+import org.nsh07.pomodoro.ui.settingsScreen.screens.sampleTopics
 import org.nsh07.pomodoro.utils.OS
 import org.nsh07.pomodoro.utils.currentOS
 import java.time.DayOfWeek
@@ -54,6 +56,7 @@ import java.util.Locale
 
 class StatsViewModel(
     private val statRepository: StatRepository,
+    private val topicRepository: TopicRepository,
     private val appInfo: AppInfo,
 ) : ViewModel() {
     val backStack = mutableStateListOf<Screen.Stats>(Screen.Stats.Main)
@@ -289,21 +292,28 @@ class StatsViewModel(
     fun generateSampleData() {
         if (appInfo.debug) {
             viewModelScope.launch {
-                val today = LocalDate.now().plusDays(1)
-                var it = today.minusDays(365)
+                sampleTopics.take(5).forEach { topic ->
+                    topicRepository.insertTopic(topic)
 
-                while (it.isBefore(today)) {
-                    statRepository.insertStat(
-                        Stat(
-                            it,
-                            (0..30 * 60 * 1000L).random(),
-                            (1 * 60 * 60 * 1000L..3 * 60 * 60 * 1000L).random(),
-                            (0..3 * 60 * 60 * 1000L).random(),
-                            (0..1 * 60 * 60 * 1000L).random(),
-                            (0..100 * 60 * 1000L).random()
-                        )
-                    )
-                    it = it.plusDays(1)
+                    val today = LocalDate.now().plusDays(1)
+                    var it = today.minusDays(365)
+
+                    while (it.isBefore(today)) {
+                        if ((0..10).random() > 2) {
+                            statRepository.insertStat(
+                                Stat(
+                                    it,
+                                    topic.id,
+                                    (0..30 * 60 * 1000L).random(),
+                                    (1 * 60 * 60 * 1000L..3 * 60 * 60 * 1000L).random(),
+                                    (0..3 * 60 * 60 * 1000L).random(),
+                                    (0..1 * 60 * 60 * 1000L).random(),
+                                    (0..100 * 60 * 1000L).random()
+                                )
+                            )
+                        }
+                        it = it.plusDays(1)
+                    }
                 }
             }
         }

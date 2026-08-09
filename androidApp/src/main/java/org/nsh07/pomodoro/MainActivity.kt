@@ -33,7 +33,6 @@ import org.nsh07.pomodoro.di.ActivityCallbacks
 import org.nsh07.pomodoro.ui.AppScreen
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
-import org.nsh07.pomodoro.utils.toColor
 
 class MainActivity : ComponentActivity() {
 
@@ -61,7 +60,7 @@ class MainActivity : ComponentActivity() {
                 else -> isSystemInDarkTheme()
             }
 
-            val seed = settingsState.colorScheme.toColor()
+            val seed = settingsState.colorScheme
 
             val isPlus by settingsViewModel.isPlus.collectAsStateWithLifecycle()
 

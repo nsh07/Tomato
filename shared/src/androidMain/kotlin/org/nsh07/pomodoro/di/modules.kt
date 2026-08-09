@@ -19,6 +19,9 @@ package org.nsh07.pomodoro.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.execSQL
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.create
@@ -27,7 +30,11 @@ import org.koin.plugin.module.dsl.viewModel
 import org.nsh07.pomodoro.BuildKonfig
 import org.nsh07.pomodoro.data.AndroidBackupRestoreManager
 import org.nsh07.pomodoro.data.AppDatabase
+import org.nsh07.pomodoro.data.AppTopicRepository
 import org.nsh07.pomodoro.data.BackupRestoreManager
+import org.nsh07.pomodoro.data.MIGRATION_2_3
+import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
+import org.nsh07.pomodoro.data.TopicRepository
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreViewModel
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
@@ -37,6 +44,7 @@ val dbModule = module {
     single<AppDatabase> { create(::createDatabase) }
     single { get<AppDatabase>().preferenceDao() }
     single { get<AppDatabase>().statDao() }
+    single { get<AppDatabase>().topicDao() }
     single { get<AppDatabase>().systemDao() }
 }
 
@@ -49,12 +57,41 @@ val viewModels = module {
 
 val androidModule = module {
     single<AndroidBackupRestoreManager>() bind BackupRestoreManager::class
+    single<AppTopicRepository>() bind TopicRepository::class
 }
 
 private fun createDatabase(context: Context): AppDatabase {
-    return Room.databaseBuilder(
-        context,
-        AppDatabase::class.java,
-        BuildKonfig.DATABASE_NAME
-    ).build()
+    return Room
+        .databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            BuildKonfig.DATABASE_NAME
+        )
+        .addMigrations(MIGRATION_2_3)
+        .addCallback(
+            object : RoomDatabase.Callback() {
+                override fun onCreate(connection: SQLiteConnection) {
+                    super.onCreate(connection)
+                    connection.execSQL(
+                        """
+                        INSERT OR IGNORE INTO `topic` 
+                            (`id`, `name`, `color`, `shape`, `focusTime`, `shortBreakTime`, `longBreakTime`, `sessionLength`, `autostartNextSession`, `dndEnabled`)
+                        VALUES (
+                            ${defaultTopic.id}, 
+                            '${defaultTopic.name}', 
+                            ${defaultTopic.color.value.toLong()},
+                            '${defaultTopic.shape.name}',
+                            ${defaultTopic.focusTime},
+                            ${defaultTopic.shortBreakTime},
+                            ${defaultTopic.longBreakTime},
+                            ${defaultTopic.sessionLength},
+                            ${if (defaultTopic.autostartNextSession) 1 else 0},
+                            ${if (defaultTopic.dndEnabled) 1 else 0}
+                        )
+                        """.trimIndent()
+                    )
+                }
+            }
+        )
+        .build()
 }

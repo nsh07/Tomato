@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastMaxBy
 import org.nsh07.pomodoro.data.Stat
+import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -201,7 +202,12 @@ fun HeatmapWithWeekLabelsPreview() {
         buildList {
             (0..93).forEach { index ->
                 val date = startDate.plusDays(index.toLong())
-                val focusStat = Stat(date, index % 10L / 2, 0, 0, 0, 0) // Varying focus durations
+                val focusStat =
+                    Stat(
+                        date,
+                        Topic.DEFAULT_TOPIC_ID,
+                        index % 10L / 2, 0, 0, 0, 0
+                    ) // Varying focus durations
 
                 if (date.month != date.minusDays(1).month && index > 0)
                     repeat(7) { add(null) }

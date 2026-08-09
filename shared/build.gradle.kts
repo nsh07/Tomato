@@ -18,6 +18,8 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -30,6 +32,15 @@ plugins {
     alias(libs.plugins.koin.compiler)
 
     alias(libs.plugins.buildKonfig)
+}
+
+tasks.withType(Test::class) {
+    systemProperty("room.schemaDir", "$projectDir/schemas")
+    testLogging {
+        exceptionFormat = TestExceptionFormat.FULL
+        events = setOf(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
+        showStandardStreams = true
+    }
 }
 
 koinCompiler {
@@ -53,6 +64,8 @@ kotlin {
         androidResources {
             enable = true
         }
+
+        withHostTest {}
     }
 
     jvm()
@@ -86,6 +99,10 @@ kotlin {
             implementation(libs.filekit.core) // file handling
         }
 
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
+
         androidMain.dependencies {
             implementation(project.dependencies.platform(libs.androidx.compose.bom))
 
@@ -113,6 +130,13 @@ kotlin {
             implementation(libs.composenativetray) // tray icons
 
             implementation(libs.jlayer.player) // MP3 playback
+        }
+
+        // Room's MigrationTestHelper is device-instrumented on Android, so migration tests are
+        // JVM-only. The migration itself lives in commonMain and is platform independent.
+        jvmTest.dependencies {
+            implementation(libs.androidx.room.testing)
+            implementation(libs.androidx.sqlite.bundled)
         }
     }
 }

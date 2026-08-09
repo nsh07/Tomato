@@ -37,9 +37,11 @@ import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.AppPreferenceRepository
 import org.nsh07.pomodoro.data.AppStatRepository
+import org.nsh07.pomodoro.data.AppTopicRepository
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
+import org.nsh07.pomodoro.data.TopicRepository
 import org.nsh07.pomodoro.service.AndroidTimerHelper
 import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.service.TimerManager
@@ -50,6 +52,7 @@ val servicesModule = module {
 
     single<AppInfo> { create(::createAppInfo) }
     single<AppStatRepository>() bind StatRepository::class
+    single<AppTopicRepository>() bind TopicRepository::class
     single<AppPreferenceRepository>() bind PreferenceRepository::class
     single<StateRepository>()
     single<AndroidTimerHelper>() bind TimerHelper::class

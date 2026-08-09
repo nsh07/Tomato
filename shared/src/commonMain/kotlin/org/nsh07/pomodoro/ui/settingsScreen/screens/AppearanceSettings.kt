@@ -66,7 +66,6 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.topBarWindowInsets
-import org.nsh07.pomodoro.utils.toColor
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.appearance
 import tomato.shared.generated.resources.arrow_back
@@ -167,7 +166,7 @@ fun AppearanceSettings(
 
                 item {
                     ColorSchemePickerListItem(
-                        color = settingsState.colorScheme.toColor(),
+                        color = settingsState.colorScheme,
                         items = 3,
                         index = if (isPlus) 1 else 0,
                         isPlus = isPlus,

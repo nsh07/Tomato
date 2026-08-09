@@ -21,9 +21,17 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.lightColorScheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.service.TimerStateSnapshot
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
@@ -31,9 +39,23 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import org.nsh07.pomodoro.utils.getDefaultAlarmTone
 import org.nsh07.pomodoro.utils.millisecondsToStr
 
-class StateRepository(private val preferenceRepository: PreferenceRepository) {
+@OptIn(ExperimentalCoroutinesApi::class)
+class StateRepository(
+    private val preferenceRepository: PreferenceRepository,
+    private val topicRepository: TopicRepository
+) {
+    private val scope = CoroutineScope(Dispatchers.IO)
+
     val timerState = MutableStateFlow(TimerState())
     val settingsState = MutableStateFlow(SettingsState())
+
+    val currentTopicId = MutableStateFlow(defaultTopic.id)
+
+    val currentTopic: StateFlow<Topic> = currentTopicId
+        .flatMapLatest { topicRepository.observeTopicById(it) }
+        .map { it ?: defaultTopic } // the selected topic may have been deleted
+        .stateIn(scope, SharingStarted.Eagerly, defaultTopic)
+
     val time = MutableStateFlow(25 * 60 * 1000L)
     var timerFrequency: Float = 60f
     var colorScheme: ColorScheme = lightColorScheme()
@@ -45,41 +67,17 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
     private var isFirstLoad = true
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
+        scope.launch {
             reloadSettings()
         }
     }
 
     suspend fun reloadSettings() {
         val defaults = SettingsState()
-        val focusTime =
-            preferenceRepository.getIntPreference("focus_time")?.toLong()
-                ?: preferenceRepository.saveIntPreference(
-                    "focus_time",
-                    defaults.focusTime.toInt()
-                ).toLong()
-        val shortBreakTime =
-            preferenceRepository.getIntPreference("short_break_time")?.toLong()
-                ?: preferenceRepository.saveIntPreference(
-                    "short_break_time",
-                    defaults.shortBreakTime.toInt()
-                ).toLong()
-        val longBreakTime =
-            preferenceRepository.getIntPreference("long_break_time")?.toLong()
-                ?: preferenceRepository.saveIntPreference(
-                    "long_break_time",
-                    defaults.longBreakTime.toInt()
-                ).toLong()
+
         val focusGoal = preferenceRepository.getIntPreference("focus_goal")?.toLong()
             ?: preferenceRepository.saveIntPreference("focus_goal", defaults.focusGoal.toInt())
                 .toLong()
-
-        val sessionLength =
-            preferenceRepository.getIntPreference("session_length")
-                ?: preferenceRepository.saveIntPreference(
-                    "session_length",
-                    defaults.sessionLength
-                )
 
         val alarmSoundUri = (
                 preferenceRepository.getStringPreference("alarm_sound")
@@ -91,8 +89,8 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
 
         val theme = preferenceRepository.getStringPreference("theme")
             ?: preferenceRepository.saveStringPreference("theme", defaults.theme)
-        val colorSchemeStr = preferenceRepository.getStringPreference("color_scheme")
-            ?: preferenceRepository.saveStringPreference("color_scheme", defaults.colorScheme)
+        val colorScheme = preferenceRepository.getColorPreference("color_scheme")
+            ?: preferenceRepository.saveColorPreference("color_scheme", defaults.colorScheme)
         val blackTheme = preferenceRepository.getBooleanPreference("black_theme")
             ?: preferenceRepository.saveBooleanPreference("black_theme", defaults.blackTheme)
         val aodEnabled = preferenceRepository.getBooleanPreference("aod_enabled")
@@ -107,8 +105,6 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
                 "vibrate_enabled",
                 defaults.vibrateEnabled
             )
-        val dndEnabled = preferenceRepository.getBooleanPreference("dnd_enabled")
-            ?: preferenceRepository.saveBooleanPreference("dnd_enabled", defaults.dndEnabled)
         val mediaVolumeForAlarm =
             preferenceRepository.getBooleanPreference("media_volume_for_alarm")
                 ?: preferenceRepository.saveBooleanPreference(
@@ -120,12 +116,6 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
                 "single_progress_bar",
                 defaults.singleProgressBar
             )
-        val autostartNextSession =
-            preferenceRepository.getBooleanPreference("autostart_next_session")
-                ?: preferenceRepository.saveBooleanPreference(
-                    "autostart_next_session",
-                    defaults.autostartNextSession
-                )
         val secureAod = preferenceRepository.getBooleanPreference("secure_aod")
             ?: preferenceRepository.saveBooleanPreference("secure_aod", defaults.secureAod)
 
@@ -155,22 +145,16 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
 
         settingsState.update { currentState ->
             currentState.copy(
-                focusTime = focusTime,
-                shortBreakTime = shortBreakTime,
-                longBreakTime = longBreakTime,
                 focusGoal = focusGoal,
-                sessionLength = sessionLength,
                 theme = theme,
-                colorScheme = colorSchemeStr,
+                colorScheme = colorScheme,
                 alarmSoundUri = alarmSoundUri,
                 blackTheme = blackTheme,
                 aodEnabled = aodEnabled,
                 alarmEnabled = alarmEnabled,
                 vibrateEnabled = vibrateEnabled,
-                dndEnabled = dndEnabled,
                 mediaVolumeForAlarm = mediaVolumeForAlarm,
                 singleProgressBar = singleProgressBar,
-                autostartNextSession = autostartNextSession,
                 secureAod = secureAod,
                 vibrationOnDuration = vibrationOnDuration,
                 vibrationOffDuration = vibrationOffDuration,
@@ -181,19 +165,41 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
 
         if (isFirstLoad) {
             isFirstLoad = false
-            val settings = settingsState.value
-            time.update { settings.focusTime }
+            val topic = restoreCurrentTopic()
+            time.update { topic.focusTime }
             timerState.update { currentState ->
                 currentState.copy(
                     timerMode = TimerMode.FOCUS,
-                    timeStr = millisecondsToStr(settings.focusTime),
-                    totalTime = settings.focusTime,
-                    nextTimerMode = if (settings.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
-                    nextTimeStr = millisecondsToStr(if (settings.sessionLength > 1) settings.shortBreakTime else settings.longBreakTime),
+                    timeStr = millisecondsToStr(topic.focusTime),
+                    totalTime = topic.focusTime,
+                    nextTimerMode = if (topic.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
+                    nextTimeStr = millisecondsToStr(if (topic.sessionLength > 1) topic.shortBreakTime else topic.longBreakTime),
                     currentFocusCount = 1,
-                    totalFocusCount = settings.sessionLength
+                    totalFocusCount = topic.sessionLength
                 )
             }
         }
+    }
+
+    suspend fun setTopic(topic: Topic) {
+        if (currentTopicId.value == topic.id) return
+        currentTopicId.value = topic.id
+        preferenceRepository.saveLongPreference(CURRENT_TOPIC_KEY, topic.id)
+        currentTopic.first { it.id == topic.id || it.id == defaultTopic.id }
+    }
+
+    private suspend fun restoreCurrentTopic(): Topic {
+        val storedId = preferenceRepository.getLongPreference(CURRENT_TOPIC_KEY)
+            ?: currentTopicId.value
+        val topic = topicRepository.getTopicById(storedId)
+            ?: topicRepository.getTopicById(defaultTopic.id)
+            ?: defaultTopic
+
+        currentTopicId.value = topic.id
+        return topic
+    }
+
+    private companion object {
+        const val CURRENT_TOPIC_KEY = "current_topic_id"
     }
 }

@@ -59,14 +59,15 @@ object TomatoShapeDefaults {
     fun segmentedListItemShapes(
         index: Int,
         count: Int,
-        singleElement: Boolean = count == 1
+        singleElement: Boolean = count == 1,
+        selectedShape: CornerBasedShape = shapes.extraLargeIncreased
     ): ListItemShapes =
         ListItemDefaults.segmentedShapes(
             index,
             count,
             ListItemDefaults.shapes(
                 shape = if (singleElement) shapes.large else shapes.extraSmall,
-                selectedShape = shapes.extraLargeIncreased,
+                selectedShape = selectedShape,
                 pressedShape = shapes.extraLargeIncreased,
                 focusedShape = shapes.large,
                 hoveredShape = shapes.extraLarge,

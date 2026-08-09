@@ -34,21 +34,26 @@ import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
+import org.nsh07.pomodoro.data.TopicRepository
 import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.ui.Screen
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
 class TimerViewModel(
     private val timerHelper: TimerHelper,
     private val stateRepository: StateRepository,
-    private val statRepository: StatRepository
+    private val statRepository: StatRepository,
+    private val topicRepository: TopicRepository
 ) : ViewModel() {
     val rootBackstack = mutableStateListOf<Screen>(Screen.Timer)
 
     private val _time: MutableStateFlow<Long> = stateRepository.time
     val timerState: StateFlow<TimerState> = stateRepository.timerState.asStateFlow()
+
+    val currentTopic = stateRepository.currentTopic
 
     val progress = _time.combine(stateRepository.timerState) { remainingTime, uiState ->
         (uiState.totalTime.toFloat() - remainingTime) / uiState.totalTime
@@ -56,6 +61,7 @@ class TimerViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
+            val topicIds = topicRepository.getTopicIds()
             var lastDate = statRepository.getLastDate()
             val today = LocalDate.now()
 
@@ -63,13 +69,17 @@ class TimerViewModel(
             if (lastDate != null) {
                 while (ChronoUnit.DAYS.between(lastDate, today) > 0) {
                     lastDate = lastDate?.plusDays(1)
-                    statRepository.insertStat(Stat(lastDate!!, 0, 0, 0, 0, 0))
+                    topicIds.forEach { topicId ->
+                        statRepository.insertStat(Stat(lastDate!!, topicId, 0, 0, 0, 0, 0))
+                    }
                 }
             } else {
-                statRepository.insertStat(Stat(today, 0, 0, 0, 0, 0))
+                topicIds.forEach { topicId ->
+                    statRepository.insertStat(Stat(today, topicId, 0, 0, 0, 0, 0))
+                }
             }
 
-            delay(1500)
+            delay(1500.milliseconds)
 
             stateRepository.timerState.update { currentState ->
                 currentState.copy(showBrandTitle = false)
@@ -78,14 +88,26 @@ class TimerViewModel(
     }
 
     fun onAction(action: TimerAction) {
-        if (action !is TimerAction.SetInfiniteFocus) timerHelper.onAction(action)
-        else {
-            stateRepository.timerState.update {
-                it.copy(
-                    infiniteFocus = action.value
-                )
+        when (action) {
+            is TimerAction.SetInfiniteFocus -> {
+                stateRepository.timerState.update {
+                    it.copy(
+                        infiniteFocus = action.value
+                    )
+                }
+                onAction(TimerAction.ResetTimer)
             }
-            onAction(TimerAction.ResetTimer)
+
+            is TimerAction.SetTopic -> {
+                if (!timerState.value.serviceRunning) {
+                    viewModelScope.launch {
+                        stateRepository.setTopic(action.topic)
+                        onAction(TimerAction.ResetTimer)
+                    }
+                }
+            }
+
+            else -> timerHelper.onAction(action)
         }
     }
 }

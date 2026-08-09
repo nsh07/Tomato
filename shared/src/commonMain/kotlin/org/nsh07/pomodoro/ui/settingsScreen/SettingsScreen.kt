@@ -50,6 +50,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.SettingsMainScreen
 import org.nsh07.pomodoro.ui.settingsScreen.screens.TimerSettings
+import org.nsh07.pomodoro.ui.settingsScreen.screens.TopicsSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.BackupRestoreScreen
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
@@ -182,6 +183,9 @@ fun SettingsScreenRoot(
             entry<Screen.Settings.Timer>(
                 metadata = detailPane()
             ) {
+                val topics by viewModel.allTopics.collectAsStateWithLifecycle()
+                val editingTopic by viewModel.editingTopic.collectAsStateWithLifecycle()
+
                 TimerSettings(
                     isPlus = isPlus,
                     serviceRunning = serviceRunning,
@@ -191,10 +195,32 @@ fun SettingsScreenRoot(
                     shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                     longBreakTimeInputFieldState = longBreakTimeInputFieldState,
                     sessionsSliderState = sessionsSliderState,
+                    topics = topics,
+                    editingTopic = editingTopic,
                     onAction = viewModel::onAction,
                     setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,
                     modifier = modifier,
+                )
+            }
+
+            entry<Screen.Settings.Topics>(
+                metadata = detailPane()
+            ) {
+                val topics by viewModel.allTopics.collectAsStateWithLifecycle()
+                val editingTopic by viewModel.editingTopic.collectAsStateWithLifecycle()
+
+                TopicsSettings(
+                    topics = topics,
+                    editingTopic = editingTopic,
+                    serviceRunning = serviceRunning,
+                    focusTimeInputFieldState = focusTimeInputFieldState,
+                    shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
+                    longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                    sessionsSliderState = sessionsSliderState,
+                    contentPadding = contentPadding,
+                    onBack = backStack::onBack,
+                    onAction = viewModel::onAction
                 )
             }
         },

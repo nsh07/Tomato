@@ -23,15 +23,16 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [IntPreference::class, BooleanPreference::class, StringPreference::class, Stat::class],
-    version = 2,
+    entities = [IntPreference::class, BooleanPreference::class, StringPreference::class, Stat::class, Topic::class],
+    version = 3,
     autoMigrations = [
         AutoMigration(from = 1, to = 2)
     ]
 )
-@TypeConverters(Converters::class)
+@TypeConverters(LocalDateConverter::class, ComposeColorConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun preferenceDao(): PreferenceDao
     abstract fun statDao(): StatDao
+    abstract fun topicDao(): TopicDao
     abstract fun systemDao(): SystemDao
 }

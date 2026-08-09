@@ -167,6 +167,8 @@ fun SharedTransitionScope.TimerMainPane(
     val haptic = LocalHapticFeedback.current
     val colorScheme = colorScheme
 
+    val timerResetSettingsInfo = stringResource(Res.string.timer_settings_reset_info)
+
     val fraction by animateFloatAsState(
         targetValue = if (timerState.timerMode == TimerMode.FOCUS) 1f else 0f,
         animationSpec = motionScheme.slowEffectsSpec()
@@ -279,6 +281,9 @@ fun SharedTransitionScope.TimerMainPane(
                 actions = {
                     var expanded by remember { mutableStateOf(false) }
 
+                    val canSwitchTopic = !timerState.serviceRunning
+                    val topicItemColors = MenuDefaults.selectableItemColors()
+
                     FilledTonalIconToggleButton(
                         checked = expanded,
                         onCheckedChange = { expanded = it },
@@ -296,10 +301,12 @@ fun SharedTransitionScope.TimerMainPane(
                                         checked = topic.id == currentTopic.id,
                                         onCheckedChange = {
                                             expanded = false
-                                            onAction(TimerAction.SetTopic(topic))
+                                            if (canSwitchTopic) onAction(TimerAction.SetTopic(topic))
                                         },
                                         text = { Text(topic.name) },
-                                        shapes = MenuDefaults.itemShape(index, topics.size)
+                                        colors = topicItemColors,
+                                        shapes = MenuDefaults.itemShape(index, topics.size),
+                                        enabled = canSwitchTopic
                                     )
                                 }
                             }
@@ -406,8 +413,6 @@ fun SharedTransitionScope.TimerMainPane(
                             }
                         }
                         var expanded by remember { mutableStateOf(timerState.showBrandTitle) }
-                        val timerResetSettingsInfo =
-                            stringResource(Res.string.timer_settings_reset_info)
                         Column(
                             horizontalAlignment = CenterHorizontally,
                             modifier = Modifier

@@ -78,6 +78,9 @@ class SettingsViewModel(
             false
         )
 
+    private val isServiceRunning: Boolean
+        get() = stateRepository.timerState.value.serviceRunning
+
     private val _settingsState = stateRepository.settingsState
     val settingsState = _settingsState.asStateFlow()
 
@@ -107,9 +110,7 @@ class SettingsViewModel(
 
     val allTopics = topicRepository
         .getAllTopics()
-        .map { list ->
-            list.sortedBy { it.name }
-        }
+        .map { it.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name }) }
         .flowOn(Dispatchers.IO)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -159,7 +160,7 @@ class SettingsViewModel(
             val created = topic.copy(id = id)
             setEditingTopic(created)
 
-            if (setAsCurrent && !serviceRunning.value) {
+            if (setAsCurrent && !isServiceRunning) {
                 stateRepository.setTopic(created)
                 refreshTimer(created)
             }
@@ -289,7 +290,7 @@ class SettingsViewModel(
     }
 
     fun cancelTextFieldFlowCollection() {
-        if (!serviceRunning.value)
+        if (!isServiceRunning)
             try {
                 timerHelper.onAction(TimerAction.ResetTimer)
             } catch (e: Exception) {
@@ -460,14 +461,8 @@ class SettingsViewModel(
         }
     }
 
-    /**
-     * Seeds the idle timer from [currentTopic].
-     *
-     * The topic is passed in rather than read from [StateRepository.currentTopic]: that flow is
-     * fed by the database and still holds the pre-edit values when this runs.
-     */
     private fun refreshTimer(currentTopic: Topic) {
-        if (!serviceRunning.value) {
+        if (!isServiceRunning) {
             val infFocus = stateRepository.timerState.value.infiniteFocus
 
             if (!infFocus) time.update { currentTopic.focusTime }

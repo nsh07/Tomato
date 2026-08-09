@@ -1,0 +1,10 @@
+New features:
+- Topics are here! Create a topic for anything you focus on, give it its own color and shape, and switch between them right from the timer screen.
+- Every topic remembers its own timer settings
+- Add, rename and delete topics from settings
+
+Improvements:
+- Translation updates (thanks to contributors on Weblate)
+
+Fixes:
+- Fixed a few crashes

@@ -17,22 +17,6 @@
 
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
-/*
- * Copyright (c) 2026 Nishant Mishra
- *
- * This file is part of Tomato - a minimalist pomodoro timer for Android.
- *
- * Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with Tomato.
- * If not, see <https://www.gnu.org/licenses/>.
- */
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.compose.multiplatform)
@@ -68,24 +52,25 @@ compose.desktop {
                 TargetFormat.Exe
             )
 
+            val ogVersionName = libs.versions.app.versionName.get()
+            val ogVersionCode = libs.versions.app.versionCode.get()
+
             linux {
                 iconFile = project.file("../shared/src/jvmMain/composeResources/drawable/logo.png")
-                appRelease = libs.versions.app.versionCode.get()
+                appRelease = ogVersionCode
                 appCategory = "TIMER"
-
-                val ogVersionName = libs.versions.app.versionName.get()
 
                 debMaintainer = "nishant.28@outlook.com"
                 debPackageVersion = ogVersionName.replace('-', '~')
 
                 rpmLicenseType = "GPLv3"
-                rpmPackageVersion = getNativePackageVersion(ogVersionName)
+                rpmPackageVersion = getNativePackageVersion(ogVersionName, ogVersionCode)
             }
             macOS {
                 iconFile = project.file("src/main/logo.icns")
                 bundleID = "org.nsh07.pomodoro"
                 appCategory = "public.app-category.productivity"
-                packageVersion = getNativePackageVersion(libs.versions.app.versionName.get())
+                packageVersion = getNativePackageVersion(ogVersionName, ogVersionCode)
             }
             windows {
                 iconFile = project.file("src/main/logo.ico")
@@ -94,7 +79,7 @@ compose.desktop {
                 dirChooser = true
                 perUserInstall = true
                 shortcut = true
-                packageVersion = getNativePackageVersion(libs.versions.app.versionName.get())
+                packageVersion = getNativePackageVersion(ogVersionName, ogVersionCode)
             }
         }
 
@@ -108,41 +93,23 @@ compose.desktop {
 /**
  * Converts a SemVer string to a native-packager-friendly integer sequence.
  *
+ * The patch component is replaced by the version code, which increments on every release and so
+ * keeps pre-releases below the release they lead up to.
+ *
  * Example:
  *
  * ```
- * "1.8.6-alpha01" -> "1.8.51"
- * "1.8.6-beta02"  -> "1.8.552"
- * "1.8.6"         -> "1.8.60"
+ * "1.8.6"         with version code 34 -> "1.8.34"
+ * "2.0.0-alpha01" with version code 36 -> "2.0.36"
  * ```
  */
-fun getNativePackageVersion(semanticVersion: String): String {
+fun getNativePackageVersion(semanticVersion: String, versionCode: String): String {
     val regex = """^(\d+)\.(\d+)\.(\d+)(?:-([a-zA-Z]+)(\d+))?$""".toRegex()
 
     val match = regex.matchEntire(semanticVersion)
         ?: throw IllegalArgumentException("Version string does not match the expected format: $semanticVersion")
 
-    val (major, minor, patchStr, suffixType, suffixNumStr) = match.destructured
-    val patch = patchStr.toInt()
+    val (major, minor) = match.destructured
 
-    if (suffixType.isEmpty()) {
-        // Appending '0' ensures the final release is mathematically higher
-        // than any double-digit alpha/beta shifts (e.g., 60 > 51)
-        return "$major.$minor.${patch}0"
-    }
-
-    require(patch > 0) {
-        "Cannot shift patch version downwards for a pre-release because it is already 0 (e.g., 1.0.0-alpha01)."
-    }
-
-    val shiftedPatch = patch - 1
-    var buildNumber = suffixNumStr.toInt() // Automatically drops leading zeros (e.g., "01" -> 1)
-
-    // Optional: Offset beta versions so they upgrade correctly over alphas
-    // Alphas stay in the 1-49 range, Betas jump into the 50+ range.
-    if (suffixType.equals("beta", ignoreCase = true)) {
-        buildNumber += 50
-    }
-
-    return "$major.$minor.$shiftedPatch$buildNumber"
+    return "$major.$minor.$versionCode"
 }

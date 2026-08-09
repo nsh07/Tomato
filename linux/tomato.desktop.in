@@ -1,0 +1,12 @@
+# Generated from fastlane/metadata/android by linux/generate-metadata.py
+[Desktop Entry]
+Type=Application
+@NAMES@
+@COMMENTS@
+Exec=tomato
+Icon=org.nsh07.pomodoro
+Terminal=false
+StartupNotify=true
+StartupWMClass=org-nsh07-pomodoro-MainKt
+Categories=Utility;Clock;
+Keywords=pomodoro;timer;focus;productivity;

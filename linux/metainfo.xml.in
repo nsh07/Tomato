@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -15,11 +16,14 @@
   ~ If not, see <https://www.gnu.org/licenses/>.
   -->
 
+<!-- Generated from fastlane/metadata/android by linux/generate-metadata.py -->
+
 <component type="desktop-application">
     <id>org.nsh07.pomodoro</id>
 
-    <name>Tomato</name>
-    <summary>Minimalist, data-oriented pomodoro timer</summary>
+@NAMES@
+
+@SUMMARIES@
 
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0-or-later</project_license>
@@ -28,25 +32,7 @@
         <name>Nishant Mishra</name>
     </developer>
 
-    <description>
-        <p>Tomato is a minimalist Pomodoro timer based on Material 3 Expressive.</p>
-        <p>
-            Tomato is fully free and open-source, forever. You can find the source code and report
-            bugs or suggest features on our GitHub repository.
-        </p>
-        <p>Features:</p>
-        <ul>
-            <li>Simple, minimalist UI based on the latest Material 3 Expressive guidelines</li>
-            <li>Detailed statistics of work/study times in an easy-to-understand manner</li>
-            <li>Stats for the current day visible at a glance</li>
-            <li>Stats for the last week and last month shown in an easy-to-read, clean graph</li>
-            <li>Additional stats for last week and month showing at what time of the day you're the
-                most productive
-            </li>
-            <li>Customizable timer parameters</li>
-            <li>Support for Android 16 Live Updates</li>
-        </ul>
-    </description>
+@DESCRIPTIONS@
 
     <launchable type="desktop-id">org.nsh07.pomodoro.desktop</launchable>
 
@@ -54,7 +40,6 @@
     <url type="bugtracker">https://github.com/nsh07/Tomato/issues</url>
     <url type="vcs-browser">https://github.com/nsh07/Tomato</url>
     <url type="donation">https://coff.ee/nsh07</url>
-    <url type="contact">https://github.com/nsh07/Tomato/issues</url>
     <url type="translate">https://hosted.weblate.org/engage/tomato/</url>
     <url type="contribute">https://github.com/nsh07/Tomato</url>
 
@@ -79,19 +64,14 @@
         <category>Utility</category>
     </categories>
 
-    <releases>
-        <release date="2026-04-18" version="1.8.6-alpha01">
-            <description>
-                <p>Enhancements:</p>
-                <ul>
-                    <li>Translation updates (thanks to contributors on Weblate)</li>
-                </ul>
-                <p>
-                    This release marks a milestone for Tomato: Tomato is now available on Desktop
-                    (Linux, Mac and Windows). Try it out from the releases page on GitHub. It will
-                    soon be available on Flathub and Snap Store for download on Linux as well.
-                </p>
-            </description>
-        </release>
-    </releases>
+    <keywords>
+        <keyword>pomodoro</keyword>
+        <keyword>timer</keyword>
+        <keyword>focus</keyword>
+        <keyword>productivity</keyword>
+    </keywords>
+
+@SCREENSHOTS@
+
+@RELEASES@
 </component>

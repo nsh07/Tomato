@@ -11,11 +11,11 @@ finish-args:
   - --socket=x11
   - --socket=wayland
   - --socket=pulseaudio
-  - --socket=session-bus
   - --share=ipc
-  - --share=network
-  - --talk-name=org.kde.StatusNotifierWatcher
   - --device=dri
+  # Tray icon (StatusNotifierItem)
+  - --talk-name=org.kde.StatusNotifierWatcher
+  - --own-name=org.kde.*
   - --env=PATH=/app/jre/bin:/app/bin:/usr/bin
   - --env=JAVA_HOME=/app/jre
 
@@ -50,13 +50,8 @@ modules:
       - install -Dm644 shared/src/jvmMain/composeResources/drawable/logo.png
         /app/share/icons/hicolor/512x512/apps/org.nsh07.pomodoro.png
 
-      # Install desktop entry
-      - install -Dm644 flatpak/org.nsh07.pomodoro.desktop
-        /app/share/applications/org.nsh07.pomodoro.desktop
-
-      # Install AppStream metadata
-      - install -Dm644 flatpak/org.nsh07.pomodoro.metainfo.xml
-        /app/share/metainfo/org.nsh07.pomodoro.metainfo.xml
+      # Install the desktop entry and AppStream metadata
+      - python3 linux/generate-metadata.py --output-dir /app/share
     sources:
       - type: dir
         path: ..

@@ -1,0 +1,36 @@
+# Maps the version code each fastlane changelog is keyed by onto the version
+# name and release date AppStream needs. Add a row whenever a release is tagged;
+# a changelog with no row here is only included if it is the version currently
+# being built, in which case the build date is used.
+#
+# versionCode	versionName	date (ISO 8601)
+4	1.0.2	2025-08-19
+5	1.1.0	2025-08-23
+6	1.2.0	2025-09-14
+7	1.3.0	2025-09-16
+8	1.4.0	2025-09-27
+9	1.4.1	2025-09-27
+10	1.4.2	2025-09-29
+11	1.4.3	2025-10-09
+12	1.5.0-alpha01	2025-10-16
+13	1.5.0	2025-10-18
+14	1.6.0-alpha01	2025-10-21
+15	1.6.0	2025-10-23
+17	1.6.2	2025-10-28
+18	1.6.3	2025-11-06
+19	1.6.4	2025-11-07
+20	1.6.5	2025-11-10
+21	1.6.6	2025-11-21
+22	1.7.0	2025-12-04
+23	1.7.1	2025-12-09
+24	1.8.0	2025-12-22
+25	1.8.1	2026-01-01
+26	1.8.2	2026-01-21
+27	1.8.3	2026-01-24
+28	1.8.4	2026-02-07
+30	1.8.5-alpha01	2026-02-25
+31	1.8.5-alpha02	2026-03-02
+32	1.8.5-alpha03	2026-03-20
+33	1.8.5-alpha04	2026-03-24
+34	1.8.5	2026-03-25
+35	1.8.6-alpha01	2026-04-18

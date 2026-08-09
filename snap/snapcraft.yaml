@@ -1,35 +1,13 @@
 name: tomato
-title: Tomato
 
 contact: nishant.28@outlook.com
-donation: https://coff.ee/nsh07
-source-code: https://github.com/nsh07/Tomato
-issues: https://github.com/nsh07/Tomato/issues
-website: https://github.com/nsh07/Tomato
 
-version: '1.8.6-alpha01'
-summary: Minimalist, data-oriented pomodoro timer
-description: |
-  Tomato is a minimalist Pomodoro timer based on Material 3 Expressive.
-
-  Tomato is fully free and open-source, forever. You can find the source code and report
-  bugs or suggest features at https://github.com/nsh07/Tomato
-
-  Features:
-  - Simple, minimalist UI based on the latest Material 3 Expressive guidelines
-  - Detailed statistics of work/study times in an easy-to-understand manner
-  - Stats for the current day visible at a glance
-  - Stats for the last week and last month shown in an easy-to-read, clean graph
-  - Additional stats for last week and month showing at what time of the day you're the
-  most productive
-  - Customizable timer parameters
-  - Support for Android 16 Live Updates
+adopt-info: tomato
 
 base: core22
 confinement: strict
 grade: stable
 icon: shared/src/jvmMain/composeResources/drawable/logo.png
-license: GPL-3.0
 
 architectures:
   - build-on: [ amd64 ]
@@ -38,22 +16,24 @@ architectures:
 apps:
   tomato:
     command: bin/tomato-launch
+    common-id: org.nsh07.pomodoro
+    desktop: usr/share/applications/org.nsh07.pomodoro.desktop
     extensions: [ gnome ]
+    # desktop, desktop-legacy, gsettings, opengl, wayland and x11 come from the
+    # gnome extension
     plugs:
-      - x11
-      - wayland
-      - desktop
-      - desktop-legacy
       - audio-playback
-      - opengl
-      - network
+      # Needed to browse for and read a custom alarm sound
+      - home
 
 parts:
   tomato:
     plugin: nil
     source: .
+    parse-info: [ usr/share/metainfo/org.nsh07.pomodoro.metainfo.xml ]
     build-packages:
       - openjdk-21-jdk-headless
+      - python3
     stage-packages:
       - libappindicator3-1
     override-build: |
@@ -62,17 +42,25 @@ parts:
       ./gradlew :desktopApp:createReleaseDistributable
 
       # Install the distributable
-      mkdir -p $SNAPCRAFT_PART_INSTALL/opt/tomato
-      cp -r desktopApp/build/compose/binaries/main-release/app/Tomato/* $SNAPCRAFT_PART_INSTALL/opt/tomato/
+      mkdir -p $CRAFT_PART_INSTALL/opt/tomato
+      cp -r desktopApp/build/compose/binaries/main-release/app/Tomato/* $CRAFT_PART_INSTALL/opt/tomato/
 
       # Create launcher script
-      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
-      cat > $SNAPCRAFT_PART_INSTALL/bin/tomato-launch << 'EOF'
+      mkdir -p $CRAFT_PART_INSTALL/bin
+      cat > $CRAFT_PART_INSTALL/bin/tomato-launch << 'EOF'
       #!/bin/sh
       exec $SNAP/opt/tomato/bin/Tomato "$@"
       EOF
-      chmod +x $SNAPCRAFT_PART_INSTALL/bin/tomato-launch
+      chmod +x $CRAFT_PART_INSTALL/bin/tomato-launch
 
-      # Install desktop entry
-      mkdir -p $SNAPCRAFT_PART_INSTALL/meta/gui
-      cp shared/src/jvmMain/composeResources/drawable/logo.png $SNAPCRAFT_PART_INSTALL/meta/gui/icon.png
+      # Install the desktop entry and AppStream metadata
+      python3 linux/generate-metadata.py --output-dir $CRAFT_PART_INSTALL/usr/share
+
+      # Install the icon, both for the desktop entry and for snapd's icon cache
+      icon=shared/src/jvmMain/composeResources/drawable/logo.png
+      install -Dm644 $icon \
+        $CRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps/org.nsh07.pomodoro.png
+      install -Dm644 $icon \
+        $CRAFT_PART_INSTALL/meta/gui/icons/hicolor/512x512/apps/org.nsh07.pomodoro.png
+
+      craftctl set version="$(sed -n 's/^app-versionName = "\(.*\)"$/\1/p' gradle/libs.versions.toml)"

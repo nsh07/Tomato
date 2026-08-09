@@ -135,8 +135,36 @@ jobs:
           archive: false
           path: ./desktopApp/build/compose/binaries/main-release/exe/*.exe
 
+  validate-linux-metadata:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install validators
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y appstream desktop-file-utils libxml2-utils
+
+      - name: Generate metadata from fastlane
+        run: python3 linux/generate-metadata.py --output-dir "$RUNNER_TEMP/share"
+
+      - name: Validate AppStream metadata
+        run: |
+          metainfo="$RUNNER_TEMP/share/metainfo/org.nsh07.pomodoro.metainfo.xml"
+          xmllint --noout "$metainfo"
+          report=$(appstreamcli validate --no-net --explain "$metainfo" || true)
+          echo "$report"
+          if echo "$report" | grep -q '^E: '; then
+            echo "::error::AppStream validation reported errors"
+            exit 1
+          fi
+
+      - name: Validate desktop entry
+        run: desktop-file-validate "$RUNNER_TEMP/share/applications/org.nsh07.pomodoro.desktop"
+
   package-linux-flatpak:
-    needs: build-linux
+    needs: [ build-linux, validate-linux-metadata ]
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     container:
@@ -164,7 +192,7 @@ jobs:
           path: tomato-${{ github.ref_name }}-${{ env.ARCH }}.flatpak
 
   package-linux-snap:
-    needs: build-linux
+    needs: [ build-linux, validate-linux-metadata ]
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
 

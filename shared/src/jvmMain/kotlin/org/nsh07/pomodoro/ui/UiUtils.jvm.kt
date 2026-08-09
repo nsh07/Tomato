@@ -31,6 +31,7 @@ import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.openFilePicker
+import io.github.vinceglb.filekit.exists
 import io.github.vinceglb.filekit.name
 import io.github.vinceglb.filekit.parent
 import io.github.vinceglb.filekit.path
@@ -72,6 +73,21 @@ actual fun rememberRequestDndPermissionCallback(): (Boolean) -> Unit = {}
 @Composable
 actual fun rememberRequestNotificationPermissionCallback(): () -> Unit = {}
 
+/** Paths handed out by the XDG document portal inside a Flatpak or Snap sandbox */
+private val documentPortalPathRegex = Regex("""^/run/user/\d+/doc(/|$)""")
+
+/**
+ * The directory the alarm sound picker should open in, or `null` to let the picker decide.
+ *
+ * In a sandbox the previously picked sound lives in the document portal rather than where the user
+ * keeps their music, so opening it there would show an opaque directory holding a single file.
+ */
+private fun alarmSoundPickerDirectory(alarmSoundFilePath: String?): PlatformFile? {
+    val parent = alarmSoundFilePath?.let { PlatformFile(it).parent() } ?: return null
+    if (documentPortalPathRegex.containsMatchIn(parent.path)) return null
+    return parent.takeIf { it.exists() }
+}
+
 @Composable
 actual fun rememberRingtonePickerLauncherCallback(
     alarmSoundFilePath: String?,
@@ -80,9 +96,7 @@ actual fun rememberRingtonePickerLauncherCallback(
     // TODO: copy the file to the data directory and use its path instead, to avoid dependence on a file that the user may delete
     val file = FileKit.openFilePicker(
         type = FileKitType.File("mp3"),
-        directory = alarmSoundFilePath?.let {
-            PlatformFile(it).parent()
-        }
+        directory = alarmSoundPickerDirectory(alarmSoundFilePath)
     )
     file?.let { onResult(SettingsAction.SaveAlarmSound(it.path)) }
 }

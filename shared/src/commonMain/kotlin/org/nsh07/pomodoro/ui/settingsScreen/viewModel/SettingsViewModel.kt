@@ -49,6 +49,7 @@ import org.nsh07.pomodoro.data.TopicRepository
 import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.ui.Screen
+import org.nsh07.pomodoro.ui.settingsScreen.components.isValidMinutesInput
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.utils.logError
@@ -258,7 +259,7 @@ class SettingsViewModel(
             snapshotFlow { focusTimeTextFieldState.text }
                 .debounce(500.milliseconds)
                 .collect {
-                    if (it.isNotEmpty()) {
+                    if (it.isValidMinutesInput()) {
                         val value = it.toString().toLong() * 60 * 1000
 
                         editTopic(refreshesTimer = true) { it.copy(focusTime = value) }
@@ -269,7 +270,7 @@ class SettingsViewModel(
             snapshotFlow { shortBreakTimeTextFieldState.text }
                 .debounce(500.milliseconds)
                 .collect {
-                    if (it.isNotEmpty()) {
+                    if (it.isValidMinutesInput()) {
                         val value = it.toString().toLong() * 60 * 1000
 
                         editTopic(refreshesTimer = true) { it.copy(shortBreakTime = value) }
@@ -280,7 +281,7 @@ class SettingsViewModel(
             snapshotFlow { longBreakTimeTextFieldState.text }
                 .debounce(500.milliseconds)
                 .collect {
-                    if (it.isNotEmpty()) {
+                    if (it.isValidMinutesInput()) {
                         val value = it.toString().toLong() * 60 * 1000
 
                         editTopic(refreshesTimer = true) { it.copy(longBreakTime = value) }

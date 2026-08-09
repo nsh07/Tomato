@@ -120,9 +120,9 @@ fun CreateTopicBottomSheet(
         topics.any { it.name.equals(name, true) }
     }
     val nameValid = name.isNotEmpty() && !nameTaken
-    val timesValid = focusTimeInputFieldState.text.isNotEmpty() &&
-            shortBreakTimeInputFieldState.text.isNotEmpty() &&
-            longBreakTimeInputFieldState.text.isNotEmpty()
+    val timesValid = focusTimeInputFieldState.text.isValidMinutesInput() &&
+            shortBreakTimeInputFieldState.text.isValidMinutesInput() &&
+            longBreakTimeInputFieldState.text.isValidMinutesInput()
 
     fun hideSheet(onHidden: () -> Unit = {}) {
         coroutineScope

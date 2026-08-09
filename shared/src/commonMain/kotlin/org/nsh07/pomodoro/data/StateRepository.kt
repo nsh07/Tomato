@@ -165,7 +165,7 @@ class StateRepository(
 
         if (isFirstLoad) {
             isFirstLoad = false
-            val topic = topicRepository.getTopicById(currentTopicId.value) ?: defaultTopic
+            val topic = restoreCurrentTopic()
             time.update { topic.focusTime }
             timerState.update { currentState ->
                 currentState.copy(
@@ -184,6 +184,22 @@ class StateRepository(
     suspend fun setTopic(topic: Topic) {
         if (currentTopicId.value == topic.id) return
         currentTopicId.value = topic.id
+        preferenceRepository.saveLongPreference(CURRENT_TOPIC_KEY, topic.id)
         currentTopic.first { it.id == topic.id || it.id == defaultTopic.id }
+    }
+
+    private suspend fun restoreCurrentTopic(): Topic {
+        val storedId = preferenceRepository.getLongPreference(CURRENT_TOPIC_KEY)
+            ?: currentTopicId.value
+        val topic = topicRepository.getTopicById(storedId)
+            ?: topicRepository.getTopicById(defaultTopic.id)
+            ?: defaultTopic
+
+        currentTopicId.value = topic.id
+        return topic
+    }
+
+    private companion object {
+        const val CURRENT_TOPIC_KEY = "current_topic_id"
     }
 }

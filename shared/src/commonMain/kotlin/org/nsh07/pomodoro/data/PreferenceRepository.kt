@@ -34,6 +34,12 @@ interface PreferenceRepository {
     suspend fun saveIntPreference(key: String, value: Int): Int
 
     /**
+     * Saves a long preference key-value pair to the database. Shares its storage with
+     * [saveIntPreference].
+     */
+    suspend fun saveLongPreference(key: String, value: Long): Long
+
+    /**
      * Saves a boolean preference key-value pair to the database.
      */
     suspend fun saveBooleanPreference(key: String, value: Boolean): Boolean
@@ -49,6 +55,11 @@ interface PreferenceRepository {
      * Retrieves an integer preference key-value pair from the database.
      */
     suspend fun getIntPreference(key: String): Int?
+
+    /**
+     * Retrieves a long preference key-value pair from the database.
+     */
+    suspend fun getLongPreference(key: String): Long?
 
     /**
      * Retrieves a boolean preference key-value pair from the database.
@@ -92,6 +103,12 @@ class AppPreferenceRepository(
             value
         }
 
+    override suspend fun saveLongPreference(key: String, value: Long): Long =
+        withContext(ioDispatcher) {
+            preferenceDao.insertIntPreference(IntPreference(key, value))
+            value
+        }
+
     override suspend fun saveBooleanPreference(key: String, value: Boolean): Boolean =
         withContext(ioDispatcher) {
             preferenceDao.insertBooleanPreference(BooleanPreference(key, value))
@@ -117,6 +134,10 @@ class AppPreferenceRepository(
 
     override suspend fun getIntPreference(key: String): Int? = withContext(ioDispatcher) {
         preferenceDao.getIntPreference(key)?.toInt()
+    }
+
+    override suspend fun getLongPreference(key: String): Long? = withContext(ioDispatcher) {
+        preferenceDao.getIntPreference(key)
     }
 
     override suspend fun getBooleanPreference(key: String): Boolean? = withContext(ioDispatcher) {

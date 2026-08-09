@@ -74,7 +74,6 @@ fun SettingsScreenRoot(
     val backStack = viewModel.backStack
 
     DisposableEffect(Unit) {
-        viewModel.setEditingTopicToCurrent()
         viewModel.runTextFieldFlowCollection()
         onDispose { viewModel.cancelTextFieldFlowCollection() }
     }

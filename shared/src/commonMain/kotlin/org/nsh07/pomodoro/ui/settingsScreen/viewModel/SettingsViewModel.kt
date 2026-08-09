@@ -151,8 +151,6 @@ class SettingsViewModel(
         }
     }
 
-    fun setEditingTopicToCurrent() = setEditingTopic(_currentTopic.value)
-
     private fun createTopic(topic: Topic, setAsCurrent: Boolean) {
         viewModelScope.launch {
             val id = topicRepository.insertTopic(topic)

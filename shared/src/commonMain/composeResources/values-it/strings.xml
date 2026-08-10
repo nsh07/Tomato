@@ -96,10 +96,10 @@
     <string name="focus_breakdown">Distribuzione della concentrazione</string>
     <string name="focus_history">Storico concentrazione</string>
     <string name="focus_history_calendar">Calendario dei livelli di concentrazione</string>
-    <string name="focus_history_calendar_desc">Storico della concentrazione dell'ultimo mese. I giorni del mese precedente sono evidenziati con un colore diverso. Tocca una data per ulteriori informazioni.</string>
-    <string name="focus_history_desc">Dettaglio della concentrazione per ogni giorno dell'ultima settimana. Tocca il grafico di un giorno per ulteriori informazioni.</string>
+    <string name="focus_history_calendar_desc">Storico della concentrazione dell\u0027ultimo mese. I giorni del mese precedente sono evidenziati con un colore diverso. Tocca una data per ulteriori informazioni.</string>
+    <string name="focus_history_desc">Dettaglio della concentrazione per ogni giorno dell\u0027ultima settimana. Tocca il grafico di un giorno per ulteriori informazioni.</string>
     <string name="focus_history_heatmap">Mappa cromatica della concentrazione</string>
-    <string name="focus_history_heatmap_desc">Storico della concentrazione dell'ultimo anno. I colori più intensi indicano una durata maggiore. I giorni sono raggruppati per mese. Tocca un giorno per ulteriori informazioni.</string>
+    <string name="focus_history_heatmap_desc">Storico della concentrazione dell\u0027ultimo anno. I colori più intensi indicano una durata maggiore. I giorni sono raggruppati per mese. Tocca un giorno per ulteriori informazioni.</string>
     <string name="gap">Intervallo</string>
     <string name="help_with_translation">Aiutaci a tradurre Tomato</string>
     <string name="help_with_translation_desc">Traduci Tomato nella tua lingua</string>

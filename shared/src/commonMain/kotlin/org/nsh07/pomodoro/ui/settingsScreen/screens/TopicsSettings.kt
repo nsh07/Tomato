@@ -47,9 +47,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
 import androidx.compose.foundation.style.MutableStyleState
-import androidx.compose.foundation.style.Style
 import androidx.compose.foundation.style.StyleScope
 import androidx.compose.foundation.style.StyleStateKey
+import androidx.compose.foundation.style.animate
+import androidx.compose.foundation.style.externalPaddingVertical
+import androidx.compose.foundation.style.size
 import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
@@ -121,6 +123,8 @@ import tomato.shared.generated.resources.create_new_topic
 import tomato.shared.generated.resources.edit
 import tomato.shared.generated.resources.minutes_format
 import tomato.shared.generated.resources.settings
+import tomato.shared.generated.resources.topic_summary_format
+import tomato.shared.generated.resources.topics
 
 val selectedKey = StyleStateKey(false)
 
@@ -130,8 +134,8 @@ var MutableStyleState.selected: Boolean
         this[selectedKey] = value
     }
 
-fun StyleScope.selected(value: Style) {
-    state(selectedKey, value) { key, state -> state[key] }
+fun StyleScope.selected(block: () -> Unit) {
+    state(selectedKey, block) { key, state -> state[key] }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -182,7 +186,7 @@ fun TopicsSettings(
                     windowInsets = topBarWindowInsets(),
                     title = {
                         Text(
-                            "Topics",
+                            stringResource(Res.string.topics),
                             fontFamily = topBarTitle
                         )
                     },
@@ -215,6 +219,7 @@ fun TopicsSettings(
         ) { innerPadding ->
             val insets = mergePaddingValues(innerPadding, contentPadding)
             val minFormat = stringResource(Res.string.minutes_format)
+            val summaryFormat = stringResource(Res.string.topic_summary_format)
             val lazyColumnState = rememberLazyListState()
             var creatingTopic by remember { mutableStateOf(false) }
             val newTopicNameState = rememberTextFieldState()
@@ -472,22 +477,13 @@ fun TopicsSettings(
                             },
                             supportingContent = {
                                 Text(
-                                    "${
-                                        String.format(
-                                            minFormat,
-                                            topic.focusTime / 60000
-                                        )
-                                    } / ${
-                                        String.format(
-                                            minFormat,
-                                            topic.shortBreakTime / 60000
-                                        )
-                                    } / ${
-                                        String.format(
-                                            minFormat,
-                                            topic.longBreakTime / 60000
-                                        )
-                                    }, ${topic.sessionLength} timers",
+                                    String.format(
+                                        summaryFormat,
+                                        String.format(minFormat, topic.focusTime / 60000),
+                                        String.format(minFormat, topic.shortBreakTime / 60000),
+                                        String.format(minFormat, topic.longBreakTime / 60000),
+                                        topic.sessionLength
+                                    ),
                                     style = typography.labelLarge,
                                     color = colorScheme.onSecondaryContainer
                                 )

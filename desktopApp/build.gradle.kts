@@ -57,6 +57,8 @@ compose.desktop {
 
             linux {
                 iconFile = project.file("../shared/src/jvmMain/composeResources/drawable/logo.png")
+                shortcut = true
+                menuGroup = "Utility;Clock;"
                 appRelease = ogVersionCode
                 appCategory = "TIMER"
 

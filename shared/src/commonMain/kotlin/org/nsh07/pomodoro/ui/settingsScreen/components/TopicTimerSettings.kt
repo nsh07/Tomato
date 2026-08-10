@@ -89,6 +89,8 @@ import tomato.shared.generated.resources.delete
 import tomato.shared.generated.resources.delete_topic
 import tomato.shared.generated.resources.dnd
 import tomato.shared.generated.resources.dnd_desc
+import tomato.shared.generated.resources.edit_topic
+import tomato.shared.generated.resources.edit_topic_desc
 import tomato.shared.generated.resources.focus
 import tomato.shared.generated.resources.long_break
 import tomato.shared.generated.resources.session_length
@@ -150,7 +152,7 @@ fun TopicTimerSettings(
                         }
                 )
             },
-            supportingContent = { Text("Name, color and shape") },
+            supportingContent = { Text(stringResource(Res.string.edit_topic_desc)) },
             trailingContent = {
                 if (!isDefaultTopic) FilledTonalIconButton(
                     onClick = { showDeleteDialog = true },
@@ -178,7 +180,7 @@ fun TopicTimerSettings(
                 )
             )
         ) {
-            Text("Edit topic")
+            Text(stringResource(Res.string.edit_topic))
         }
     }
 

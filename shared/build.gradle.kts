@@ -72,7 +72,6 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project.dependencies.platform(libs.androidx.compose.bom))
             implementation(libs.components.resources)
             implementation(libs.compose.ui)
             implementation(libs.compose.ui.graphics)
@@ -104,8 +103,6 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(project.dependencies.platform(libs.androidx.compose.bom))
-
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.core.ktx)
 
@@ -116,7 +113,6 @@ kotlin {
             implementation(libs.androidx.junit)
             implementation(libs.androidx.espresso.core)
             implementation(libs.androidx.ui.test.junit4)
-            implementation(libs.androidx.ui.test.manifest)
         }
 
         jvmMain.dependencies {
@@ -165,7 +161,8 @@ buildkonfig {
 }
 
 dependencies {
-    ksp(libs.androidx.room.compiler)
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspJvm", libs.androidx.room.compiler)
 }
 
 ksp {

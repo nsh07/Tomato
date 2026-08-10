@@ -163,4 +163,7 @@
     <string name="delete_topic_and_stats">Delete topic and stats</string>
     <string name="delete_topic_dialog_title">Delete topic?</string>
     <string name="delete_topic_dialog_text">This cannot be undone. Stats associated with this topic will be moved to the default topic (%1$s). Optionally, you can delete the stats associated with this topic.</string>
+    <string name="edit_topic">Edit topic</string>
+    <string name="edit_topic_desc">Name, color and shape</string>
+    <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d timers</string>
 </resources>

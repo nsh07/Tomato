@@ -148,4 +148,17 @@
     <string name="open_tomato">Tomato\u0027yu Aç</string>
     <string name="quit_tomato">Tomato\u0027dan Çık</string>
     <string name="advanced">Gelişmiş</string>
+    <string name="topics">Kategoriler</string>
+    <string name="create_new_topic">Yeni kategori oluştur</string>
+    <string name="topic_name">Ad</string>
+    <string name="topic_name_taken">Zaten bu isimle bir kategori var</string>
+    <string name="add_topic">Kategori ekle</string>
+    <string name="next">Sonraki</string>
+    <string name="delete_topic">Kategoriyi sil</string>
+    <string name="delete_topic_and_stats">Kategoriyi ve o kategorinin istatistiklerini sil</string>
+    <string name="delete_topic_dialog_title">Kategori silinsin mi?</string>
+    <string name="delete_topic_dialog_text">Bu işlem geri alınamaz. Bu kategoriyle ilişkilendirilmiş tüm istatistikler varsayılan kategorisine alınacaktır (%1$s). İsterseniz bu kategoriye ait istatistikleri direkt silebilirsiniz.</string>
+    <string name="edit_topic">Kategoriyi düzenle</string>
+    <string name="edit_topic_desc">İsim, renk ve şekil</string>
+    <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d sayaç</string>
 </resources>

@@ -150,4 +150,14 @@
     <string name="open_tomato">開啟 Tomato</string>
     <string name="quit_tomato">結束 Tomato</string>
     <string name="advanced">進階</string>
+    <string name="topics">主題</string>
+    <string name="create_new_topic">建立新主題</string>
+    <string name="topic_name">名稱</string>
+    <string name="topic_name_taken">已有相同名稱的主題</string>
+    <string name="add_topic">新增主題</string>
+    <string name="next">下一步</string>
+    <string name="delete_topic">刪除主題</string>
+    <string name="delete_topic_and_stats">刪除主題與統計資料</string>
+    <string name="delete_topic_dialog_title">要刪除主題嗎？</string>
+    <string name="delete_topic_dialog_text">此操作無法復原。與此主題相關的統計資料將移至預設主題（%1$s）。你也可以選擇刪除與此主題相關的統計資料。</string>
 </resources>

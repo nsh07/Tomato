@@ -148,4 +148,16 @@
     <string name="open_tomato">打开 Tomato</string>
     <string name="quit_tomato">关闭 Tomato</string>
     <string name="advanced">高级</string>
+    <string name="topics">主题</string>
+    <string name="create_new_topic">新建主题</string>
+    <string name="topic_name">名称</string>
+    <string name="topic_name_taken">同名主题已存在</string>
+    <string name="add_topic">添加主题</string>
+    <string name="next">下一步</string>
+    <string name="delete_topic">删除主题</string>
+    <string name="delete_topic_and_stats">删除主题和统计</string>
+    <string name="delete_topic_dialog_title">删除主题？</string>
+    <string name="edit_topic">编辑主题</string>
+    <string name="edit_topic_desc">名称、颜色与图形</string>
+    <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d 计时器</string>
 </resources>

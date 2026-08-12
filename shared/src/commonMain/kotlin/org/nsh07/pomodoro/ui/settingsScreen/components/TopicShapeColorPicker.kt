@@ -96,13 +96,6 @@ private const val shapeGridColumns = 5
 private val shapeGridRows =
     (TopicShape.entries.size + shapeGridColumns - 1) / shapeGridColumns
 
-internal val topicColors = listOf(
-    Color.White,
-    Color(0xfffeb4a7), Color(0xffffb3c0), Color(0xfffcaaff), Color(0xffb9c3ff),
-    Color(0xff62d3ff), Color(0xff44d9f1), Color(0xff52dbc9), Color(0xff78dd77),
-    Color(0xff9fd75c), Color(0xffc1d02d), Color(0xfffabd00), Color(0xffffb86e)
-)
-
 @Stable
 private class AnimatedCornerShape(initialShape: RoundedCornerShape) : Shape {
     private var shape = initialShape
@@ -214,12 +207,11 @@ fun TopicShapeColorPicker(
         )
         ColorPickerRow(
             color,
-            topicColors,
             isPlus = true,
             onColorChange = onColorChange,
             backgroundColor = containerColor,
             horizontalPadding = horizontalPadding,
-            dropLast = false
+            showDynamicItem = true
         )
 
         Text(

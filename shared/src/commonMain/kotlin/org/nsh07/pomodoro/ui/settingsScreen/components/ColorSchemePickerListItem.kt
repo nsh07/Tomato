@@ -21,46 +21,95 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.ToggleButtonShapes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
+import org.nsh07.pomodoro.ui.theme.SeededTheme
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
+import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.blue
+import tomato.shared.generated.resources.chartreuse
 import tomato.shared.generated.resources.check
 import tomato.shared.generated.resources.clear
 import tomato.shared.generated.resources.color
 import tomato.shared.generated.resources.color_scheme
 import tomato.shared.generated.resources.colors
+import tomato.shared.generated.resources.cyan
 import tomato.shared.generated.resources.dynamic
 import tomato.shared.generated.resources.dynamic_color
 import tomato.shared.generated.resources.dynamic_color_desc
+import tomato.shared.generated.resources.green
+import tomato.shared.generated.resources.indigo
+import tomato.shared.generated.resources.orange
 import tomato.shared.generated.resources.palette
+import tomato.shared.generated.resources.purple
+import tomato.shared.generated.resources.red
+import tomato.shared.generated.resources.rose
+import tomato.shared.generated.resources.teal
+import tomato.shared.generated.resources.yellow
+
+@Immutable
+data class ColorSchemeItem(
+    val color: Color,
+    val name: StringResource
+)
+
+val colorSchemes = listOf(
+    ColorSchemeItem(Color(0xffffa79b), Res.string.red),
+    ColorSchemeItem(Color(0xffffb2bd), Res.string.rose),
+    ColorSchemeItem(Color(0xffd7bbfc), Res.string.purple),
+    ColorSchemeItem(Color(0xffc5c0ff), Res.string.indigo),
+    ColorSchemeItem(Color(0xffb0c6ff), Res.string.blue),
+    ColorSchemeItem(Color(0xff86d1ea), Res.string.cyan),
+    ColorSchemeItem(Color(0xff82d5c7), Res.string.teal),
+    ColorSchemeItem(Color(0xff9cd59f), Res.string.green),
+    ColorSchemeItem(Color(0xffc3cd7c), Res.string.chartreuse),
+    ColorSchemeItem(Color(0xffe8c16c), Res.string.yellow),
+    ColorSchemeItem(Color(0xffffb68d), Res.string.orange)
+)
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -72,19 +121,12 @@ fun ColorSchemePickerListItem(
     onColorChange: (Color) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val colorSchemes = listOf(
-        Color(0xfffeb4a7), Color(0xffffb3c0), Color(0xfffcaaff), Color(0xffb9c3ff),
-        Color(0xff62d3ff), Color(0xff44d9f1), Color(0xff52dbc9), Color(0xff78dd77),
-        Color(0xff9fd75c), Color(0xffc1d02d), Color(0xfffabd00), Color(0xffffb86e),
-        Color.White
-    )
-
     if (androidSdkVersionAtLeast(31)) {
-        val checked = color == colorSchemes.last()
+        val checked = color == colorSchemes.last().color
         SegmentedListItem(
             onClick = {
-                if (!checked) onColorChange(colorSchemes.last())
-                else onColorChange(colorSchemes.first())
+                if (!checked) onColorChange(Color.White)
+                else onColorChange(colorSchemes.first().color)
             },
             leadingContent = { Icon(painterResource(Res.drawable.colors), null) },
             content = { Text(stringResource(Res.string.dynamic_color)) },
@@ -93,8 +135,8 @@ fun ColorSchemePickerListItem(
                 Switch(
                     checked = checked,
                     onCheckedChange = {
-                        if (it) onColorChange(colorSchemes.last())
-                        else onColorChange(colorSchemes.first())
+                        if (it) onColorChange(Color.White)
+                        else onColorChange(colorSchemes.first().color)
                     },
                     enabled = isPlus,
                     thumbContent = {
@@ -163,7 +205,6 @@ fun ColorSchemePickerListItem(
 
     ColorPickerRow(
         color = color,
-        colorSchemes = colorSchemes,
         isPlus = isPlus,
         onColorChange = onColorChange,
         modifier = modifier
@@ -173,15 +214,15 @@ fun ColorSchemePickerListItem(
 @Composable
 fun ColorPickerRow(
     color: Color,
-    colorSchemes: List<Color>,
     isPlus: Boolean,
     onColorChange: (Color) -> Unit,
     modifier: Modifier = Modifier,
     backgroundColor: Color = animateColorAsState(listItemColors.containerColor).value,
     horizontalPadding: Dp = 48.dp,
-    dropLast: Boolean = true
+    showDynamicItem: Boolean = false
 ) {
     LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
         contentPadding = PaddingValues(horizontal = horizontalPadding),
         userScrollEnabled = isPlus,
         modifier = modifier
@@ -191,14 +232,24 @@ fun ColorPickerRow(
             )
             .padding(bottom = 8.dp)
     ) {
-        items(colorSchemes.dropLast(if (dropLast) 1 else 0)) {
-            ColorPickerButton(
-                color = it,
-                isSelected = it == color,
+        if (showDynamicItem) item {
+            DynamicColorPickerButton(
+                shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
+                checked = color == Color.White,
                 enabled = isPlus,
-                modifier = Modifier.padding(4.dp)
+                onClick = { onColorChange(Color.White) }
+            )
+        }
+        itemsIndexed(colorSchemes) { index, it ->
+            ColorPickerButton(
+                items = if (showDynamicItem) colorSchemes.size + 1 else colorSchemes.size,
+                index = if (showDynamicItem) index + 1 else index,
+                color = it.color,
+                colorName = it.name,
+                checked = it.color == color,
+                enabled = isPlus
             ) {
-                onColorChange(it)
+                onColorChange(it.color)
             }
         }
     }
@@ -206,37 +257,119 @@ fun ColorPickerRow(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ColorPickerButton(
+private fun ColorPickerButton(
+    items: Int,
+    index: Int,
     color: Color,
-    isSelected: Boolean,
+    colorName: StringResource,
+    checked: Boolean,
     enabled: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    IconButton(
-        shapes = IconButtonDefaults.shapes(),
-        colors = IconButtonDefaults.iconButtonColors(
-            containerColor = color,
-            disabledContainerColor = color.copy(0.3f)
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+        SeededTheme(color) {
+            ToggleButton(
+                shapes = when (index) {
+                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                    items - 1 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                },
+                colors = ToggleButtonDefaults.toggleButtonColors(
+                    containerColor = colorScheme.primaryContainer,
+                    checkedContainerColor = colorScheme.primary,
+                    checkedContentColor = colorScheme.onPrimary
+                ),
+                enabled = enabled,
+                modifier = modifier
+                    .height(40.dp)
+                    .widthIn(min = 40.dp),
+                checked = checked,
+                onCheckedChange = { onClick() }
+            ) {
+                AnimatedContent(checked) { checked ->
+                    if (checked) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Icon(
+                                painterResource(Res.drawable.check),
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Text(
+                                stringResource(colorName),
+                                style = typography.labelLarge
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DynamicColorPickerButton(
+    shapes: ToggleButtonShapes,
+    checked: Boolean,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    ToggleButton(
+        shapes = shapes,
+        colors = ToggleButtonDefaults.toggleButtonColors(
+            containerColor = colorScheme.secondaryContainer,
+            contentColor = colorScheme.onSecondaryContainer,
+            checkedContainerColor = colorScheme.primary,
+            checkedContentColor = colorScheme.onPrimary
         ),
         enabled = enabled,
-        modifier = modifier.size(48.dp),
-        onClick = onClick
+        modifier = modifier
+            .height(40.dp)
+            .widthIn(min = 40.dp),
+        checked = checked,
+        onCheckedChange = { onClick() }
     ) {
-        AnimatedContent(isSelected) { isSelected ->
-            when (isSelected) {
-                true -> Icon(
-                    painterResource(Res.drawable.check),
-                    tint = Color.Black,
-                    contentDescription = null
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            AnimatedContent(checked) { checked ->
+                Icon(
+                    if (checked) painterResource(Res.drawable.check)
+                    else painterResource(Res.drawable.colors),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
                 )
+            }
+            Text(
+                stringResource(Res.string.dynamic),
+                style = typography.labelLarge
+            )
+        }
+    }
+}
 
-                else ->
-                    if (color == Color.White) Icon(
-                        painterResource(Res.drawable.colors),
-                        tint = Color.Black,
-                        contentDescription = null
-                    )
+@Preview
+@Composable
+private fun ColorPickerButtonPreview() {
+    var selectedIndex by remember { mutableIntStateOf(0) }
+
+    TomatoTheme {
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            contentPadding = PaddingValues(16.dp),
+            modifier = Modifier
+                .background(colorScheme.inverseSurface)
+        ) {
+            items(colorSchemes.size) { index ->
+                val (color, name) = colorSchemes[index]
+                ColorPickerButton(
+                    items = colorSchemes.size,
+                    index = index,
+                    color = color,
+                    colorName = name,
+                    checked = index == selectedIndex,
+                    enabled = true,
+                    onClick = { selectedIndex = index }
+                )
             }
         }
     }

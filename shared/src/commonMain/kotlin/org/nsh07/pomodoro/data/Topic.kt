@@ -57,7 +57,7 @@ data class Topic(
             id = DEFAULT_TOPIC_ID,
             name = "Default",
             color = Color.White,
-            shape = TopicShape.COOKIE_12_SIDED,
+            shape = TopicShape.COOKIE_7_SIDED,
             focusTime = 25 * 60 * 1000L,
             shortBreakTime = 5 * 60 * 1000L,
             longBreakTime = 15 * 60 * 1000L,

@@ -166,4 +166,15 @@
     <string name="edit_topic">Edit topic</string>
     <string name="edit_topic_desc">Name, color and shape</string>
     <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d timers</string>
+    <string name="red">Red</string>
+    <string name="rose">Rose</string>
+    <string name="purple">Purple</string>
+    <string name="indigo">Indigo</string>
+    <string name="blue">Blue</string>
+    <string name="cyan">Cyan</string>
+    <string name="teal">Teal</string>
+    <string name="green">Green</string>
+    <string name="chartreuse">Chartreuse</string>
+    <string name="yellow">Yellow</string>
+    <string name="orange">Orange</string>
 </resources>

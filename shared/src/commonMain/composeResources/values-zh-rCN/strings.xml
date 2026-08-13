@@ -77,9 +77,9 @@
     <string name="dnd_desc">运行「专注」计时器时打开勿扰</string>
     <string name="get_plus">获取 Tomato+</string>
     <string name="dynamic_color">动态配色</string>
-    <string name="dynamic_color_desc">从你的壁纸中提取主题色</string>
+    <string name="dynamic_color_desc">从您的壁纸中提取主题色</string>
     <string name="tomato_foss" translatable="false">Tomato FOSS</string>
-    <string name="tomato_foss_desc">此版本已解锁所有功能。若这个应用对你有帮助，请考虑在 %1$s 上捐款支持我。</string>
+    <string name="tomato_foss_desc">此版本已解锁所有功能。若这个应用对您有帮助，请考虑在 %1$s 上捐款支持我。</string>
     <string name="language">语言</string>
     <string name="choose_language">选择语言</string>
     <string name="rate_on_google_play">在 Google Play 上评价</string>
@@ -90,7 +90,7 @@
     <string name="hours_format">%1$d 小时</string>
     <string name="minutes_format">%1$d 分钟</string>
     <string name="about">关于</string>
-    <string name="help_with_translation_desc">将 Tomato 翻译成你的语言</string>
+    <string name="help_with_translation_desc">将 Tomato 翻译成您的语言</string>
     <string name="rate_on_google_play_desc">喜欢本应用？写一条评价吧！</string>
     <string name="bmc_desc">小额捐赠支持</string>
     <string name="tomato_plus_desc">使用 Tomato+ 进行更多个性化设置</string>
@@ -101,8 +101,8 @@
     <string name="session_only_progress_desc">在通知中只显示当前计时器的进度，而非整个工作阶段。</string>
     <string name="auto_start_next_timer_desc">在停止闹钟后，自动启动下一个计时器</string>
     <string name="auto_start_next_timer">自动启动下一个计时器</string>
-    <string name="secure_aod">安全AOD</string>
-    <string name="secure_aod_desc">时间到后将自动锁定你的设备，同时打开AOD</string>
+    <string name="secure_aod">安全 AOD</string>
+    <string name="secure_aod_desc">时间到后将自动锁定您的设备，同时打开 AOD</string>
     <string name="timer_reset_message">定时器已重置</string>
     <string name="undo">撤销</string>
     <string name="focus_break_ratio">专注 / 休息比例</string>
@@ -160,4 +160,5 @@
     <string name="edit_topic">编辑主题</string>
     <string name="edit_topic_desc">名称、颜色与图形</string>
     <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d 计时器</string>
+    <string name="delete_topic_dialog_text">此操作不可撤销。与此主题相关的统计数据将会移至默认主题（%1$s）。您也可以选择删除与此主题相关的统计数据。</string>
 </resources>

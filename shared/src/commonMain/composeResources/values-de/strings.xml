@@ -148,4 +148,17 @@
     <string name="open_tomato">Tomato öffnen</string>
     <string name="quit_tomato">Tomato beenden</string>
     <string name="advanced">Erweitert</string>
+    <string name="topics">Themen</string>
+    <string name="create_new_topic">Erstelle ein neues Thema</string>
+    <string name="topic_name">Name</string>
+    <string name="topic_name_taken">Ein Thema mit diesem Namen existiert bereits</string>
+    <string name="add_topic">Thema hinzufügen</string>
+    <string name="next">Nächstes</string>
+    <string name="delete_topic">Thema löschen</string>
+    <string name="delete_topic_and_stats">Thema und Statistiken löschen</string>
+    <string name="delete_topic_dialog_title">Thema löschen?</string>
+    <string name="delete_topic_dialog_text">Dies kann nicht rückgängig gemacht werden. Die Statistiken zu diesem Thema werden in das Standard-Thema (%1$s) verschoben. Optional können Sie die zu diesem Thema gehörenden Statistiken löschen.</string>
+    <string name="edit_topic">Thema bearbeiten</string>
+    <string name="edit_topic_desc">Name, Farbe und Form</string>
+    <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d Stunden</string>
 </resources>

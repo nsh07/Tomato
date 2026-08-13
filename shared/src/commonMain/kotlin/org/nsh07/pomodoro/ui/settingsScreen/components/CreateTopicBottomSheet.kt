@@ -309,7 +309,7 @@ private fun CreateTopicSheetContent(
                 .background(
                     Brush.linearGradient(
                         colors = listOf(
-                            colorScheme.surfaceContainer.copy(0.9f),
+                            colorScheme.surfaceContainer.copy(0.7f),
                             colorScheme.surfaceContainer
                         ),
                         start = Offset.Zero,

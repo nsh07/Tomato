@@ -332,6 +332,13 @@ fun AppScreen(
                             progress = { progress },
                             onAction = timerViewModel::onAction,
                             onAddTopic = { showCreateTopicSheet = true },
+                            onOpenTopicSettings = {
+                                if (backStack.size < 2) backStack.add(Screen.Settings.Main)
+                                else backStack[1] = Screen.Settings.Main
+                                settingsViewModel.backStack.clear()
+                                settingsViewModel.backStack.add(Screen.Settings.Main)
+                                settingsViewModel.backStack.add(Screen.Settings.Topics)
+                            },
                             modifier = if (isAODEnabled) Modifier
                                 .clickable(
                                     interactionSource = aodInteractionSource,

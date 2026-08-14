@@ -77,7 +77,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -100,7 +100,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -125,6 +124,7 @@ import tomato.shared.generated.resources.app_name
 import tomato.shared.generated.resources.app_name_plus
 import tomato.shared.generated.resources.create_new_topic
 import tomato.shared.generated.resources.focus
+import tomato.shared.generated.resources.goto_settings
 import tomato.shared.generated.resources.infinite_focus
 import tomato.shared.generated.resources.label
 import tomato.shared.generated.resources.long_break
@@ -142,6 +142,7 @@ import tomato.shared.generated.resources.skip_to_next
 import tomato.shared.generated.resources.timer_reset_message
 import tomato.shared.generated.resources.timer_session_count
 import tomato.shared.generated.resources.timer_settings_reset_info
+import tomato.shared.generated.resources.topic_settings
 import tomato.shared.generated.resources.undo
 import tomato.shared.generated.resources.up_next
 
@@ -160,6 +161,7 @@ fun SharedTransitionScope.TimerMainPane(
     progress: () -> Float,
     onAction: (TimerAction) -> Unit,
     onAddTopic: () -> Unit,
+    onOpenTopicSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val motionScheme = motionScheme
@@ -190,7 +192,7 @@ fun SharedTransitionScope.TimerMainPane(
         animationSpec = motionScheme.defaultSpatialSpec()
     )
 
-    val widthExpanded = currentWindowAdaptiveInfo()
+    val widthExpanded = currentWindowAdaptiveInfoV2()
         .windowSizeClass
         .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
 
@@ -296,41 +298,52 @@ fun SharedTransitionScope.TimerMainPane(
                     ) {
                         DropdownMenuGroup(shapes = MenuDefaults.groupShape(0, 2)) {
                             topics.fastForEachIndexed { index, topic ->
-                                Box {
-                                    DropdownMenuItem(
-                                        checked = topic.id == currentTopic.id,
-                                        onCheckedChange = {
-                                            expanded = false
-                                            if (canSwitchTopic) onAction(TimerAction.SetTopic(topic))
-                                        },
-                                        text = { Text(topic.name) },
-                                        colors = topicItemColors,
-                                        shapes = MenuDefaults.itemShape(index, topics.size),
-                                        enabled = canSwitchTopic
-                                    )
-                                }
+                                DropdownMenuItem(
+                                    checked = topic.id == currentTopic.id,
+                                    onCheckedChange = {
+                                        expanded = false
+                                        if (canSwitchTopic) onAction(TimerAction.SetTopic(topic))
+                                    },
+                                    text = { Text(topic.name) },
+                                    colors = topicItemColors,
+                                    shapes = MenuDefaults.itemShape(index, topics.size),
+                                    enabled = canSwitchTopic
+                                )
                             }
                         }
 
                         Spacer(Modifier.height(MenuDefaults.GroupSpacing))
 
                         DropdownMenuGroup(shapes = MenuDefaults.groupShape(1, 2)) {
-                            Box {
-                                DropdownMenuItem(
-                                    onClick = {
-                                        expanded = false
-                                        onAddTopic()
-                                    },
-                                    text = { Text(stringResource(Res.string.create_new_topic)) },
-                                    leadingIcon = {
-                                        Icon(
-                                            painterResource(Res.drawable.new_label),
-                                            null
-                                        )
-                                    },
-                                    shape = MenuDefaults.trailingItemShape
-                                )
-                            }
+                            DropdownMenuItem(
+                                onClick = {
+                                    expanded = false
+                                    onAddTopic()
+                                },
+                                text = { Text(stringResource(Res.string.create_new_topic)) },
+                                leadingIcon = {
+                                    Icon(
+                                        painterResource(Res.drawable.new_label),
+                                        null
+                                    )
+                                },
+                                shape = MenuDefaults.leadingItemShape
+                            )
+
+                            DropdownMenuItem(
+                                onClick = {
+                                    expanded = false
+                                    onOpenTopicSettings()
+                                },
+                                text = { Text(stringResource(Res.string.topic_settings)) },
+                                leadingIcon = {
+                                    Icon(
+                                        painterResource(Res.drawable.goto_settings),
+                                        null
+                                    )
+                                },
+                                shape = MenuDefaults.trailingItemShape
+                            )
                         }
                     }
                 },
@@ -737,10 +750,7 @@ fun SharedTransitionScope.TimerMainPane(
     }
 }
 
-@Preview(
-    showSystemUi = true,
-    device = Devices.PIXEL_9_PRO
-)
+@Preview
 @Composable
 fun TimerMainPanePreview() {
     val timerState = TimerState(
@@ -759,6 +769,7 @@ fun TimerMainPanePreview() {
                                 isPlus = true,
                                 contentPadding = PaddingValues(),
                                 { 0.3f },
+                                {},
                                 {},
                                 {}
                             )

@@ -154,7 +154,8 @@
     <string name="cancel">Cancel</string>
     <string name="advanced">Advanced</string>
     <string name="topics">Topics</string>
-    <string name="create_new_topic">Create new topic</string>
+    <string name="create_new_topic">New topic</string>
+    <string name="topic_settings">Topic settings</string>
     <string name="topic_name">Name</string>
     <string name="topic_name_taken">A topic with this name already exists</string>
     <string name="add_topic">Add topic</string>

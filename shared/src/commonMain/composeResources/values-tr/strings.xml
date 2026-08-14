@@ -161,4 +161,15 @@
     <string name="edit_topic">Kategoriyi düzenle</string>
     <string name="edit_topic_desc">İsim, renk ve şekil</string>
     <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d sayaç</string>
+    <string name="red">Kırmızı</string>
+    <string name="rose">Gül</string>
+    <string name="purple">Mor</string>
+    <string name="indigo">Çivit mavisi</string>
+    <string name="blue">Mavi</string>
+    <string name="cyan">Camgöbeği</string>
+    <string name="teal">Turkuaz</string>
+    <string name="green">Yeşil</string>
+    <string name="chartreuse">Açık yeşil</string>
+    <string name="yellow">Sarı</string>
+    <string name="orange">Turuncu</string>
 </resources>

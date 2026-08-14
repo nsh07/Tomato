@@ -28,17 +28,23 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -46,7 +52,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
@@ -67,6 +72,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
@@ -79,7 +85,9 @@ import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.add_topic
 import tomato.shared.generated.resources.back
 import tomato.shared.generated.resources.cancel
+import tomato.shared.generated.resources.check
 import tomato.shared.generated.resources.create_new_topic
+import tomato.shared.generated.resources.keyboard_arrow_right
 import tomato.shared.generated.resources.next
 
 private enum class CreateTopicStep { Appearance, Timer }
@@ -100,7 +108,7 @@ fun CreateTopicBottomSheet(
 
     var name by remember { mutableStateOf("") }
     var color by remember { mutableStateOf(Color.White) }
-    var shape by remember { mutableStateOf(TopicShape.COOKIE_12_SIDED) }
+    var shape by remember { mutableStateOf(defaultTopic.shape) }
 
     val focusTimeInputFieldState = rememberTextFieldState(defaultTopic.focusTime.toMinutes())
     val shortBreakTimeInputFieldState =
@@ -305,7 +313,7 @@ private fun CreateTopicSheetContent(
         }
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .fillMaxWidth()
@@ -321,10 +329,11 @@ private fun CreateTopicSheetContent(
                 )
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            TextButton(
+            FilledTonalButton(
                 onClick = {
                     if (step == CreateTopicStep.Appearance) onCancel() else onBack()
-                }
+                },
+                shapes = ButtonDefaults.shapes()
             ) {
                 AnimatedContent(step) { currentStep ->
                     Text(
@@ -339,8 +348,20 @@ private fun CreateTopicSheetContent(
                 onClick = {
                     if (step == CreateTopicStep.Appearance) onNext() else onCreate()
                 },
-                enabled = if (step == CreateTopicStep.Appearance) nextEnabled else createEnabled
+                enabled = if (step == CreateTopicStep.Appearance) nextEnabled else createEnabled,
+                shapes = ButtonDefaults.shapes()
             ) {
+                AnimatedContent(step) { currentStep ->
+                    Icon(
+                        painterResource(
+                            if (currentStep == CreateTopicStep.Appearance) Res.drawable.keyboard_arrow_right
+                            else Res.drawable.check
+                        ),
+                        null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+                Spacer(Modifier.width(4.dp))
                 AnimatedContent(step) { currentStep ->
                     Text(
                         stringResource(
@@ -366,7 +387,7 @@ private fun CreateTopicSheetContentPreview() {
     var step by remember { mutableStateOf(CreateTopicStep.Appearance) }
     var name by remember { mutableStateOf("") }
     var color by remember { mutableStateOf(Color.White) }
-    var shape by remember { mutableStateOf(TopicShape.COOKIE_12_SIDED) }
+    var shape by remember { mutableStateOf(TopicShape.COOKIE_7_SIDED) }
     var autostartNextSession by remember { mutableStateOf(false) }
     var dndEnabled by remember { mutableStateOf(false) }
 

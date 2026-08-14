@@ -225,12 +225,12 @@ fun TopicsSettings(
                 var creatingTopic by remember { mutableStateOf(false) }
                 var newTopicName by remember { mutableStateOf("") }
                 var newTopicColor by remember { mutableStateOf(Color.White) }
-                var newTopicShape by remember { mutableStateOf(TopicShape.COOKIE_12_SIDED) }
+                var newTopicShape by remember { mutableStateOf(Topic.defaultTopic.shape) }
 
                 fun resetNewTopic() {
                     newTopicName = ""
                     newTopicColor = Color.White
-                    newTopicShape = TopicShape.COOKIE_12_SIDED
+                    newTopicShape = Topic.defaultTopic.shape
                     creatingTopic = false
                 }
 

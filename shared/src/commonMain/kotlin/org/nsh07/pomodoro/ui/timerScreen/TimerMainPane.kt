@@ -527,7 +527,9 @@ fun SharedTransitionScope.TimerMainPane(
                                         checkedContainerColor = color,
                                         checkedContentColor = onColor
                                     ),
-                                    shapes = IconButtonDefaults.toggleableShapes(),
+                                    shapes = IconButtonDefaults.toggleableShapes(
+                                        checkedShape = shapes.extraLarge
+                                    ),
                                     interactionSource = interactionSources[0],
                                     modifier = Modifier
                                         .size(width = 128.dp, height = 96.dp)

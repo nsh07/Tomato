@@ -39,7 +39,6 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.SegmentedListItem
@@ -68,7 +67,6 @@ import org.nsh07.pomodoro.ui.rememberRequestDndPermissionCallback
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.screens.sampleTopics
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
-import org.nsh07.pomodoro.ui.theme.CustomColors.black
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
@@ -77,7 +75,6 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
-import org.nsh07.pomodoro.ui.theme.harmonizeIf
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.auto_start_next_timer
 import tomato.shared.generated.resources.auto_start_next_timer_desc
@@ -141,7 +138,7 @@ fun TopicTimerSettings(
             checked = showColorShapeSheet,
             onCheckedChange = { showColorShapeSheet = it },
             leadingContent = {
-                val fillColor = topic.color.harmonizeIf(colorScheme.primary, isDefaultTopic)
+                val fillColor = colorScheme.primary
                 val fillShape = topic.shape.toShape()
                 Box(
                     Modifier
@@ -169,16 +166,7 @@ fun TopicTimerSettings(
                 }
             },
             shapes = segmentedListItemShapes(0, 1),
-            colors = ListItemDefaults.segmentedColors(
-                containerColor = topic.color.harmonizeIf(
-                    if (!black) colorScheme.surfaceBright else colorScheme.surfaceContainerHigh,
-                    isDefaultTopic
-                ),
-                selectedContainerColor = topic.color.harmonizeIf(
-                    listItemColors.selectedContainerColor,
-                    isDefaultTopic
-                )
-            )
+            colors = listItemColors
         ) {
             Text(stringResource(Res.string.edit_topic))
         }

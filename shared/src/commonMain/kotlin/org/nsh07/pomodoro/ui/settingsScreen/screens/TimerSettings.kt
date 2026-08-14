@@ -63,7 +63,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -96,13 +96,13 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
+import org.nsh07.pomodoro.ui.theme.SeededTheme
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.bottomListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.cardShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
-import org.nsh07.pomodoro.ui.theme.harmonizeIf
 import org.nsh07.pomodoro.ui.topBarWindowInsets
 import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
@@ -151,403 +151,401 @@ fun TimerSettings(
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val colorScheme = colorScheme
 
-    val widthExpanded = currentWindowAdaptiveInfo()
-        .windowSizeClass
-        .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
+    SeededTheme(editingTopic.color) {
+        val colorScheme = colorScheme
 
-    val switchItems = remember(
-        settingsState.aodEnabled,
-        settingsState.secureAod,
-        isPlus,
-        serviceRunning
-    ) {
-        listOf(
-            SettingsSwitchItem(
-                checked = settingsState.aodEnabled,
-                enabled = isPlus,
-                icon = Res.drawable.aod,
-                label = Res.string.always_on_display,
-                description = Res.string.always_on_display_desc,
-                onClick = { onAction(SettingsAction.SaveAodEnabled(it)) }
-            ),
-            SettingsSwitchItem(
-                checked = settingsState.secureAod && isPlus,
-                enabled = isPlus && settingsState.aodEnabled,
-                icon = Res.drawable.mobile_lock_portrait,
-                label = Res.string.secure_aod,
-                description = Res.string.secure_aod_desc,
-                onClick = { onAction(SettingsAction.SaveSecureAod(it)) }
+        val widthExpanded = currentWindowAdaptiveInfoV2()
+            .windowSizeClass
+            .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
+
+        val switchItems = remember(
+            settingsState.aodEnabled,
+            settingsState.secureAod,
+            isPlus,
+            serviceRunning
+        ) {
+            listOf(
+                SettingsSwitchItem(
+                    checked = settingsState.aodEnabled,
+                    enabled = isPlus,
+                    icon = Res.drawable.aod,
+                    label = Res.string.always_on_display,
+                    description = Res.string.always_on_display_desc,
+                    onClick = { onAction(SettingsAction.SaveAodEnabled(it)) }
+                ),
+                SettingsSwitchItem(
+                    checked = settingsState.secureAod && isPlus,
+                    enabled = isPlus && settingsState.aodEnabled,
+                    icon = Res.drawable.mobile_lock_portrait,
+                    label = Res.string.secure_aod,
+                    description = Res.string.secure_aod_desc,
+                    onClick = { onAction(SettingsAction.SaveSecureAod(it)) }
+                )
             )
-        )
-    }
+        }
 
-    val barColors = if (widthExpanded) detailPaneTopBarColors
-    else topBarColors
+        val barColors = if (widthExpanded) detailPaneTopBarColors
+        else topBarColors
 
-    var showCreateTopicSheet by remember { mutableStateOf(false) }
+        var showCreateTopicSheet by remember { mutableStateOf(false) }
 
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(barColors.containerColor)
-    ) {
-        Scaffold(
-            topBar = {
-                Column {
-                    val isDefaultTopic = editingTopic.id == defaultTopic.id
-                    val colors = ToggleButtonDefaults.toggleButtonColors(
-                        containerColor = listItemColors.containerColor,
-                        checkedContainerColor = remember(editingTopic.color) {
-                            editingTopic.color.harmonizeIf(
-                                colorScheme.secondaryContainer,
-                                isDefaultTopic
-                            )
-                        },
-                        checkedContentColor = remember(editingTopic.color) {
-                            editingTopic.color.harmonizeIf(
-                                colorScheme.onSecondaryContainer,
-                                isDefaultTopic
-                            )
-                        }
-                    )
-
-                    LargeFlexibleTopAppBar(
-                        windowInsets = topBarWindowInsets(),
-                        title = {
-                            Text(
-                                stringResource(Res.string.timer),
-                                fontFamily = LocalAppFonts.current.topBarTitle
-                            )
-                        },
-                        subtitle = {
-                            Text(stringResource(Res.string.settings))
-                        },
-                        navigationIcon = {
-                            if (!widthExpanded)
-                                FilledTonalIconButton(
-                                    onClick = onBack,
-                                    shapes = IconButtonDefaults.shapes(),
-                                    colors = IconButtonDefaults.filledTonalIconButtonColors(
-                                        containerColor = listItemColors.containerColor
-                                    )
-                                ) {
-                                    Icon(
-                                        painterResource(Res.drawable.arrow_back),
-                                        stringResource(Res.string.back)
-
-                                    )
-                                }
-                        },
-                        colors = barColors,
-                        scrollBehavior = scrollBehavior
-                    )
-
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        modifier = Modifier
-                            .background(topBarColors.containerColor)
-                            .padding(bottom = 4.dp)
-                            .fillMaxWidth()
-                    ) {
-                        itemsIndexed(topics, key = { _, item -> item.id }) { index, topic ->
-                            ToggleButton(
-                                checked = topic.id == editingTopic.id,
-                                onCheckedChange = { onAction(SettingsAction.SetEditingTopic(topic)) },
-                                shapes = when (index) {
-                                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                                },
-                                colors = colors
-                            ) { Text(topic.name) }
-                        }
-
-                        item {
-                            ToggleButton(
-                                checked = false,
-                                onCheckedChange = { showCreateTopicSheet = true },
-                                shapes = ButtonGroupDefaults.connectedTrailingButtonShapes(),
-                                colors = colors
-                            ) {
-                                Icon(
-                                    painterResource(Res.drawable.add),
-                                    stringResource(Res.string.create_new_topic),
-                                    Modifier.size(IconButtonDefaults.extraSmallIconSize)
-                                )
-                            }
-                        }
-                    }
-                }
-            },
-            containerColor = barColors.containerColor,
-            modifier = modifier
-                .widthIn(max = PANE_MAX_WIDTH)
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-        ) { innerPadding ->
-            val insets = mergePaddingValues(innerPadding, contentPadding)
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-                contentPadding = insets,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
-            ) {
-                item {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(barColors.containerColor)
+        ) {
+            Scaffold(
+                topBar = {
                     Column {
-                        Spacer(Modifier.height(8.dp))
-                        AnimatedContent(serviceRunning) {
-                            if (it) {
-                                CompositionLocalProvider(LocalContentColor provides colorScheme.error) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-                                        Icon(painterResource(Res.drawable.info), null)
-                                        Text(stringResource(Res.string.timer_settings_reset_info))
-                                    }
-                                }
-                            } else {
-                                CompositionLocalProvider(LocalContentColor provides colorScheme.onSurfaceVariant) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-                                        Icon(painterResource(Res.drawable.info), null)
-                                        Text(stringResource(Res.string.settings_infinite_focus_tip))
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    Spacer(Modifier.height(14.dp))
-                }
-                item {
-                    TopicTimerSettings(
-                        topic = editingTopic,
-                        topics = topics,
-                        serviceRunning = serviceRunning,
-                        focusTimeInputFieldState = focusTimeInputFieldState,
-                        shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
-                        longBreakTimeInputFieldState = longBreakTimeInputFieldState,
-                        sessionsSliderState = sessionsSliderState,
-                        onAction = onAction
-                    )
-                    Spacer(Modifier.height(14.dp))
-                }
-
-                item {
-                    val hmf = stringResource(Res.string.hours_and_minutes_format)
-                    SliderListItem(
-                        value = settingsState.focusGoal.toFloat(),
-                        valueRange = 0f..16 * 60 * 60 * 1000f,
-                        enabled = true,
-                        label = stringResource(Res.string.daily_focus_goal),
-                        trailingLabel = { millisecondsToHoursMinutes(it.toLong(), hmf) },
-                        icon = { Icon(painterResource(Res.drawable.flag), null) },
-                        shape = shapes.large
-                    ) {
-                        with(it.toLong()) {
-                            onAction(SettingsAction.SaveFocusGoal(this - (this % (30 * 60 * 1000))))
-                        }
-                    }
-                }
-                item { Spacer(Modifier.height(12.dp)) }
-
-                if (isPlus) {
-                    item { Spacer(Modifier.height(12.dp)) }
-                    itemsIndexed(switchItems) { index, item ->
-                        ListItem(
-                            leadingContent = {
-                                Icon(
-                                    painterResource(item.icon),
-                                    contentDescription = null,
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
-                            },
-                            headlineContent = { Text(stringResource(item.label)) },
-                            supportingContent = { Text(stringResource(item.description)) },
-                            trailingContent = {
-                                Switch(
-                                    checked = item.checked,
-                                    onCheckedChange = { item.onClick(it) },
-                                    enabled = item.enabled,
-                                    thumbContent = {
-                                        if (item.checked) {
-                                            Icon(
-                                                painter = painterResource(Res.drawable.check),
-                                                contentDescription = null,
-                                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                                            )
-                                        } else {
-                                            Icon(
-                                                painter = painterResource(Res.drawable.clear),
-                                                contentDescription = null,
-                                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                                            )
-                                        }
-                                    },
-                                    colors = switchColors
-                                )
-                            },
-                            colors = listItemColors,
-                            modifier = Modifier.clip(
-                                when (index) {
-                                    0 -> topListItemShape
-                                    switchItems.size - 1 -> bottomListItemShape
-                                    else -> middleListItemShape
-                                }
-                            )
+                        val colors = ToggleButtonDefaults.toggleButtonColors(
+                            containerColor = listItemColors.containerColor,
+                            checkedContainerColor = colorScheme.secondaryContainer,
+                            checkedContentColor = colorScheme.onSecondaryContainer
                         )
-                    }
-                }
 
-                if (androidSdkVersionAtLeast(36)) {
-                    item { Spacer(Modifier.height(12.dp)) }
-                    item {
-                        ListItem(
-                            leadingContent = {
-                                Icon(painterResource(Res.drawable.view_day), null)
-                            },
-                            headlineContent = { Text(stringResource(Res.string.session_only_progress)) },
-                            supportingContent = {
-                                var expanded by remember { mutableStateOf(false) }
+                        LargeFlexibleTopAppBar(
+                            windowInsets = topBarWindowInsets(),
+                            title = {
                                 Text(
-                                    stringResource(Res.string.session_only_progress_desc),
-                                    maxLines = if (expanded) Int.MAX_VALUE else 2,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier
-                                        .clickable { expanded = !expanded }
-                                        .animateContentSize(motionScheme.defaultSpatialSpec())
+                                    stringResource(Res.string.timer),
+                                    fontFamily = LocalAppFonts.current.topBarTitle
                                 )
                             },
-                            trailingContent = {
-                                Switch(
-                                    checked = settingsState.singleProgressBar,
-                                    enabled = !serviceRunning,
+                            subtitle = {
+                                Text(stringResource(Res.string.settings))
+                            },
+                            navigationIcon = {
+                                if (!widthExpanded)
+                                    FilledTonalIconButton(
+                                        onClick = onBack,
+                                        shapes = IconButtonDefaults.shapes(),
+                                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                            containerColor = listItemColors.containerColor
+                                        )
+                                    ) {
+                                        Icon(
+                                            painterResource(Res.drawable.arrow_back),
+                                            stringResource(Res.string.back)
+
+                                        )
+                                    }
+                            },
+                            colors = barColors,
+                            scrollBehavior = scrollBehavior
+                        )
+
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                            contentPadding = PaddingValues(horizontal = 16.dp),
+                            modifier = Modifier
+                                .background(topBarColors.containerColor)
+                                .padding(bottom = 4.dp)
+                                .fillMaxWidth()
+                        ) {
+                            itemsIndexed(topics, key = { _, item -> item.id }) { index, topic ->
+                                ToggleButton(
+                                    checked = topic.id == editingTopic.id,
                                     onCheckedChange = {
                                         onAction(
-                                            SettingsAction.SaveSingleProgressBar(
-                                                it
+                                            SettingsAction.SetEditingTopic(
+                                                topic
                                             )
                                         )
                                     },
-                                    thumbContent = {
-                                        if (settingsState.singleProgressBar) {
-                                            Icon(
-                                                painter = painterResource(Res.drawable.check),
-                                                contentDescription = null,
-                                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                                            )
-                                        } else {
-                                            Icon(
-                                                painter = painterResource(Res.drawable.clear),
-                                                contentDescription = null,
-                                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                                            )
-                                        }
+                                    shapes = when (index) {
+                                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                                     },
-                                    colors = switchColors
-                                )
-                            },
-                            colors = listItemColors,
-                            modifier = Modifier.clip(cardShape)
-                        )
-                    }
-                }
+                                    colors = colors
+                                ) { Text(topic.name) }
+                            }
 
-                if (!isPlus) {
-                    item {
-                        PlusDivider(setShowPaywall)
-                    }
-                    itemsIndexed(switchItems) { index, item ->
-                        ListItem(
-                            leadingContent = {
-                                Icon(
-                                    painterResource(item.icon),
-                                    contentDescription = null,
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
-                            },
-                            headlineContent = { Text(stringResource(item.label)) },
-                            supportingContent = { Text(stringResource(item.description)) },
-                            trailingContent = {
-                                Switch(
-                                    checked = item.checked,
-                                    onCheckedChange = { item.onClick(it) },
-                                    enabled = item.enabled,
-                                    thumbContent = {
-                                        if (item.checked) {
-                                            Icon(
-                                                painter = painterResource(Res.drawable.check),
-                                                contentDescription = null,
-                                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                                            )
-                                        } else {
-                                            Icon(
-                                                painter = painterResource(Res.drawable.clear),
-                                                contentDescription = null,
-                                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                                            )
-                                        }
-                                    },
-                                    colors = switchColors
-                                )
-                            },
-                            colors = listItemColors,
-                            modifier = Modifier.clip(
-                                when (index) {
-                                    0 -> topListItemShape
-                                    switchItems.size - 1 -> bottomListItemShape
-                                    else -> middleListItemShape
+                            item {
+                                ToggleButton(
+                                    checked = false,
+                                    onCheckedChange = { showCreateTopicSheet = true },
+                                    shapes = ButtonGroupDefaults.connectedTrailingButtonShapes(),
+                                    colors = colors
+                                ) {
+                                    Icon(
+                                        painterResource(Res.drawable.add),
+                                        stringResource(Res.string.create_new_topic),
+                                        Modifier.size(IconButtonDefaults.extraSmallIconSize)
+                                    )
                                 }
-                            )
+                            }
+                        }
+                    }
+                },
+                containerColor = barColors.containerColor,
+                modifier = modifier
+                    .widthIn(max = PANE_MAX_WIDTH)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+            ) { innerPadding ->
+                val insets = mergePaddingValues(innerPadding, contentPadding)
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    contentPadding = insets,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    item {
+                        Column {
+                            Spacer(Modifier.height(8.dp))
+                            AnimatedContent(serviceRunning) {
+                                if (it) {
+                                    CompositionLocalProvider(LocalContentColor provides colorScheme.error) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            Icon(painterResource(Res.drawable.info), null)
+                                            Text(stringResource(Res.string.timer_settings_reset_info))
+                                        }
+                                    }
+                                } else {
+                                    CompositionLocalProvider(LocalContentColor provides colorScheme.onSurfaceVariant) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            Icon(painterResource(Res.drawable.info), null)
+                                            Text(stringResource(Res.string.settings_infinite_focus_tip))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        Spacer(Modifier.height(14.dp))
+                    }
+                    item {
+                        TopicTimerSettings(
+                            topic = editingTopic,
+                            topics = topics,
+                            serviceRunning = serviceRunning,
+                            focusTimeInputFieldState = focusTimeInputFieldState,
+                            shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
+                            longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                            sessionsSliderState = sessionsSliderState,
+                            onAction = onAction
                         )
+                        Spacer(Modifier.height(14.dp))
                     }
-                }
 
-                item {
-                    var expanded by remember { mutableStateOf(false) }
-                    Column(
-                        horizontalAlignment = Alignment.End,
-                        modifier = Modifier
-                            .padding(vertical = 6.dp)
-                            .fillMaxWidth()
-                    ) {
-                        FilledTonalIconToggleButton(
-                            checked = expanded,
-                            onCheckedChange = { expanded = it },
-                            shapes = IconButtonDefaults.toggleableShapes(),
-                            modifier = Modifier.width(52.dp)
+                    item {
+                        val hmf = stringResource(Res.string.hours_and_minutes_format)
+                        SliderListItem(
+                            value = settingsState.focusGoal.toFloat(),
+                            valueRange = 0f..16 * 60 * 60 * 1000f,
+                            enabled = true,
+                            label = stringResource(Res.string.daily_focus_goal),
+                            trailingLabel = { millisecondsToHoursMinutes(it.toLong(), hmf) },
+                            icon = { Icon(painterResource(Res.drawable.flag), null) },
+                            shape = shapes.large
                         ) {
-                            Icon(
-                                painterResource(Res.drawable.info),
-                                null
-                            )
+                            with(it.toLong()) {
+                                onAction(SettingsAction.SaveFocusGoal(this - (this % (30 * 60 * 1000))))
+                            }
                         }
-                        AnimatedVisibility(expanded) {
-                            Text(
-                                stringResource(Res.string.pomodoro_info),
-                                style = typography.bodyMedium,
-                                color = colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(8.dp)
+                    }
+                    item { Spacer(Modifier.height(12.dp)) }
+
+                    if (isPlus) {
+                        item { Spacer(Modifier.height(12.dp)) }
+                        itemsIndexed(switchItems) { index, item ->
+                            ListItem(
+                                leadingContent = {
+                                    Icon(
+                                        painterResource(item.icon),
+                                        contentDescription = null,
+                                        modifier = Modifier.padding(top = 4.dp)
+                                    )
+                                },
+                                headlineContent = { Text(stringResource(item.label)) },
+                                supportingContent = { Text(stringResource(item.description)) },
+                                trailingContent = {
+                                    Switch(
+                                        checked = item.checked,
+                                        onCheckedChange = { item.onClick(it) },
+                                        enabled = item.enabled,
+                                        thumbContent = {
+                                            if (item.checked) {
+                                                Icon(
+                                                    painter = painterResource(Res.drawable.check),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                )
+                                            } else {
+                                                Icon(
+                                                    painter = painterResource(Res.drawable.clear),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                )
+                                            }
+                                        },
+                                        colors = switchColors
+                                    )
+                                },
+                                colors = listItemColors,
+                                modifier = Modifier.clip(
+                                    when (index) {
+                                        0 -> topListItemShape
+                                        switchItems.size - 1 -> bottomListItemShape
+                                        else -> middleListItemShape
+                                    }
+                                )
                             )
                         }
                     }
+
+                    if (androidSdkVersionAtLeast(36)) {
+                        item { Spacer(Modifier.height(12.dp)) }
+                        item {
+                            ListItem(
+                                leadingContent = {
+                                    Icon(painterResource(Res.drawable.view_day), null)
+                                },
+                                headlineContent = { Text(stringResource(Res.string.session_only_progress)) },
+                                supportingContent = {
+                                    var expanded by remember { mutableStateOf(false) }
+                                    Text(
+                                        stringResource(Res.string.session_only_progress_desc),
+                                        maxLines = if (expanded) Int.MAX_VALUE else 2,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier
+                                            .clickable { expanded = !expanded }
+                                            .animateContentSize(motionScheme.defaultSpatialSpec())
+                                    )
+                                },
+                                trailingContent = {
+                                    Switch(
+                                        checked = settingsState.singleProgressBar,
+                                        enabled = !serviceRunning,
+                                        onCheckedChange = {
+                                            onAction(
+                                                SettingsAction.SaveSingleProgressBar(
+                                                    it
+                                                )
+                                            )
+                                        },
+                                        thumbContent = {
+                                            if (settingsState.singleProgressBar) {
+                                                Icon(
+                                                    painter = painterResource(Res.drawable.check),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                )
+                                            } else {
+                                                Icon(
+                                                    painter = painterResource(Res.drawable.clear),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                )
+                                            }
+                                        },
+                                        colors = switchColors
+                                    )
+                                },
+                                colors = listItemColors,
+                                modifier = Modifier.clip(cardShape)
+                            )
+                        }
+                    }
+
+                    if (!isPlus) {
+                        item {
+                            PlusDivider(setShowPaywall)
+                        }
+                        itemsIndexed(switchItems) { index, item ->
+                            ListItem(
+                                leadingContent = {
+                                    Icon(
+                                        painterResource(item.icon),
+                                        contentDescription = null,
+                                        modifier = Modifier.padding(top = 4.dp)
+                                    )
+                                },
+                                headlineContent = { Text(stringResource(item.label)) },
+                                supportingContent = { Text(stringResource(item.description)) },
+                                trailingContent = {
+                                    Switch(
+                                        checked = item.checked,
+                                        onCheckedChange = { item.onClick(it) },
+                                        enabled = item.enabled,
+                                        thumbContent = {
+                                            if (item.checked) {
+                                                Icon(
+                                                    painter = painterResource(Res.drawable.check),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                )
+                                            } else {
+                                                Icon(
+                                                    painter = painterResource(Res.drawable.clear),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                )
+                                            }
+                                        },
+                                        colors = switchColors
+                                    )
+                                },
+                                colors = listItemColors,
+                                modifier = Modifier.clip(
+                                    when (index) {
+                                        0 -> topListItemShape
+                                        switchItems.size - 1 -> bottomListItemShape
+                                        else -> middleListItemShape
+                                    }
+                                )
+                            )
+                        }
+                    }
+
+                    item {
+                        var expanded by remember { mutableStateOf(false) }
+                        Column(
+                            horizontalAlignment = Alignment.End,
+                            modifier = Modifier
+                                .padding(vertical = 6.dp)
+                                .fillMaxWidth()
+                        ) {
+                            FilledTonalIconToggleButton(
+                                checked = expanded,
+                                onCheckedChange = { expanded = it },
+                                shapes = IconButtonDefaults.toggleableShapes(),
+                                modifier = Modifier.width(52.dp)
+                            ) {
+                                Icon(
+                                    painterResource(Res.drawable.info),
+                                    null
+                                )
+                            }
+                            AnimatedVisibility(expanded) {
+                                Text(
+                                    stringResource(Res.string.pomodoro_info),
+                                    style = typography.bodyMedium,
+                                    color = colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(8.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    item { Spacer(Modifier.height(12.dp)) }
                 }
-
-                item { Spacer(Modifier.height(12.dp)) }
             }
-        }
 
-        if (showCreateTopicSheet) {
-            CreateTopicBottomSheet(
-                topics = topics,
-                setShowSheet = { showCreateTopicSheet = it },
-                onAction = onAction
-            )
+            if (showCreateTopicSheet) {
+                CreateTopicBottomSheet(
+                    topics = topics,
+                    setShowSheet = { showCreateTopicSheet = it },
+                    onAction = onAction
+                )
+            }
         }
     }
 }

@@ -98,7 +98,7 @@ fun CreateTopicBottomSheet(
 
     var step by remember { mutableStateOf(CreateTopicStep.Appearance) }
 
-    val nameState = rememberTextFieldState()
+    var name by remember { mutableStateOf("") }
     var color by remember { mutableStateOf(Color.White) }
     var shape by remember { mutableStateOf(TopicShape.COOKIE_12_SIDED) }
 
@@ -115,11 +115,11 @@ fun CreateTopicBottomSheet(
     var autostartNextSession by remember { mutableStateOf(defaultTopic.autostartNextSession) }
     var dndEnabled by remember { mutableStateOf(defaultTopic.dndEnabled) }
 
-    val name = nameState.text.toString().trim()
-    val nameTaken = remember(name, topics) {
-        topics.any { it.name.equals(name, true) }
+    val trimmedName = name.trim()
+    val nameTaken = remember(trimmedName, topics) {
+        topics.any { it.name.equals(trimmedName, true) }
     }
-    val nameValid = name.isNotEmpty() && !nameTaken
+    val nameValid = trimmedName.isNotEmpty() && !nameTaken
     val timesValid = focusTimeInputFieldState.text.isValidMinutesInput() &&
             shortBreakTimeInputFieldState.text.isValidMinutesInput() &&
             longBreakTimeInputFieldState.text.isValidMinutesInput()
@@ -146,7 +146,8 @@ fun CreateTopicBottomSheet(
         ) {
             CreateTopicSheetContent(
                 step = step,
-                nameState = nameState,
+                name = name,
+                onNameValueChange = { name = it },
                 color = color,
                 shape = shape,
                 nameTaken = nameTaken,
@@ -171,7 +172,7 @@ fun CreateTopicBottomSheet(
                             SettingsAction.CreateTopic(
                                 topic = defaultTopic.copy(
                                     id = 0,
-                                    name = name,
+                                    name = trimmedName,
                                     color = color,
                                     shape = shape,
                                     focusTime = focusTimeInputFieldState.toMillis(
@@ -203,7 +204,8 @@ fun CreateTopicBottomSheet(
 @Composable
 private fun CreateTopicSheetContent(
     step: CreateTopicStep,
-    nameState: TextFieldState,
+    name: String,
+    onNameValueChange: (String) -> Unit,
     color: Color,
     shape: TopicShape,
     nameTaken: Boolean,
@@ -248,7 +250,7 @@ private fun CreateTopicSheetContent(
                 Text(
                     if (currentStep == CreateTopicStep.Appearance)
                         stringResource(Res.string.create_new_topic)
-                    else nameState.text.toString(),
+                    else name,
                     style = typography.titleLargeEmphasized,
                     fontFamily = LocalAppFonts.current.topBarTitle,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
@@ -273,7 +275,8 @@ private fun CreateTopicSheetContent(
                 when (currentStep) {
                     CreateTopicStep.Appearance ->
                         TopicShapeColorPicker(
-                            nameState = nameState,
+                            name = name,
+                            onNameValueChange = onNameValueChange,
                             color = color,
                             shape = shape,
                             nameTaken = nameTaken,
@@ -361,7 +364,7 @@ private fun TextFieldState.toMillis(fallback: Long) =
 @Composable
 private fun CreateTopicSheetContentPreview() {
     var step by remember { mutableStateOf(CreateTopicStep.Appearance) }
-    val nameState = rememberTextFieldState()
+    var name by remember { mutableStateOf("") }
     var color by remember { mutableStateOf(Color.White) }
     var shape by remember { mutableStateOf(TopicShape.COOKIE_12_SIDED) }
     var autostartNextSession by remember { mutableStateOf(false) }
@@ -374,7 +377,8 @@ private fun CreateTopicSheetContentPreview() {
             Surface(color = colorScheme.surfaceContainer, modifier = Modifier.fillMaxSize()) {
                 CreateTopicSheetContent(
                     step = step,
-                    nameState = nameState,
+                    name = name,
+                    onNameValueChange = { name = it },
                     color = color,
                     shape = shape,
                     nameTaken = false,
@@ -388,8 +392,8 @@ private fun CreateTopicSheetContentPreview() {
                     ),
                     autostartNextSession = autostartNextSession,
                     dndEnabled = dndEnabled,
-                    nextEnabled = nameState.text.isNotBlank(),
-                    createEnabled = nameState.text.isNotBlank(),
+                    nextEnabled = name.isNotBlank(),
+                    createEnabled = name.isNotBlank(),
                     onColorChange = { color = it },
                     onShapeChange = { shape = it },
                     onAutostartNextSessionChange = { autostartNextSession = it },

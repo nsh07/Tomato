@@ -54,8 +54,6 @@ import androidx.compose.foundation.style.externalPaddingVertical
 import androidx.compose.foundation.style.size
 import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.clearText
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -222,12 +220,12 @@ fun TopicsSettings(
             val summaryFormat = stringResource(Res.string.topic_summary_format)
             val lazyColumnState = rememberLazyListState()
             var creatingTopic by remember { mutableStateOf(false) }
-            val newTopicNameState = rememberTextFieldState()
+            var newTopicName by remember { mutableStateOf("") }
             var newTopicColor by remember { mutableStateOf(Color.White) }
             var newTopicShape by remember { mutableStateOf(TopicShape.COOKIE_12_SIDED) }
 
             fun resetNewTopic() {
-                newTopicNameState.clearText()
+                newTopicName = ""
                 newTopicColor = Color.White
                 newTopicShape = TopicShape.COOKIE_12_SIDED
                 creatingTopic = false
@@ -325,14 +323,14 @@ fun TopicsSettings(
                                                 )
                                                 .padding(start = 16.dp, top = 24.dp, end = 16.dp)
                                         )
-                                        val newTopicName =
-                                            newTopicNameState.text.toString().trim()
-                                        val nameTaken = remember(newTopicName, topics) {
-                                            topics.any { it.name.equals(newTopicName, true) }
+                                        val trimmedNewTopicName = newTopicName.trim()
+                                        val nameTaken = remember(trimmedNewTopicName, topics) {
+                                            topics.any { it.name.equals(trimmedNewTopicName, true) }
                                         }
 
                                         TopicShapeColorPicker(
-                                            nameState = newTopicNameState,
+                                            name = newTopicName,
+                                            onNameValueChange = { newTopicName = it },
                                             color = newTopicColor,
                                             shape = newTopicShape,
                                             nameTaken = nameTaken,
@@ -359,7 +357,7 @@ fun TopicsSettings(
                                                         SettingsAction.CreateTopic(
                                                             Topic.defaultTopic.copy(
                                                                 id = 0,
-                                                                name = newTopicName,
+                                                                name = trimmedNewTopicName,
                                                                 color = newTopicColor,
                                                                 shape = newTopicShape
                                                             )
@@ -367,7 +365,7 @@ fun TopicsSettings(
                                                     )
                                                     resetNewTopic()
                                                 },
-                                                enabled = newTopicName.isNotEmpty() && !nameTaken
+                                                enabled = trimmedNewTopicName.isNotEmpty() && !nameTaken
                                             ) {
                                                 Text(stringResource(Res.string.add_topic))
                                             }

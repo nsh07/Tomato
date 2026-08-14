@@ -20,7 +20,6 @@ package org.nsh07.pomodoro.ui.settingsScreen.components
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -55,10 +54,10 @@ fun TopicShapeColorBottomSheet(
     SeededTheme(topic.color) {
         val colorScheme = MaterialTheme.colorScheme
 
-        val nameState = rememberTextFieldState(topic.name)
-        val name = nameState.text.toString().trim()
+        var name by remember { mutableStateOf(topic.name) }
         val nameTaken = remember(name, topics, topic.id) {
-            topics.any { it.id != topic.id && it.name.equals(name, true) }
+            val trimmedName = name.trim()
+            topics.any { it.id != topic.id && it.name.equals(trimmedName, true) }
         }
 
         ModalBottomSheet(
@@ -68,7 +67,8 @@ fun TopicShapeColorBottomSheet(
             modifier = modifier
         ) {
             TopicShapeColorPicker(
-                nameState = nameState,
+                name = name,
+                onNameValueChange = { name = it },
                 color = topic.color,
                 shape = topic.shape,
                 nameTaken = nameTaken,

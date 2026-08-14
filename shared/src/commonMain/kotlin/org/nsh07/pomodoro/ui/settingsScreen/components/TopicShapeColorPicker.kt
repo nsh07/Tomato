@@ -32,8 +32,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconToggleButton
@@ -41,11 +39,8 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
-import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -86,7 +81,8 @@ private val shapeGridRows = TopicShape.entries.chunked(shapeGridColumns)
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, FlowPreview::class)
 @Composable
 fun TopicShapeColorPicker(
-    nameState: TextFieldState,
+    name: String,
+    onNameValueChange: (String) -> Unit,
     color: Color,
     shape: TopicShape,
     nameTaken: Boolean,
@@ -100,12 +96,12 @@ fun TopicShapeColorPicker(
     val currentNameTaken by rememberUpdatedState(nameTaken)
     val currentOnNameChange by rememberUpdatedState(onNameChange)
 
-    LaunchedEffect(nameState) {
-        snapshotFlow { nameState.text.toString().trim() }
+    LaunchedEffect(name) {
+        snapshotFlow { name.trim() }
             .drop(1) // The initial name needs no saving
             .debounce(500.milliseconds)
-            .collect { name ->
-                if (name.isNotEmpty() && !currentNameTaken) currentOnNameChange(name)
+            .collect { trimmedName ->
+                if (trimmedName.isNotEmpty() && !currentNameTaken) currentOnNameChange(trimmedName)
             }
     }
 
@@ -119,18 +115,12 @@ fun TopicShapeColorPicker(
             color = colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(start = horizontalPadding)
         )
-        TextField(
-            state = nameState,
-            lineLimits = TextFieldLineLimits.SingleLine,
+        TopicNameTextField(
+            name = name,
+            onNameChange = onNameValueChange,
+            maxLines = 1,
             isError = nameTaken,
-            supportingText = if (nameTaken) {
-                { Text(stringResource(Res.string.topic_name_taken)) }
-            } else null,
-            shape = shapes.large,
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
+            supportingText = if (nameTaken) stringResource(Res.string.topic_name_taken) else null,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = horizontalPadding)

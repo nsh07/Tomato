@@ -28,7 +28,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.detailPane
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.listPane
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
@@ -84,6 +84,7 @@ fun SettingsScreenRoot(
 
     val isPlus by viewModel.isPlus.collectAsStateWithLifecycle()
     val serviceRunning by viewModel.serviceRunning.collectAsStateWithLifecycle()
+    val currentTopicId by viewModel.currentTopicId.collectAsStateWithLifecycle()
 
     val settingsState by viewModel.settingsState.collectAsStateWithLifecycle()
 
@@ -113,7 +114,7 @@ fun SettingsScreenRoot(
         },
         sceneStrategies = listOf(
             rememberListDetailSceneStrategy(
-                directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
+                directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())
             )
         ),
         entryProvider = entryProvider {
@@ -189,6 +190,7 @@ fun SettingsScreenRoot(
                 TimerSettings(
                     isPlus = isPlus,
                     serviceRunning = serviceRunning,
+                    currentTopicId = currentTopicId,
                     settingsState = settingsState,
                     contentPadding = contentPadding,
                     focusTimeInputFieldState = focusTimeInputFieldState,
@@ -214,6 +216,7 @@ fun SettingsScreenRoot(
                     topics = topics,
                     editingTopic = editingTopic,
                     serviceRunning = serviceRunning,
+                    currentTopicId = currentTopicId,
                     focusTimeInputFieldState = focusTimeInputFieldState,
                     shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                     longBreakTimeInputFieldState = longBreakTimeInputFieldState,

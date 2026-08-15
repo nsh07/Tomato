@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +40,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.SegmentedListItem
@@ -49,6 +51,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -89,10 +92,12 @@ import tomato.shared.generated.resources.dnd_desc
 import tomato.shared.generated.resources.edit_topic
 import tomato.shared.generated.resources.edit_topic_desc
 import tomato.shared.generated.resources.focus
+import tomato.shared.generated.resources.info
 import tomato.shared.generated.resources.long_break
 import tomato.shared.generated.resources.session_length
 import tomato.shared.generated.resources.session_length_desc
 import tomato.shared.generated.resources.short_break
+import tomato.shared.generated.resources.timer_settings_reset_info
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
@@ -102,7 +107,7 @@ import tomato.shared.generated.resources.short_break
 fun TopicTimerSettings(
     topic: Topic,
     topics: List<Topic>,
-    serviceRunning: Boolean,
+    topicRunning: Boolean,
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
@@ -120,10 +125,22 @@ fun TopicTimerSettings(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier
     ) {
+        AnimatedVisibility(topicRunning) {
+            CompositionLocalProvider(LocalContentColor provides colorScheme.error) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(painterResource(Res.drawable.info), null)
+                    Text(stringResource(Res.string.timer_settings_reset_info))
+                }
+            }
+        }
+
         TopicTimerProperties(
             autostartNextSession = topic.autostartNextSession,
             dndEnabled = topic.dndEnabled,
-            serviceRunning = serviceRunning,
+            topicRunning = topicRunning,
             focusTimeInputFieldState = focusTimeInputFieldState,
             shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
             longBreakTimeInputFieldState = longBreakTimeInputFieldState,
@@ -205,7 +222,7 @@ fun TopicTimerSettings(
 fun TopicTimerProperties(
     autostartNextSession: Boolean,
     dndEnabled: Boolean,
-    serviceRunning: Boolean,
+    topicRunning: Boolean,
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
@@ -236,7 +253,7 @@ fun TopicTimerProperties(
                 )
                 MinuteInputField(
                     state = focusTimeInputFieldState,
-                    enabled = !serviceRunning,
+                    enabled = !topicRunning,
                     shape = RoundedCornerShape(
                         topStart = topListItemShape.topStart,
                         bottomStart = topListItemShape.topStart,
@@ -258,7 +275,7 @@ fun TopicTimerProperties(
                 )
                 MinuteInputField(
                     state = shortBreakTimeInputFieldState,
-                    enabled = !serviceRunning,
+                    enabled = !topicRunning,
                     shape = RoundedCornerShape(middleListItemShape.topStart),
                     imeAction = ImeAction.Next
                 )
@@ -274,7 +291,7 @@ fun TopicTimerProperties(
                 )
                 MinuteInputField(
                     state = longBreakTimeInputFieldState,
-                    enabled = !serviceRunning,
+                    enabled = !topicRunning,
                     shape = RoundedCornerShape(
                         topStart = bottomListItemShape.topStart,
                         bottomStart = bottomListItemShape.topStart,
@@ -308,7 +325,7 @@ fun TopicTimerProperties(
                 )
                 Slider(
                     state = sessionsSliderState,
-                    enabled = !serviceRunning,
+                    enabled = !topicRunning,
                     modifier = Modifier
                         .padding(start = (16 * 2 + 24).dp, end = 16.dp, bottom = 12.dp)
                 )
@@ -317,7 +334,7 @@ fun TopicTimerProperties(
             val switchItems = remember(
                 autostartNextSession,
                 dndEnabled,
-                serviceRunning
+                topicRunning
             ) {
                 listOf(
                     SettingsSwitchItem(
@@ -329,7 +346,7 @@ fun TopicTimerProperties(
                     ),
                     SettingsSwitchItem(
                         checked = dndEnabled,
-                        enabled = !serviceRunning,
+                        enabled = !topicRunning,
                         icon = Res.drawable.dnd,
                         label = Res.string.dnd,
                         description = Res.string.dnd_desc,
@@ -392,7 +409,7 @@ fun TopicTimerSettingsPreview() {
             TopicTimerSettings(
                 topic = sampleTopics.random(),
                 topics = sampleTopics,
-                serviceRunning = false,
+                topicRunning = false,
                 focusTimeInputFieldState = TextFieldState("25"),
                 shortBreakTimeInputFieldState = TextFieldState("5"),
                 longBreakTimeInputFieldState = TextFieldState("15"),
@@ -412,7 +429,7 @@ fun TopicTimerSettingsDarkPreview() {
             TopicTimerSettings(
                 topic = sampleTopics.random(),
                 topics = sampleTopics,
-                serviceRunning = false,
+                topicRunning = false,
                 focusTimeInputFieldState = TextFieldState("25"),
                 shortBreakTimeInputFieldState = TextFieldState("5"),
                 longBreakTimeInputFieldState = TextFieldState("15"),

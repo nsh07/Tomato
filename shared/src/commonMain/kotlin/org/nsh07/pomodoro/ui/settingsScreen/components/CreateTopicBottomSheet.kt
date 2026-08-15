@@ -299,7 +299,7 @@ private fun CreateTopicSheetContent(
                         TopicTimerProperties(
                             autostartNextSession = autostartNextSession,
                             dndEnabled = dndEnabled,
-                            serviceRunning = false,
+                            topicRunning = false,
                             focusTimeInputFieldState = focusTimeInputFieldState,
                             shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                             longBreakTimeInputFieldState = longBreakTimeInputFieldState,

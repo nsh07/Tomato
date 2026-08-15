@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -129,7 +128,6 @@ import tomato.shared.generated.resources.session_only_progress_desc
 import tomato.shared.generated.resources.settings
 import tomato.shared.generated.resources.settings_infinite_focus_tip
 import tomato.shared.generated.resources.timer
-import tomato.shared.generated.resources.timer_settings_reset_info
 import tomato.shared.generated.resources.view_day
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -137,6 +135,7 @@ import tomato.shared.generated.resources.view_day
 fun TimerSettings(
     isPlus: Boolean,
     serviceRunning: Boolean,
+    currentTopicId: Long,
     settingsState: SettingsState,
     contentPadding: PaddingValues,
     focusTimeInputFieldState: TextFieldState,
@@ -154,6 +153,7 @@ fun TimerSettings(
 
     SeededTheme(editingTopic.color) {
         val colorScheme = colorScheme
+        val topicRunning = serviceRunning && editingTopic.id == currentTopicId
 
         val widthExpanded = currentWindowAdaptiveInfoV2()
             .windowSizeClass
@@ -295,26 +295,14 @@ fun TimerSettings(
                     item {
                         Column {
                             Spacer(Modifier.height(8.dp))
-                            AnimatedContent(serviceRunning) {
-                                if (it) {
-                                    CompositionLocalProvider(LocalContentColor provides colorScheme.error) {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                        ) {
-                                            Icon(painterResource(Res.drawable.info), null)
-                                            Text(stringResource(Res.string.timer_settings_reset_info))
-                                        }
-                                    }
-                                } else {
-                                    CompositionLocalProvider(LocalContentColor provides colorScheme.onSurfaceVariant) {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                        ) {
-                                            Icon(painterResource(Res.drawable.info), null)
-                                            Text(stringResource(Res.string.settings_infinite_focus_tip))
-                                        }
+                            AnimatedVisibility(!topicRunning) {
+                                CompositionLocalProvider(LocalContentColor provides colorScheme.onSurfaceVariant) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Icon(painterResource(Res.drawable.info), null)
+                                        Text(stringResource(Res.string.settings_infinite_focus_tip))
                                     }
                                 }
                             }
@@ -325,7 +313,7 @@ fun TimerSettings(
                         TopicTimerSettings(
                             topic = editingTopic,
                             topics = topics,
-                            serviceRunning = serviceRunning,
+                            topicRunning = topicRunning,
                             focusTimeInputFieldState = focusTimeInputFieldState,
                             shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                             longBreakTimeInputFieldState = longBreakTimeInputFieldState,
@@ -567,6 +555,7 @@ private fun TimerSettingsPreview() {
             TimerSettings(
                 isPlus = false,
                 serviceRunning = false,
+                currentTopicId = defaultTopic.id,
                 settingsState = remember { SettingsState() },
                 contentPadding = PaddingValues(),
                 focusTimeInputFieldState = focusTimeInputFieldState,

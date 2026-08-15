@@ -21,10 +21,9 @@ package org.nsh07.pomodoro.ui.settingsScreen.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.animateBounds
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -148,6 +147,7 @@ fun TopicsSettings(
     topics: List<Topic>,
     editingTopic: Topic,
     serviceRunning: Boolean,
+    currentTopicId: Long,
     focusTimeInputFieldState: TextFieldState,
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
@@ -260,12 +260,7 @@ fun TopicsSettings(
                                         background(colorScheme.primary)
                                         selected { animate { background(colorScheme.surfaceContainer) } }
                                     }
-                                    .animateBounds(
-                                        lookaheadScope = this@SharedTransitionLayout,
-                                        boundsTransform = BoundsTransform { _, _ ->
-                                            motionScheme.slowSpatialSpec()
-                                        }
-                                    )
+                                    .animateContentSize(motionScheme.slowSpatialSpec())
                                     .clickable { creatingTopic = !creatingTopic },
                                 contentAlignment = Alignment.Center
                             ) {
@@ -563,7 +558,7 @@ fun TopicsSettings(
                                 TopicTimerSettings(
                                     topic = topic,
                                     topics = topics,
-                                    serviceRunning = serviceRunning,
+                                    topicRunning = serviceRunning && topic.id == currentTopicId,
                                     focusTimeInputFieldState = focusTimeInputFieldState,
                                     shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                                     longBreakTimeInputFieldState = longBreakTimeInputFieldState,
@@ -597,6 +592,7 @@ fun TopicsSettingsPreview() {
             topics = topics,
             editingTopic = editingTopic,
             serviceRunning = false,
+            currentTopicId = editingTopic.id,
             focusTimeInputFieldState = TextFieldState("25"),
             shortBreakTimeInputFieldState = TextFieldState("5"),
             longBreakTimeInputFieldState = TextFieldState("15"),
@@ -631,6 +627,7 @@ fun TopicsSettingsDarkPreview() {
             topics = topics,
             editingTopic = editingTopic,
             serviceRunning = false,
+            currentTopicId = editingTopic.id,
             focusTimeInputFieldState = TextFieldState("25"),
             shortBreakTimeInputFieldState = TextFieldState("5"),
             longBreakTimeInputFieldState = TextFieldState("15"),

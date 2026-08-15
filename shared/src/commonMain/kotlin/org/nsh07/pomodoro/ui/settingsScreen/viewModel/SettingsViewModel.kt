@@ -82,6 +82,8 @@ class SettingsViewModel(
     private val isServiceRunning: Boolean
         get() = stateRepository.timerState.value.serviceRunning
 
+    val currentTopicId = stateRepository.currentTopicId.asStateFlow()
+
     private val _settingsState = stateRepository.settingsState
     val settingsState = _settingsState.asStateFlow()
 

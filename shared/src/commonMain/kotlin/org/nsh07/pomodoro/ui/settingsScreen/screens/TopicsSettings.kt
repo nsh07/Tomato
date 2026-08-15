@@ -569,7 +569,8 @@ fun TopicsSettings(
                                         top = 8.dp,
                                         end = 16.dp,
                                         bottom = 2.dp
-                                    )
+                                    ),
+                                    showInfiniteFocusTip = false
                                 )
                             }
                         }

@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,7 +47,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.shapes
@@ -65,7 +63,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -126,7 +123,6 @@ import tomato.shared.generated.resources.secure_aod_desc
 import tomato.shared.generated.resources.session_only_progress
 import tomato.shared.generated.resources.session_only_progress_desc
 import tomato.shared.generated.resources.settings
-import tomato.shared.generated.resources.settings_infinite_focus_tip
 import tomato.shared.generated.resources.timer
 import tomato.shared.generated.resources.view_day
 
@@ -293,23 +289,7 @@ fun TimerSettings(
                         .padding(horizontal = 16.dp)
                 ) {
                     item {
-                        Column {
-                            Spacer(Modifier.height(8.dp))
-                            AnimatedVisibility(!topicRunning) {
-                                CompositionLocalProvider(LocalContentColor provides colorScheme.onSurfaceVariant) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-                                        Icon(painterResource(Res.drawable.info), null)
-                                        Text(stringResource(Res.string.settings_infinite_focus_tip))
-                                    }
-                                }
-                            }
-                        }
-                        Spacer(Modifier.height(14.dp))
-                    }
-                    item {
+                        Spacer(Modifier.height(8.dp))
                         TopicTimerSettings(
                             topic = editingTopic,
                             topics = topics,

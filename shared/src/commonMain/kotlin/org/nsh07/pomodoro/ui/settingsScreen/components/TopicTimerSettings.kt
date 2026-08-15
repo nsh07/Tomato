@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -96,8 +97,11 @@ import tomato.shared.generated.resources.info
 import tomato.shared.generated.resources.long_break
 import tomato.shared.generated.resources.session_length
 import tomato.shared.generated.resources.session_length_desc
+import tomato.shared.generated.resources.settings_infinite_focus_tip
 import tomato.shared.generated.resources.short_break
 import tomato.shared.generated.resources.timer_settings_reset_info
+
+private enum class TopicTimerTip { INFINITE_FOCUS, RESET }
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
@@ -113,7 +117,8 @@ fun TopicTimerSettings(
     longBreakTimeInputFieldState: TextFieldState,
     sessionsSliderState: SliderState,
     onAction: (SettingsAction) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showInfiniteFocusTip: Boolean = true
 ) {
     val isDefaultTopic = topic.id == defaultTopic.id
 
@@ -125,14 +130,46 @@ fun TopicTimerSettings(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier
     ) {
-        AnimatedVisibility(topicRunning) {
-            CompositionLocalProvider(LocalContentColor provides colorScheme.error) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(painterResource(Res.drawable.info), null)
-                    Text(stringResource(Res.string.timer_settings_reset_info))
+        if (showInfiniteFocusTip) {
+            val tip = if (topicRunning) TopicTimerTip.RESET else TopicTimerTip.INFINITE_FOCUS
+
+            AnimatedContent(tip) { targetTip ->
+                when (targetTip) {
+                    TopicTimerTip.INFINITE_FOCUS -> CompositionLocalProvider(
+                        LocalContentColor provides colorScheme.onSurfaceVariant
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(painterResource(Res.drawable.info), null)
+                            Text(stringResource(Res.string.settings_infinite_focus_tip))
+                        }
+                    }
+
+                    TopicTimerTip.RESET -> CompositionLocalProvider(
+                        LocalContentColor provides colorScheme.error
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(painterResource(Res.drawable.info), null)
+                            Text(stringResource(Res.string.timer_settings_reset_info))
+                        }
+                    }
+                }
+            }
+        } else {
+            AnimatedVisibility(topicRunning) {
+                CompositionLocalProvider(LocalContentColor provides colorScheme.error) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(painterResource(Res.drawable.info), null)
+                        Text(stringResource(Res.string.timer_settings_reset_info))
+                    }
                 }
             }
         }

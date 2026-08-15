@@ -176,7 +176,7 @@ fun SettingsMainScreen(
                         Screen.Settings.Backup,
                         Res.drawable.backup,
                         Res.string.backup_and_restore,
-                        listOf(Res.string.backup, Res.string.restore, Res.string.reset_data)
+                        listOf(Res.string.backup, Res.string.restore)
                     )
                 }
                 SegmentedListItem(

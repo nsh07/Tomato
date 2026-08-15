@@ -20,7 +20,7 @@ package org.nsh07.pomodoro.ui
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -74,6 +74,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -94,6 +95,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.components.CreateTopicBottomSheet
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.statsScreen.StatsScreenRoot
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
+import org.nsh07.pomodoro.ui.theme.SeededTheme
 import org.nsh07.pomodoro.ui.timerScreen.AlarmDialog
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
@@ -125,6 +127,7 @@ fun AppScreen(
     val uiState by timerViewModel.timerState.collectAsStateWithLifecycle()
     val settingsState by settingsViewModel.settingsState.collectAsStateWithLifecycle()
     val progress by timerViewModel.progress.collectAsStateWithLifecycle()
+    val currentTopic by timerViewModel.currentTopic.collectAsStateWithLifecycle()
 
     val layoutDirection = LocalLayoutDirection.current
     val motionScheme = motionScheme
@@ -181,105 +184,114 @@ fun AppScreen(
                     )
                 }
 
-                val primary by animateColorAsState(
-                    if (uiState.timerMode == TimerMode.FOCUS) colorScheme.primary else colorScheme.tertiary
-                )
-                val onPrimary by animateColorAsState(
-                    if (uiState.timerMode == TimerMode.FOCUS) colorScheme.onPrimary else colorScheme.onTertiary
-                )
-                val primaryContainer by animateColorAsState(
-                    if (uiState.timerMode == TimerMode.FOCUS) colorScheme.primaryContainer else colorScheme.tertiaryContainer
-                )
-                val onPrimaryContainer by animateColorAsState(
-                    if (uiState.timerMode == TimerMode.FOCUS) colorScheme.onPrimaryContainer else colorScheme.onTertiaryContainer
-                )
+                SeededTheme(currentTopic.color) {
+                    val colorScheme = colorScheme
+                    val focusFraction by animateFloatAsState(
+                        if (uiState.timerMode == TimerMode.FOCUS) 0f else 1f
+                    )
+                    val primary = lerp(colorScheme.primary, colorScheme.tertiary, focusFraction)
+                    val onPrimary =
+                        lerp(colorScheme.onPrimary, colorScheme.onTertiary, focusFraction)
+                    val primaryContainer =
+                        lerp(
+                            colorScheme.primaryContainer,
+                            colorScheme.tertiaryContainer,
+                            focusFraction
+                        )
+                    val onPrimaryContainer =
+                        lerp(
+                            colorScheme.onPrimaryContainer,
+                            colorScheme.onTertiaryContainer,
+                            focusFraction
+                        )
 
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = cutoutInsets.calculateStartPadding(layoutDirection),
-                            end = cutoutInsets.calculateEndPadding(layoutDirection)
-                        ),
-                    Alignment.Center
-                ) {
-                    HorizontalFloatingToolbar(
-                        expanded = true,
-                        scrollBehavior = toolbarScrollBehavior,
-                        colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(
-                            toolbarContainerColor = primaryContainer,
-                            toolbarContentColor = onPrimaryContainer
-                        ),
-                        modifier = Modifier
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
                             .padding(
-                                top = ScreenOffset,
-                                bottom = systemBarsInsets.calculateBottomPadding()
-                                        + ScreenOffset
-                            )
-                            .zIndex(1f)
+                                start = cutoutInsets.calculateStartPadding(layoutDirection),
+                                end = cutoutInsets.calculateEndPadding(layoutDirection)
+                            ),
+                        Alignment.Center
                     ) {
-                        mainScreens.fastForEach { item ->
-                            val selected by remember { derivedStateOf { backStack.lastOrNull() == item.route } }
-                            TooltipBox(
-                                positionProvider =
-                                    TooltipDefaults.rememberTooltipPositionProvider(
-                                        TooltipAnchorPosition.Above
-                                    ),
-                                tooltip = { PlainTooltip { Text(stringResource(item.label)) } },
-                                state = rememberTooltipState()
-                            ) {
-                                ToggleButton(
-                                    checked = selected,
-                                    onCheckedChange = if (!selected) {
-                                        {
-                                            if (item.route != Screen.Timer) { // Ensure the backstack does not accumulate screens
-                                                if (backStack.size < 2) backStack.add(item.route)
-                                                else backStack[1] = item.route
-                                            } else {
-                                                if (backStack.size > 1) backStack.removeAt(1)
-                                            }
-                                        }
-                                    } else {
-                                        { item.onNavigateHome() }
-                                    },
-                                    colors = ToggleButtonDefaults.toggleButtonColors(
-                                        containerColor = primaryContainer,
-                                        contentColor = onPrimaryContainer,
-                                        checkedContainerColor = primary,
-                                        checkedContentColor = onPrimary
-                                    ),
-                                    shapes = ToggleButtonDefaults.shapes(
-                                        CircleShape,
-                                        CircleShape,
-                                        CircleShape
-                                    ),
-                                    modifier = Modifier.height(56.dp)
+                        HorizontalFloatingToolbar(
+                            expanded = true,
+                            scrollBehavior = toolbarScrollBehavior,
+                            colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(
+                                toolbarContainerColor = primaryContainer,
+                                toolbarContentColor = onPrimaryContainer
+                            ),
+                            modifier = Modifier
+                                .padding(
+                                    top = ScreenOffset,
+                                    bottom = systemBarsInsets.calculateBottomPadding()
+                                            + ScreenOffset
+                                )
+                                .zIndex(1f)
+                        ) {
+                            mainScreens.fastForEach { item ->
+                                val selected by remember { derivedStateOf { backStack.lastOrNull() == item.route } }
+                                TooltipBox(
+                                    positionProvider =
+                                        TooltipDefaults.rememberTooltipPositionProvider(
+                                            TooltipAnchorPosition.Above
+                                        ),
+                                    tooltip = { PlainTooltip { Text(stringResource(item.label)) } },
+                                    state = rememberTooltipState()
                                 ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Crossfade(selected) {
-                                            if (it) Icon(
-                                                painterResource(item.selectedIcon),
-                                                stringResource(item.label)
-                                            )
-                                            else Icon(
-                                                painterResource(item.unselectedIcon),
-                                                stringResource(item.label)
-                                            )
-                                        }
-                                        AnimatedVisibility(
-                                            visible = selected || wide,
-                                            enter = expandHorizontally(motionScheme.defaultSpatialSpec()),
-                                            exit = shrinkHorizontally(motionScheme.defaultSpatialSpec())
-                                        ) {
-                                            Text(
-                                                text = stringResource(item.label),
-                                                fontSize = 16.sp,
-                                                lineHeight = 24.sp,
-                                                maxLines = 1,
-                                                softWrap = false,
-                                                overflow = TextOverflow.Clip,
-                                                modifier = Modifier.padding(start = ButtonDefaults.IconSpacing)
-                                            )
+                                    ToggleButton(
+                                        checked = selected,
+                                        onCheckedChange = if (!selected) {
+                                            {
+                                                if (item.route != Screen.Timer) { // Ensure the backstack does not accumulate screens
+                                                    if (backStack.size < 2) backStack.add(item.route)
+                                                    else backStack[1] = item.route
+                                                } else {
+                                                    if (backStack.size > 1) backStack.removeAt(1)
+                                                }
+                                            }
+                                        } else {
+                                            { item.onNavigateHome() }
+                                        },
+                                        colors = ToggleButtonDefaults.toggleButtonColors(
+                                            containerColor = primaryContainer,
+                                            contentColor = onPrimaryContainer,
+                                            checkedContainerColor = primary,
+                                            checkedContentColor = onPrimary
+                                        ),
+                                        shapes = ToggleButtonDefaults.shapes(
+                                            CircleShape,
+                                            CircleShape,
+                                            CircleShape
+                                        ),
+                                        modifier = Modifier.height(56.dp)
+                                    ) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Crossfade(selected) {
+                                                if (it) Icon(
+                                                    painterResource(item.selectedIcon),
+                                                    stringResource(item.label)
+                                                )
+                                                else Icon(
+                                                    painterResource(item.unselectedIcon),
+                                                    stringResource(item.label)
+                                                )
+                                            }
+                                            AnimatedVisibility(
+                                                visible = selected || wide,
+                                                enter = expandHorizontally(motionScheme.defaultSpatialSpec()),
+                                                exit = shrinkHorizontally(motionScheme.defaultSpatialSpec())
+                                            ) {
+                                                Text(
+                                                    text = stringResource(item.label),
+                                                    fontSize = 16.sp,
+                                                    lineHeight = 24.sp,
+                                                    maxLines = 1,
+                                                    softWrap = false,
+                                                    overflow = TextOverflow.Clip,
+                                                    modifier = Modifier.padding(start = ButtonDefaults.IconSpacing)
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -311,7 +323,6 @@ fun AppScreen(
                 entryProvider = entryProvider {
                     entry<Screen.Timer> {
                         val topics by settingsViewModel.allTopics.collectAsStateWithLifecycle()
-                        val currentTopic by timerViewModel.currentTopic.collectAsStateWithLifecycle()
                         var showCreateTopicSheet by remember { mutableStateOf(false) }
 
                         if (showCreateTopicSheet) {

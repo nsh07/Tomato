@@ -19,7 +19,7 @@ package org.nsh07.pomodoro.ui
 
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.TextStyle
@@ -62,6 +63,7 @@ import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Always On Display composable. Must be called within a [SharedTransitionScope] which allows
@@ -88,36 +90,31 @@ fun SharedTransitionScope.AlwaysOnDisplay(
     AodSystemBarsHandler(density, windowInfo, secureAod, setTimerFrequency)
 
     LaunchedEffect(Unit) {
-        delay(300)
+        delay(300.milliseconds)
         sharedElementTransitionComplete = true
     }
 
-    val primary by animateColorAsState(
-        if (sharedElementTransitionComplete) Color(0xFFA2A2A2)
-        else {
-            if (timerState.timerMode == TimerMode.FOCUS) colorScheme.primary
-            else colorScheme.tertiary
-        },
+    val sharedElementFraction by animateFloatAsState(
+        if (sharedElementTransitionComplete) 1f else 0f,
         animationSpec = motionScheme.slowEffectsSpec()
     )
-    val secondaryContainer by animateColorAsState(
-        if (sharedElementTransitionComplete) Color(0xFF1D1D1D)
-        else {
-            if (timerState.timerMode == TimerMode.FOCUS) colorScheme.secondaryContainer
-            else colorScheme.tertiaryContainer
-        },
+    val focusFraction by animateFloatAsState(
+        if (timerState.timerMode == TimerMode.FOCUS) 0f else 1f,
         animationSpec = motionScheme.slowEffectsSpec()
     )
-    val surface by animateColorAsState(
-        if (sharedElementTransitionComplete) Color.Black
-        else colorScheme.surface,
-        animationSpec = motionScheme.slowEffectsSpec()
+
+    val primary = lerp(
+        lerp(colorScheme.primary, colorScheme.tertiary, focusFraction),
+        Color(0xFFA2A2A2),
+        sharedElementFraction
     )
-    val onSurface by animateColorAsState(
-        if (sharedElementTransitionComplete) Color(0xFFE3E3E3)
-        else colorScheme.onSurface,
-        animationSpec = motionScheme.slowEffectsSpec()
+    val secondaryContainer = lerp(
+        lerp(colorScheme.secondaryContainer, colorScheme.tertiaryContainer, focusFraction),
+        Color(0xFF1D1D1D),
+        sharedElementFraction
     )
+    val surface = lerp(colorScheme.surface, Color.Black, sharedElementFraction)
+    val onSurface = lerp(colorScheme.onSurface, Color(0xFFE3E3E3), sharedElementFraction)
 
     val elementSize = 250.dp.toIntPx(density)
     val margin = 16.dp.toIntPx(density)

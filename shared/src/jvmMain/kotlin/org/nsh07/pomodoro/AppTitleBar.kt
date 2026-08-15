@@ -17,7 +17,7 @@
 
 package org.nsh07.pomodoro
 
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -41,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowScope
@@ -127,8 +128,9 @@ private fun TitleBarButton(
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
 
-    val containerColor by animateColorAsState(if (isHovered) hoveredContainerColor else Color.Transparent)
-    val contentColor by animateColorAsState(if (isHovered) hoveredContentColor else LocalContentColor.current)
+    val hoverFraction by animateFloatAsState(if (isHovered) 1f else 0f)
+    val containerColor = lerp(Color.Transparent, hoveredContainerColor, hoverFraction)
+    val contentColor = lerp(LocalContentColor.current, hoveredContentColor, hoverFraction)
 
     Box(
         contentAlignment = Alignment.Center,

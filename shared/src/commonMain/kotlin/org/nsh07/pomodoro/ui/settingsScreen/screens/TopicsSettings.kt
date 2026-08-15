@@ -28,6 +28,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +38,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -60,7 +62,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
@@ -87,6 +88,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.lerp
@@ -123,6 +127,8 @@ import tomato.shared.generated.resources.minutes_format
 import tomato.shared.generated.resources.settings
 import tomato.shared.generated.resources.topic_summary_format
 import tomato.shared.generated.resources.topics
+import kotlin.math.PI
+import kotlin.math.cos
 
 val selectedKey = StyleStateKey(false)
 
@@ -390,13 +396,35 @@ fun TopicsSettings(
                             }
                         }
                         item {
-                            HorizontalDivider(
-                                thickness = 4.dp,
-                                color = colorScheme.primary,
+                            val dividerColor = colorScheme.primary
+                            Canvas(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 36.dp, vertical = 20.dp)
-                            )
+                                    .height(12.dp)
+                            ) {
+                                val wavelengthPx = 20.dp.toPx()
+                                val amplitudePx = 2.dp.toPx()
+                                val strokeWidthPx = 4.dp.toPx()
+                                val centerY = size.height / 2f
+
+                                val path = Path().apply {
+                                    moveTo(0f, centerY + amplitudePx)
+                                    var x = 0f
+                                    while (x < size.width) {
+                                        x += 2f
+                                        val y = centerY +
+                                                amplitudePx * cos(2 * PI * x / wavelengthPx).toFloat()
+                                        lineTo(x, y)
+                                    }
+                                }
+
+                                drawPath(
+                                    path = path,
+                                    color = dividerColor,
+                                    style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
+                                )
+                            }
                         }
                         itemsIndexed(topics, key = { _, topic -> topic.id }) { index, topic ->
                             val selected = topic.id == editingTopic.id && !creatingTopic

@@ -148,7 +148,7 @@
     <string name="quit_tomato">Ukončit Tomato</string>
     <string name="advanced">Pokročilé</string>
     <string name="topics">Témata</string>
-    <string name="create_new_topic">Vytvořit nové téma</string>
+    <string name="create_new_topic">Nové téma</string>
     <string name="topic_name">Název</string>
     <string name="topic_name_taken">Téma s tímto názvem již existuje</string>
     <string name="add_topic">Přidat téma</string>
@@ -160,4 +160,16 @@
     <string name="edit_topic">Upravit téma</string>
     <string name="edit_topic_desc">Název, barva a tvar</string>
     <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d časovačů</string>
+    <string name="topic_settings">Nastavení tématu</string>
+    <string name="red">Červená</string>
+    <string name="rose">Růžová</string>
+    <string name="purple">Fialová</string>
+    <string name="indigo">Indigová</string>
+    <string name="blue">Modrá</string>
+    <string name="cyan">Modrozelená</string>
+    <string name="teal">Tmavě modrozelená</string>
+    <string name="green">Zelená</string>
+    <string name="chartreuse">Chartreuse</string>
+    <string name="yellow">Žlutá</string>
+    <string name="orange">Oranžová</string>
 </resources>

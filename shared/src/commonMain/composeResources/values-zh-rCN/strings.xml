@@ -161,4 +161,16 @@
     <string name="edit_topic_desc">名称、颜色与图形</string>
     <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d 计时器</string>
     <string name="delete_topic_dialog_text">此操作不可撤销。与此主题相关的统计数据将会移至默认主题（%1$s）。您也可以选择删除与此主题相关的统计数据。</string>
+    <string name="topic_settings">主题设置</string>
+    <string name="red">红色</string>
+    <string name="rose">玫瑰色</string>
+    <string name="purple">紫色</string>
+    <string name="indigo">靛青</string>
+    <string name="blue">蓝色</string>
+    <string name="cyan">青色</string>
+    <string name="teal">青绿色</string>
+    <string name="green">绿色</string>
+    <string name="chartreuse">草绿色</string>
+    <string name="yellow">黄色</string>
+    <string name="orange">橙色</string>
 </resources>

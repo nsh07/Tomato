@@ -149,7 +149,7 @@
     <string name="quit_tomato">Tomato\u0027dan Çık</string>
     <string name="advanced">Gelişmiş</string>
     <string name="topics">Kategoriler</string>
-    <string name="create_new_topic">Yeni kategori oluştur</string>
+    <string name="create_new_topic">Yeni kategori</string>
     <string name="topic_name">Ad</string>
     <string name="topic_name_taken">Zaten bu isimle bir kategori var</string>
     <string name="add_topic">Kategori ekle</string>
@@ -172,4 +172,5 @@
     <string name="chartreuse">Açık yeşil</string>
     <string name="yellow">Sarı</string>
     <string name="orange">Turuncu</string>
+    <string name="topic_settings">Kategori ayarları</string>
 </resources>

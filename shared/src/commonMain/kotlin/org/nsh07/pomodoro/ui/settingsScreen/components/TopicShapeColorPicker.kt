@@ -137,8 +137,7 @@ fun TopicShapeColorPicker(
             isPlus = true,
             onColorChange = onColorChange,
             backgroundColor = containerColor,
-            horizontalPadding = horizontalPadding,
-            showDynamicItem = true
+            horizontalPadding = horizontalPadding
         )
 
         Text(

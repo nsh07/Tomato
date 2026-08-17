@@ -40,6 +40,7 @@
     <string name="color_scheme">Color scheme</string>
     <string name="completed">Completed</string>
     <string name="dark">Dark</string>
+    <string name="default_name">Default</string>
     <string name="dnd">Do Not Disturb</string>
     <string name="dnd_desc">Turn on DND when running a Focus timer</string>
     <string name="dnd_permission_message">Enable permission for &quot;%1$s&quot;</string>

@@ -78,6 +78,7 @@ import tomato.shared.generated.resources.color
 import tomato.shared.generated.resources.color_scheme
 import tomato.shared.generated.resources.colors
 import tomato.shared.generated.resources.cyan
+import tomato.shared.generated.resources.default_name
 import tomato.shared.generated.resources.dynamic
 import tomato.shared.generated.resources.dynamic_color
 import tomato.shared.generated.resources.dynamic_color_desc
@@ -111,6 +112,9 @@ val colorSchemes = listOf(
     ColorSchemeItem(Color(0xffffb68d), Res.string.orange)
 )
 
+private val dynamicColorLabel: StringResource
+    get() = if (androidSdkVersionAtLeast(31)) Res.string.dynamic else Res.string.default_name
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ColorSchemePickerListItem(
@@ -122,7 +126,7 @@ fun ColorSchemePickerListItem(
     modifier: Modifier = Modifier
 ) {
     if (androidSdkVersionAtLeast(31)) {
-        val checked = color == colorSchemes.last().color
+        val checked = color == Color.White
         SegmentedListItem(
             onClick = {
                 if (!checked) onColorChange(Color.White)
@@ -177,7 +181,7 @@ fun ColorSchemePickerListItem(
             content = { Text(stringResource(Res.string.color_scheme)) },
             supportingContent = {
                 Text(
-                    if (color == Color.White) stringResource(Res.string.dynamic)
+                    if (color == Color.White) stringResource(dynamicColorLabel)
                     else stringResource(Res.string.color)
                 )
             },
@@ -218,8 +222,7 @@ fun ColorPickerRow(
     onColorChange: (Color) -> Unit,
     modifier: Modifier = Modifier,
     backgroundColor: Color = animateColorAsState(listItemColors.containerColor).value,
-    horizontalPadding: Dp = 48.dp,
-    showDynamicItem: Boolean = false
+    horizontalPadding: Dp = 48.dp
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(2.dp),
@@ -232,7 +235,7 @@ fun ColorPickerRow(
             )
             .padding(bottom = 8.dp)
     ) {
-        if (showDynamicItem) item {
+        item {
             DynamicColorPickerButton(
                 shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
                 checked = color == Color.White,
@@ -242,8 +245,8 @@ fun ColorPickerRow(
         }
         itemsIndexed(colorSchemes) { index, it ->
             ColorPickerButton(
-                items = if (showDynamicItem) colorSchemes.size + 1 else colorSchemes.size,
-                index = if (showDynamicItem) index + 1 else index,
+                items = colorSchemes.size + 1,
+                index = index + 1,
                 color = it.color,
                 colorName = it.name,
                 checked = it.color == color,
@@ -340,7 +343,7 @@ private fun DynamicColorPickerButton(
                 )
             }
             Text(
-                stringResource(Res.string.dynamic),
+                stringResource(dynamicColorLabel),
                 style = typography.labelLarge
             )
         }

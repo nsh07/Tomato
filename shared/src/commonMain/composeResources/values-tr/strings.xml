@@ -157,7 +157,7 @@
     <string name="delete_topic">Kategoriyi sil</string>
     <string name="delete_topic_and_stats">Kategoriyi ve o kategorinin istatistiklerini sil</string>
     <string name="delete_topic_dialog_title">Kategori silinsin mi?</string>
-    <string name="delete_topic_dialog_text">Bu işlem geri alınamaz. Bu kategoriyle ilişkilendirilmiş tüm istatistikler varsayılan kategorisine alınacaktır (%1$s). İsterseniz bu kategoriye ait istatistikleri direkt silebilirsiniz.</string>
+    <string name="delete_topic_dialog_text">Bu işlem geri alınamaz. Bu kategoriyle ilişkilendirilmiş tüm istatistikler öntanımlı kategoriye alınacaktır (%1$s). İsterseniz bu kategoriye ait istatistikleri silebilirsiniz.</string>
     <string name="edit_topic">Kategoriyi düzenle</string>
     <string name="edit_topic_desc">İsim, renk ve şekil</string>
     <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d sayaç</string>
@@ -173,4 +173,5 @@
     <string name="yellow">Sarı</string>
     <string name="orange">Turuncu</string>
     <string name="topic_settings">Kategori ayarları</string>
+    <string name="default_name">Öntanımlı</string>
 </resources>

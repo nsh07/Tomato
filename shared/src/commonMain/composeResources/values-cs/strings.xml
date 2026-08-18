@@ -172,4 +172,5 @@
     <string name="chartreuse">Chartreuse</string>
     <string name="yellow">Žlutá</string>
     <string name="orange">Oranžová</string>
+    <string name="default_name">Výchozí</string>
 </resources>

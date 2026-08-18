@@ -39,6 +39,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
+import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -235,8 +236,8 @@ private fun TopicShapeButton(
         checked = checked,
         onCheckedChange = { onClick() },
         shapes = IconButtonDefaults.toggleableShapes(
-            shape = RoundedCornerShape(8.dp),
-            pressedShape = RoundedCornerShape(28.dp),
+            shape = shapes.small,
+            pressedShape = shapes.large,
             checkedShape = CircleShape
         ),
         colors = IconButtonDefaults.filledIconToggleButtonColors(

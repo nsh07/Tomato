@@ -276,7 +276,7 @@ private fun TopicShapeButton(
                             drawOutline(outline, lerp(shapeColor, checkedColor, fraction))
                             drawOutline(
                                 outline,
-                                lerp(strokeColor, checkedColor, fraction),
+                                lerp(strokeColor, Color.Transparent, fraction),
                                 style = stroke
                             )
                         }

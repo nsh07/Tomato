@@ -23,7 +23,7 @@ import androidx.compose.runtime.Immutable
 data class TimerState(
     val timerMode: TimerMode = TimerMode.FOCUS,
     val timeStr: String = "25:00",
-    val totalTime: Long = 25 * 60,
+    val totalTime: Long = 25 * 60 * 1000,
     val timerRunning: Boolean = false,
     val nextTimerMode: TimerMode = TimerMode.SHORT_BREAK,
     val nextTimeStr: String = "5:00",

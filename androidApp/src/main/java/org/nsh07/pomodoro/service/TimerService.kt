@@ -111,7 +111,6 @@ class TimerService : Service(), KoinComponent {
         runBlocking {
             job.cancel()
             timerManager.saveTimeToDb()
-            timerManager.resetLastSavedDuration()
             setDoNotDisturb(false)
             notificationManager.cancel(1)
             alarm?.release()

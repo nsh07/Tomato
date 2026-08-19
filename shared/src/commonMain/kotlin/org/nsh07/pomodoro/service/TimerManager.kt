@@ -56,9 +56,46 @@ class TimerManager(
     private var lastSavedDuration = 0L
 
     private val timerStateSnapshot by lazy { stateRepository.timerStateSnapshot }
+    private var hasSnapshot = false
     private val saveLock = Mutex()
 
     private var timerJob: Job? = null
+
+    /**
+     * Time actually spent in the current interval, measured with the monotonic clock provided by
+     * [currentTime].
+     */
+    private fun elapsedInInterval(): Long {
+        if (startTime == 0L) return 0L
+        val now = if (pauseTime != 0L) pauseTime else currentTime()
+        return (now - startTime - pauseDuration).coerceAtLeast(0L)
+    }
+
+    /**
+     * Marks the current interval as fresh, discarding any time accounted for so far.
+     *
+     * @param startNow Whether the new interval starts counting immediately
+     */
+    private fun beginInterval(startNow: Boolean) {
+        lastSavedDuration = 0L
+        pauseTime = 0L
+        pauseDuration = 0L
+        startTime = if (startNow) currentTime() else 0L
+    }
+
+    /**
+     * Starts the current interval, or resumes it if it was paused.
+     */
+    private fun resumeInterval() {
+        if (startTime == 0L) {
+            startTime = currentTime()
+            pauseTime = 0L
+            pauseDuration = 0L
+        } else if (pauseTime != 0L) {
+            pauseDuration += (currentTime() - pauseTime).coerceAtLeast(0L)
+            pauseTime = 0L
+        }
+    }
 
     /**
      * Toggles the timer between running and paused states.
@@ -87,38 +124,39 @@ class TimerManager(
         onStateChanged: () -> Unit,
     ) {
         if (_timerState.value.timerRunning) {
+            pauseTime = currentTime()
             setDoNotDisturb(false)
             onPause(time)
             _timerState.update { currentState ->
                 currentState.copy(timerRunning = false)
             }
-            pauseTime = currentTime()
         } else {
             if (_timerState.value.timerMode == TimerMode.FOCUS) setDoNotDisturb(true)
             else setDoNotDisturb(false)
             onStart()
             _timerState.update { it.copy(timerRunning = true) }
-            if (pauseTime != 0L) pauseDuration += currentTime() - pauseTime
+            resumeInterval()
 
             var iterations = -1
             var notificationUpdateCounter = -1
 
+            timerJob?.cancel() // never let two timer loops run at once
             timerJob = scope.launch {
                 while (true) {
                     if (!_timerState.value.timerRunning) break
-                    if (startTime == 0L) startTime = currentTime()
 
                     val currentTopic = stateRepository.currentTopic.value
                     val timerState = _timerState.value
+                    val elapsed = elapsedInInterval()
 
                     val focusTime =
                         if (!timerState.infiniteFocus) currentTopic.focusTime else Long.MAX_VALUE
-                    time = when (_timerState.value.timerMode) {
-                        TimerMode.FOCUS -> focusTime - (currentTime() - startTime - pauseDuration)
+                    time = when (timerState.timerMode) {
+                        TimerMode.FOCUS -> focusTime - elapsed
 
-                        TimerMode.SHORT_BREAK -> currentTopic.shortBreakTime - (currentTime() - startTime - pauseDuration)
+                        TimerMode.SHORT_BREAK -> currentTopic.shortBreakTime - elapsed
 
-                        else -> currentTopic.longBreakTime - (currentTime() - startTime - pauseDuration)
+                        else -> currentTopic.longBreakTime - elapsed
                     }
 
                     val freq = stateRepository.timerFrequency.toInt().coerceAtLeast(1)
@@ -134,10 +172,12 @@ class TimerManager(
                     }
 
                     if (time < 0) {
-                        skipTimer(
+                        // The next interval must not start counting until the timer is started again
+                        advanceTimer(
                             onStart = onTimerExpired,
                             onCompletion = onSkipComplete,
-                            setDoNotDisturb = setDoNotDisturb
+                            setDoNotDisturb = setDoNotDisturb,
+                            startNextInterval = false
                         )
                         _timerState.update { currentState ->
                             currentState.copy(timerRunning = false)
@@ -151,13 +191,8 @@ class TimerManager(
                                 else millisecondsToStr(currentState.totalTime - time) // elapsed time
                             )
                         }
-                        val totalTime = _timerState.value.totalTime
 
-                        if (totalTime - time < lastSavedDuration)
-                            lastSavedDuration =
-                                0 // Sanity check, prevents bugs if service is force closed
-                        if (totalTime - time - lastSavedDuration > 60000)
-                            saveTimeToDb()
+                        if (elapsed - lastSavedDuration > SAVE_INTERVAL) saveTimeToDb()
                     }
 
                     delay((1000f / stateRepository.timerFrequency).toLong().milliseconds)
@@ -168,77 +203,117 @@ class TimerManager(
         onStateChanged()
     }
 
-    suspend fun saveTimeToDb() {
-        saveLock.withLock {
-            val elapsedTime = _timerState.value.totalTime - time
-            val topicId = stateRepository.currentTopic.value.id
-            when (_timerState.value.timerMode) {
-                TimerMode.FOCUS -> statRepository.addFocusTime(
-                    topicId,
-                    (elapsedTime - lastSavedDuration).coerceAtLeast(0L)
-                )
+    /**
+     * Writes the part of the current interval that has elapsed since the last save to the database.
+     */
+    suspend fun saveTimeToDb() = saveLock.withLock { saveElapsedTime() }
 
-                else -> statRepository.addBreakTime(
-                    topicId,
-                    (elapsedTime - lastSavedDuration).coerceAtLeast(0L)
-                )
-            }
-            lastSavedDuration = elapsedTime
+    /**
+     * See [saveTimeToDb]. Must only be called while holding [saveLock].
+     */
+    private suspend fun saveElapsedTime() {
+        val timerState = _timerState.value
+        val currentTopic = stateRepository.currentTopic.value
+
+        // An interval cannot contribute more time than its own length
+        val intervalDuration = when (timerState.timerMode) {
+            TimerMode.FOCUS ->
+                if (!timerState.infiniteFocus) currentTopic.focusTime else Long.MAX_VALUE
+
+            TimerMode.SHORT_BREAK -> currentTopic.shortBreakTime
+
+            else -> currentTopic.longBreakTime
         }
+
+        val elapsed = elapsedInInterval().coerceAtMost(intervalDuration)
+        val duration = (elapsed - lastSavedDuration).coerceIn(0L, MAX_SAVED_DURATION)
+
+        if (duration > 0L) {
+            when (timerState.timerMode) {
+                TimerMode.FOCUS -> statRepository.addFocusTime(currentTopic.id, duration)
+
+                else -> statRepository.addBreakTime(currentTopic.id, duration)
+            }
+        }
+
+        lastSavedDuration = elapsed
     }
 
+    /**
+     * Ends the current interval and moves the timer on to the next one.
+     */
     suspend fun skipTimer(
         onStart: suspend () -> Unit,
         onCompletion: suspend () -> Unit,
         setDoNotDisturb: (Boolean) -> Unit
+    ) = advanceTimer(
+        onStart = onStart,
+        onCompletion = onCompletion,
+        setDoNotDisturb = setDoNotDisturb,
+        startNextInterval = _timerState.value.timerRunning
+    )
+
+    /**
+     * See [skipTimer].
+     *
+     * @param startNextInterval Whether the next interval starts counting immediately, see
+     * [beginInterval]
+     */
+    private suspend fun advanceTimer(
+        onStart: suspend () -> Unit,
+        onCompletion: suspend () -> Unit,
+        setDoNotDisturb: (Boolean) -> Unit,
+        startNextInterval: Boolean
     ) {
         val currentTopic = stateRepository.currentTopic.value
-        saveTimeToDb()
+
+        // Flushing and resetting must be atomic, else a save could record the interval twice
+        saveLock.withLock {
+            saveElapsedTime()
+            beginInterval(startNow = startNextInterval)
+        }
 
         onStart()
 
-        lastSavedDuration = 0
-        startTime = 0L
-        pauseTime = 0L
-        pauseDuration = 0L
-
         cycles = (cycles + 1) % (currentTopic.sessionLength * 2)
 
-        if (cycles % 2 == 0) {
-            _timerState.update { currentState ->
-                if (currentState.timerRunning) setDoNotDisturb(true)
-                time = if (!currentState.infiniteFocus) currentTopic.focusTime else Long.MAX_VALUE
+        val timerRunning = _timerState.value.timerRunning
+        val infiniteFocus = _timerState.value.infiniteFocus
 
+        if (cycles % 2 == 0) {
+            if (timerRunning) setDoNotDisturb(true)
+            val newTime = if (!infiniteFocus) currentTopic.focusTime else Long.MAX_VALUE
+            time = newTime
+            val long = cycles == (currentTopic.sessionLength - 1) * 2
+
+            _timerState.update { currentState ->
                 currentState.copy(
                     timerMode = TimerMode.FOCUS,
-                    timeStr = if (!currentState.infiniteFocus) millisecondsToStr(time)
+                    timeStr = if (!infiniteFocus) millisecondsToStr(newTime)
                     else millisecondsToStr(0),
-                    totalTime = time,
-                    nextTimerMode = if (cycles == (currentTopic.sessionLength - 1) * 2) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                    nextTimeStr = if (cycles == (currentTopic.sessionLength - 1) * 2) millisecondsToStr(
-                        currentTopic.longBreakTime
-                    ) else millisecondsToStr(
-                        currentTopic.shortBreakTime
-                    ),
+                    totalTime = newTime,
+                    nextTimerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
+                    nextTimeStr = if (long) millisecondsToStr(currentTopic.longBreakTime)
+                    else millisecondsToStr(currentTopic.shortBreakTime),
                     currentFocusCount = cycles / 2 + 1,
                     totalFocusCount = currentTopic.sessionLength
                 )
             }
         } else {
+            if (timerRunning) setDoNotDisturb(false)
             val long = cycles == (currentTopic.sessionLength * 2) - 1
-            time = if (long) currentTopic.longBreakTime else currentTopic.shortBreakTime
+            val newTime = if (long) currentTopic.longBreakTime else currentTopic.shortBreakTime
+            time = newTime
+            val nextTimeStr = if (!infiniteFocus) millisecondsToStr(currentTopic.focusTime)
+            else getString(Res.string.infinite)
 
             _timerState.update { currentState ->
-                if (currentState.timerRunning) setDoNotDisturb(false)
-
                 currentState.copy(
                     timerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                    timeStr = millisecondsToStr(time),
-                    totalTime = time,
+                    timeStr = millisecondsToStr(newTime),
+                    totalTime = newTime,
                     nextTimerMode = TimerMode.FOCUS,
-                    nextTimeStr = if (!currentState.infiniteFocus)
-                        millisecondsToStr(currentTopic.focusTime)
-                    else getString(Res.string.infinite)
+                    nextTimeStr = nextTimeStr
                 )
             }
         }
@@ -248,33 +323,35 @@ class TimerManager(
 
     suspend fun resetTimer(onCompletion: () -> Unit) {
         val currentTopic = stateRepository.currentTopic.value
-        val timerState = _timerState.value
 
-        timerStateSnapshot.save(
-            lastSavedDuration,
-            time,
-            cycles,
-            startTime,
-            pauseTime,
-            pauseDuration,
-            timerState
-        )
+        saveLock.withLock {
+            saveElapsedTime()
+            // Snapshotted after flushing, so that an undo cannot save the same time twice
+            timerStateSnapshot.save(
+                lastSavedDuration,
+                time,
+                cycles,
+                startTime,
+                pauseTime,
+                pauseDuration,
+                _timerState.value
+            )
+            hasSnapshot = true
+            beginInterval(startNow = false)
+        }
 
-        saveTimeToDb()
-        lastSavedDuration = 0
         cycles = 0
-        startTime = 0L
-        pauseTime = 0L
-        pauseDuration = 0L
 
-        time = if (!timerState.infiniteFocus) currentTopic.focusTime else Long.MAX_VALUE
+        val infiniteFocus = _timerState.value.infiniteFocus
+        val newTime = if (!infiniteFocus) currentTopic.focusTime else Long.MAX_VALUE
+        time = newTime
 
         _timerState.update { currentState ->
             currentState.copy(
                 timerMode = TimerMode.FOCUS,
-                timeStr = if (!currentState.infiniteFocus) millisecondsToStr(time)
+                timeStr = if (!infiniteFocus) millisecondsToStr(newTime)
                 else millisecondsToStr(0),
-                totalTime = time,
+                totalTime = newTime,
                 nextTimerMode = if (currentTopic.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
                 nextTimeStr = millisecondsToStr(if (currentTopic.sessionLength > 1) currentTopic.shortBreakTime else currentTopic.longBreakTime),
                 currentFocusCount = 1,
@@ -286,6 +363,7 @@ class TimerManager(
     }
 
     fun undoReset() {
+        if (!hasSnapshot) return // nothing to restore, the timer was never reset
         lastSavedDuration = timerStateSnapshot.lastSavedDuration
         time = timerStateSnapshot.time
         cycles = timerStateSnapshot.cycles
@@ -295,11 +373,8 @@ class TimerManager(
         _timerState.update { timerStateSnapshot.timerState }
     }
 
-    /**
-     * Resets the saved duration tracker. Call when the service is destroyed
-     * to prevent double-counting on restart.
-     */
-    fun resetLastSavedDuration() {
-        lastSavedDuration = 0
+    private companion object {
+        const val SAVE_INTERVAL = 60000L
+        const val MAX_SAVED_DURATION = 24 * 60 * 60 * 1000L
     }
 }

@@ -566,11 +566,11 @@ fun TopicsSettings(
                                     onAction = onAction,
                                     modifier = Modifier.padding(
                                         start = 16.dp,
-                                        top = 8.dp,
+                                        top = 2.dp,
                                         end = 16.dp,
                                         bottom = 2.dp
                                     ),
-                                    showInfiniteFocusTip = false
+                                    inTimerScreen = false
                                 )
                             }
                         }

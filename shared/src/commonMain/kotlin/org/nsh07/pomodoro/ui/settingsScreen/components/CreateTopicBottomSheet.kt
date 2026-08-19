@@ -297,15 +297,18 @@ private fun CreateTopicSheetContent(
 
                     CreateTopicStep.Timer ->
                         TopicTimerProperties(
+                            topicId = -1L,
                             autostartNextSession = autostartNextSession,
                             dndEnabled = dndEnabled,
                             topicRunning = false,
+                            inTimerScreen = true,
                             focusTimeInputFieldState = focusTimeInputFieldState,
                             shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                             longBreakTimeInputFieldState = longBreakTimeInputFieldState,
                             sessionsSliderState = sessionsSliderState,
                             onAutostartNextSessionChange = onAutostartNextSessionChange,
                             onDndEnabledChange = onDndEnabledChange,
+                            showEditButtons = false,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                         )
                 }

@@ -27,19 +27,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
-import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -50,6 +48,8 @@ import androidx.compose.material3.SliderState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -90,7 +90,6 @@ import tomato.shared.generated.resources.delete
 import tomato.shared.generated.resources.delete_topic
 import tomato.shared.generated.resources.dnd
 import tomato.shared.generated.resources.dnd_desc
-import tomato.shared.generated.resources.edit_topic
 import tomato.shared.generated.resources.edit_topic_desc
 import tomato.shared.generated.resources.focus
 import tomato.shared.generated.resources.info
@@ -99,6 +98,7 @@ import tomato.shared.generated.resources.session_length
 import tomato.shared.generated.resources.session_length_desc
 import tomato.shared.generated.resources.settings_infinite_focus_tip
 import tomato.shared.generated.resources.short_break
+import tomato.shared.generated.resources.style
 import tomato.shared.generated.resources.timer_settings_reset_info
 
 private enum class TopicTimerTip { INFINITE_FOCUS, RESET }
@@ -118,19 +118,24 @@ fun TopicTimerSettings(
     sessionsSliderState: SliderState,
     onAction: (SettingsAction) -> Unit,
     modifier: Modifier = Modifier,
-    showInfiniteFocusTip: Boolean = true
+    inTimerScreen: Boolean = true
 ) {
-    val isDefaultTopic = topic.id == defaultTopic.id
-
     var showColorShapeSheet by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     val colorScheme = colorScheme
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(if (inTimerScreen) 2.dp else 16.dp),
         modifier = modifier
     ) {
-        if (showInfiniteFocusTip) {
+        if (!inTimerScreen) {
+            TopicShapeColorPickerButton(
+                showColorShapeSheet = showColorShapeSheet,
+                onShowColorShapeSheet = { showColorShapeSheet = it }
+            )
+        }
+
+        if (inTimerScreen) {
             val tip = if (topicRunning) TopicTimerTip.RESET else TopicTimerTip.INFINITE_FOCUS
 
             AnimatedContent(tip) { targetTip ->
@@ -175,9 +180,13 @@ fun TopicTimerSettings(
         }
 
         TopicTimerProperties(
+            topicId = topic.id,
             autostartNextSession = topic.autostartNextSession,
             dndEnabled = topic.dndEnabled,
             topicRunning = topicRunning,
+            inTimerScreen = inTimerScreen,
+            showDeleteDialog = showDeleteDialog,
+            showColorShapeSheet = showColorShapeSheet,
             focusTimeInputFieldState = focusTimeInputFieldState,
             shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
             longBreakTimeInputFieldState = longBreakTimeInputFieldState,
@@ -185,45 +194,10 @@ fun TopicTimerSettings(
             onAutostartNextSessionChange = {
                 onAction(SettingsAction.SaveAutostartNextSession(it))
             },
-            onDndEnabledChange = { onAction(SettingsAction.SaveDndEnabled(it)) }
+            onDndEnabledChange = { onAction(SettingsAction.SaveDndEnabled(it)) },
+            onShowColorShapeSheet = { showColorShapeSheet = it },
+            setShowDeleteDialog = { showDeleteDialog = it }
         )
-
-        SegmentedListItem(
-            checked = showColorShapeSheet,
-            onCheckedChange = { showColorShapeSheet = it },
-            leadingContent = {
-                val fillColor = colorScheme.primary
-                val fillShape = topic.shape.toShape()
-                Box(
-                    Modifier
-                        .size(22.dp)
-                        .styleable {
-                            background(fillColor)
-                            shape(fillShape)
-                        }
-                )
-            },
-            supportingContent = { Text(stringResource(Res.string.edit_topic_desc)) },
-            trailingContent = {
-                if (!isDefaultTopic) FilledTonalIconButton(
-                    onClick = { showDeleteDialog = true },
-                    shapes = IconButtonDefaults.shapes(),
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = colorScheme.errorContainer,
-                        contentColor = colorScheme.onErrorContainer
-                    )
-                ) {
-                    Icon(
-                        painterResource(Res.drawable.delete),
-                        stringResource(Res.string.delete_topic)
-                    )
-                }
-            },
-            shapes = segmentedListItemShapes(0, 1),
-            colors = listItemColors
-        ) {
-            Text(stringResource(Res.string.edit_topic))
-        }
     }
 
     if (showColorShapeSheet) {
@@ -257,6 +231,7 @@ fun TopicTimerSettings(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TopicTimerProperties(
+    topicId: Long,
     autostartNextSession: Boolean,
     dndEnabled: Boolean,
     topicRunning: Boolean,
@@ -264,9 +239,15 @@ fun TopicTimerProperties(
     shortBreakTimeInputFieldState: TextFieldState,
     longBreakTimeInputFieldState: TextFieldState,
     sessionsSliderState: SliderState,
+    inTimerScreen: Boolean,
     onAutostartNextSessionChange: (Boolean) -> Unit,
     onDndEnabledChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showColorShapeSheet: Boolean = false,
+    showDeleteDialog: Boolean = false,
+    onShowColorShapeSheet: (Boolean) -> Unit = {},
+    setShowDeleteDialog: (Boolean) -> Unit = {},
+    showEditButtons: Boolean = true
 ) {
     val requestDndPermissionCallback = rememberRequestDndPermissionCallback()
 
@@ -429,11 +410,81 @@ fun TopicTimerProperties(
                             colors = switchColors
                         )
                     },
-                    shapes = segmentedListItemShapes(index + 1, switchItems.size + 1),
+                    shapes = segmentedListItemShapes(
+                        index + 1,
+                        switchItems.size + 1
+                    ),
                     colors = listItemColors
                 )
             }
+
+            if (showEditButtons) {
+                if (inTimerScreen) {
+                    TopicShapeColorPickerButton(
+                        showColorShapeSheet = showColorShapeSheet,
+                        onShowColorShapeSheet = onShowColorShapeSheet
+                    )
+                }
+
+                if (topicId != Topic.DEFAULT_TOPIC_ID) {
+                    ToggleButton(
+                        checked = showDeleteDialog,
+                        onCheckedChange = setShowDeleteDialog,
+                        shapes = ToggleButtonDefaults.shapes(),
+                        colors = ToggleButtonDefaults.toggleButtonColors(
+                            containerColor = colorScheme.errorContainer,
+                            contentColor = colorScheme.onErrorContainer,
+                            checkedContainerColor = colorScheme.error,
+                            checkedContentColor = colorScheme.onError
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                    ) {
+                        Icon(
+                            painterResource(Res.drawable.delete),
+                            null,
+                            Modifier.size(24.dp)
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            stringResource(Res.string.delete_topic),
+                            style = typography.titleMedium
+                        )
+                    }
+                }
+            }
         }
+    }
+}
+
+
+@Composable
+private fun TopicShapeColorPickerButton(
+    showColorShapeSheet: Boolean,
+    onShowColorShapeSheet: (Boolean) -> Unit
+) {
+    ToggleButton(
+        checked = showColorShapeSheet,
+        onCheckedChange = onShowColorShapeSheet,
+        shapes = ToggleButtonDefaults.shapes(),
+        colors = ToggleButtonDefaults.toggleButtonColors(
+            containerColor = colorScheme.tertiaryContainer,
+            contentColor = colorScheme.onTertiaryContainer,
+            checkedContainerColor = colorScheme.tertiary,
+            checkedContentColor = colorScheme.onTertiary
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+    ) {
+        Icon(
+            painterResource(Res.drawable.style),
+            null,
+            Modifier.size(24.dp)
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(stringResource(Res.string.edit_topic_desc), style = typography.titleMedium)
     }
 }
 

@@ -66,10 +66,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -238,12 +235,7 @@ private fun CreateTopicSheetContent(
 ) {
     val motionScheme = motionScheme
 
-    val windowHeight = LocalWindowInfo.current.containerSize.height
-    val maxSheetHeight =
-        if (windowHeight > 0) with(LocalDensity.current) { (windowHeight * 0.75f).toDp() }
-        else Dp.Unspecified
-
-    Box(modifier.heightIn(max = maxSheetHeight)) {
+    Box(modifier.heightIn(max = maxSheetHeight())) {
         val scrollState = rememberScrollState()
 
         LaunchedEffect(step) { scrollState.scrollTo(0) }

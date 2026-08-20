@@ -18,6 +18,7 @@
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -77,8 +78,9 @@ fun TopicShapeColorBottomSheet(
                 onShapeChange = { onAction(SettingsAction.SetEditingTopicShape(it)) },
                 containerColor = colorScheme.surfaceContainer,
                 modifier = Modifier
-                    .padding(bottom = 16.dp)
+                    .heightIn(max = maxSheetHeight())
                     .verticalScroll(rememberScrollState())
+                    .padding(bottom = 16.dp)
             )
         }
     }

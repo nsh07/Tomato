@@ -115,3 +115,14 @@ fun getNativePackageVersion(semanticVersion: String, versionCode: String): Strin
 
     return "$major.$minor.$versionCode"
 }
+// See the matching note in shared/build.gradle.kts: skiko is pinned to the last version
+// whose Image.encodeToData() signature composenativetray 1.3.3 was compiled against.
+val skikoVersion = libs.versions.skiko.get()
+
+configurations.configureEach {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.skiko") {
+            useVersion(skikoVersion)
+        }
+    }
+}

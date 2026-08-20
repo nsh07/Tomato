@@ -1,0 +1,11 @@
+Improvements:
+- Refreshed topic editing: creation sheet, name field, shape and color pickers, and timer settings UI
+- Settings pages and the navbar are now themed to match the current topic
+- Quicker access to topic settings from the timer screen
+- Translation updates (thanks to Weblate contributors)
+
+Fixes:
+- Fixed dynamic color theme not being respected
+- Fixed huge durations being recorded
+- Editing the timer is now only blocked for the running topic
+- Various small UI fixes

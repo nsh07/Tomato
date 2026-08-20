@@ -117,6 +117,8 @@ fun TopicTimerSettings(
     longBreakTimeInputFieldState: TextFieldState,
     sessionsSliderState: SliderState,
     onAction: (SettingsAction) -> Unit,
+    isPlus: Boolean,
+    setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     inTimerScreen: Boolean = true
 ) {
@@ -205,7 +207,9 @@ fun TopicTimerSettings(
             topic = topic,
             topics = topics,
             setShowSheet = { showColorShapeSheet = it },
-            onAction = onAction
+            onAction = onAction,
+            isPlus = isPlus,
+            setShowPaywall = setShowPaywall
         )
     }
 
@@ -426,7 +430,7 @@ fun TopicTimerProperties(
                     )
                 }
 
-                if (topicId != Topic.DEFAULT_TOPIC_ID) {
+                AnimatedVisibility(topicId != Topic.DEFAULT_TOPIC_ID) {
                     ToggleButton(
                         checked = showDeleteDialog,
                         onCheckedChange = setShowDeleteDialog,
@@ -502,7 +506,9 @@ fun TopicTimerSettingsPreview() {
                 shortBreakTimeInputFieldState = TextFieldState("5"),
                 longBreakTimeInputFieldState = TextFieldState("15"),
                 sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
-                onAction = {}
+                onAction = {},
+                isPlus = false,
+                setShowPaywall = {}
             )
         }
     }
@@ -522,7 +528,9 @@ fun TopicTimerSettingsDarkPreview() {
                 shortBreakTimeInputFieldState = TextFieldState("5"),
                 longBreakTimeInputFieldState = TextFieldState("15"),
                 sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
-                onAction = {}
+                onAction = {},
+                isPlus = false,
+                setShowPaywall = {}
             )
         }
     }

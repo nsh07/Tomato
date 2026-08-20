@@ -298,7 +298,9 @@ fun TimerSettings(
                             shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                             longBreakTimeInputFieldState = longBreakTimeInputFieldState,
                             sessionsSliderState = sessionsSliderState,
-                            onAction = onAction
+                            onAction = onAction,
+                            isPlus = isPlus,
+                            setShowPaywall = setShowPaywall
                         )
                         Spacer(Modifier.height(14.dp))
                     }
@@ -511,7 +513,9 @@ fun TimerSettings(
                 CreateTopicBottomSheet(
                     topics = topics,
                     setShowSheet = { showCreateTopicSheet = it },
-                    onAction = onAction
+                    onAction = onAction,
+                    isPlus = isPlus,
+                    setShowPaywall = setShowPaywall
                 )
             }
         }

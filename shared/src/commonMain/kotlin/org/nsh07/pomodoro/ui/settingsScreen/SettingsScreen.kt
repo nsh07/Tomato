@@ -222,6 +222,8 @@ fun SettingsScreenRoot(
                     longBreakTimeInputFieldState = longBreakTimeInputFieldState,
                     sessionsSliderState = sessionsSliderState,
                     contentPadding = contentPadding,
+                    isPlus = isPlus,
+                    setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,
                     onAction = viewModel::onAction
                 )

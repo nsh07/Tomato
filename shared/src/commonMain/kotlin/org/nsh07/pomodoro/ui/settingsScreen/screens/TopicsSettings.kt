@@ -153,6 +153,8 @@ fun TopicsSettings(
     longBreakTimeInputFieldState: TextFieldState,
     sessionsSliderState: SliderState,
     contentPadding: PaddingValues,
+    isPlus: Boolean,
+    setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
     onAction: (SettingsAction) -> Unit,
     modifier: Modifier = Modifier
@@ -160,7 +162,20 @@ fun TopicsSettings(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val defaultTopicColor = colorScheme.primary
 
-    SeededTheme(editingTopic.color) {
+    var creatingTopic by remember { mutableStateOf(false) }
+    var newTopicName by remember { mutableStateOf("") }
+    var newTopicColor by remember { mutableStateOf(Color.White) }
+    var newTopicShape by remember { mutableStateOf(Topic.defaultTopic.shape) }
+
+    fun resetNewTopic() {
+        newTopicName = ""
+        newTopicColor = Color.White
+        newTopicShape = Topic.defaultTopic.shape
+        creatingTopic = false
+    }
+
+    // While a topic is being created, the screen follows the color picked for the new topic
+    SeededTheme(if (creatingTopic) newTopicColor else editingTopic.color) {
         val colorScheme = colorScheme
         val motionScheme = motionScheme
         val shapes = shapes
@@ -228,18 +243,6 @@ fun TopicsSettings(
                 val minFormat = stringResource(Res.string.minutes_format)
                 val summaryFormat = stringResource(Res.string.topic_summary_format)
                 val lazyColumnState = rememberLazyListState()
-                var creatingTopic by remember { mutableStateOf(false) }
-                var newTopicName by remember { mutableStateOf("") }
-                var newTopicColor by remember { mutableStateOf(Color.White) }
-                var newTopicShape by remember { mutableStateOf(Topic.defaultTopic.shape) }
-
-                fun resetNewTopic() {
-                    newTopicName = ""
-                    newTopicColor = Color.White
-                    newTopicShape = Topic.defaultTopic.shape
-                    creatingTopic = false
-                }
-
                 SharedTransitionLayout {
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -313,77 +316,77 @@ fun TopicsSettings(
                                             )
                                         ) { Icon(painterResource(Res.drawable.add), null) }
                                     }
-                                    else SeededTheme(newTopicColor) {
-                                        Column(
-                                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                                            modifier = Modifier.fillMaxWidth()
-                                        ) {
-                                            Text(
-                                                newTopicText,
-                                                style = typography.titleLargeEmphasized,
-                                                fontFamily = topBarTitle,
-                                                modifier = Modifier
-                                                    .sharedBounds(
-                                                        rememberSharedContentState(newTopicText),
-                                                        this@AnimatedContent
-                                                    )
-                                                    .padding(
-                                                        start = 16.dp,
-                                                        top = 24.dp,
-                                                        end = 16.dp
-                                                    )
-                                            )
-                                            val trimmedNewTopicName = newTopicName.trim()
-                                            val nameTaken = remember(trimmedNewTopicName, topics) {
-                                                topics.any {
-                                                    it.name.equals(
-                                                        trimmedNewTopicName,
-                                                        true
-                                                    )
-                                                }
+                                    else Column(
+                                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            newTopicText,
+                                            style = typography.titleLargeEmphasized,
+                                            fontFamily = topBarTitle,
+                                            modifier = Modifier
+                                                .sharedBounds(
+                                                    rememberSharedContentState(newTopicText),
+                                                    this@AnimatedContent
+                                                )
+                                                .padding(
+                                                    start = 16.dp,
+                                                    top = 24.dp,
+                                                    end = 16.dp
+                                                )
+                                        )
+                                        val trimmedNewTopicName = newTopicName.trim()
+                                        val nameTaken = remember(trimmedNewTopicName, topics) {
+                                            topics.any {
+                                                it.name.equals(
+                                                    trimmedNewTopicName,
+                                                    true
+                                                )
                                             }
+                                        }
 
-                                            TopicShapeColorPicker(
-                                                name = newTopicName,
-                                                onNameValueChange = { newTopicName = it },
-                                                color = newTopicColor,
-                                                shape = newTopicShape,
-                                                nameTaken = nameTaken,
-                                                onNameChange = {},
-                                                onColorChange = { newTopicColor = it },
-                                                onShapeChange = { newTopicShape = it },
-                                                containerColor = colorScheme.surfaceContainer
-                                            )
-                                            Row(
-                                                horizontalArrangement = Arrangement.spacedBy(
-                                                    8.dp,
-                                                    Alignment.End
-                                                ),
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(16.dp)
-                                            ) {
-                                                TextButton(onClick = { resetNewTopic() }) {
-                                                    Text(stringResource(Res.string.cancel))
-                                                }
-                                                Button(
-                                                    onClick = {
-                                                        onAction(
-                                                            SettingsAction.CreateTopic(
-                                                                Topic.defaultTopic.copy(
-                                                                    id = 0,
-                                                                    name = trimmedNewTopicName,
-                                                                    color = newTopicColor,
-                                                                    shape = newTopicShape
-                                                                )
+                                        TopicShapeColorPicker(
+                                            name = newTopicName,
+                                            onNameValueChange = { newTopicName = it },
+                                            color = newTopicColor,
+                                            shape = newTopicShape,
+                                            nameTaken = nameTaken,
+                                            onNameChange = {},
+                                            onColorChange = { newTopicColor = it },
+                                            onShapeChange = { newTopicShape = it },
+                                            isPlus = isPlus,
+                                            setShowPaywall = setShowPaywall,
+                                            containerColor = colorScheme.surfaceContainer
+                                        )
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(
+                                                8.dp,
+                                                Alignment.End
+                                            ),
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp)
+                                        ) {
+                                            TextButton(onClick = { resetNewTopic() }) {
+                                                Text(stringResource(Res.string.cancel))
+                                            }
+                                            Button(
+                                                onClick = {
+                                                    onAction(
+                                                        SettingsAction.CreateTopic(
+                                                            Topic.defaultTopic.copy(
+                                                                id = 0,
+                                                                name = trimmedNewTopicName,
+                                                                color = newTopicColor,
+                                                                shape = newTopicShape
                                                             )
                                                         )
-                                                        resetNewTopic()
-                                                    },
-                                                    enabled = trimmedNewTopicName.isNotEmpty() && !nameTaken
-                                                ) {
-                                                    Text(stringResource(Res.string.add_topic))
-                                                }
+                                                    )
+                                                    resetNewTopic()
+                                                },
+                                                enabled = trimmedNewTopicName.isNotEmpty() && !nameTaken
+                                            ) {
+                                                Text(stringResource(Res.string.add_topic))
                                             }
                                         }
                                     }
@@ -564,6 +567,8 @@ fun TopicsSettings(
                                     longBreakTimeInputFieldState = longBreakTimeInputFieldState,
                                     sessionsSliderState = sessionsSliderState,
                                     onAction = onAction,
+                                    isPlus = isPlus,
+                                    setShowPaywall = setShowPaywall,
                                     modifier = Modifier.padding(
                                         start = 16.dp,
                                         top = 2.dp,
@@ -599,6 +604,8 @@ fun TopicsSettingsPreview() {
             longBreakTimeInputFieldState = TextFieldState("15"),
             sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
             contentPadding = PaddingValues(0.dp),
+            isPlus = false,
+            setShowPaywall = {},
             onBack = {},
             onAction = { action ->
                 when (action) {
@@ -634,6 +641,8 @@ fun TopicsSettingsDarkPreview() {
             longBreakTimeInputFieldState = TextFieldState("15"),
             sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
             contentPadding = PaddingValues(0.dp),
+            isPlus = false,
+            setShowPaywall = {},
             onBack = {},
             onAction = { action ->
                 when (action) {

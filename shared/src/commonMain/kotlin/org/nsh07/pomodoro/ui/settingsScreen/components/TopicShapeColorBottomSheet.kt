@@ -49,6 +49,8 @@ fun TopicShapeColorBottomSheet(
     topics: List<Topic>,
     setShowSheet: (Boolean) -> Unit,
     onAction: (SettingsAction) -> Unit,
+    isPlus: Boolean,
+    setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     SeededTheme(topic.color) {
@@ -75,6 +77,8 @@ fun TopicShapeColorBottomSheet(
                 onNameChange = { onAction(SettingsAction.SetEditingTopicName(it)) },
                 onColorChange = { onAction(SettingsAction.SetEditingTopicColor(it)) },
                 onShapeChange = { onAction(SettingsAction.SetEditingTopicShape(it)) },
+                isPlus = isPlus,
+                setShowPaywall = setShowPaywall,
                 containerColor = colorScheme.surfaceContainer,
                 modifier = Modifier
                     .padding(bottom = 16.dp)
@@ -95,6 +99,8 @@ private fun TopicShapeColorBottomSheetPreview() {
                 topic = topic,
                 topics = listOf(topic),
                 setShowSheet = {},
+                isPlus = true,
+                setShowPaywall = {},
                 onAction = { action ->
                     when (action) {
                         is SettingsAction.SetEditingTopicName -> topic =

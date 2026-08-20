@@ -330,6 +330,8 @@ fun AppScreen(
                                 topics = topics,
                                 setShowSheet = { showCreateTopicSheet = it },
                                 onAction = settingsViewModel::onAction,
+                                isPlus = isPlus,
+                                setShowPaywall = { showPaywall = it },
                                 setAsCurrent = true
                             )
                         }

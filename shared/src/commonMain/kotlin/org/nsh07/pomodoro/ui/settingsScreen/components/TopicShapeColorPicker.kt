@@ -63,7 +63,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
@@ -79,6 +78,9 @@ private const val shapeGridColumns = 5
 private val shapeGridGap = 2.dp
 private val shapeGridRows = TopicShape.entries.chunked(shapeGridColumns)
 
+/** The number of trailing shape grid rows that are only available to Tomato Plus users. */
+private const val plusShapeGridRows = 2
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, FlowPreview::class)
 @Composable
 fun TopicShapeColorPicker(
@@ -90,6 +92,8 @@ fun TopicShapeColorPicker(
     onNameChange: (String) -> Unit,
     onColorChange: (Color) -> Unit,
     onShapeChange: (TopicShape) -> Unit,
+    isPlus: Boolean,
+    setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = colorScheme.surfaceContainer,
     horizontalPadding: Dp = 16.dp
@@ -157,8 +161,17 @@ fun TopicShapeColorPicker(
                 val cellSize =
                     (maxWidth - shapeGridGap * (shapeGridColumns - 1)) / shapeGridColumns
 
+                val firstPlusRow = shapeGridRows.size - plusShapeGridRows
+
                 Column(verticalArrangement = Arrangement.spacedBy(shapeGridGap)) {
-                    shapeGridRows.fastForEach { rowShapes ->
+                    shapeGridRows.fastForEachIndexed { rowIndex, rowShapes ->
+                        val rowEnabled = isPlus || rowIndex < firstPlusRow
+
+                        if (!isPlus && rowIndex == firstPlusRow) PlusDivider(
+                            setShowPaywall = setShowPaywall,
+                            backgroundColor = containerColor
+                        )
+
                         val interactionSources =
                             remember { List(rowShapes.size) { MutableInteractionSource() } }
 
@@ -173,6 +186,7 @@ fun TopicShapeColorPicker(
                                         TopicShapeButton(
                                             topicShape = topicShape,
                                             checked = shape == topicShape,
+                                            enabled = rowEnabled,
                                             interactionSource = interactionSources[index],
                                             onClick = { onShapeChange(topicShape) },
                                             modifier = Modifier
@@ -206,6 +220,7 @@ fun TopicShapeColorPicker(
 private fun TopicShapeButton(
     topicShape: TopicShape,
     checked: Boolean,
+    enabled: Boolean,
     interactionSource: MutableInteractionSource,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -235,6 +250,7 @@ private fun TopicShapeButton(
     FilledIconToggleButton(
         checked = checked,
         onCheckedChange = { onClick() },
+        enabled = enabled,
         shapes = IconButtonDefaults.toggleableShapes(
             shape = shapes.small,
             pressedShape = shapes.large,

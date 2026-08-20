@@ -153,8 +153,6 @@ fun TopicsSettings(
     longBreakTimeInputFieldState: TextFieldState,
     sessionsSliderState: SliderState,
     contentPadding: PaddingValues,
-    isPlus: Boolean,
-    setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
     onAction: (SettingsAction) -> Unit,
     modifier: Modifier = Modifier
@@ -354,8 +352,6 @@ fun TopicsSettings(
                                             onNameChange = {},
                                             onColorChange = { newTopicColor = it },
                                             onShapeChange = { newTopicShape = it },
-                                            isPlus = isPlus,
-                                            setShowPaywall = setShowPaywall,
                                             containerColor = colorScheme.surfaceContainer
                                         )
                                         Row(
@@ -567,8 +563,6 @@ fun TopicsSettings(
                                     longBreakTimeInputFieldState = longBreakTimeInputFieldState,
                                     sessionsSliderState = sessionsSliderState,
                                     onAction = onAction,
-                                    isPlus = isPlus,
-                                    setShowPaywall = setShowPaywall,
                                     modifier = Modifier.padding(
                                         start = 16.dp,
                                         top = 2.dp,
@@ -604,8 +598,6 @@ fun TopicsSettingsPreview() {
             longBreakTimeInputFieldState = TextFieldState("15"),
             sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
             contentPadding = PaddingValues(0.dp),
-            isPlus = false,
-            setShowPaywall = {},
             onBack = {},
             onAction = { action ->
                 when (action) {
@@ -641,8 +633,6 @@ fun TopicsSettingsDarkPreview() {
             longBreakTimeInputFieldState = TextFieldState("15"),
             sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
             contentPadding = PaddingValues(0.dp),
-            isPlus = false,
-            setShowPaywall = {},
             onBack = {},
             onAction = { action ->
                 when (action) {

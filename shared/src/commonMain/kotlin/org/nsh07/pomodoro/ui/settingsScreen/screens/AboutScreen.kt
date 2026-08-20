@@ -49,6 +49,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,6 +69,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.nsh07.pomodoro.BuildKonfig
 import org.nsh07.pomodoro.di.FlavorUI
+import org.nsh07.pomodoro.ui.LocalIsPlus
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.components.LicenseBottomSheet
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
@@ -100,11 +102,12 @@ import tomato.shared.generated.resources.x
 @Composable
 fun AboutScreen(
     contentPadding: PaddingValues,
-    isPlus: Boolean,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     flavorUI: FlavorUI = koinInject()
 ) {
+    val isPlus = LocalIsPlus.current
+
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val uriHandler = LocalUriHandler.current
 
@@ -323,11 +326,12 @@ fun AboutScreen(
 @Composable
 private fun AboutScreenPreview() {
     TomatoTheme(dynamicColor = false) {
-        AboutScreen(
-            contentPadding = PaddingValues(),
-            isPlus = true,
-            onBack = {}
-        )
+        CompositionLocalProvider(LocalIsPlus provides true) {
+            AboutScreen(
+                contentPadding = PaddingValues(),
+                onBack = {}
+            )
+        }
     }
 }
 

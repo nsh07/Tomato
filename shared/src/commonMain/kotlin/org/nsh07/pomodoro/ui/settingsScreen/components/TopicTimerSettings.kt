@@ -117,8 +117,6 @@ fun TopicTimerSettings(
     longBreakTimeInputFieldState: TextFieldState,
     sessionsSliderState: SliderState,
     onAction: (SettingsAction) -> Unit,
-    isPlus: Boolean,
-    setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     inTimerScreen: Boolean = true
 ) {
@@ -207,9 +205,7 @@ fun TopicTimerSettings(
             topic = topic,
             topics = topics,
             setShowSheet = { showColorShapeSheet = it },
-            onAction = onAction,
-            isPlus = isPlus,
-            setShowPaywall = setShowPaywall
+            onAction = onAction
         )
     }
 
@@ -506,9 +502,7 @@ fun TopicTimerSettingsPreview() {
                 shortBreakTimeInputFieldState = TextFieldState("5"),
                 longBreakTimeInputFieldState = TextFieldState("15"),
                 sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
-                onAction = {},
-                isPlus = false,
-                setShowPaywall = {}
+                onAction = {}
             )
         }
     }
@@ -528,9 +522,7 @@ fun TopicTimerSettingsDarkPreview() {
                 shortBreakTimeInputFieldState = TextFieldState("5"),
                 longBreakTimeInputFieldState = TextFieldState("15"),
                 sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
-                onAction = {},
-                isPlus = false,
-                setShowPaywall = {}
+                onAction = {}
             )
         }
     }

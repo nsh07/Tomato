@@ -98,8 +98,6 @@ fun CreateTopicBottomSheet(
     topics: List<Topic>,
     setShowSheet: (Boolean) -> Unit,
     onAction: (SettingsAction) -> Unit,
-    isPlus: Boolean,
-    setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     setAsCurrent: Boolean = false
 ) {
@@ -204,8 +202,6 @@ fun CreateTopicBottomSheet(
                     }
                 },
                 containerColor = colorScheme.surfaceContainer,
-                isPlus = isPlus,
-                setShowPaywall = setShowPaywall,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -238,8 +234,6 @@ private fun CreateTopicSheetContent(
     onBack: () -> Unit,
     onCreate: () -> Unit,
     containerColor: Color,
-    isPlus: Boolean,
-    setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val motionScheme = motionScheme
@@ -297,8 +291,6 @@ private fun CreateTopicSheetContent(
                             onNameChange = {},
                             onColorChange = onColorChange,
                             onShapeChange = onShapeChange,
-                            isPlus = isPlus,
-                            setShowPaywall = setShowPaywall,
                             containerColor = containerColor,
                             modifier = Modifier.padding(top = 8.dp)
                         )
@@ -435,8 +427,6 @@ private fun CreateTopicSheetContentPreview() {
                     onBack = { step = CreateTopicStep.Appearance },
                     onCreate = {},
                     containerColor = colorScheme.surfaceContainer,
-                    isPlus = false,
-                    setShowPaywall = {},
                     modifier = Modifier.fillMaxSize()
                 )
             }

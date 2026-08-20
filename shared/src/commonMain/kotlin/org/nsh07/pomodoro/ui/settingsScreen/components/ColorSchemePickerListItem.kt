@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.ui.LocalIsPlus
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.SeededTheme
@@ -121,10 +122,11 @@ fun ColorSchemePickerListItem(
     color: Color,
     items: Int,
     index: Int,
-    isPlus: Boolean,
     onColorChange: (Color) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isPlus = LocalIsPlus.current
+
     if (androidSdkVersionAtLeast(31)) {
         val checked = color == Color.White
         SegmentedListItem(
@@ -209,7 +211,6 @@ fun ColorSchemePickerListItem(
 
     ColorPickerRow(
         color = color,
-        isPlus = isPlus,
         onColorChange = onColorChange,
         modifier = modifier
     )
@@ -218,16 +219,16 @@ fun ColorSchemePickerListItem(
 @Composable
 fun ColorPickerRow(
     color: Color,
-    isPlus: Boolean,
     onColorChange: (Color) -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = LocalIsPlus.current,
     backgroundColor: Color = animateColorAsState(listItemColors.containerColor).value,
     horizontalPadding: Dp = 48.dp
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(2.dp),
         contentPadding = PaddingValues(horizontal = horizontalPadding),
-        userScrollEnabled = isPlus,
+        userScrollEnabled = enabled,
         modifier = modifier
             .background(
                 backgroundColor,
@@ -239,7 +240,7 @@ fun ColorPickerRow(
             DynamicColorPickerButton(
                 shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
                 checked = color == Color.White,
-                enabled = isPlus,
+                enabled = enabled,
                 onClick = { onColorChange(Color.White) }
             )
         }
@@ -250,7 +251,7 @@ fun ColorPickerRow(
                 color = it.color,
                 colorName = it.name,
                 checked = it.color == color,
-                enabled = isPlus
+                enabled = enabled
             ) {
                 onColorChange(it.color)
             }

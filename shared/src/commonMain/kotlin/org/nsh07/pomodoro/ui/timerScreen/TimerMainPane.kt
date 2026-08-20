@@ -110,6 +110,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.Topic
+import org.nsh07.pomodoro.ui.LocalIsPlus
 import org.nsh07.pomodoro.ui.rememberRequestNotificationPermissionCallback
 import org.nsh07.pomodoro.ui.settingsScreen.screens.sampleTopics
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
@@ -156,7 +157,6 @@ fun SharedTransitionScope.TimerMainPane(
     timerState: TimerState,
     topics: List<Topic>,
     currentTopic: Topic,
-    isPlus: Boolean,
     contentPadding: PaddingValues,
     progress: () -> Float,
     onAction: (TimerAction) -> Unit,
@@ -164,6 +164,8 @@ fun SharedTransitionScope.TimerMainPane(
     onOpenTopicSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isPlus = LocalIsPlus.current
+
     val motionScheme = motionScheme
     val scope = rememberCoroutineScope()
     val haptic = LocalHapticFeedback.current
@@ -763,12 +765,14 @@ fun TimerMainPanePreview() {
             SharedTransitionLayout {
                 AnimatedContent(true) {
                     if (it)
-                        CompositionLocalProvider(LocalNavAnimatedContentScope provides this) {
+                        CompositionLocalProvider(
+                            LocalNavAnimatedContentScope provides this,
+                            LocalIsPlus provides true
+                        ) {
                             TimerMainPane(
                                 timerState = timerState,
                                 topics = sampleTopics,
                                 currentTopic = sampleTopics[5],
-                                isPlus = true,
                                 contentPadding = PaddingValues(),
                                 { 0.3f },
                                 {},

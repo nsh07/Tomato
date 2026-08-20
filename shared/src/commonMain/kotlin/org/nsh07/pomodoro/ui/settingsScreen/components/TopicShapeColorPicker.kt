@@ -69,6 +69,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.TopicShape
+import org.nsh07.pomodoro.ui.LocalIsPlus
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.topic_name
 import tomato.shared.generated.resources.topic_name_taken
@@ -92,12 +93,12 @@ fun TopicShapeColorPicker(
     onNameChange: (String) -> Unit,
     onColorChange: (Color) -> Unit,
     onShapeChange: (TopicShape) -> Unit,
-    isPlus: Boolean,
-    setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = colorScheme.surfaceContainer,
     horizontalPadding: Dp = 16.dp
 ) {
+    val isPlus = LocalIsPlus.current
+
     val currentNameTaken by rememberUpdatedState(nameTaken)
     val currentOnNameChange by rememberUpdatedState(onNameChange)
 
@@ -139,8 +140,8 @@ fun TopicShapeColorPicker(
         )
         ColorPickerRow(
             color,
-            isPlus = true,
             onColorChange = onColorChange,
+            enabled = true,
             backgroundColor = containerColor,
             horizontalPadding = horizontalPadding
         )
@@ -168,7 +169,6 @@ fun TopicShapeColorPicker(
                         val rowEnabled = isPlus || rowIndex < firstPlusRow
 
                         if (!isPlus && rowIndex == firstPlusRow) PlusDivider(
-                            setShowPaywall = setShowPaywall,
                             backgroundColor = containerColor
                         )
 

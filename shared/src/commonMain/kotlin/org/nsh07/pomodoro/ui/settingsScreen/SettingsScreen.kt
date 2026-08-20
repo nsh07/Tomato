@@ -66,7 +66,6 @@ import tomato.shared.generated.resources.settings_filled
 )
 @Composable
 fun SettingsScreenRoot(
-    setShowPaywall: (Boolean) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = koinViewModel()
@@ -82,7 +81,6 @@ fun SettingsScreenRoot(
     val shortBreakTimeInputFieldState = viewModel.shortBreakTimeTextFieldState
     val longBreakTimeInputFieldState = viewModel.longBreakTimeTextFieldState
 
-    val isPlus by viewModel.isPlus.collectAsStateWithLifecycle()
     val serviceRunning by viewModel.serviceRunning.collectAsStateWithLifecycle()
     val currentTopicId by viewModel.currentTopicId.collectAsStateWithLifecycle()
 
@@ -125,10 +123,8 @@ fun SettingsScreenRoot(
                     settingsState = settingsState,
                     contentPadding = contentPadding,
                     currentScreen = backStack.last(),
-                    isPlus = isPlus,
                     onAction = viewModel::onAction,
                     onNavigate = backStack::onTopLevelNavigate,
-                    setShowPaywall = setShowPaywall,
                     modifier = modifier,
                 )
             }
@@ -138,7 +134,6 @@ fun SettingsScreenRoot(
             ) {
                 AboutScreen(
                     contentPadding = contentPadding,
-                    isPlus = isPlus,
                     onBack = backStack::onBack
                 )
             }
@@ -148,10 +143,8 @@ fun SettingsScreenRoot(
             ) {
                 AlarmSettings(
                     settingsState = settingsState,
-                    isPlus = isPlus,
                     contentPadding = contentPadding,
                     onAction = viewModel::onAction,
-                    setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,
                     modifier = modifier
                 )
@@ -163,9 +156,7 @@ fun SettingsScreenRoot(
                 AppearanceSettings(
                     settingsState = settingsState,
                     contentPadding = contentPadding,
-                    isPlus = isPlus,
                     onAction = viewModel::onAction,
-                    setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,
                     modifier = modifier,
                 )
@@ -188,7 +179,6 @@ fun SettingsScreenRoot(
                 val editingTopic by viewModel.editingTopic.collectAsStateWithLifecycle()
 
                 TimerSettings(
-                    isPlus = isPlus,
                     serviceRunning = serviceRunning,
                     currentTopicId = currentTopicId,
                     settingsState = settingsState,
@@ -200,7 +190,6 @@ fun SettingsScreenRoot(
                     topics = topics,
                     editingTopic = editingTopic,
                     onAction = viewModel::onAction,
-                    setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,
                     modifier = modifier,
                 )
@@ -222,8 +211,6 @@ fun SettingsScreenRoot(
                     longBreakTimeInputFieldState = longBreakTimeInputFieldState,
                     sessionsSliderState = sessionsSliderState,
                     contentPadding = contentPadding,
-                    isPlus = isPlus,
-                    setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,
                     onAction = viewModel::onAction
                 )

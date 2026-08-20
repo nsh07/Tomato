@@ -83,10 +83,8 @@ fun SettingsMainScreen(
     settingsState: SettingsState,
     contentPadding: PaddingValues,
     currentScreen: Screen.Settings,
-    isPlus: Boolean,
     onAction: (SettingsAction) -> Unit,
     onNavigate: (Screen.Settings) -> Unit,
-    setShowPaywall: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -136,7 +134,7 @@ fun SettingsMainScreen(
             item { Spacer(Modifier.height(14.dp)) }
 
             item {
-                PlusPromo(isPlus, setShowPaywall)
+                PlusPromo()
             }
 
             item { Spacer(Modifier.height(12.dp)) }
@@ -256,10 +254,8 @@ private fun SettingsMainScreenPreview() {
             settingsState = SettingsState(),
             contentPadding = PaddingValues(),
             currentScreen = Screen.Settings.Main,
-            isPlus = false,
             onAction = {},
-            onNavigate = {},
-            setShowPaywall = {}
+            onNavigate = {}
         )
     }
 }

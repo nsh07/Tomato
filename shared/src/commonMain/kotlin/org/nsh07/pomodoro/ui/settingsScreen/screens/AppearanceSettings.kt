@@ -42,6 +42,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -50,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.ui.LocalIsPlus
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.ColorSchemePickerListItem
@@ -82,12 +84,12 @@ import tomato.shared.generated.resources.settings
 fun AppearanceSettings(
     settingsState: SettingsState,
     contentPadding: PaddingValues,
-    isPlus: Boolean,
     onAction: (SettingsAction) -> Unit,
-    setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isPlus = LocalIsPlus.current
+
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     val widthExpanded = currentWindowAdaptiveInfo()
@@ -161,7 +163,7 @@ fun AppearanceSettings(
                 }
 
                 if (!isPlus) {
-                    item { PlusDivider(setShowPaywall) }
+                    item { PlusDivider() }
                 }
 
                 item {
@@ -169,7 +171,6 @@ fun AppearanceSettings(
                         color = settingsState.colorScheme,
                         items = 3,
                         index = if (isPlus) 1 else 0,
-                        isPlus = isPlus,
                         onColorChange = { onAction(SettingsAction.SaveColorScheme(it)) },
                     )
                 }
@@ -228,13 +229,13 @@ fun AppearanceSettings(
 fun AppearanceSettingsPreview() {
     val settingsState = SettingsState()
     TomatoTheme(dynamicColor = false) {
-        AppearanceSettings(
-            settingsState = settingsState,
-            contentPadding = PaddingValues(),
-            isPlus = true,
-            onAction = {},
-            setShowPaywall = {},
-            onBack = {}
-        )
+        CompositionLocalProvider(LocalIsPlus provides true) {
+            AppearanceSettings(
+                settingsState = settingsState,
+                contentPadding = PaddingValues(),
+                onAction = {},
+                onBack = {}
+            )
+        }
     }
 }

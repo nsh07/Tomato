@@ -112,8 +112,6 @@ fun ApplicationScope.AppWindow(
                         }
                     }
 
-                    val isPlus by settingsViewModel.isPlus.collectAsState()
-
                     val darkTheme = when (settingsState.theme) {
                         "dark" -> true
                         "light" -> false
@@ -138,7 +136,6 @@ fun ApplicationScope.AppWindow(
                         ) {
                             AppScreen(
                                 isAODEnabled = settingsState.aodEnabled,
-                                isPlus = isPlus,
                                 setTimerFrequency = {
                                     stateRepository.timerFrequency = it
                                 }

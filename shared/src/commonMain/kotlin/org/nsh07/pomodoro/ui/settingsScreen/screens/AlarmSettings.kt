@@ -48,7 +48,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -71,6 +71,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.ui.LocalIsPlus
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.rememberRingtoneNameProviderCallback
 import org.nsh07.pomodoro.ui.rememberRingtonePickerLauncherCallback
@@ -130,18 +131,18 @@ import kotlin.math.roundToLong
 @Composable
 fun AlarmSettings(
     settingsState: SettingsState,
-    isPlus: Boolean,
     contentPadding: PaddingValues,
     onAction: (SettingsAction) -> Unit,
-    setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isPlus = LocalIsPlus.current
+
     val scope = rememberCoroutineScope()
     val inspectionMode = LocalInspectionMode.current // used to show all features in preview
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    val widthExpanded = currentWindowAdaptiveInfo()
+    val widthExpanded = currentWindowAdaptiveInfoV2()
         .windowSizeClass
         .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
 
@@ -344,7 +345,7 @@ fun AlarmSettings(
                 }
 
                 if (hasVibrator) {
-                    if (!isPlus) item { PlusDivider(setShowPaywall) }
+                    if (!isPlus) item { PlusDivider() }
                     else item { Spacer(Modifier.height(12.dp)) }
 
                     item {
@@ -484,9 +485,7 @@ fun AlarmSettingsPreview() {
         AlarmSettings(
             settingsState = settingsState,
             contentPadding = PaddingValues(),
-            isPlus = false,
             onAction = {},
-            setShowPaywall = {},
             onBack = {}
         )
     }

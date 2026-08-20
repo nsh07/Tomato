@@ -32,11 +32,13 @@ import androidx.compose.material3.adaptive.layout.SupportingPaneScaffoldDefaults
 import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
 import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import org.nsh07.pomodoro.data.Topic
+import org.nsh07.pomodoro.ui.LocalIsPlus
 import org.nsh07.pomodoro.ui.androidSystemGestureExclusion
 import org.nsh07.pomodoro.ui.settingsScreen.screens.sampleTopics
 import org.nsh07.pomodoro.ui.theme.SeededTheme
@@ -54,7 +56,6 @@ fun SharedTransitionScope.TimerScreen(
     timerState: TimerState,
     topics: List<Topic>,
     currentTopic: Topic,
-    isPlus: Boolean,
     contentPadding: PaddingValues,
     progress: () -> Float,
     onAction: (TimerAction) -> Unit,
@@ -77,7 +78,6 @@ fun SharedTransitionScope.TimerScreen(
                         timerState = timerState,
                         currentTopic = currentTopic,
                         topics = topics,
-                        isPlus = isPlus,
                         contentPadding = contentPadding,
                         progress = progress,
                         onAction = onAction,
@@ -126,17 +126,18 @@ fun TimerScreenPreview() {
     TomatoTheme {
         Surface {
             SharedTransitionLayout {
-                TimerScreen(
-                    timerState = timerState,
-                    topics = sampleTopics,
-                    currentTopic = sampleTopics[5],
-                    isPlus = true,
-                    contentPadding = PaddingValues(),
-                    { 0.3f },
-                    onAction = {},
-                    onAddTopic = {},
-                    onOpenTopicSettings = {}
-                )
+                CompositionLocalProvider(LocalIsPlus provides true) {
+                    TimerScreen(
+                        timerState = timerState,
+                        topics = sampleTopics,
+                        currentTopic = sampleTopics[5],
+                        contentPadding = PaddingValues(),
+                        { 0.3f },
+                        onAction = {},
+                        onAddTopic = {},
+                        onOpenTopicSettings = {}
+                    )
+                }
             }
         }
     }

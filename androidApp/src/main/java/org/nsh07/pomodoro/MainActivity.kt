@@ -62,7 +62,6 @@ class MainActivity : ComponentActivity() {
 
             val seed = settingsState.colorScheme
 
-            val isPlus by settingsViewModel.isPlus.collectAsStateWithLifecycle()
 
             TomatoTheme(
                 darkTheme = darkTheme,
@@ -75,7 +74,6 @@ class MainActivity : ComponentActivity() {
                 }
 
                 AppScreen(
-                    isPlus = isPlus,
                     isAODEnabled = settingsState.aodEnabled,
                     setTimerFrequency = {
                         stateRepository.timerFrequency = it

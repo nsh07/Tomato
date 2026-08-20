@@ -79,6 +79,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
+import org.nsh07.pomodoro.ui.LocalIsPlus
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.CreateTopicBottomSheet
@@ -129,7 +130,6 @@ import tomato.shared.generated.resources.view_day
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TimerSettings(
-    isPlus: Boolean,
     serviceRunning: Boolean,
     currentTopicId: Long,
     settingsState: SettingsState,
@@ -141,10 +141,11 @@ fun TimerSettings(
     topics: List<Topic>,
     editingTopic: Topic,
     onAction: (SettingsAction) -> Unit,
-    setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isPlus = LocalIsPlus.current
+
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     SeededTheme(editingTopic.color) {
@@ -298,9 +299,7 @@ fun TimerSettings(
                             shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
                             longBreakTimeInputFieldState = longBreakTimeInputFieldState,
                             sessionsSliderState = sessionsSliderState,
-                            onAction = onAction,
-                            isPlus = isPlus,
-                            setShowPaywall = setShowPaywall
+                            onAction = onAction
                         )
                         Spacer(Modifier.height(14.dp))
                     }
@@ -427,7 +426,7 @@ fun TimerSettings(
 
                     if (!isPlus) {
                         item {
-                            PlusDivider(setShowPaywall)
+                            PlusDivider()
                         }
                         itemsIndexed(switchItems) { index, item ->
                             ListItem(
@@ -513,9 +512,7 @@ fun TimerSettings(
                 CreateTopicBottomSheet(
                     topics = topics,
                     setShowSheet = { showCreateTopicSheet = it },
-                    onAction = onAction,
-                    isPlus = isPlus,
-                    setShowPaywall = setShowPaywall
+                    onAction = onAction
                 )
             }
         }
@@ -537,7 +534,6 @@ private fun TimerSettingsPreview() {
     TomatoTheme(dynamicColor = false) {
         Surface(Modifier.fillMaxSize()) {
             TimerSettings(
-                isPlus = false,
                 serviceRunning = false,
                 currentTopicId = defaultTopic.id,
                 settingsState = remember { SettingsState() },
@@ -554,7 +550,6 @@ private fun TimerSettingsPreview() {
                 ),
                 editingTopic = defaultTopic.copy(id = 3, name = "Math"),
                 onAction = {},
-                setShowPaywall = {},
                 onBack = {}
             )
         }

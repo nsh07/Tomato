@@ -119,26 +119,32 @@ class TimerService : Service(), KoinComponent {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent == null) {
+            stopForegroundService()
+            return START_NOT_STICKY
+        }
+
         if (glanceId == null) {
-            val widgetId = intent?.getIntExtra(
+            val widgetId = intent.getIntExtra(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID
-            ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
+            )
 
             glanceId = if (widgetId == AppWidgetManager.INVALID_APPWIDGET_ID) null
             else widgetManager.getGlanceIdBy(widgetId)
         }
 
-        when (intent?.action) {
-            Actions.TOGGLE.toString() -> {
-                try {
-                    startForegroundService()
-                    toggleTimer()
-                } catch (e: Exception) {
-                    Log.e("TimerService", "Cannot start service: ${e.message}")
-                    e.printStackTrace()
-                }
+        if (intent.action != Actions.UPDATE_ALARM_TONE.toString()) {
+            try {
+                startForegroundService()
+            } catch (e: Exception) {
+                Log.e("TimerService", "Cannot start service in foreground: ${e.message}")
+                e.printStackTrace()
             }
+        }
+
+        when (intent.action) {
+            Actions.TOGGLE.toString() -> toggleTimer()
 
             Actions.RESET.toString() -> {
                 if (_timerState.value.timerRunning) toggleTimer()
@@ -165,7 +171,7 @@ class TimerService : Service(), KoinComponent {
 
             Actions.UPDATE_ALARM_TONE.toString() -> updateAlarmTone()
         }
-        return super.onStartCommand(intent, flags, startId)
+        return START_NOT_STICKY
     }
 
     private fun toggleTimer() {

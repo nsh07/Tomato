@@ -23,48 +23,29 @@ import android.util.Log
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 
 /**
- * Helper class that holds a reference to [Context] and helps call [Context.startService] in
+ * Helper class that holds a reference to [Context] and helps call
+ * [Context.startForegroundService] in
  * [androidx.lifecycle.ViewModel]s. This class must be managed by an [android.app.Application] class
  * to scope it to the Activity's lifecycle and prevent leaks.
  */
 class AndroidTimerHelper(private val context: Context) : TimerHelper {
     override fun onAction(action: TimerAction) {
+        val serviceAction = when (action) {
+            TimerAction.ResetTimer -> TimerService.Actions.RESET
+            TimerAction.UndoReset -> TimerService.Actions.UNDO_RESET
+            is TimerAction.SkipTimer -> TimerService.Actions.SKIP
+            TimerAction.StopAlarm -> TimerService.Actions.STOP_ALARM
+            TimerAction.ToggleTimer -> TimerService.Actions.TOGGLE
+            else -> {
+                Log.e("StartService", "Invalid action: $action")
+                return
+            }
+        }
+
         try {
-            when (action) {
-                TimerAction.ResetTimer ->
-                    Intent(context, TimerService::class.java).also {
-                        it.action = TimerService.Actions.RESET.toString()
-                        context.startService(it)
-                    }
-
-                TimerAction.UndoReset ->
-                    Intent(context, TimerService::class.java).also {
-                        it.action = TimerService.Actions.UNDO_RESET.toString()
-                        context.startService(it)
-                    }
-
-                is TimerAction.SkipTimer ->
-                    Intent(context, TimerService::class.java).also {
-                        it.action = TimerService.Actions.SKIP.toString()
-                        context.startService(it)
-                    }
-
-                TimerAction.StopAlarm ->
-                    Intent(context, TimerService::class.java).also {
-                        it.action =
-                            TimerService.Actions.STOP_ALARM.toString()
-                        context.startService(it)
-                    }
-
-                TimerAction.ToggleTimer ->
-                    Intent(context, TimerService::class.java).also {
-                        it.action = TimerService.Actions.TOGGLE.toString()
-                        context.startService(it)
-                    }
-
-                else -> {
-                    Log.e("StartService", "Invalid action: $action")
-                }
+            Intent(context, TimerService::class.java).also {
+                it.action = serviceAction.toString()
+                context.startForegroundService(it)
             }
         } catch (e: Exception) {
             Log.e("StartService", "Cannot start service with action $action: ${e.message}")

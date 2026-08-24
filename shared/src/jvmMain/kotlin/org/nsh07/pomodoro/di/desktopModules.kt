@@ -91,7 +91,7 @@ val servicesModule = module {
     single<AppPreferenceRepository>() bind PreferenceRepository::class
     single<StateRepository>()
     single<DesktopTimerHelper>() bind TimerHelper::class
-    single<TimerManager> { TimerManager(get(), get()) { System.nanoTime() / 1_000_000L } }
+    single<TimerManager> { TimerManager(get(), get(), { System.nanoTime() / 1_000_000L }) }
 
     single<ActivityCallbacks>()
 }

@@ -37,6 +37,11 @@ class TimerManager(
     private val stateRepository: StateRepository,
     private val statRepository: StatRepository,
     private val currentTime: () -> Long,
+    /**
+     * Platform hook that schedules a wakeup at the given value of [currentTime], or cancels the
+     * pending wakeup when passed `null`. The wakeup must call [expireIntervalIfDue].
+     */
+    private val setExpiryAlarm: (triggerTime: Long?) -> Unit = {},
 ) {
     private val _timerState by lazy { stateRepository.timerState }
 
@@ -58,6 +63,7 @@ class TimerManager(
     private val timerStateSnapshot by lazy { stateRepository.timerStateSnapshot }
     private var hasSnapshot = false
     private val saveLock = Mutex()
+    private val expiryLock = Mutex()
 
     private var timerJob: Job? = null
 
@@ -69,6 +75,36 @@ class TimerManager(
         if (startTime == 0L) return 0L
         val now = if (pauseTime != 0L) pauseTime else currentTime()
         return (now - startTime - pauseDuration).coerceAtLeast(0L)
+    }
+
+    /** Time left in the current interval. Negative once the interval is over. */
+    private fun remainingInInterval(): Long {
+        val currentTopic = stateRepository.currentTopic.value
+        val timerState = _timerState.value
+        val elapsed = elapsedInInterval()
+
+        return when (timerState.timerMode) {
+            TimerMode.FOCUS ->
+                if (!timerState.infiniteFocus) currentTopic.focusTime - elapsed
+                else Long.MAX_VALUE - elapsed
+
+            TimerMode.SHORT_BREAK -> currentTopic.shortBreakTime - elapsed
+
+            else -> currentTopic.longBreakTime - elapsed
+        }
+    }
+
+    private fun updateExpiryAlarm() {
+        val timerState = _timerState.value
+        val remaining = remainingInInterval()
+        val infiniteFocus = timerState.infiniteFocus && timerState.timerMode == TimerMode.FOCUS
+
+        // `remaining` is close to Long.MAX_VALUE for an infinite focus interval, which would
+        // overflow when added to the current time
+        setExpiryAlarm(
+            if (timerState.timerRunning && !infiniteFocus) currentTime() + remaining.coerceAtLeast(0)
+            else null
+        )
     }
 
     /**
@@ -130,12 +166,14 @@ class TimerManager(
             _timerState.update { currentState ->
                 currentState.copy(timerRunning = false)
             }
+            updateExpiryAlarm()
         } else {
             if (_timerState.value.timerMode == TimerMode.FOCUS) setDoNotDisturb(true)
             else setDoNotDisturb(false)
             onStart()
             _timerState.update { it.copy(timerRunning = true) }
             resumeInterval()
+            updateExpiryAlarm()
 
             var iterations = -1
             var notificationUpdateCounter = -1
@@ -145,19 +183,8 @@ class TimerManager(
                 while (true) {
                     if (!_timerState.value.timerRunning) break
 
-                    val currentTopic = stateRepository.currentTopic.value
-                    val timerState = _timerState.value
                     val elapsed = elapsedInInterval()
-
-                    val focusTime =
-                        if (!timerState.infiniteFocus) currentTopic.focusTime else Long.MAX_VALUE
-                    time = when (timerState.timerMode) {
-                        TimerMode.FOCUS -> focusTime - elapsed
-
-                        TimerMode.SHORT_BREAK -> currentTopic.shortBreakTime - elapsed
-
-                        else -> currentTopic.longBreakTime - elapsed
-                    }
+                    time = remainingInInterval()
 
                     val freq = stateRepository.timerFrequency.toInt().coerceAtLeast(1)
 
@@ -172,16 +199,7 @@ class TimerManager(
                     }
 
                     if (time < 0) {
-                        // The next interval must not start counting until the timer is started again
-                        advanceTimer(
-                            onStart = onTimerExpired,
-                            onCompletion = onSkipComplete,
-                            setDoNotDisturb = setDoNotDisturb,
-                            startNextInterval = false
-                        )
-                        _timerState.update { currentState ->
-                            currentState.copy(timerRunning = false)
-                        }
+                        expireIntervalIfDue(onTimerExpired, onSkipComplete, setDoNotDisturb)
                         break
                     } else {
                         _timerState.update { currentState ->
@@ -201,6 +219,38 @@ class TimerManager(
         }
 
         onStateChanged()
+    }
+
+    /**
+     * Ends the current interval if its time has run out, leaving the timer paused at the start of
+     * the next one.
+     *
+     * The timer loop and the expiry alarm both call this, so the check and the advance happen
+     * together under [expiryLock]. A caller that arrives second, or with a stale alarm, finds
+     * nothing left to do.
+     *
+     * @return whether this call was the one that ended the interval
+     */
+    suspend fun expireIntervalIfDue(
+        onTimerExpired: suspend () -> Unit,
+        onSkipComplete: suspend () -> Unit,
+        setDoNotDisturb: (Boolean) -> Unit,
+    ): Boolean = expiryLock.withLock {
+        if (!_timerState.value.timerRunning || remainingInInterval() > 0) return@withLock false
+
+        // The next interval must not start counting until the timer is started again
+        advanceTimer(
+            onStart = onTimerExpired,
+            onCompletion = onSkipComplete,
+            setDoNotDisturb = setDoNotDisturb,
+            startNextInterval = false
+        )
+        _timerState.update { currentState ->
+            currentState.copy(timerRunning = false)
+        }
+        updateExpiryAlarm()
+
+        true
     }
 
     /**
@@ -246,12 +296,15 @@ class TimerManager(
         onStart: suspend () -> Unit,
         onCompletion: suspend () -> Unit,
         setDoNotDisturb: (Boolean) -> Unit
-    ) = advanceTimer(
-        onStart = onStart,
-        onCompletion = onCompletion,
-        setDoNotDisturb = setDoNotDisturb,
-        startNextInterval = _timerState.value.timerRunning
-    )
+    ) {
+        advanceTimer(
+            onStart = onStart,
+            onCompletion = onCompletion,
+            setDoNotDisturb = setDoNotDisturb,
+            startNextInterval = _timerState.value.timerRunning
+        )
+        updateExpiryAlarm()
+    }
 
     /**
      * See [skipTimer].
@@ -359,6 +412,8 @@ class TimerManager(
             )
         }
 
+        updateExpiryAlarm()
+
         onCompletion()
     }
 
@@ -371,6 +426,7 @@ class TimerManager(
         pauseTime = timerStateSnapshot.pauseTime
         pauseDuration = timerStateSnapshot.pauseDuration
         _timerState.update { timerStateSnapshot.timerState }
+        updateExpiryAlarm()
     }
 
     private companion object {

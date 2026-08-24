@@ -94,6 +94,8 @@ class TimerService : Service(), KoinComponent {
 
     private lateinit var notificationStyle: NotificationCompat.ProgressStyle
 
+    private var foreground = false
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
@@ -134,16 +136,13 @@ class TimerService : Service(), KoinComponent {
             else widgetManager.getGlanceIdBy(widgetId)
         }
 
-        if (intent.action != Actions.UPDATE_ALARM_TONE.toString()) {
-            try {
-                startForegroundService()
-            } catch (e: Exception) {
-                Log.e("TimerService", "Cannot start service in foreground: ${e.message}")
-                e.printStackTrace()
-            }
-        }
+        val action = intent.action
 
-        when (intent.action) {
+        // EXPIRE and UPDATE_ALARM_TONE arrive through plain startService()
+        if (action != Actions.EXPIRE.toString() && action != Actions.UPDATE_ALARM_TONE.toString())
+            startForegroundService()
+
+        when (action) {
             Actions.TOGGLE.toString() -> toggleTimer()
 
             Actions.RESET.toString() -> {
@@ -165,6 +164,23 @@ class TimerService : Service(), KoinComponent {
                     },
                     setDoNotDisturb = ::setDoNotDisturb
                 )
+            }
+
+            Actions.EXPIRE.toString() -> skipScope.launch {
+                val expired = timerManager.expireIntervalIfDue(
+                    onTimerExpired = {
+                        startForegroundService()
+                        showTimerNotification(0, paused = true, complete = true)
+                    },
+                    onSkipComplete = {
+                        updateProgressSegments()
+                        updateWidget()
+                    },
+                    setDoNotDisturb = ::setDoNotDisturb
+                )
+                // A service that was never promoted only exists because of a stale alarm
+                if (expired) updateQSTile()
+                else if (!foreground) stopSelf()
             }
 
             Actions.STOP_ALARM.toString() -> stopAlarm()
@@ -466,10 +482,17 @@ class TimerService : Service(), KoinComponent {
     }
 
     private fun startForegroundService() {
-        startForeground(1, notificationBuilder.build())
+        try {
+            startForeground(1, notificationBuilder.build())
+            foreground = true
+        } catch (e: Exception) {
+            Log.e("TimerService", "Cannot start service in foreground: ${e.message}")
+            e.printStackTrace()
+        }
     }
 
     private fun stopForegroundService() {
+        foreground = false
         notificationManager.cancel(1)
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
@@ -481,6 +504,6 @@ class TimerService : Service(), KoinComponent {
     }
 
     enum class Actions {
-        TOGGLE, SKIP, RESET, UNDO_RESET, STOP_ALARM, UPDATE_ALARM_TONE
+        TOGGLE, SKIP, RESET, UNDO_RESET, EXPIRE, STOP_ALARM, UPDATE_ALARM_TONE
     }
 }

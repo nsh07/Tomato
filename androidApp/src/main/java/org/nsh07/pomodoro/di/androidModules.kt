@@ -43,6 +43,7 @@ import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.data.TopicRepository
 import org.nsh07.pomodoro.service.AndroidTimerHelper
+import org.nsh07.pomodoro.service.ExpiryAlarmScheduler
 import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.service.TimerManager
 import org.nsh07.pomodoro.service.addTimerActions
@@ -56,7 +57,10 @@ val servicesModule = module {
     single<AppPreferenceRepository>() bind PreferenceRepository::class
     single<StateRepository>()
     single<AndroidTimerHelper>() bind TimerHelper::class
-    single<TimerManager> { TimerManager(get(), get(), SystemClock::elapsedRealtime) }
+    single<ExpiryAlarmScheduler>()
+    single<TimerManager> {
+        TimerManager(get(), get(), SystemClock::elapsedRealtime, get<ExpiryAlarmScheduler>()::set)
+    }
 
     single { NotificationManagerCompat.from(get()) }
     single { create(::createNotificationManager) }

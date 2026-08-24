@@ -32,6 +32,8 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -64,6 +66,9 @@ class TimerManagerTest {
 
     private val loopScope = CoroutineScope(NeverDispatcher)
 
+    /** The wakeup the platform has been asked to schedule, or null if cancelled */
+    private var scheduledExpiry: Long? = null
+
     @BeforeTest
     fun setUp() = runBlocking {
         statRepository = FakeStatRepository()
@@ -76,7 +81,10 @@ class TimerManagerTest {
         withTimeout(TIMEOUT.milliseconds) {
             while (stateRepository.timerState.value.totalTime != topic.focusTime) yield()
         }
-        timerManager = TimerManager(stateRepository, statRepository) { clock }
+        scheduledExpiry = null
+        timerManager = TimerManager(stateRepository, statRepository, { clock }) {
+            scheduledExpiry = it
+        }
     }
 
     @Test
@@ -223,6 +231,91 @@ class TimerManagerTest {
         )
     }
 
+    @Test
+    fun `starting the timer schedules the expiry alarm at the end of the interval`() = runBlocking {
+        timerManager.toggle()
+        assertEquals(clock + topic.focusTime, scheduledExpiry)
+    }
+
+    @Test
+    fun `pausing cancels the expiry alarm`() = runBlocking {
+        timerManager.toggle()
+        clock += 5 * MINUTE
+
+        timerManager.toggle() // pause
+        assertNull(scheduledExpiry)
+    }
+
+    @Test
+    fun `resuming schedules the expiry alarm for the time left`() = runBlocking {
+        timerManager.toggle()
+        clock += 10 * MINUTE
+        timerManager.toggle() // pause
+        clock += 3 * 60 * MINUTE // the user goes away for three hours
+
+        timerManager.toggle() // resume
+        assertEquals(clock + topic.focusTime - 10 * MINUTE, scheduledExpiry)
+    }
+
+    /** [NeverDispatcher] stands in for a suspended device, where the timer loop does not run */
+    @Test
+    fun `the expiry alarm ends the interval while the timer loop is not running`() = runBlocking {
+        timerManager.toggle()
+        clock += topic.focusTime + 1
+
+        assertTrue(timerManager.expire(), "the alarm did not end the interval")
+        assertEquals(TimerMode.SHORT_BREAK, stateRepository.timerState.value.timerMode)
+        assertFalse(stateRepository.timerState.value.timerRunning)
+        assertEquals(topic.focusTime, statRepository.focusTime)
+        assertNull(scheduledExpiry)
+    }
+
+    @Test
+    fun `an interval expires the moment its last millisecond is up`() = runBlocking {
+        timerManager.toggle()
+        clock += topic.focusTime
+
+        assertTrue(timerManager.expire())
+        assertEquals(TimerMode.SHORT_BREAK, stateRepository.timerState.value.timerMode)
+    }
+
+    @Test
+    fun `an interval that is not over yet does not expire`() = runBlocking {
+        timerManager.toggle()
+        clock += MINUTE
+
+        assertFalse(timerManager.expire())
+        assertEquals(TimerMode.FOCUS, stateRepository.timerState.value.timerMode)
+    }
+
+    @Test
+    fun `a stale expiry alarm left over from a pause does nothing`() = runBlocking {
+        timerManager.toggle()
+        clock += 5 * MINUTE
+        timerManager.toggle() // pause
+        clock += topic.focusTime // long enough that the interval would have been over
+
+        assertFalse(timerManager.expire())
+        assertEquals(TimerMode.FOCUS, stateRepository.timerState.value.timerMode)
+
+        timerManager.saveTimeToDb()
+        assertEquals(5 * MINUTE, statRepository.focusTime)
+    }
+
+    @Test
+    fun `an interval cannot expire twice`() = runBlocking {
+        timerManager.toggle()
+        clock += topic.focusTime + 1
+
+        assertTrue(timerManager.expire())
+        assertFalse(timerManager.expire(), "the interval expired a second time")
+
+        // A second advance would have moved on to the next focus interval
+        assertEquals(TimerMode.SHORT_BREAK, stateRepository.timerState.value.timerMode)
+        assertEquals(topic.focusTime, statRepository.focusTime)
+        assertEquals(0L, statRepository.breakTime)
+    }
+
     private fun TimerManager.toggle() = toggleTimer(
         scope = loopScope,
         onPause = {},
@@ -236,6 +329,9 @@ class TimerManagerTest {
 
     private suspend fun TimerManager.skip() =
         skipTimer(onStart = {}, onCompletion = {}, setDoNotDisturb = {})
+
+    private suspend fun TimerManager.expire() =
+        expireIntervalIfDue(onTimerExpired = {}, onSkipComplete = {}, setDoNotDisturb = {})
 
     private companion object {
         const val MINUTE = 60_000L

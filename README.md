@@ -132,7 +132,7 @@ or [my BuyMeACoffee page](https://coff.ee/nsh07):
 
 ## Special Thanks
 
-Lots of thanks to Dimu ([@pdimu](https://github.com/pdimu) on GitHub) for helping through the designing of multiple features from versions 2.0 and onwards
+Many thanks to Dimu ([@pdimu](https://github.com/pdimu) on GitHub) for helping design multiple features starting with version 2.0.
 
 This app was made possible by these awesome libraries:
 

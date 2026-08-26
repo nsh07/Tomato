@@ -17,9 +17,6 @@
 
 <resources>
 
-    <style name="Theme.Tomato" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Tomato" parent="android:Theme.Material.NoActionBar" />
 
-    <style name="Theme.Tomato.Splash" parent="Theme.Tomato">
-        <item name="android:windowBackground">@color/splash_background</item>
-    </style>
 </resources>

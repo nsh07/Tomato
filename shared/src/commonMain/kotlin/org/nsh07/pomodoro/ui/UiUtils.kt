@@ -112,7 +112,7 @@ expect fun rememberRingtoneNameProviderCallback(): suspend (String?) -> String
  * minor modifications, namely the reduction of horizontalPartitionSpacerSize to 0.dp)
  *
  * Calculates the recommended [PaneScaffoldDirective] from a given [WindowAdaptiveInfo]. Use this
- * method with [androidx.compose.material3.adaptive.currentWindowAdaptiveInfo] to acquire
+ * method with [androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2] to acquire
  * Material-recommended adaptive layout settings of the current activity window.
  *
  * See more details on the [Material design guideline site]

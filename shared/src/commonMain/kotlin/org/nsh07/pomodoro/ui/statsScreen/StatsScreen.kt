@@ -27,7 +27,7 @@ import androidx.compose.animation.veilOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.detailPane
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.listPane
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
@@ -97,7 +97,7 @@ fun StatsScreenRoot(
             },
             sceneStrategies = listOf(
                 rememberListDetailSceneStrategy(
-                    directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
+                    directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())
                 )
             ),
             entryProvider = entryProvider {

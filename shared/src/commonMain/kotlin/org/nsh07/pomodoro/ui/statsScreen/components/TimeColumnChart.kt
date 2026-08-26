@@ -44,7 +44,7 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
 import com.patrykandpatrick.vico.compose.cartesian.decoration.HorizontalLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.ColumnCartesianLayerMarkerTarget
@@ -199,7 +199,7 @@ fun TimeColumnChart(
             zoomState = zoomState,
             scrollState = scrollState,
             animationSpec = animationSpec,
-            animateIn = false,
+            initialAnimationSpec = null,
             modifier = modifier.height(226.dp),
         )
     }
@@ -215,7 +215,7 @@ private fun TimeColumnChartPreview() {
             values.add((0..120).random() * 60 * 1000)
         }
         modelProducer.runTransaction {
-            columnSeries {
+            columnModel {
                 series(values)
             }
         }

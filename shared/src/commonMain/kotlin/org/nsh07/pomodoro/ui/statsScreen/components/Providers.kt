@@ -31,7 +31,6 @@ class Providers {
         ) : ColumnCartesianLayer.ColumnProvider {
             override fun getColumn(
                 entry: ColumnCartesianLayerModel.Entry,
-                seriesIndex: Int,
                 extraStore: ExtraStore,
             ): LineComponent {
                 return if (entry.y < limit) belowLimitComponent
@@ -39,6 +38,7 @@ class Providers {
             }
 
             override fun getWidestSeriesColumn(
+                seriesKey: Any,
                 seriesIndex: Int,
                 extraStore: ExtraStore
             ): LineComponent {

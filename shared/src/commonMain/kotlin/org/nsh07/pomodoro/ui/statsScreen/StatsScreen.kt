@@ -58,6 +58,7 @@ import tomato.shared.generated.resources.hours_and_minutes_format
 import tomato.shared.generated.resources.hours_format
 import tomato.shared.generated.resources.minutes_format
 import tomato.shared.generated.resources.query_stats
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -78,7 +79,7 @@ fun StatsScreenRoot(
     var chartsVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        delay(300)
+        delay(300.milliseconds)
         chartsVisible = true
     }
 

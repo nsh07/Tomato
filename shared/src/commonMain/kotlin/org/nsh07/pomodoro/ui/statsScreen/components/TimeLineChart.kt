@@ -45,7 +45,7 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.lineModel
 import com.patrykandpatrick.vico.compose.cartesian.decoration.HorizontalLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
@@ -210,7 +210,7 @@ fun TimeLineChart(
             zoomState = zoomState,
             scrollState = scrollState,
             animationSpec = animationSpec,
-            animateIn = false,
+            initialAnimationSpec = null,
             modifier = modifier.height(224.dp),
         )
     }
@@ -227,7 +227,7 @@ private fun TimeLineChartPreview() {
             values.add((0..120).random() * 60 * 1000)
         }
         modelProducer.runTransaction {
-            lineSeries {
+            lineModel {
                 series(values)
             }
         }

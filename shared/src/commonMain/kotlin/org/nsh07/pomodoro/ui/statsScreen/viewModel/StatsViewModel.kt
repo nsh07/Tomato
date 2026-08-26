@@ -28,8 +28,8 @@ import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.compose.cartesian.Zoom
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
-import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
+import com.patrykandpatrick.vico.compose.cartesian.data.lineModel
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -124,7 +124,7 @@ class StatsViewModel(
                 val values = reversed.map { it.totalFocusTime() }
 
                 lastWeekChartProducer.runTransaction {
-                    columnSeries { series(values) }
+                    columnModel { series(values) }
                     extras { it[lastWeekXLabelKey] = keys }
                 }
             }
@@ -137,7 +137,7 @@ class StatsViewModel(
                 val values = reversed.map { it.totalFocusTime() }
 
                 lastMonthChartProducer.runTransaction {
-                    columnSeries { series(values) }
+                    columnModel { series(values) }
                     extras { it[lastMonthXLabelKey] = keys }
                 }
             }
@@ -150,7 +150,7 @@ class StatsViewModel(
                 val values = reversed.map { it.totalFocusTime() }
 
                 lastYearChartProducer.runTransaction {
-                    lineSeries { series(values) }
+                    lineModel { series(values) }
                     extras { it[lastYearXLabelKey] = keys }
                 }
             }

@@ -70,7 +70,7 @@ import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -327,7 +327,7 @@ fun SharedTransitionScope.LastYearScreen(
                         AnimatedVisibility(breakdownChartExpanded) {
                             LaunchedEffect(focusBreakdownValues.first) {
                                 lastYearSummaryAnalysisModelProducer.runTransaction {
-                                    columnSeries {
+                                    columnModel {
                                         series(focusBreakdownValues.first)
                                     }
                                 }

@@ -40,11 +40,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.ui.performConfirm
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.cancel
@@ -66,6 +68,8 @@ fun DeleteTopicDialog(
     onDeleteTopicAndStats: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val haptic = LocalHapticFeedback.current
+
     BasicAlertDialog(
         onDismissRequest = onDismiss,
         modifier = modifier
@@ -111,7 +115,10 @@ fun DeleteTopicDialog(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     TextButton(
-                        onClick = onDeleteTopic,
+                        onClick = {
+                            haptic.performConfirm()
+                            onDeleteTopic()
+                        },
                         shapes = ButtonDefaults.shapes(),
                         colors = ButtonDefaults.textButtonColors(
                             contentColor = colorScheme.error
@@ -119,7 +126,10 @@ fun DeleteTopicDialog(
                     ) { Text(stringResource(Res.string.delete_topic)) }
 
                     TextButton(
-                        onClick = onDeleteTopicAndStats,
+                        onClick = {
+                            haptic.performConfirm()
+                            onDeleteTopicAndStats()
+                        },
                         shapes = ButtonDefaults.shapes(),
                         colors = ButtonDefaults.textButtonColors(
                             contentColor = colorScheme.error

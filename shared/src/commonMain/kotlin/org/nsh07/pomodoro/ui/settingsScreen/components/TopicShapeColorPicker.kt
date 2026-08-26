@@ -61,6 +61,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
@@ -70,6 +71,7 @@ import kotlinx.coroutines.flow.drop
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.ui.LocalIsPlus
+import org.nsh07.pomodoro.ui.performSegmentTick
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.topic_name
 import tomato.shared.generated.resources.topic_name_taken
@@ -225,6 +227,7 @@ private fun TopicShapeButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val haptic = LocalHapticFeedback.current
     val pressed by interactionSource.collectIsPressedAsState()
 
     val rotation = animateFloatAsState(
@@ -249,7 +252,10 @@ private fun TopicShapeButton(
 
     FilledIconToggleButton(
         checked = checked,
-        onCheckedChange = { onClick() },
+        onCheckedChange = {
+            if (!checked) haptic.performSegmentTick()
+            onClick()
+        },
         enabled = enabled,
         shapes = IconButtonDefaults.toggleableShapes(
             shape = shapes.small,

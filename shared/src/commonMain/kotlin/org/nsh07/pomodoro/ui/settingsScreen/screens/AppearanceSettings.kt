@@ -46,6 +46,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
@@ -53,6 +54,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.LocalIsPlus
 import org.nsh07.pomodoro.ui.mergePaddingValues
+import org.nsh07.pomodoro.ui.performToggle
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.ColorSchemePickerListItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
@@ -89,6 +91,7 @@ fun AppearanceSettings(
     modifier: Modifier = Modifier
 ) {
     val isPlus = LocalIsPlus.current
+    val haptic = LocalHapticFeedback.current
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -183,7 +186,10 @@ fun AppearanceSettings(
                         onClick = { onAction(SettingsAction.SaveBlackTheme(it)) }
                     )
                     SegmentedListItem(
-                        onClick = { item.onClick(!item.checked) },
+                        onClick = {
+                            haptic.performToggle(!item.checked)
+                            item.onClick(!item.checked)
+                        },
                         leadingContent = {
                             Icon(painterResource(item.icon), contentDescription = null)
                         },
@@ -192,7 +198,10 @@ fun AppearanceSettings(
                         trailingContent = {
                             Switch(
                                 checked = item.checked,
-                                onCheckedChange = { item.onClick(it) },
+                                onCheckedChange = {
+                                    haptic.performToggle(it)
+                                    item.onClick(it)
+                                },
                                 enabled = isPlus,
                                 thumbContent = {
                                     if (item.checked) {

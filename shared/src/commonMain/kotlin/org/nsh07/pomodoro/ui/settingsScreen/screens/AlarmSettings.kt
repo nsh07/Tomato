@@ -61,6 +61,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -73,6 +74,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.LocalIsPlus
 import org.nsh07.pomodoro.ui.mergePaddingValues
+import org.nsh07.pomodoro.ui.performConfirm
+import org.nsh07.pomodoro.ui.performToggle
 import org.nsh07.pomodoro.ui.rememberRingtoneNameProviderCallback
 import org.nsh07.pomodoro.ui.rememberRingtonePickerLauncherCallback
 import org.nsh07.pomodoro.ui.settingsScreen.SYSTEM_DEFAULT_AMPLITUDE
@@ -139,6 +142,7 @@ fun AlarmSettings(
     val isPlus = LocalIsPlus.current
 
     val scope = rememberCoroutineScope()
+    val haptic = LocalHapticFeedback.current
     val inspectionMode = LocalInspectionMode.current // used to show all features in preview
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -289,7 +293,10 @@ fun AlarmSettings(
                 switchItems.fastForEachIndexed { baseIndex, items ->
                     itemsIndexed(items) { index, item ->
                         SegmentedListItem(
-                            onClick = { item.onClick(!item.checked) },
+                            onClick = {
+                                haptic.performToggle(!item.checked)
+                                item.onClick(!item.checked)
+                            },
                             leadingContent = {
                                 Icon(painterResource(item.icon), contentDescription = null)
                             },
@@ -312,7 +319,10 @@ fun AlarmSettings(
                             trailingContent = {
                                 Switch(
                                     checked = item.checked,
-                                    onCheckedChange = { item.onClick(it) },
+                                    onCheckedChange = {
+                                        haptic.performToggle(it)
+                                        item.onClick(it)
+                                    },
                                     thumbContent = {
                                         if (item.checked) {
                                             Icon(
@@ -391,6 +401,7 @@ fun AlarmSettings(
                                         buttonGroupContent = {
                                             FilledTonalIconButton(
                                                 onClick = {
+                                                    haptic.performConfirm()
                                                     onAction(
                                                         SettingsAction.SaveVibrationOnDuration(
                                                             1000L

@@ -43,11 +43,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.ui.performConfirm
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.cancel
@@ -63,6 +65,8 @@ fun ResetDataDialog(
     onDismiss: () -> Unit,
     resetData: () -> Unit
 ) {
+    val haptic = LocalHapticFeedback.current
+
     BasicAlertDialog(
         onDismissRequest = onDismiss,
         modifier = modifier
@@ -112,7 +116,10 @@ fun ResetDataDialog(
                     Spacer(modifier = Modifier.width(8.dp))
 
                     TextButton(
-                        onClick = resetData,
+                        onClick = {
+                            haptic.performConfirm()
+                            resetData()
+                        },
                         shapes = ButtonDefaults.shapes(),
                     ) {
                         Text(stringResource(Res.string.ok))

@@ -71,6 +71,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -81,6 +82,8 @@ import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.ui.LocalIsPlus
 import org.nsh07.pomodoro.ui.mergePaddingValues
+import org.nsh07.pomodoro.ui.performSegmentTick
+import org.nsh07.pomodoro.ui.performToggle
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.CreateTopicBottomSheet
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
@@ -145,6 +148,7 @@ fun TimerSettings(
     modifier: Modifier = Modifier
 ) {
     val isPlus = LocalIsPlus.current
+    val haptic = LocalHapticFeedback.current
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -245,6 +249,9 @@ fun TimerSettings(
                                 ToggleButton(
                                     checked = topic.id == editingTopic.id,
                                     onCheckedChange = {
+                                        if (topic.id != editingTopic.id) {
+                                            haptic.performSegmentTick()
+                                        }
                                         onAction(
                                             SettingsAction.SetEditingTopic(
                                                 topic
@@ -338,7 +345,10 @@ fun TimerSettings(
                                 trailingContent = {
                                     Switch(
                                         checked = item.checked,
-                                        onCheckedChange = { item.onClick(it) },
+                                        onCheckedChange = {
+                                            haptic.performToggle(it)
+                                            item.onClick(it)
+                                        },
                                         enabled = item.enabled,
                                         thumbContent = {
                                             if (item.checked) {
@@ -394,6 +404,7 @@ fun TimerSettings(
                                         checked = settingsState.singleProgressBar,
                                         enabled = !serviceRunning,
                                         onCheckedChange = {
+                                            haptic.performToggle(it)
                                             onAction(
                                                 SettingsAction.SaveSingleProgressBar(
                                                     it
@@ -442,7 +453,10 @@ fun TimerSettings(
                                 trailingContent = {
                                     Switch(
                                         checked = item.checked,
-                                        onCheckedChange = { item.onClick(it) },
+                                        onCheckedChange = {
+                                            haptic.performToggle(it)
+                                            item.onClick(it)
+                                        },
                                         enabled = item.enabled,
                                         thumbContent = {
                                             if (item.checked) {

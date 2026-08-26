@@ -57,6 +57,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -64,6 +65,8 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.LocalIsPlus
+import org.nsh07.pomodoro.ui.performSegmentTick
+import org.nsh07.pomodoro.ui.performToggle
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.CustomColors.switchColors
 import org.nsh07.pomodoro.ui.theme.SeededTheme
@@ -126,11 +129,13 @@ fun ColorSchemePickerListItem(
     modifier: Modifier = Modifier
 ) {
     val isPlus = LocalIsPlus.current
+    val haptic = LocalHapticFeedback.current
 
     if (androidSdkVersionAtLeast(31)) {
         val checked = color == Color.White
         SegmentedListItem(
             onClick = {
+                haptic.performToggle(!checked)
                 if (!checked) onColorChange(Color.White)
                 else onColorChange(colorSchemes.first().color)
             },
@@ -141,6 +146,7 @@ fun ColorSchemePickerListItem(
                 Switch(
                     checked = checked,
                     onCheckedChange = {
+                        haptic.performToggle(it)
                         if (it) onColorChange(Color.White)
                         else onColorChange(colorSchemes.first().color)
                     },
@@ -271,6 +277,8 @@ private fun ColorPickerButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val haptic = LocalHapticFeedback.current
+
     CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
         SeededTheme(color) {
             ToggleButton(
@@ -289,7 +297,10 @@ private fun ColorPickerButton(
                     .height(40.dp)
                     .widthIn(min = 40.dp),
                 checked = checked,
-                onCheckedChange = { onClick() }
+                onCheckedChange = {
+                    if (!checked) haptic.performSegmentTick()
+                    onClick()
+                }
             ) {
                 AnimatedContent(checked) { checked ->
                     if (checked) {
@@ -319,6 +330,8 @@ private fun DynamicColorPickerButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val haptic = LocalHapticFeedback.current
+
     ToggleButton(
         shapes = shapes,
         colors = ToggleButtonDefaults.toggleButtonColors(
@@ -332,7 +345,10 @@ private fun DynamicColorPickerButton(
             .height(40.dp)
             .widthIn(min = 40.dp),
         checked = checked,
-        onCheckedChange = { onClick() }
+        onCheckedChange = {
+            if (!checked) haptic.performSegmentTick()
+            onClick()
+        }
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             AnimatedContent(checked) { checked ->

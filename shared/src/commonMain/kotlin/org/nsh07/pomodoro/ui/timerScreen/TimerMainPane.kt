@@ -94,7 +94,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -111,6 +110,10 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.ui.LocalIsPlus
+import org.nsh07.pomodoro.ui.performLongPress
+import org.nsh07.pomodoro.ui.performReject
+import org.nsh07.pomodoro.ui.performToggle
+import org.nsh07.pomodoro.ui.performVirtualKey
 import org.nsh07.pomodoro.ui.rememberRequestNotificationPermissionCallback
 import org.nsh07.pomodoro.ui.settingsScreen.screens.sampleTopics
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
@@ -433,19 +436,26 @@ fun SharedTransitionScope.TimerMainPane(
                             modifier = Modifier
                                 .clip(shapes.largeIncreased)
                                 .combinedClickable(
+                                    hapticFeedbackEnabled = false,
                                     onClick = { expanded = !expanded },
                                     onLongClick = {
-                                        if (!timerState.timerRunning) onAction(
-                                            TimerAction.SetInfiniteFocus(
-                                                !timerState.infiniteFocus
+                                        if (!timerState.timerRunning) {
+                                            haptic.performLongPress()
+                                            onAction(
+                                                TimerAction.SetInfiniteFocus(
+                                                    !timerState.infiniteFocus
+                                                )
                                             )
-                                        )
-                                        else scope.launch {
-                                            snackbarHostState.currentSnackbarData?.dismiss()
-                                            snackbarHostState.showSnackbar(
-                                                timerResetSettingsInfo,
-                                                duration = SnackbarDuration.Short
-                                            )
+                                        } else {
+                                            // Infinite focus cannot be toggled mid-session
+                                            haptic.performReject()
+                                            scope.launch {
+                                                snackbarHostState.currentSnackbarData?.dismiss()
+                                                snackbarHostState.showSnackbar(
+                                                    timerResetSettingsInfo,
+                                                    duration = SnackbarDuration.Short
+                                                )
+                                            }
                                         }
                                     }
                                 )
@@ -513,12 +523,7 @@ fun SharedTransitionScope.TimerMainPane(
                                     onCheckedChange = { checked ->
                                         onAction(TimerAction.ToggleTimer)
 
-                                        if (checked) haptic.performHapticFeedback(
-                                            HapticFeedbackType.ToggleOn
-                                        )
-                                        else haptic.performHapticFeedback(
-                                            HapticFeedbackType.ToggleOff
-                                        )
+                                        haptic.performToggle(checked)
 
                                         if (androidSdkVersionAtLeast(33) && checked) {
                                             requestNotificationPermissionCallback()
@@ -593,7 +598,7 @@ fun SharedTransitionScope.TimerMainPane(
                                 FilledTonalIconButton(
                                     onClick = {
                                         onAction(TimerAction.ResetTimer)
-                                        haptic.performHapticFeedback(HapticFeedbackType.VirtualKey)
+                                        haptic.performVirtualKey()
 
                                         scope.launch {
                                             snackbarHostState.currentSnackbarData?.dismiss()
@@ -647,7 +652,7 @@ fun SharedTransitionScope.TimerMainPane(
                                 FilledTonalIconButton(
                                     onClick = {
                                         onAction(TimerAction.SkipTimer(fromButton = true))
-                                        haptic.performHapticFeedback(HapticFeedbackType.VirtualKey)
+                                        haptic.performVirtualKey()
                                     },
                                     colors = IconButtonDefaults.filledTonalIconButtonColors(
                                         containerColor = colorContainer,

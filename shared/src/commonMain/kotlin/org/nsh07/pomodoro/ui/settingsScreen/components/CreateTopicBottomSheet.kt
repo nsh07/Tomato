@@ -66,6 +66,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -74,6 +75,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.data.TopicShape
+import org.nsh07.pomodoro.ui.performConfirm
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.SeededTheme
@@ -99,6 +101,7 @@ fun CreateTopicBottomSheet(
     setAsCurrent: Boolean = false
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val haptic = LocalHapticFeedback.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     var step by remember { mutableStateOf(CreateTopicStep.Appearance) }
@@ -172,6 +175,7 @@ fun CreateTopicBottomSheet(
                 onNext = { step = CreateTopicStep.Timer },
                 onBack = { step = CreateTopicStep.Appearance },
                 onCreate = {
+                    haptic.performConfirm()
                     hideSheet {
                         onAction(
                             SettingsAction.CreateTopic(

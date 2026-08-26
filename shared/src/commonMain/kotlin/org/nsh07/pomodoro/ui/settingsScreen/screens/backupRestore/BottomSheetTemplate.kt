@@ -43,12 +43,14 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import io.github.vinceglb.filekit.PlatformFile
@@ -56,6 +58,7 @@ import io.github.vinceglb.filekit.name
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.ui.performConfirm
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import tomato.shared.generated.resources.Res
@@ -79,6 +82,12 @@ fun BackupBottomSheetTemplate(
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
+    val haptic = LocalHapticFeedback.current
+
+    // The backup or restore finished while the user was waiting on the sheet.
+    LaunchedEffect(backupState) {
+        if (backupState == BackupRestoreState.DONE) haptic.performConfirm()
+    }
 
     val animatedBgColor by animateColorAsState(
         targetValue = when (backupState) {

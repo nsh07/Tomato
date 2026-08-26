@@ -60,6 +60,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -67,6 +68,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
+import org.nsh07.pomodoro.ui.SliderTickHaptics
+import org.nsh07.pomodoro.ui.performToggle
 import org.nsh07.pomodoro.ui.rememberRequestDndPermissionCallback
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.screens.sampleTopics
@@ -250,6 +253,7 @@ fun TopicTimerProperties(
     showEditButtons: Boolean = true
 ) {
     val requestDndPermissionCallback = rememberRequestDndPermissionCallback()
+    val haptic = LocalHapticFeedback.current
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -341,6 +345,7 @@ fun TopicTimerProperties(
                     colors = listItemColors,
                     modifier = Modifier.clip(cardShape)
                 )
+                SliderTickHaptics(sessionsSliderState)
                 Slider(
                     state = sessionsSliderState,
                     enabled = !topicRunning,
@@ -378,7 +383,10 @@ fun TopicTimerProperties(
 
             switchItems.forEachIndexed { index, item ->
                 SegmentedListItem(
-                    onClick = { item.onClick(!item.checked) },
+                    onClick = {
+                        haptic.performToggle(!item.checked)
+                        item.onClick(!item.checked)
+                    },
                     leadingContent = {
                         Icon(
                             painterResource(item.icon),
@@ -391,7 +399,10 @@ fun TopicTimerProperties(
                         Switch(
                             checked = item.checked,
                             enabled = item.enabled,
-                            onCheckedChange = { item.onClick(it) },
+                            onCheckedChange = {
+                                haptic.performToggle(it)
+                                item.onClick(it)
+                            },
                             thumbContent = {
                                 if (item.checked) {
                                     Icon(

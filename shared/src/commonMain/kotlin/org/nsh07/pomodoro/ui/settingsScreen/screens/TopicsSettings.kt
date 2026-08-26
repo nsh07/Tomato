@@ -91,6 +91,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.lerp
 import androidx.compose.ui.tooling.preview.Preview
@@ -103,6 +104,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.ui.mergePaddingValues
+import org.nsh07.pomodoro.ui.performConfirm
+import org.nsh07.pomodoro.ui.performSegmentTick
 import org.nsh07.pomodoro.ui.settingsScreen.components.TopicShapeColorPicker
 import org.nsh07.pomodoro.ui.settingsScreen.components.TopicTimerSettings
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
@@ -159,6 +162,7 @@ fun TopicsSettings(
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val haptic = LocalHapticFeedback.current
     val defaultTopicColor = colorScheme.primary
 
     var creatingTopic by remember { mutableStateOf(false) }
@@ -369,6 +373,7 @@ fun TopicsSettings(
                                         }
                                         Button(
                                             onClick = {
+                                                haptic.performConfirm()
                                                 onAction(
                                                     SettingsAction.CreateTopic(
                                                         Topic.defaultTopic.copy(
@@ -467,6 +472,7 @@ fun TopicsSettings(
                                 SegmentedListItem(
                                     checked = selected,
                                     onCheckedChange = {
+                                        if (!selected) haptic.performSegmentTick()
                                         onAction(
                                             SettingsAction.SetEditingTopic(
                                                 topic
@@ -528,6 +534,7 @@ fun TopicsSettings(
                                         FilledIconToggleButton(
                                             checked = selected,
                                             onCheckedChange = {
+                                                if (!selected) haptic.performSegmentTick()
                                                 onAction(SettingsAction.SetEditingTopic(topic))
                                             },
                                             colors = IconButtonDefaults.filledIconToggleButtonColors(

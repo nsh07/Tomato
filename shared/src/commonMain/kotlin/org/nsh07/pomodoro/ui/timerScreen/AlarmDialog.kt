@@ -37,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,6 +45,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.ui.performConfirm
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.alarm
@@ -57,8 +59,14 @@ fun AlarmDialog(
     modifier: Modifier = Modifier,
     stopAlarm: () -> Unit
 ) {
+    val haptic = LocalHapticFeedback.current
+    val stopAlarmWithHaptics = {
+        haptic.performConfirm()
+        stopAlarm()
+    }
+
     Dialog(
-        onDismissRequest = stopAlarm,
+        onDismissRequest = stopAlarmWithHaptics,
         properties = DialogProperties(
             usePlatformDefaultWidth = false
         )
@@ -68,7 +76,7 @@ fun AlarmDialog(
             modifier = modifier
                 .fillMaxSize()
                 .background(colorScheme.primaryContainer)
-                .clickable(onClick = stopAlarm)
+                .clickable(onClick = stopAlarmWithHaptics)
         ) {
             CompositionLocalProvider(LocalContentColor provides colorScheme.onPrimaryContainer) {
                 Column(modifier = Modifier.padding(24.dp)) {
@@ -92,7 +100,7 @@ fun AlarmDialog(
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     Button(
-                        onClick = stopAlarm,
+                        onClick = stopAlarmWithHaptics,
                         shapes = ButtonDefaults.shapes(),
                         modifier = Modifier.align(Alignment.End),
                     ) {

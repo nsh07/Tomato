@@ -164,11 +164,6 @@ fun AppScreen(
         )
     }
 
-    if (uiState.alarmRinging)
-        AlarmDialog {
-            timerViewModel.onAction(TimerAction.StopAlarm)
-        }
-
     var showPaywall by remember { mutableStateOf(false) }
     val setShowPaywall = remember { { show: Boolean -> showPaywall = show } }
 
@@ -176,6 +171,11 @@ fun AppScreen(
         LocalIsPlus provides isPlus,
         LocalSetShowPaywall provides setShowPaywall
     ) {
+        if (uiState.alarmRinging)
+            AlarmDialog {
+                timerViewModel.onAction(TimerAction.StopAlarm)
+            }
+
         Scaffold(
             contentWindowInsets = LocalContentWindowInsets.current(),
             bottomBar = {

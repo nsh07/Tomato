@@ -45,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLocaleList
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,6 +56,7 @@ import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.Topic
+import org.nsh07.pomodoro.ui.performSegmentTick
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -123,6 +125,7 @@ fun FocusHistoryCalendar(
         data.chunked(7)
     }
     var selectedItemIndex by remember { mutableIntStateOf(-1) }
+    val haptic = LocalHapticFeedback.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -193,6 +196,9 @@ fun FocusHistoryCalendar(
                                     else Modifier
                                 )
                                 .clickable(enabled = it != null) {
+                                    if (selectedItemIndex != flatIndex) {
+                                        haptic.performSegmentTick()
+                                    }
                                     selectedItemIndex = flatIndex
                                 }
                         ) {

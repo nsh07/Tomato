@@ -50,7 +50,10 @@ import tomato.shared.generated.resources.tomato_foss_desc
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun TomatoPlusPaywallDialog(onDismiss: () -> Unit) {
+fun TomatoPlusPaywallDialog(
+    isPlus: Boolean,
+    onDismiss: () -> Unit
+) {
     val uriHandler = LocalUriHandler.current
 
     ModalBottomSheet(

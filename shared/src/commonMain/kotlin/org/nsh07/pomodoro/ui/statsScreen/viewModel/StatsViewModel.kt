@@ -54,6 +54,9 @@ import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
+/** A chart's scroll offset, as a fraction of its maximum, and its zoom factor. */
+data class ChartViewport(val scrollFraction: Float = 1f, val zoom: Float = 0f)
+
 class StatsViewModel(
     private val statRepository: StatRepository,
     private val topicRepository: TopicRepository,
@@ -61,7 +64,12 @@ class StatsViewModel(
 ) : ViewModel() {
     val backStack = mutableStateListOf<Screen.Stats>(Screen.Stats.Main)
 
-    val chartScrollStates = List(3) {
+    /**
+     * For the main screen only, the detail screens build their own. Two `CartesianChartHost`s
+     * sharing one state object invalidate each other every frame for as long as both are composed,
+     * as each writes width-derived values into it from its draw phase and reads them back there.
+     */
+    val summaryChartScrollStates = List(3) {
         VicoScrollState(
             scrollEnabled = true,
             initialScroll = Scroll.Absolute.End,
@@ -71,12 +79,32 @@ class StatsViewModel(
         )
     }
 
-    val chartZoomStates = List(3) {
+    val summaryChartZoomStates = List(3) {
         VicoZoomState(
             zoomEnabled = currentOS == OS.ANDROID,
             initialZoom = Zoom.fixed(),
             minZoom = Zoom.min(Zoom.Content, Zoom.fixed()),
             maxZoom = Zoom.max(Zoom.fixed(10f), Zoom.Content)
+        )
+    }
+
+    var summaryChartViewport = ChartViewport()
+        private set
+
+    fun captureSummaryChartViewport(screen: Screen.Stats) {
+        val index = when (screen) {
+            Screen.Stats.LastWeek -> 0
+            Screen.Stats.LastMonth -> 1
+            Screen.Stats.LastYear -> 2
+            Screen.Stats.Main -> return
+        }
+        val scrollState = summaryChartScrollStates[index]
+        val maxValue = scrollState.maxValue
+        summaryChartViewport = ChartViewport(
+            // A fraction because the detail chart is a different width
+            scrollFraction = if (maxValue > 0f) (scrollState.value / maxValue).coerceIn(0f, 1f)
+            else 1f,
+            zoom = summaryChartZoomStates[index].value
         )
     }
 

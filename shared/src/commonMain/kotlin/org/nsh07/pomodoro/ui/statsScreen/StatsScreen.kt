@@ -19,6 +19,7 @@ package org.nsh07.pomodoro.ui.statsScreen
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -41,6 +42,15 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.patrykandpatrick.vico.compose.cartesian.AutoScrollCondition
+import com.patrykandpatrick.vico.compose.cartesian.Scroll
+import com.patrykandpatrick.vico.compose.cartesian.VicoScrollState
+import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
+import com.patrykandpatrick.vico.compose.cartesian.Zoom
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
+import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -51,7 +61,10 @@ import org.nsh07.pomodoro.ui.statsScreen.screens.LastMonthScreen
 import org.nsh07.pomodoro.ui.statsScreen.screens.LastWeekScreen
 import org.nsh07.pomodoro.ui.statsScreen.screens.LastYearScreen
 import org.nsh07.pomodoro.ui.statsScreen.screens.StatsMainScreen
+import org.nsh07.pomodoro.ui.statsScreen.viewModel.ChartViewport
 import org.nsh07.pomodoro.ui.statsScreen.viewModel.StatsViewModel
+import org.nsh07.pomodoro.utils.OS
+import org.nsh07.pomodoro.utils.currentOS
 import org.nsh07.pomodoro.utils.onBack
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.hours_and_minutes_format
@@ -84,139 +97,180 @@ fun StatsScreenRoot(
     }
 
     SharedTransitionLayout {
-        NavDisplay(
-            backStack = backStack,
-            onBack = backStack::onBack,
-            transitionSpec = {
-                fadeIn().togetherWith(veilOut(targetColor = colorScheme.surfaceDim))
-            },
-            popTransitionSpec = {
-                unveilIn(initialColor = colorScheme.surfaceDim).togetherWith(fadeOut())
-            },
-            predictivePopTransitionSpec = {
-                unveilIn(initialColor = colorScheme.surfaceDim).togetherWith(fadeOut())
-            },
-            sceneStrategies = listOf(
-                rememberListDetailSceneStrategy(
-                    directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())
-                )
-            ),
-            entryProvider = entryProvider {
-                entry<Screen.Stats.Main>(
-                    metadata = listPane(
-                        detailPlaceholder = {
-                            DetailPlaceholder(
-                                icon = Res.drawable.query_stats,
-                                background = colorScheme.surface
+        ProvideVicoTheme(rememberM3VicoTheme()) {
+            NavDisplay(
+                backStack = backStack,
+                onBack = backStack::onBack,
+                transitionSpec = {
+                    fadeIn().togetherWith(veilOut(targetColor = colorScheme.surfaceDim))
+                },
+                popTransitionSpec = {
+                    unveilIn(initialColor = colorScheme.surfaceDim).togetherWith(fadeOut())
+                },
+                predictivePopTransitionSpec = {
+                    unveilIn(initialColor = colorScheme.surfaceDim).togetherWith(fadeOut())
+                },
+                sceneStrategies = listOf(
+                    rememberListDetailSceneStrategy(
+                        directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())
+                    )
+                ),
+                entryProvider = entryProvider {
+                    entry<Screen.Stats.Main>(
+                        metadata = listPane(
+                            detailPlaceholder = {
+                                DetailPlaceholder(
+                                    icon = Res.drawable.query_stats,
+                                    background = colorScheme.surface
+                                )
+                            }
+                        )
+                    ) {
+                        val todayStat by viewModel.todayStat.collectAsStateWithLifecycle(null)
+                        val allTimeTotalFocus by
+                        viewModel.allTimeTotalFocus.collectAsStateWithLifecycle(null)
+
+                        val lastWeekFocusBreakdownValues by viewModel.lastWeekFocusBreakdownValues.collectAsStateWithLifecycle()
+                        val lastMonthFocusBreakdownValues by viewModel.lastMonthFocusBreakdownValues.collectAsStateWithLifecycle()
+                        val lastYearFocusBreakdownValues by viewModel.lastYearFocusBreakdownValues.collectAsStateWithLifecycle()
+
+                        StatsMainScreen(
+                            chartsVisible = chartsVisible,
+                            goal = focusGoal,
+                            contentPadding = contentPadding,
+                            lastWeekSummaryChartModelProducer = viewModel.lastWeekChartProducer,
+                            lastWeekSummaryChartXLabelKey = viewModel.lastWeekXLabelKey,
+                            lastMonthSummaryChartModelProducer = viewModel.lastMonthChartProducer,
+                            lastMonthSummaryChartXLabelKey = viewModel.lastMonthXLabelKey,
+                            lastYearSummaryChartModelProducer = viewModel.lastYearChartProducer,
+                            lastYearSummaryChartXLabelKey = viewModel.lastYearXLabelKey,
+                            todayStat = todayStat,
+                            allTimeTotalFocus = allTimeTotalFocus,
+                            lastWeekAverageFocusTimes = lastWeekFocusBreakdownValues.first,
+                            lastMonthAverageFocusTimes = lastMonthFocusBreakdownValues.first,
+                            lastYearAverageFocusTimes = lastYearFocusBreakdownValues.first,
+                            generateSampleData = viewModel::generateSampleData,
+                            hoursFormat = hoursFormat,
+                            hoursMinutesFormat = hoursMinutesFormat,
+                            minutesFormat = minutesFormat,
+                            zoomStates = viewModel.summaryChartZoomStates,
+                            scrollStates = viewModel.summaryChartScrollStates,
+                            onNavigate = {
+                                viewModel.captureSummaryChartViewport(it)
+                                if (backStack.size < 2) backStack.add(it)
+                                else backStack[backStack.lastIndex] = it
+                            },
+                            modifier = modifier
+                        )
+                    }
+
+                    entry<Screen.Stats.LastWeek>(
+                        metadata = detailPane()
+                    ) {
+                        val lastWeekFocusHistoryValues by viewModel.lastWeekFocusHistoryValues.collectAsStateWithLifecycle()
+                        val lastWeekFocusBreakdownValues by viewModel.lastWeekFocusBreakdownValues.collectAsStateWithLifecycle()
+
+                        LastWeekScreen(
+                            goal = focusGoal,
+                            contentPadding = contentPadding,
+                            focusBreakdownValues = lastWeekFocusBreakdownValues,
+                            focusHistoryValues = lastWeekFocusHistoryValues,
+                            mainChartModelProducer = viewModel.lastWeekChartProducer,
+                            xLabelKey = viewModel.lastWeekXLabelKey,
+                            onBack = backStack::onBack,
+                            hoursMinutesFormat = hoursMinutesFormat,
+                            hoursFormat = hoursFormat,
+                            minutesFormat = minutesFormat,
+                            zoomState = rememberDetailChartZoomState(
+                                viewModel.summaryChartViewport
+                            ),
+                            scrollState = rememberDetailChartScrollState(
+                                viewModel.summaryChartViewport
                             )
-                        }
-                    )
-                ) {
-                    val todayStat by viewModel.todayStat.collectAsStateWithLifecycle(null)
-                    val allTimeTotalFocus by
-                    viewModel.allTimeTotalFocus.collectAsStateWithLifecycle(null)
+                        )
+                    }
 
-                    val lastWeekFocusBreakdownValues by viewModel.lastWeekFocusBreakdownValues.collectAsStateWithLifecycle()
-                    val lastMonthFocusBreakdownValues by viewModel.lastMonthFocusBreakdownValues.collectAsStateWithLifecycle()
-                    val lastYearFocusBreakdownValues by viewModel.lastYearFocusBreakdownValues.collectAsStateWithLifecycle()
+                    entry<Screen.Stats.LastMonth>(
+                        metadata = detailPane()
+                    ) {
+                        val lastMonthCalendarData by viewModel.lastMonthCalendarData.collectAsStateWithLifecycle()
+                        val lastMonthFocusBreakdownValues by viewModel.lastMonthFocusBreakdownValues.collectAsStateWithLifecycle()
 
-                    StatsMainScreen(
-                        chartsVisible = chartsVisible,
-                        goal = focusGoal,
-                        contentPadding = contentPadding,
-                        lastWeekSummaryChartModelProducer = viewModel.lastWeekChartProducer,
-                        lastWeekSummaryChartXLabelKey = viewModel.lastWeekXLabelKey,
-                        lastMonthSummaryChartModelProducer = viewModel.lastMonthChartProducer,
-                        lastMonthSummaryChartXLabelKey = viewModel.lastMonthXLabelKey,
-                        lastYearSummaryChartModelProducer = viewModel.lastYearChartProducer,
-                        lastYearSummaryChartXLabelKey = viewModel.lastYearXLabelKey,
-                        todayStat = todayStat,
-                        allTimeTotalFocus = allTimeTotalFocus,
-                        lastWeekAverageFocusTimes = lastWeekFocusBreakdownValues.first,
-                        lastMonthAverageFocusTimes = lastMonthFocusBreakdownValues.first,
-                        lastYearAverageFocusTimes = lastYearFocusBreakdownValues.first,
-                        generateSampleData = viewModel::generateSampleData,
-                        hoursFormat = hoursFormat,
-                        hoursMinutesFormat = hoursMinutesFormat,
-                        minutesFormat = minutesFormat,
-                        zoomStates = viewModel.chartZoomStates,
-                        scrollStates = viewModel.chartScrollStates,
-                        onNavigate = {
-                            if (backStack.size < 2) backStack.add(it)
-                            else backStack[backStack.lastIndex] = it
-                        },
-                        modifier = modifier
-                    )
+                        LastMonthScreen(
+                            goal = focusGoal,
+                            contentPadding = contentPadding,
+                            focusBreakdownValues = lastMonthFocusBreakdownValues,
+                            calendarData = lastMonthCalendarData,
+                            mainChartModelProducer = viewModel.lastMonthChartProducer,
+                            xLabelKey = viewModel.lastMonthXLabelKey,
+                            onBack = backStack::onBack,
+                            hoursMinutesFormat = hoursMinutesFormat,
+                            hoursFormat = hoursFormat,
+                            minutesFormat = minutesFormat,
+                            zoomState = rememberDetailChartZoomState(
+                                viewModel.summaryChartViewport
+                            ),
+                            scrollState = rememberDetailChartScrollState(
+                                viewModel.summaryChartViewport
+                            )
+                        )
+                    }
+
+                    entry<Screen.Stats.LastYear>(
+                        metadata = detailPane()
+                    ) {
+                        val lastYearFocusHeatmapData by viewModel.lastYearFocusHeatmapData.collectAsStateWithLifecycle()
+                        val lastYearFocusBreakdownValues by viewModel.lastYearFocusBreakdownValues.collectAsStateWithLifecycle()
+                        val lastYearMaxFocus by viewModel.lastYearMaxFocus.collectAsStateWithLifecycle()
+
+                        LastYearScreen(
+                            goal = focusGoal,
+                            contentPadding = contentPadding,
+                            focusBreakdownValues = lastYearFocusBreakdownValues,
+                            focusHeatmapData = lastYearFocusHeatmapData,
+                            heatmapMaxValue = lastYearMaxFocus,
+                            mainChartModelProducer = viewModel.lastYearChartProducer,
+                            xLabelKey = viewModel.lastYearXLabelKey,
+                            onBack = backStack::onBack,
+                            hoursMinutesFormat = hoursMinutesFormat,
+                            hoursFormat = hoursFormat,
+                            minutesFormat = minutesFormat,
+                            zoomState = rememberDetailChartZoomState(
+                                viewModel.summaryChartViewport
+                            ),
+                            scrollState = rememberDetailChartScrollState(
+                                viewModel.summaryChartViewport
+                            )
+                        )
+                    }
                 }
-
-                entry<Screen.Stats.LastWeek>(
-                    metadata = detailPane()
-                ) {
-                    val lastWeekFocusHistoryValues by viewModel.lastWeekFocusHistoryValues.collectAsStateWithLifecycle()
-                    val lastWeekFocusBreakdownValues by viewModel.lastWeekFocusBreakdownValues.collectAsStateWithLifecycle()
-
-                    LastWeekScreen(
-                        goal = focusGoal,
-                        contentPadding = contentPadding,
-                        focusBreakdownValues = lastWeekFocusBreakdownValues,
-                        focusHistoryValues = lastWeekFocusHistoryValues,
-                        mainChartModelProducer = viewModel.lastWeekChartProducer,
-                        xLabelKey = viewModel.lastWeekXLabelKey,
-                        onBack = backStack::onBack,
-                        hoursMinutesFormat = hoursMinutesFormat,
-                        hoursFormat = hoursFormat,
-                        minutesFormat = minutesFormat,
-                        zoomState = viewModel.chartZoomStates[0],
-                        scrollState = viewModel.chartScrollStates[0]
-                    )
-                }
-
-                entry<Screen.Stats.LastMonth>(
-                    metadata = detailPane()
-                ) {
-                    val lastMonthCalendarData by viewModel.lastMonthCalendarData.collectAsStateWithLifecycle()
-                    val lastMonthFocusBreakdownValues by viewModel.lastMonthFocusBreakdownValues.collectAsStateWithLifecycle()
-
-                    LastMonthScreen(
-                        goal = focusGoal,
-                        contentPadding = contentPadding,
-                        focusBreakdownValues = lastMonthFocusBreakdownValues,
-                        calendarData = lastMonthCalendarData,
-                        mainChartModelProducer = viewModel.lastMonthChartProducer,
-                        xLabelKey = viewModel.lastMonthXLabelKey,
-                        onBack = backStack::onBack,
-                        hoursMinutesFormat = hoursMinutesFormat,
-                        hoursFormat = hoursFormat,
-                        minutesFormat = minutesFormat,
-                        zoomState = viewModel.chartZoomStates[1],
-                        scrollState = viewModel.chartScrollStates[1]
-                    )
-                }
-
-                entry<Screen.Stats.LastYear>(
-                    metadata = detailPane()
-                ) {
-                    val lastYearFocusHeatmapData by viewModel.lastYearFocusHeatmapData.collectAsStateWithLifecycle()
-                    val lastYearFocusBreakdownValues by viewModel.lastYearFocusBreakdownValues.collectAsStateWithLifecycle()
-                    val lastYearMaxFocus by viewModel.lastYearMaxFocus.collectAsStateWithLifecycle()
-
-                    LastYearScreen(
-                        goal = focusGoal,
-                        contentPadding = contentPadding,
-                        focusBreakdownValues = lastYearFocusBreakdownValues,
-                        focusHeatmapData = lastYearFocusHeatmapData,
-                        heatmapMaxValue = lastYearMaxFocus,
-                        mainChartModelProducer = viewModel.lastYearChartProducer,
-                        xLabelKey = viewModel.lastYearXLabelKey,
-                        onBack = backStack::onBack,
-                        hoursMinutesFormat = hoursMinutesFormat,
-                        hoursFormat = hoursFormat,
-                        minutesFormat = minutesFormat,
-                        zoomState = viewModel.chartZoomStates[2],
-                        scrollState = viewModel.chartScrollStates[2]
-                    )
-                }
-            }
-        )
+            )
+        }
     }
+}
+
+@Composable
+private fun rememberDetailChartScrollState(viewport: ChartViewport): VicoScrollState {
+    val fraction = viewport.scrollFraction
+    return rememberVicoScrollState(
+        scrollEnabled = true,
+        // Remembered because `rememberVicoScrollState` keys its state on these.
+        initialScroll = remember(fraction) {
+            Scroll.Absolute { _, _, _, maxValue -> fraction * maxValue }
+        },
+        autoScroll = Scroll.Absolute.End,
+        autoScrollCondition = AutoScrollCondition.OnModelGrowth,
+        autoScrollAnimationSpec = remember { spring(0.8f, 380f) }
+    )
+}
+
+@Composable
+private fun rememberDetailChartZoomState(viewport: ChartViewport): VicoZoomState {
+    val zoom = viewport.zoom
+    return rememberVicoZoomState(
+        zoomEnabled = currentOS == OS.ANDROID,
+        initialZoom = remember(zoom) { if (zoom > 0f) Zoom.fixed(zoom) else Zoom.fixed() },
+        minZoom = remember { Zoom.min(Zoom.Content, Zoom.fixed()) },
+        maxZoom = remember { Zoom.max(Zoom.fixed(10f), Zoom.Content) }
+    )
 }

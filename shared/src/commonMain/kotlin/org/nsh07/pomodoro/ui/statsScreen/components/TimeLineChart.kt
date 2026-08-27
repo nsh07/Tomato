@@ -120,100 +120,104 @@ fun TimeLineChart(
     ),
     animationSpec: AnimationSpec<Float>? = null
 ) {
-    ProvideVicoTheme(rememberM3VicoTheme()) {
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberLineCartesianLayer(
-                        LineCartesianLayer.LineProvider.series(
-                            LineCartesianLayer.rememberLine(
-                                fill = LineCartesianLayer.LineFill.double(
-                                    topFill = Fill(colorScheme.primary),
-                                    bottomFill = Fill(colorScheme.secondary),
-                                    splitY = { goal }
-                                ),
-                                stroke = LineCartesianLayer.LineStroke.Continuous(
-                                    thickness, StrokeCap.Round
-                                ),
-                                interpolator = LineCartesianLayer.Interpolator.catmullRom()
-                            )
-                        ),
-                        pointSpacing = pointSpacing
-                    ),
-                    startAxis = VerticalAxis.rememberStart(
-                        line = rememberLineComponent(Fill.Transparent, 8.dp),
-                        label = rememberTextComponent(typography.bodySmall.copy(colorScheme.onSurface)),
-                        tick = null,
-                        guideline = null,
-                        itemPlacer = VerticalAxis.ItemPlacer.count({ 4 }),
-                        valueFormatter = yValueFormatter
-                    ),
-                    bottomAxis = HorizontalAxis.rememberBottom(
-                        line = rememberLineComponent(Fill.Transparent, 8.dp),
-                        label = rememberTextComponent(typography.bodySmall.copy(colorScheme.onSurface)),
-                        tick = null,
-                        guideline = null,
-                        valueFormatter = xValueFormatter
-                    ),
-                    decorations = if (goal > 0) listOf(
-                        HorizontalLine(
-                            y = { goal.toDouble() },
-                            line = rememberLineComponent(
-                                fill = Fill(colorScheme.primary),
-                                thickness = 1.dp,
-                                shape = DashedShape(
-                                    shape = CircleShape,
-                                    dashLength = 2.dp,
-                                    gapLength = 2.dp
-                                )
+    val goalLine = rememberLineComponent(
+        fill = Fill(colorScheme.primary),
+        thickness = 1.dp,
+        shape = DashedShape(
+            shape = CircleShape,
+            dashLength = 2.dp,
+            gapLength = 2.dp
+        )
+    )
+    // Remembered because `HorizontalLine`'s default `label` lambda captures `y`, so two
+    // identical instances never compare equal, rebuilding the chart on every recomposition.
+    val decorations = remember(goal, goalLine) {
+        if (goal > 0) listOf(
+            HorizontalLine(
+                y = { goal.toDouble() },
+                line = goalLine,
+                horizontalLabelPosition = Position.Horizontal.Start,
+                verticalLabelPosition = Position.Vertical.Center
+            )
+        ) else emptyList()
+    }
+
+    CartesianChartHost(
+        chart =
+            rememberCartesianChart(
+                rememberLineCartesianLayer(
+                    LineCartesianLayer.LineProvider.series(
+                        LineCartesianLayer.rememberLine(
+                            fill = LineCartesianLayer.LineFill.double(
+                                topFill = Fill(colorScheme.primary),
+                                bottomFill = Fill(colorScheme.secondary),
+                                splitY = { goal }
                             ),
-                            horizontalLabelPosition = Position.Horizontal.Start,
-                            verticalLabelPosition = Position.Vertical.Center
+                            stroke = LineCartesianLayer.LineStroke.Continuous(
+                                thickness, StrokeCap.Round
+                            ),
+                            interpolator = LineCartesianLayer.Interpolator.catmullRom()
+                        )
+                    ),
+                    pointSpacing = pointSpacing
+                ),
+                startAxis = VerticalAxis.rememberStart(
+                    line = rememberLineComponent(Fill.Transparent, 8.dp),
+                    label = rememberTextComponent(typography.bodySmall.copy(colorScheme.onSurface)),
+                    tick = null,
+                    guideline = null,
+                    itemPlacer = VerticalAxis.ItemPlacer.count({ 4 }),
+                    valueFormatter = yValueFormatter
+                ),
+                bottomAxis = HorizontalAxis.rememberBottom(
+                    line = rememberLineComponent(Fill.Transparent, 8.dp),
+                    label = rememberTextComponent(typography.bodySmall.copy(colorScheme.onSurface)),
+                    tick = null,
+                    guideline = null,
+                    valueFormatter = xValueFormatter
+                ),
+                decorations = decorations,
+                marker = rememberDefaultCartesianMarker(
+                    rememberTextComponent(
+                        TextStyle(
+                            fontFamily = typography.bodyLarge.fontFamily,
+                            color = colorScheme.inverseOnSurface,
+                            fontSize = typography.bodySmall.fontSize,
+                            lineHeight = typography.bodySmall.lineHeight
+                        ),
+                        background = rememberShapeComponent(
+                            fill = Fill(colorScheme.inverseSurface),
+                            shape = shapes.small
+                        ),
+                        padding = Insets(vertical = 4.dp, horizontal = 8.dp),
+                        margins = Insets(bottom = 2.dp)
+                    ),
+                    valueFormatter = markerValueFormatter,
+                    indicator = {
+                        ShapeComponent(
+                            fill = Fill(it),
+                            shape = CircleShape,
+                            margins = Insets(3.dp)
+                        )
+                    },
+                    guideline = rememberLineComponent(
+                        fill = Fill(colorScheme.primary),
+                        shape = DashedShape(
+                            shape = CircleShape,
+                            dashLength = 2.dp,
+                            gapLength = 2.dp
                         )
                     )
-                    else emptyList(),
-                    marker = rememberDefaultCartesianMarker(
-                        rememberTextComponent(
-                            TextStyle(
-                                fontFamily = typography.bodyLarge.fontFamily,
-                                color = colorScheme.inverseOnSurface,
-                                fontSize = typography.bodySmall.fontSize,
-                                lineHeight = typography.bodySmall.lineHeight
-                            ),
-                            background = rememberShapeComponent(
-                                fill = Fill(colorScheme.inverseSurface),
-                                shape = shapes.small
-                            ),
-                            padding = Insets(vertical = 4.dp, horizontal = 8.dp),
-                            margins = Insets(bottom = 2.dp)
-                        ),
-                        valueFormatter = markerValueFormatter,
-                        indicator = {
-                            ShapeComponent(
-                                fill = Fill(it),
-                                shape = CircleShape,
-                                margins = Insets(3.dp)
-                            )
-                        },
-                        guideline = rememberLineComponent(
-                            fill = Fill(colorScheme.primary),
-                            shape = DashedShape(
-                                shape = CircleShape,
-                                dashLength = 2.dp,
-                                gapLength = 2.dp
-                            )
-                        )
-                    ),
-                    fadingEdges = rememberFadingEdges()
                 ),
-            modelProducer = modelProducer,
-            zoomState = zoomState,
-            scrollState = scrollState,
-            animationSpec = animationSpec,
-            initialAnimationSpec = null,
-            modifier = modifier.height(224.dp),
-        )
-    }
+                fadingEdges = rememberFadingEdges()
+            ),
+        modelProducer = modelProducer,
+        zoomState = zoomState,
+        scrollState = scrollState,
+        animationSpec = animationSpec,
+        initialAnimationSpec = null,
+        modifier = modifier.height(224.dp),
+    )
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -234,13 +238,16 @@ private fun TimeLineChartPreview() {
     }
     TomatoTheme {
         Surface {
-            TimeLineChart(
-                modelProducer = modelProducer,
-                goal = 60 * 60 * 1000,
-                hoursFormat = "%dh",
-                hoursMinutesFormat = "%dh %dm",
-                minutesFormat = "%dm"
-            )
+            // Provided by StatsScreenRoot in the app.
+            ProvideVicoTheme(rememberM3VicoTheme()) {
+                TimeLineChart(
+                    modelProducer = modelProducer,
+                    goal = 60 * 60 * 1000,
+                    hoursFormat = "%dh",
+                    hoursMinutesFormat = "%dh %dm",
+                    minutesFormat = "%dm"
+                )
+            }
         }
     }
 }

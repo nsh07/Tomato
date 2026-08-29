@@ -50,7 +50,6 @@ fun TopicNameTextField(
     name: String,
     onNameChange: (String) -> Unit,
     isError: Boolean,
-    maxLines: Int,
     supportingText: String?,
     modifier: Modifier = Modifier
 ) {
@@ -66,7 +65,7 @@ fun TopicNameTextField(
         onValueChange = onNameChange,
         interactionSource = interactionSource,
         textStyle = typography.bodyLargeEmphasized.copy(color = colorScheme.onSurface),
-        maxLines = maxLines,
+        singleLine = true,
         cursorBrush = SolidColor(colorScheme.onSurface),
         modifier = modifier,
         decorationBox = { innerTextField ->
@@ -139,7 +138,6 @@ private fun TopicNameTextFieldPreview() {
                 name = "Work",
                 onNameChange = {},
                 isError = false,
-                maxLines = 1,
                 supportingText = null,
                 modifier = Modifier.padding(16.dp)
             )
@@ -156,7 +154,6 @@ private fun TopicNameTextFieldErrorPreview() {
                 name = "Work",
                 onNameChange = {},
                 isError = true,
-                maxLines = 1,
                 supportingText = "Topic name taken",
                 modifier = Modifier.padding(16.dp)
             )

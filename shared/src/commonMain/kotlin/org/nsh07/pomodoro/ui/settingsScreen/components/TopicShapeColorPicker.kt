@@ -101,16 +101,24 @@ fun TopicShapeColorPicker(
 ) {
     val isPlus = LocalIsPlus.current
 
+    val currentName by rememberUpdatedState(name)
     val currentNameTaken by rememberUpdatedState(nameTaken)
     val currentOnNameChange by rememberUpdatedState(onNameChange)
 
-    LaunchedEffect(name) {
-        snapshotFlow { name.trim() }
-            .drop(1) // The initial name needs no saving
-            .debounce(500.milliseconds)
-            .collect { trimmedName ->
-                if (trimmedName.isNotEmpty() && !currentNameTaken) currentOnNameChange(trimmedName)
-            }
+    LaunchedEffect(Unit) {
+        fun saveName(trimmedName: String) {
+            if (trimmedName.isNotEmpty() && !currentNameTaken) currentOnNameChange(trimmedName)
+        }
+
+        try {
+            snapshotFlow { currentName.trim() }
+                .drop(1)
+                .debounce(500.milliseconds)
+                .collect { saveName(it) }
+        } finally {
+            // Persist an edit that is still waiting on the debounce when the picker goes away
+            saveName(currentName.trim())
+        }
     }
 
     Column(
@@ -126,7 +134,6 @@ fun TopicShapeColorPicker(
         TopicNameTextField(
             name = name,
             onNameChange = onNameValueChange,
-            maxLines = 1,
             isError = nameTaken,
             supportingText = if (nameTaken) stringResource(Res.string.topic_name_taken) else null,
             modifier = Modifier

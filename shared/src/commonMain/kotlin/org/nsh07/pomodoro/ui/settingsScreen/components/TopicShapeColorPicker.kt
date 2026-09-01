@@ -46,8 +46,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -74,6 +76,7 @@ import org.nsh07.pomodoro.ui.LocalIsPlus
 import org.nsh07.pomodoro.ui.performSegmentTick
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.topic_name
+import tomato.shared.generated.resources.topic_name_empty
 import tomato.shared.generated.resources.topic_name_taken
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -100,6 +103,10 @@ fun TopicShapeColorPicker(
     horizontalPadding: Dp = 16.dp
 ) {
     val isPlus = LocalIsPlus.current
+
+    // An empty name is only worth complaining about once the user has cleared it themselves
+    var nameEdited by remember { mutableStateOf(false) }
+    val nameEmpty = nameEdited && name.isBlank()
 
     val currentName by rememberUpdatedState(name)
     val currentNameTaken by rememberUpdatedState(nameTaken)
@@ -133,9 +140,16 @@ fun TopicShapeColorPicker(
         )
         TopicNameTextField(
             name = name,
-            onNameChange = onNameValueChange,
-            isError = nameTaken,
-            supportingText = if (nameTaken) stringResource(Res.string.topic_name_taken) else null,
+            onNameChange = {
+                nameEdited = true
+                onNameValueChange(it)
+            },
+            isError = nameTaken || nameEmpty,
+            supportingText = when {
+                nameTaken -> stringResource(Res.string.topic_name_taken)
+                nameEmpty -> stringResource(Res.string.topic_name_empty)
+                else -> null
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = horizontalPadding)

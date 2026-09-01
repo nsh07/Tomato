@@ -3,12 +3,15 @@
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,6 +36,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -60,61 +64,76 @@ fun TopicNameTextField(
     val colorScheme = colorScheme
     val motionScheme = motionScheme
 
-    BasicTextField(
-        value = name,
-        onValueChange = onNameChange,
-        interactionSource = interactionSource,
-        textStyle = typography.bodyLargeEmphasized.copy(color = colorScheme.onSurface),
-        singleLine = true,
-        cursorBrush = SolidColor(colorScheme.onSurface),
-        modifier = modifier,
-        decorationBox = { innerTextField ->
-            Box(
-                contentAlignment = Alignment.CenterStart,
-                modifier = Modifier
-                    .height(56.dp)
-                    .styleable(styleState) {
-                        shape(RoundedCornerShape(16.dp))
-                        contentPadding(start = 20.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
-                        background(colorScheme.secondaryContainer)
-                        contentColor(colorScheme.onSurface)
+    Column(modifier = modifier) {
+        BasicTextField(
+            value = name,
+            onValueChange = onNameChange,
+            interactionSource = interactionSource,
+            textStyle = typography.bodyLargeEmphasized.copy(color = colorScheme.onSurface),
+            singleLine = true,
+            cursorBrush = SolidColor(colorScheme.onSurface),
+            modifier = Modifier.fillMaxWidth(),
+            decorationBox = { innerTextField ->
+                Box(
+                    contentAlignment = Alignment.CenterStart,
+                    modifier = Modifier
+                        .height(56.dp)
+                        .styleable(styleState) {
+                            shape(RoundedCornerShape(16.dp))
+                            contentPadding(start = 20.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
+                            background(colorScheme.secondaryContainer)
+                            contentColor(colorScheme.onSurface)
 
-                        error {
-                            animate(spec = motionScheme.slowEffectsSpec()) {
-                                background(colorScheme.errorContainer)
-                                contentColor(colorScheme.onErrorContainer)
+                            error {
+                                animate(spec = motionScheme.slowEffectsSpec()) {
+                                    background(colorScheme.errorContainer)
+                                    contentColor(colorScheme.onErrorContainer)
+                                }
+                            }
+
+                            focused {
+                                animate(spec = motionScheme.slowSpatialSpec()) {
+                                    shape(CircleShape)
+                                }
                             }
                         }
-
-                        focused {
-                            animate(spec = motionScheme.slowSpatialSpec()) {
-                                shape(CircleShape)
-                            }
-                        }
-                    }
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    innerTextField()
-                    Spacer(Modifier.weight(1f))
-                    AnimatedVisibility(
-                        visible = name.isNotEmpty(),
-                        enter = fadeIn() + scaleIn(motionScheme.defaultSpatialSpec()),
-                        exit = fadeOut() + scaleOut(motionScheme.defaultSpatialSpec())
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        IconButton(
-                            onClick = { onNameChange("") },
-                            shapes = IconButtonDefaults.shapes()
+                        innerTextField()
+                        Spacer(Modifier.weight(1f))
+                        AnimatedVisibility(
+                            visible = name.isNotEmpty(),
+                            enter = fadeIn() + scaleIn(motionScheme.defaultSpatialSpec()),
+                            exit = fadeOut() + scaleOut(motionScheme.defaultSpatialSpec())
                         ) {
-                            Icon(painterResource(Res.drawable.clear), null)
+                            IconButton(
+                                onClick = { onNameChange("") },
+                                shapes = IconButtonDefaults.shapes()
+                            ) {
+                                Icon(painterResource(Res.drawable.clear), null)
+                            }
                         }
                     }
                 }
             }
+        )
+
+        AnimatedVisibility(
+            visible = supportingText != null,
+            enter = fadeIn() + expandVertically(motionScheme.defaultSpatialSpec()),
+            exit = fadeOut() + shrinkVertically(motionScheme.defaultSpatialSpec())
+        ) {
+            Text(
+                text = supportingText ?: "",
+                style = typography.bodySmall,
+                color = colorScheme.error,
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 4.dp)
+            )
         }
-    )
+    }
 }
 
 private val ErrorKey = StyleStateKey(false)

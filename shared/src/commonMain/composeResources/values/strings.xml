@@ -159,6 +159,7 @@
     <string name="topic_settings">Topic settings</string>
     <string name="topic_name">Name</string>
     <string name="topic_name_taken">A topic with this name already exists</string>
+    <string name="topic_name_empty">Topic name cannot be empty</string>
     <string name="add_topic">Add topic</string>
     <string name="next">Next</string>
     <string name="delete_topic">Delete topic</string>

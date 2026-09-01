@@ -58,7 +58,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -66,7 +65,6 @@ import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
-import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedListItem
@@ -125,7 +123,6 @@ import tomato.shared.generated.resources.arrow_back
 import tomato.shared.generated.resources.back
 import tomato.shared.generated.resources.cancel
 import tomato.shared.generated.resources.create_new_topic
-import tomato.shared.generated.resources.edit
 import tomato.shared.generated.resources.minutes_format
 import tomato.shared.generated.resources.settings
 import tomato.shared.generated.resources.topic_summary_format
@@ -181,7 +178,6 @@ fun TopicsSettings(
     SeededTheme(if (creatingTopic) newTopicColor else editingTopic.color) {
         val colorScheme = colorScheme
         val motionScheme = motionScheme
-        val shapes = shapes
         val topBarTitle = LocalAppFonts.current.topBarTitle
 
         val unselectedFont = typography.titleLargeEmphasized.copy(
@@ -454,10 +450,6 @@ fun TopicsSettings(
                                     remember(topicColor, colorScheme.surfaceBright) {
                                         topicColor.harmonize(colorScheme.surfaceBright, true)
                                     }
-                                val surfaceContainer =
-                                    remember(topicColor, colorScheme.surfaceContainer) {
-                                        topicColor.harmonize(colorScheme.surfaceContainer, true)
-                                    }
 
                                 val progress by animateFloatAsState(
                                     if (selected) 1f else 0f,
@@ -529,30 +521,6 @@ fun TopicsSettings(
                                             style = typography.labelLarge,
                                             color = colorScheme.onSecondaryContainer
                                         )
-                                    },
-                                    trailingContent = {
-                                        FilledIconToggleButton(
-                                            checked = selected,
-                                            onCheckedChange = {
-                                                if (!selected) haptic.performSegmentTick()
-                                                onAction(SettingsAction.SetEditingTopic(topic))
-                                            },
-                                            colors = IconButtonDefaults.filledIconToggleButtonColors(
-                                                containerColor = surfaceContainer,
-                                                checkedContainerColor = primary,
-                                                checkedContentColor = onPrimary
-                                            ),
-                                            shapes = IconButtonDefaults.toggleableShapes(
-                                                checkedShape = shapes.large
-                                            ),
-                                            modifier = Modifier.size(IconButtonDefaults.mediumContainerSize())
-                                        ) {
-                                            Icon(
-                                                painterResource(Res.drawable.edit),
-                                                null,
-                                                modifier = Modifier.size(IconButtonDefaults.mediumIconSize)
-                                            )
-                                        }
                                     },
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp)

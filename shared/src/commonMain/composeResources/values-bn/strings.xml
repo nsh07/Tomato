@@ -93,4 +93,5 @@
     <string name="license">লাইসেন্স</string>
     <string name="media_volume_for_alarm">হেডফোন মোড</string>
     <string name="media_volume_for_alarm_desc">শুধুমাত্র হেডফোন এ বাজে। হেডফোন ডিসকানেক্টেড হলে, স্পিকার দিয়ে এলার্ম বাজে মিডিয়া ভলিউম এ</string>
+    <string name="auto_start_next_timer">স্বয়ংক্রিয়ভাবে পরের টাইমার স্টার্ট করুন</string>
 </resources>

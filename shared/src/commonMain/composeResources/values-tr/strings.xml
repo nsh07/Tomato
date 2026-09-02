@@ -174,4 +174,5 @@
     <string name="orange">Turuncu</string>
     <string name="topic_settings">Kategori ayarları</string>
     <string name="default_name">Öntanımlı</string>
+    <string name="topic_name_empty">Kategori adı boş olamaz</string>
 </resources>

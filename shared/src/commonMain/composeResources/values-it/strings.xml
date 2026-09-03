@@ -174,4 +174,5 @@
     <string name="chartreuse">Chartreuse</string>
     <string name="yellow">Giallo</string>
     <string name="orange">Arancione</string>
+    <string name="topic_name_empty">Il nome dell'argomento non può essere vuoto</string>
 </resources>

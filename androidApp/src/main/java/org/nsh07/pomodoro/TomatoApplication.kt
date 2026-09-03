@@ -31,11 +31,13 @@ import org.nsh07.pomodoro.di.androidModule
 import org.nsh07.pomodoro.di.dbModule
 import org.nsh07.pomodoro.di.servicesModule
 import org.nsh07.pomodoro.di.viewModels
+import org.nsh07.pomodoro.reporting.initMeasureReporting
 
 class TomatoApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        initMeasureReporting()
         initializePurchases(this)
 
         val notificationChannel = NotificationChannel(
@@ -44,11 +46,10 @@ class TomatoApplication : Application() {
             NotificationManager.IMPORTANCE_DEFAULT
         )
 
-
         startKoin {
             androidLogger(Level.INFO)
-
             androidContext(this@TomatoApplication)
+
             modules(
                 dbModule,
                 flavorModule,

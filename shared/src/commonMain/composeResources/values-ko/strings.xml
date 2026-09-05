@@ -123,7 +123,7 @@
     <string name="timer_reset_message">타이머 초기화</string>
     <string name="timer_session_count">%1$d 의 %2$d</string>
     <string name="today_widget_desc">오늘 집중 통계</string>
-    <string name="tomato_foss_desc">이번 버전에서는 모든 기능이 잠금 해제되어 있습니다. 제 앱이 여러분의 삶에 도움이 되었다면, %1$s에서 후원해 주세요.</string>
+    <string name="tomato_foss_desc">잠겨있는 기능은 없습니다. 제 앱이 여러분의 삶에 도움이 되었다면, %1$s에서 후원해 주세요.</string>
     <string name="tomato_plus_desc">Tomato+으로 더 많은 기능을 사용해 보세요</string>
     <string name="total">총합</string>
     <string name="undo">실행 취소</string>

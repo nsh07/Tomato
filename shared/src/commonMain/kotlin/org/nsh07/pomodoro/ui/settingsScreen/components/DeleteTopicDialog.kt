@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,18 +26,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -112,34 +114,80 @@ fun DeleteTopicDialog(
 
                 Column(
                     horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    TextButton(
+                    val errorButtonColors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = colorScheme.errorContainer,
+                        contentColor = colorScheme.onErrorContainer
+                    )
+
+                    FilledTonalButton(
                         onClick = {
                             haptic.performConfirm()
                             onDeleteTopic()
                         },
-                        shapes = ButtonDefaults.shapes(),
-                        colors = ButtonDefaults.textButtonColors(
-                            contentColor = colorScheme.error
+                        shapes = ButtonDefaults
+                            .shapesFor(ButtonDefaults.MediumContainerHeight)
+                            .copy(
+                                shape = RoundedCornerShape(
+                                    topStart = 24.dp,
+                                    topEnd = 24.dp,
+                                    bottomStart = 8.dp,
+                                    bottomEnd = 8.dp
+                                )
+                            ),
+                        colors = errorButtonColors,
+                        modifier = Modifier
+                            .height(ButtonDefaults.MediumContainerHeight)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            stringResource(Res.string.delete_topic),
+                            style = typography.titleMedium
                         )
-                    ) { Text(stringResource(Res.string.delete_topic)) }
+                    }
 
-                    TextButton(
+                    FilledTonalButton(
                         onClick = {
                             haptic.performConfirm()
                             onDeleteTopicAndStats()
                         },
-                        shapes = ButtonDefaults.shapes(),
-                        colors = ButtonDefaults.textButtonColors(
-                            contentColor = colorScheme.error
+                        shapes = ButtonDefaults
+                            .shapesFor(ButtonDefaults.MediumContainerHeight)
+                            .copy(shape = RoundedCornerShape(8.dp)),
+                        colors = errorButtonColors,
+                        modifier = Modifier
+                            .height(ButtonDefaults.MediumContainerHeight)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            stringResource(Res.string.delete_topic_and_stats),
+                            style = typography.titleMedium
                         )
-                    ) { Text(stringResource(Res.string.delete_topic_and_stats)) }
+                    }
 
-                    TextButton(
+                    FilledTonalButton(
                         onClick = onDismiss,
-                        shapes = ButtonDefaults.shapes()
-                    ) { Text(stringResource(Res.string.cancel)) }
+                        shapes = ButtonDefaults
+                            .shapesFor(ButtonDefaults.MediumContainerHeight)
+                            .copy(
+                                shape = RoundedCornerShape(
+                                    topStart = 8.dp,
+                                    topEnd = 8.dp,
+                                    bottomStart = 24.dp,
+                                    bottomEnd = 24.dp
+                                )
+                            ),
+                        modifier = Modifier
+                            .height(ButtonDefaults.MediumContainerHeight)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            stringResource(Res.string.cancel),
+                            style = typography.titleMedium
+                        )
+                    }
                 }
             }
         }

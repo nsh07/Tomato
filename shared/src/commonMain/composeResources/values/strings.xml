@@ -105,6 +105,7 @@
     <string name="session_only_progress">Simplified progress</string>
     <string name="session_only_progress_desc">Show progress for the current timer only in notifications, rather than the entire session</string>
     <string name="settings">Settings</string>
+    <string name="shape">Shape</string>
     <string name="short_break">Short break</string>
     <string name="show_chart">Show chart</string>
     <string name="skip">Skip</string>

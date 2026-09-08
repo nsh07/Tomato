@@ -75,6 +75,8 @@ import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.ui.LocalIsPlus
 import org.nsh07.pomodoro.ui.performSegmentTick
 import tomato.shared.generated.resources.Res
+import tomato.shared.generated.resources.color
+import tomato.shared.generated.resources.shape
 import tomato.shared.generated.resources.topic_name
 import tomato.shared.generated.resources.topic_name_empty
 import tomato.shared.generated.resources.topic_name_taken
@@ -156,7 +158,7 @@ fun TopicShapeColorPicker(
         )
 
         Text(
-            "Color",
+            stringResource(Res.string.color),
             style = typography.labelLarge,
             color = colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(start = horizontalPadding, top = 12.dp)
@@ -170,7 +172,7 @@ fun TopicShapeColorPicker(
         )
 
         Text(
-            "Shape",
+            stringResource(Res.string.shape),
             style = typography.labelLarge,
             color = colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(start = horizontalPadding, top = 8.dp)

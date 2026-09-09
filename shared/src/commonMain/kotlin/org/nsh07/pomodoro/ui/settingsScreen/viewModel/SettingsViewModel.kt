@@ -39,6 +39,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.StatRepository
@@ -116,6 +118,8 @@ class SettingsViewModel(
         .map { it.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name }) }
         .flowOn(Dispatchers.IO)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    private val editTopicMutex = Mutex()
 
     private var focusFlowCollectionJob: Job? = null
     private var shortBreakFlowCollectionJob: Job? = null
@@ -195,11 +199,22 @@ class SettingsViewModel(
     }
 
     /**
-     * Applies [transform] to the topic being edited and persists it.
+     * Applies [transform] to the topic being edited and writes it to the database
      */
     private suspend fun editTopic(refreshesTimer: Boolean = false, transform: (Topic) -> Topic) {
-        val topic = _editingTopic.updateAndGet(transform)
-        topicRepository.updateTopic(topic)
+        val topic = editTopicMutex.withLock {
+            val previous = _editingTopic.value
+            val topic = _editingTopic.updateAndGet(transform)
+
+            if (!topicRepository.updateTopic(topic)) {
+                // saving edit failed, roll back unless the topic being edited has since changed
+                _editingTopic.update { if (it == topic) previous else it }
+                return
+            }
+
+            topic
+        }
+
         if (refreshesTimer && topic.id == stateRepository.currentTopicId.value) refreshTimer(topic)
     }
 

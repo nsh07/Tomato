@@ -19,6 +19,7 @@ package org.nsh07.pomodoro.data
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy.Companion.IGNORE
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
@@ -26,23 +27,42 @@ import java.time.LocalDate
 
 @Dao
 interface StatDao {
-    @Insert(onConflict = REPLACE)
+    /**
+     * Insert and ignore on conflict
+     */
+    @Insert(onConflict = IGNORE)
     suspend fun insertStat(stat: Stat)
 
-    @Query("UPDATE stat SET focusTimeQ1 = focusTimeQ1 + :focusTime WHERE date = :date AND topicId = :topicId")
-    suspend fun addFocusTimeQ1(date: LocalDate, topicId: Long, focusTime: Long)
+    /**
+     * Insert and replace on conflict
+     */
+    @Insert(onConflict = REPLACE)
+    suspend fun replaceStat(stat: Stat)
 
-    @Query("UPDATE stat SET focusTimeQ2 = focusTimeQ2 + :focusTime WHERE date = :date AND topicId = :topicId")
-    suspend fun addFocusTimeQ2(date: LocalDate, topicId: Long, focusTime: Long)
-
-    @Query("UPDATE stat SET focusTimeQ3 = focusTimeQ3 + :focusTime WHERE date = :date AND topicId = :topicId")
-    suspend fun addFocusTimeQ3(date: LocalDate, topicId: Long, focusTime: Long)
-
-    @Query("UPDATE stat SET focusTimeQ4 = focusTimeQ4 + :focusTime WHERE date = :date AND topicId = :topicId")
-    suspend fun addFocusTimeQ4(date: LocalDate, topicId: Long, focusTime: Long)
-
-    @Query("UPDATE stat SET breakTime = breakTime + :breakTime WHERE date = :date AND topicId = :topicId")
-    suspend fun addBreakTime(date: LocalDate, topicId: Long, breakTime: Long)
+    /**
+     * Adds the given times to the row for [date] and [topicId], creating it if it does not exist
+     */
+    @Query(
+        """
+        INSERT INTO stat (date, topicId, focusTimeQ1, focusTimeQ2, focusTimeQ3, focusTimeQ4, breakTime)
+        VALUES (:date, :topicId, :focusTimeQ1, :focusTimeQ2, :focusTimeQ3, :focusTimeQ4, :breakTime)
+        ON CONFLICT(date, topicId) DO UPDATE SET
+            focusTimeQ1 = focusTimeQ1 + :focusTimeQ1,
+            focusTimeQ2 = focusTimeQ2 + :focusTimeQ2,
+            focusTimeQ3 = focusTimeQ3 + :focusTimeQ3,
+            focusTimeQ4 = focusTimeQ4 + :focusTimeQ4,
+            breakTime = breakTime + :breakTime
+        """
+    )
+    suspend fun addStatTimes(
+        date: LocalDate,
+        topicId: Long,
+        focusTimeQ1: Long,
+        focusTimeQ2: Long,
+        focusTimeQ3: Long,
+        focusTimeQ4: Long,
+        breakTime: Long
+    )
 
     @Query(
         """
@@ -104,9 +124,6 @@ interface StatDao {
                 "WHERE focusTimeQ1 > 0 OR focusTimeQ2 > 0 OR focusTimeQ3 > 0 OR focusTimeQ4 > 0"
     )
     fun getLastNDaysAvgStats(n: Int): Flow<StatTime?>
-
-    @Query("SELECT EXISTS (SELECT * FROM stat WHERE date = :date AND topicId = :topicId)")
-    suspend fun statExists(date: LocalDate, topicId: Long): Boolean
 
     @Query("SELECT date FROM stat ORDER BY date DESC LIMIT 1")
     suspend fun getLastDate(): LocalDate?

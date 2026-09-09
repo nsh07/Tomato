@@ -17,13 +17,19 @@
 
 package org.nsh07.pomodoro.data
 
+import androidx.sqlite.SQLiteException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 interface TopicRepository {
     suspend fun insertTopic(topic: Topic): Long
-    suspend fun updateTopic(topic: Topic)
+
+    /**
+     * Writes [topic] to the database
+     * @return true if the update was successful, false otherwise
+     */
+    suspend fun updateTopic(topic: Topic): Boolean
     suspend fun deleteTopic(topic: Topic)
     suspend fun deleteTopicMergingStats(topic: Topic, targetTopicId: Long)
     fun getAllTopics(): Flow<List<Topic>>
@@ -40,8 +46,13 @@ class AppTopicRepository(
         topicDao.insertTopic(topic)
     }
 
-    override suspend fun updateTopic(topic: Topic) = withContext(ioDispatcher) {
-        topicDao.updateTopic(topic)
+    override suspend fun updateTopic(topic: Topic): Boolean = withContext(ioDispatcher) {
+        try {
+            topicDao.updateTopic(topic)
+            true
+        } catch (_: SQLiteException) {
+            false
+        }
     }
 
     override suspend fun deleteTopic(topic: Topic) = withContext(ioDispatcher) {

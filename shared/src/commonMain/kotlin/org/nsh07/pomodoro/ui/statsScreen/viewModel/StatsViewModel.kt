@@ -328,7 +328,7 @@ class StatsViewModel(
 
                     while (it.isBefore(today)) {
                         if ((0..10).random() > 2) {
-                            statRepository.insertStat(
+                            statRepository.replaceStat(
                                 Stat(
                                     it,
                                     topic.id,

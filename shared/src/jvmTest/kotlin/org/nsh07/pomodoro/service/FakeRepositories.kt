@@ -37,6 +37,8 @@ class FakeStatRepository : StatRepository {
 
     override suspend fun insertStat(stat: Stat) {}
 
+    override suspend fun replaceStat(stat: Stat) {}
+
     override suspend fun addFocusTime(topicId: Long, focusTime: Long) {
         this.focusTime += focusTime
     }
@@ -105,7 +107,7 @@ class FakePreferenceRepository(currentTopicId: Long) : PreferenceRepository {
 class FakeTopicRepository(private val topic: Topic) : TopicRepository {
     override suspend fun insertTopic(topic: Topic): Long = topic.id
 
-    override suspend fun updateTopic(topic: Topic) {}
+    override suspend fun updateTopic(topic: Topic): Boolean = true
 
     override suspend fun deleteTopic(topic: Topic) {}
 

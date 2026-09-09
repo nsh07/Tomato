@@ -23,10 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import androidx.sqlite.execSQL
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.databasesDir
 import io.github.vinceglb.filekit.path
@@ -47,9 +44,9 @@ import org.nsh07.pomodoro.data.BackupRestoreManager
 import org.nsh07.pomodoro.data.DesktopBackupRestoreManager
 import org.nsh07.pomodoro.data.MIGRATION_2_3
 import org.nsh07.pomodoro.data.PreferenceRepository
+import org.nsh07.pomodoro.data.SeedDefaultTopicCallback
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
-import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.data.TopicRepository
 import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.service.TimerManager
@@ -117,29 +114,7 @@ private fun createDatabase(): AppDatabase {
         .setDriver(BundledSQLiteDriver())
         .setQueryCoroutineContext(Dispatchers.IO)
         .addMigrations(MIGRATION_2_3)
-        .addCallback(object : RoomDatabase.Callback() {
-            override fun onCreate(connection: SQLiteConnection) {
-                super.onCreate(connection)
-                connection.execSQL(
-                    """
-                    INSERT OR IGNORE INTO `topic` 
-                        (`id`, `name`, `color`, `shape`, `focusTime`, `shortBreakTime`, `longBreakTime`, `sessionLength`, `autostartNextSession`, `dndEnabled`)
-                    VALUES (
-                        ${defaultTopic.id}, 
-                        '${defaultTopic.name}', 
-                        ${defaultTopic.color.value.toLong()},
-                        '${defaultTopic.shape.name}',
-                        ${defaultTopic.focusTime},
-                        ${defaultTopic.shortBreakTime},
-                        ${defaultTopic.longBreakTime},
-                        ${defaultTopic.sessionLength},
-                        ${if (defaultTopic.autostartNextSession) 1 else 0},
-                        ${if (defaultTopic.dndEnabled) 1 else 0}
-                    )
-                    """.trimIndent()
-                )
-            }
-        })
+        .addCallback(SeedDefaultTopicCallback)
         .build()
 }
 

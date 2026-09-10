@@ -53,6 +53,7 @@ import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -126,6 +127,9 @@ fun TopicTimerSettings(
     var showColorShapeSheet by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     val colorScheme = colorScheme
+
+    // The timer may be started from elsewhere (widget, tile, notification) while the dialog is open
+    LaunchedEffect(topicRunning) { if (topicRunning) showDeleteDialog = false }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(if (inTimerScreen) 2.dp else 16.dp),
@@ -441,6 +445,7 @@ fun TopicTimerProperties(
                     ToggleButton(
                         checked = showDeleteDialog,
                         onCheckedChange = setShowDeleteDialog,
+                        enabled = !topicRunning,
                         shapes = ToggleButtonDefaults.shapes(),
                         colors = ToggleButtonDefaults.toggleButtonColors(
                             containerColor = colorScheme.errorContainer,

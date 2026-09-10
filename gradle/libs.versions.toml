@@ -22,7 +22,6 @@ ksp = "2.3.11"
 lifecycleRuntime = "2.11.0"
 materialKolor = "5.0.1"
 navigation3 = "1.1.1"
-revenuecat = "10.19.1"
 room = "2.8.4"
 sqlite = "2.7.0"
 vico = "3.3.1"
@@ -31,6 +30,10 @@ composeMaterial3 = "1.12.0-alpha03"
 skiko = "0.150.0"
 koinBom = "4.2.2"
 koinCompilerPlugin = "1.1.0"
+
+revenuecat = "10.19.1"
+measure = "0.19.0"
+measurePlugin = "0.13.0"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -63,8 +66,6 @@ filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose
 jlayer-player = { module = "dev.mccue:jlayer-player", version.ref = "jlayerPlayer" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
-revenuecat-purchases = { module = "com.revenuecat.purchases:purchases", version.ref = "revenuecat" }
-revenuecat-purchases-ui = { module = "com.revenuecat.purchases:purchases-ui", version.ref = "revenuecat" }
 vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
 
 # koin
@@ -75,6 +76,11 @@ koin-compose = { module = "io.insert-koin:koin-compose" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinxCoroutines" }
+
+# play variant deps
+revenuecat-purchases = { module = "com.revenuecat.purchases:purchases", version.ref = "revenuecat" }
+revenuecat-purchases-ui = { module = "com.revenuecat.purchases:purchases-ui", version.ref = "revenuecat" }
+measure-android = { group = "sh.measure", name = "measure-android", version.ref = "measure" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -89,3 +95,4 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koinCompilerPlugin" }
 
 buildKonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildKonfig" }
+measure = { id = "sh.measure.android.gradle", version.ref = "measurePlugin" }

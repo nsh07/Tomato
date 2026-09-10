@@ -26,6 +26,13 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.koin.compiler)
+    alias(libs.plugins.measure)
+}
+
+measure {
+    variantFilter {
+        enabled = name.startsWith("play")
+    }
 }
 
 tasks.withType(Test::class) {
@@ -139,6 +146,7 @@ dependencies {
     implementation(libs.androidx.adaptive)
     implementation(libs.compose.ui)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.ui.tooling)
 
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
@@ -147,6 +155,7 @@ dependencies {
 
     "playImplementation"(libs.revenuecat.purchases)
     "playImplementation"(libs.revenuecat.purchases.ui)
+    "playImplementation"(libs.measure.android)
 
     // koin
     implementation(project.dependencies.platform(libs.koin.bom))

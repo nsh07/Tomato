@@ -18,4 +18,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="com.android.vending.BILLING" />
+
+    <application>
+        <meta-data
+            android:name="sh.measure.android.API_KEY"
+            android:value="msrsh_a5548e5ea0cd31b4c16fb5a67a87e0fe6f86dad651768a4c0239aa33f31fc172_87d8dd9f" />
+        <meta-data
+            android:name="sh.measure.android.API_URL"
+            android:value="https://ingest.measure.sh" />
+    </application>
 </manifest>

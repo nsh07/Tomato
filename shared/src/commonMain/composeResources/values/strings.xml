@@ -146,6 +146,9 @@
     <string name="restore_desc">Restore stats and settings</string>
     <string name="backup_dialog_desc">Your stats and settings will be saved to a file in your chosen folder. You can restore this data later in %1$s.</string>
     <string name="restore_dialog_desc">Your stats and settings will be restored from the chosen backup file. The app will need to be restarted when the restore is complete. &lt;b>All existing data will be erased, and this cannot be undone.&lt;/b></string>
+    <string name="diagnostics">Diagnostics</string>
+    <string name="send_diagnostics_question">Send diagnostics?</string>
+    <string name="crash_reporting_notice_desc">Crash, freeze and performance reports help fix bugs faster. They include your device model, app version, gestures, and a random ID for this installation. Nothing is sent unless you allow it, and you can change this at any time in %1$s.</string>
     <string name="choose_folder">Choose folder</string>
     <string name="choose_file">Choose file</string>
     <string name="restart_app">Restart app</string>
@@ -181,4 +184,6 @@
     <string name="chartreuse">Chartreuse</string>
     <string name="yellow">Yellow</string>
     <string name="orange">Orange</string>
+    <string name="allow">Allow</string>
+    <string name="dont_allow">Don\'t allow</string>
 </resources>

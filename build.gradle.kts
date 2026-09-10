@@ -29,4 +29,5 @@ plugins {
     alias(libs.plugins.koin.compiler) apply false
 
     alias(libs.plugins.buildKonfig) apply false
+    alias(libs.plugins.measure) apply false
 }

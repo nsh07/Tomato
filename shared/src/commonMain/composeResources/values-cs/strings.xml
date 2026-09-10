@@ -174,4 +174,5 @@
     <string name="orange">Oranžová</string>
     <string name="default_name">Výchozí</string>
     <string name="topic_name_empty">Název tématu nemůže být prázdný</string>
+    <string name="shape">Tvar</string>
 </resources>

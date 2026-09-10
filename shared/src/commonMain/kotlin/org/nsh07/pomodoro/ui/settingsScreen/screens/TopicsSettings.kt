@@ -19,11 +19,8 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.screens
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -54,7 +51,6 @@ import androidx.compose.foundation.style.size
 import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
@@ -70,7 +66,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.rememberSliderState
@@ -102,9 +97,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.ui.mergePaddingValues
-import org.nsh07.pomodoro.ui.performConfirm
 import org.nsh07.pomodoro.ui.performSegmentTick
-import org.nsh07.pomodoro.ui.settingsScreen.components.TopicShapeColorPicker
+import org.nsh07.pomodoro.ui.settingsScreen.components.CreateTopicBottomSheet
 import org.nsh07.pomodoro.ui.settingsScreen.components.TopicTimerSettings
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
@@ -118,10 +112,8 @@ import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import org.nsh07.pomodoro.ui.topBarWindowInsets
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.add
-import tomato.shared.generated.resources.add_topic
 import tomato.shared.generated.resources.arrow_back
 import tomato.shared.generated.resources.back
-import tomato.shared.generated.resources.cancel
 import tomato.shared.generated.resources.create_new_topic
 import tomato.shared.generated.resources.minutes_format
 import tomato.shared.generated.resources.settings
@@ -162,20 +154,9 @@ fun TopicsSettings(
     val haptic = LocalHapticFeedback.current
     val defaultTopicColor = colorScheme.primary
 
-    var creatingTopic by remember { mutableStateOf(false) }
-    var newTopicName by remember { mutableStateOf("") }
-    var newTopicColor by remember { mutableStateOf(Color.White) }
-    var newTopicShape by remember { mutableStateOf(Topic.defaultTopic.shape) }
+    var showCreateTopicSheet by remember { mutableStateOf(false) }
 
-    fun resetNewTopic() {
-        newTopicName = ""
-        newTopicColor = Color.White
-        newTopicShape = Topic.defaultTopic.shape
-        creatingTopic = false
-    }
-
-    // While a topic is being created, the screen follows the color picked for the new topic
-    SeededTheme(if (creatingTopic) newTopicColor else editingTopic.color) {
+    SeededTheme(editingTopic.color) {
         val colorScheme = colorScheme
         val motionScheme = motionScheme
         val topBarTitle = LocalAppFonts.current.topBarTitle
@@ -242,330 +223,249 @@ fun TopicsSettings(
                 val minFormat = stringResource(Res.string.minutes_format)
                 val summaryFormat = stringResource(Res.string.topic_summary_format)
                 val scrollState = rememberScrollState()
-                SharedTransitionLayout {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(2.dp),
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(insets)
+                ) {
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(scrollState)
-                            .padding(insets)
+                            .padding(horizontal = 16.dp)
+                            .styleable {
+                                shape(RoundedCornerShape(40.dp))
+                                clip(true)
+                                background(colorScheme.primary)
+                            }
+                            .clickable { showCreateTopicSheet = true },
+                        contentAlignment = Alignment.Center
                     ) {
-                        val styleState = remember { MutableStyleState(null) }
-                        styleState.selected = creatingTopic
-
-                        Box(
-                            modifier = Modifier
-                                .padding(horizontal = if (creatingTopic) 0.dp else 16.dp)
-                                .styleable(styleState) {
-                                    shape(RoundedCornerShape(40.dp))
-                                    clip(true)
-                                    background(colorScheme.primary)
-                                    selected { animate { background(colorScheme.surfaceContainer) } }
-                                }
-                                .animateContentSize(motionScheme.slowSpatialSpec())
-                                .clickable { creatingTopic = !creatingTopic },
-                            contentAlignment = Alignment.Center
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(16.dp)
                         ) {
-                            val newTopicText = stringResource(Res.string.create_new_topic)
-                            AnimatedContent(creatingTopic) {
-                                if (!it) Row(
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.padding(16.dp)
-                                ) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .styleable {
+                                        size(40.dp)
+                                        shape(CircleShape)
+                                        background(colorScheme.onPrimary)
+                                    }
+                            ) {
+                                val shape = MaterialShapes.Boom.toShape()
+                                Box(
+                                    Modifier.styleable {
+                                        size(22.dp)
+                                        shape(shape)
+                                        background(colorScheme.onPrimaryContainer)
+                                    }
+                                )
+                            }
+                            Text(
+                                stringResource(Res.string.create_new_topic),
+                                style = typography.bodyLargeEmphasized,
+                                color = colorScheme.onPrimary,
+                                modifier = Modifier.weight(1f)
+                            )
+                            FilledIconButton(
+                                onClick = { showCreateTopicSheet = true },
+                                shapes = IconButtonDefaults.shapes(),
+                                colors = IconButtonDefaults.filledIconButtonColors(
+                                    containerColor = colorScheme.primaryContainer
+                                ),
+                                modifier = Modifier.size(
+                                    IconButtonDefaults.smallContainerSize(
+                                        IconButtonDefaults.IconButtonWidthOption.Wide
+                                    )
+                                )
+                            ) { Icon(painterResource(Res.drawable.add), null) }
+                        }
+                    }
+                    val dividerColor = colorScheme.primary
+                    Canvas(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 36.dp, vertical = 20.dp)
+                            .height(12.dp)
+                    ) {
+                        val wavelengthPx = 20.dp.toPx()
+                        val amplitudePx = 2.dp.toPx()
+                        val strokeWidthPx = 4.dp.toPx()
+                        val centerY = size.height / 2f
+
+                        val path = Path().apply {
+                            moveTo(0f, centerY + amplitudePx)
+                            var x = 0f
+                            while (x < size.width) {
+                                x += 2f
+                                val y = centerY +
+                                        amplitudePx * cos(2 * PI * x / wavelengthPx).toFloat()
+                                lineTo(x, y)
+                            }
+                        }
+
+                        drawPath(
+                            path = path,
+                            color = dividerColor,
+                            style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
+                        )
+                    }
+
+                    topics.fastForEachIndexed { index, topic ->
+                        key(topic.id) {
+                            val selected = topic.id == editingTopic.id
+                            val shape = topic.shape.toShape()
+
+                            val styleState = remember { MutableStyleState(null) }
+                            styleState.selected = selected
+
+                            val topicColor =
+                                if (topic.color == Color.White) defaultTopicColor
+                                else topic.color
+
+                            val primary = remember(topicColor, colorScheme.primary) {
+                                topicColor.harmonize(colorScheme.primary, true)
+                            }
+                            val onPrimary = remember(topicColor, colorScheme.onPrimary) {
+                                topicColor.harmonize(colorScheme.onPrimary, true)
+                            }
+                            val primaryContainer =
+                                remember(topicColor, colorScheme.primaryContainer) {
+                                    topicColor.harmonize(colorScheme.primaryContainer, true)
+                                }
+                            val onPrimaryContainer =
+                                remember(topicColor, colorScheme.onPrimaryContainer) {
+                                    topicColor.harmonize(colorScheme.onPrimaryContainer, true)
+                                }
+                            val surfaceBright =
+                                remember(topicColor, colorScheme.surfaceBright) {
+                                    topicColor.harmonize(colorScheme.surfaceBright, true)
+                                }
+
+                            val progress by animateFloatAsState(
+                                if (selected) 1f else 0f,
+                                animationSpec = motionScheme.defaultEffectsSpec()
+                            )
+                            val titleFontFamily: TextStyle by remember(progress) {
+                                derivedStateOf {
+                                    lerp(unselectedFont, selectedFont, progress)
+                                }
+                            }
+
+                            SegmentedListItem(
+                                checked = selected,
+                                onCheckedChange = {
+                                    if (!selected) haptic.performSegmentTick()
+                                    onAction(
+                                        SettingsAction.SetEditingTopic(
+                                            topic
+                                        )
+                                    )
+                                },
+                                shapes = segmentedListItemShapes(
+                                    index,
+                                    topics.size
+                                ),
+                                colors = listItemColors.copy(
+                                    containerColor = surfaceBright,
+                                    selectedContainerColor = primaryContainer
+                                ),
+                                verticalAlignment = Alignment.CenterVertically,
+                                leadingContent = {
                                     Box(
                                         contentAlignment = Alignment.Center,
                                         modifier = Modifier
-                                            .styleable {
-                                                size(40.dp)
+                                            .styleable(styleState) {
+                                                externalPaddingVertical(4.dp)
+                                                size(72.dp)
                                                 shape(CircleShape)
-                                                background(colorScheme.onPrimary)
+                                                background(primaryContainer)
+                                                selected { animate { background(primary) } }
                                             }
                                     ) {
-                                        val shape = MaterialShapes.Boom.toShape()
                                         Box(
-                                            Modifier.styleable {
-                                                size(22.dp)
-                                                shape(shape)
-                                                background(colorScheme.onPrimaryContainer)
-                                            }
-                                        )
-                                    }
-                                    Text(
-                                        newTopicText,
-                                        style = typography.bodyLargeEmphasized,
-                                        color = colorScheme.onPrimary,
-                                        modifier = Modifier
-                                            .sharedBounds(
-                                                rememberSharedContentState(newTopicText),
-                                                this@AnimatedContent
-                                            )
-                                            .weight(1f)
-                                    )
-                                    FilledIconButton(
-                                        onClick = { creatingTopic = true },
-                                        shapes = IconButtonDefaults.shapes(),
-                                        colors = IconButtonDefaults.filledIconButtonColors(
-                                            containerColor = colorScheme.primaryContainer
-                                        ),
-                                        modifier = Modifier.size(
-                                            IconButtonDefaults.smallContainerSize(
-                                                IconButtonDefaults.IconButtonWidthOption.Wide
-                                            )
-                                        )
-                                    ) { Icon(painterResource(Res.drawable.add), null) }
-                                }
-                                else Column(
-                                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(
-                                        newTopicText,
-                                        style = typography.titleLargeEmphasized,
-                                        fontFamily = topBarTitle,
-                                        modifier = Modifier
-                                            .sharedBounds(
-                                                rememberSharedContentState(newTopicText),
-                                                this@AnimatedContent
-                                            )
-                                            .padding(
-                                                start = 16.dp,
-                                                top = 24.dp,
-                                                end = 16.dp
-                                            )
-                                    )
-                                    val trimmedNewTopicName = newTopicName.trim()
-                                    val nameTaken = remember(trimmedNewTopicName, topics) {
-                                        topics.any {
-                                            it.name.equals(
-                                                trimmedNewTopicName,
-                                                true
-                                            )
-                                        }
-                                    }
-
-                                    TopicShapeColorPicker(
-                                        name = newTopicName,
-                                        onNameValueChange = { newTopicName = it },
-                                        color = newTopicColor,
-                                        shape = newTopicShape,
-                                        nameTaken = nameTaken,
-                                        onNameChange = {},
-                                        onColorChange = { newTopicColor = it },
-                                        onShapeChange = { newTopicShape = it },
-                                        containerColor = colorScheme.surfaceContainer
-                                    )
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(
-                                            8.dp,
-                                            Alignment.End
-                                        ),
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(16.dp)
-                                    ) {
-                                        TextButton(onClick = { resetNewTopic() }) {
-                                            Text(stringResource(Res.string.cancel))
-                                        }
-                                        Button(
-                                            onClick = {
-                                                haptic.performConfirm()
-                                                onAction(
-                                                    SettingsAction.CreateTopic(
-                                                        Topic.defaultTopic.copy(
-                                                            id = 0,
-                                                            name = trimmedNewTopicName,
-                                                            color = newTopicColor,
-                                                            shape = newTopicShape
-                                                        )
-                                                    )
-                                                )
-                                                resetNewTopic()
-                                            },
-                                            enabled = trimmedNewTopicName.isNotEmpty() && !nameTaken
-                                        ) {
-                                            Text(stringResource(Res.string.add_topic))
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        val dividerColor = colorScheme.primary
-                        Canvas(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 36.dp, vertical = 20.dp)
-                                .height(12.dp)
-                        ) {
-                            val wavelengthPx = 20.dp.toPx()
-                            val amplitudePx = 2.dp.toPx()
-                            val strokeWidthPx = 4.dp.toPx()
-                            val centerY = size.height / 2f
-
-                            val path = Path().apply {
-                                moveTo(0f, centerY + amplitudePx)
-                                var x = 0f
-                                while (x < size.width) {
-                                    x += 2f
-                                    val y = centerY +
-                                            amplitudePx * cos(2 * PI * x / wavelengthPx).toFloat()
-                                    lineTo(x, y)
-                                }
-                            }
-
-                            drawPath(
-                                path = path,
-                                color = dividerColor,
-                                style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
-                            )
-                        }
-
-                        topics.fastForEachIndexed { index, topic ->
-                            key(topic.id) {
-                                val selected = topic.id == editingTopic.id && !creatingTopic
-                                val shape = topic.shape.toShape()
-
-                                val styleState = remember { MutableStyleState(null) }
-                                styleState.selected = selected
-
-                                val topicColor =
-                                    if (topic.color == Color.White) defaultTopicColor
-                                    else topic.color
-
-                                val primary = remember(topicColor, colorScheme.primary) {
-                                    topicColor.harmonize(colorScheme.primary, true)
-                                }
-                                val onPrimary = remember(topicColor, colorScheme.onPrimary) {
-                                    topicColor.harmonize(colorScheme.onPrimary, true)
-                                }
-                                val primaryContainer =
-                                    remember(topicColor, colorScheme.primaryContainer) {
-                                        topicColor.harmonize(colorScheme.primaryContainer, true)
-                                    }
-                                val onPrimaryContainer =
-                                    remember(topicColor, colorScheme.onPrimaryContainer) {
-                                        topicColor.harmonize(colorScheme.onPrimaryContainer, true)
-                                    }
-                                val surfaceBright =
-                                    remember(topicColor, colorScheme.surfaceBright) {
-                                        topicColor.harmonize(colorScheme.surfaceBright, true)
-                                    }
-
-                                val progress by animateFloatAsState(
-                                    if (selected) 1f else 0f,
-                                    animationSpec = motionScheme.defaultEffectsSpec()
-                                )
-                                val titleFontFamily: TextStyle by remember(progress) {
-                                    derivedStateOf {
-                                        lerp(unselectedFont, selectedFont, progress)
-                                    }
-                                }
-
-                                SegmentedListItem(
-                                    checked = selected,
-                                    onCheckedChange = {
-                                        if (!selected) haptic.performSegmentTick()
-                                        onAction(
-                                            SettingsAction.SetEditingTopic(
-                                                topic
-                                            )
-                                        )
-                                    },
-                                    shapes = segmentedListItemShapes(
-                                        index,
-                                        topics.size
-                                    ),
-                                    colors = listItemColors.copy(
-                                        containerColor = surfaceBright,
-                                        selectedContainerColor = primaryContainer
-                                    ),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    leadingContent = {
-                                        Box(
-                                            contentAlignment = Alignment.Center,
-                                            modifier = Modifier
+                                            Modifier
                                                 .styleable(styleState) {
-                                                    externalPaddingVertical(4.dp)
-                                                    size(72.dp)
-                                                    shape(CircleShape)
-                                                    background(primaryContainer)
-                                                    selected { animate { background(primary) } }
+                                                    size(40.dp)
+                                                    shape(shape)
+                                                    background(primary)
+                                                    selected { animate { background(onPrimary) } }
                                                 }
-                                        ) {
-                                            Box(
-                                                Modifier
-                                                    .styleable(styleState) {
-                                                        size(40.dp)
-                                                        shape(shape)
-                                                        background(primary)
-                                                        selected { animate { background(onPrimary) } }
-                                                    }
-                                            )
-                                        }
-                                    },
-                                    supportingContent = {
-                                        Text(
-                                            String.format(
-                                                summaryFormat,
-                                                String.format(minFormat, topic.focusTime / 60000),
-                                                String.format(
-                                                    minFormat,
-                                                    topic.shortBreakTime / 60000
-                                                ),
-                                                String.format(
-                                                    minFormat,
-                                                    topic.longBreakTime / 60000
-                                                ),
-                                                topic.sessionLength
-                                            ),
-                                            style = typography.labelLarge,
-                                            color = colorScheme.onSecondaryContainer
                                         )
-                                    },
-                                    modifier = Modifier
-                                        .padding(horizontal = 16.dp)
-                                        .styleable(styleState) {
-                                            externalPaddingTop(0.dp)
-                                            selected { animate { externalPaddingTop(2.dp) } }
-                                        }
-                                ) {
+                                    }
+                                },
+                                supportingContent = {
                                     Text(
-                                        topic.name,
-                                        style = titleFontFamily,
-                                        color = animateColorAsState(
-                                            if (!selected) colorScheme.onSurface
-                                            else onPrimaryContainer
-                                        ).value
-                                    )
-                                }
-
-                                AnimatedVisibility(
-                                    selected,
-                                    enter = expandVertically(motionScheme.slowSpatialSpec()),
-                                    exit = shrinkVertically(motionScheme.slowSpatialSpec())
-                                ) {
-                                    TopicTimerSettings(
-                                        topic = topic,
-                                        topics = topics,
-                                        topicRunning = serviceRunning && topic.id == currentTopicId,
-                                        focusTimeInputFieldState = focusTimeInputFieldState,
-                                        shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
-                                        longBreakTimeInputFieldState = longBreakTimeInputFieldState,
-                                        sessionsSliderState = sessionsSliderState,
-                                        onAction = onAction,
-                                        modifier = Modifier.padding(
-                                            start = 16.dp,
-                                            top = 2.dp,
-                                            end = 16.dp,
-                                            bottom = 2.dp
+                                        String.format(
+                                            summaryFormat,
+                                            String.format(minFormat, topic.focusTime / 60000),
+                                            String.format(
+                                                minFormat,
+                                                topic.shortBreakTime / 60000
+                                            ),
+                                            String.format(
+                                                minFormat,
+                                                topic.longBreakTime / 60000
+                                            ),
+                                            topic.sessionLength
                                         ),
-                                        inTimerScreen = false
+                                        style = typography.labelLarge,
+                                        color = colorScheme.onSecondaryContainer
                                     )
-                                }
+                                },
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .styleable(styleState) {
+                                        externalPaddingTop(0.dp)
+                                        selected { animate { externalPaddingTop(2.dp) } }
+                                    }
+                            ) {
+                                Text(
+                                    topic.name,
+                                    style = titleFontFamily,
+                                    color = animateColorAsState(
+                                        if (!selected) colorScheme.onSurface
+                                        else onPrimaryContainer
+                                    ).value
+                                )
+                            }
+
+                            AnimatedVisibility(
+                                selected,
+                                enter = expandVertically(motionScheme.slowSpatialSpec()),
+                                exit = shrinkVertically(motionScheme.slowSpatialSpec())
+                            ) {
+                                TopicTimerSettings(
+                                    topic = topic,
+                                    topics = topics,
+                                    topicRunning = serviceRunning && topic.id == currentTopicId,
+                                    focusTimeInputFieldState = focusTimeInputFieldState,
+                                    shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
+                                    longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                                    sessionsSliderState = sessionsSliderState,
+                                    onAction = onAction,
+                                    modifier = Modifier.padding(
+                                        start = 16.dp,
+                                        top = 2.dp,
+                                        end = 16.dp,
+                                        bottom = 2.dp
+                                    ),
+                                    inTimerScreen = false
+                                )
                             }
                         }
                     }
                 }
+            }
+            if (showCreateTopicSheet) {
+                CreateTopicBottomSheet(
+                    topics = topics,
+                    setShowSheet = { showCreateTopicSheet = it },
+                    onAction = onAction
+                )
             }
         }
     }

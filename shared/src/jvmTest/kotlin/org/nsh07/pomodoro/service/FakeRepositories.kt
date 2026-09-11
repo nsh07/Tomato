@@ -19,7 +19,11 @@ package org.nsh07.pomodoro.service
 
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
@@ -103,21 +107,29 @@ class FakePreferenceRepository(currentTopicId: Long) : PreferenceRepository {
     }
 }
 
-/** [TopicRepository] serving a single, fixed topic */
-class FakeTopicRepository(private val topic: Topic) : TopicRepository {
-    override suspend fun insertTopic(topic: Topic): Long = topic.id
+/** In-memory [TopicRepository], whose contents may change while a test runs */
+class FakeTopicRepository(vararg topics: Topic) : TopicRepository {
+    private val topics = MutableStateFlow(topics.associateBy { it.id })
 
-    override suspend fun updateTopic(topic: Topic): Boolean = true
+    override suspend fun insertTopic(topic: Topic): Long =
+        topic.id.also { id -> this.topics.update { it + (id to topic) } }
 
-    override suspend fun deleteTopic(topic: Topic) {}
+    override suspend fun updateTopic(topic: Topic): Boolean =
+        true.also { this.topics.update { it + (topic.id to topic) } }
 
-    override suspend fun deleteTopicMergingStats(topic: Topic, targetTopicId: Long) {}
+    override suspend fun deleteTopic(topic: Topic) {
+        topics.update { it - topic.id }
+    }
 
-    override fun getAllTopics(): Flow<List<Topic>> = flowOf(listOf(topic))
+    override suspend fun deleteTopicMergingStats(topic: Topic, targetTopicId: Long) =
+        deleteTopic(topic)
 
-    override suspend fun getTopicById(id: Long): Topic? = topic.takeIf { it.id == id }
+    override fun getAllTopics(): Flow<List<Topic>> = topics.map { it.values.toList() }
 
-    override fun observeTopicById(id: Long): Flow<Topic?> = flowOf(topic.takeIf { it.id == id })
+    override suspend fun getTopicById(id: Long): Topic? = topics.value[id]
 
-    override suspend fun getTopicIds(): List<Long> = listOf(topic.id)
+    override fun observeTopicById(id: Long): Flow<Topic?> =
+        topics.map { it[id] }.distinctUntilChanged()
+
+    override suspend fun getTopicIds(): List<Long> = topics.value.keys.toList()
 }

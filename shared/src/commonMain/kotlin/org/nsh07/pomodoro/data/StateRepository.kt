@@ -22,13 +22,12 @@ import androidx.compose.material3.lightColorScheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
@@ -44,17 +43,16 @@ class StateRepository(
     private val preferenceRepository: PreferenceRepository,
     private val topicRepository: TopicRepository
 ) {
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     val timerState = MutableStateFlow(TimerState())
     val settingsState = MutableStateFlow(SettingsState())
 
-    val currentTopicId = MutableStateFlow(defaultTopic.id)
+    private val _currentTopicId = MutableStateFlow(defaultTopic.id)
+    val currentTopicId: StateFlow<Long> = _currentTopicId.asStateFlow()
 
-    val currentTopic: StateFlow<Topic> = currentTopicId
-        .flatMapLatest { topicRepository.observeTopicById(it) }
-        .map { it ?: defaultTopic } // the selected topic may have been deleted
-        .stateIn(scope, SharingStarted.Eagerly, defaultTopic)
+    private val _currentTopic = MutableStateFlow(defaultTopic)
+    val currentTopic: StateFlow<Topic> = _currentTopic.asStateFlow()
 
     val time = MutableStateFlow(25 * 60 * 1000L)
     var timerFrequency: Float = 60f
@@ -68,8 +66,28 @@ class StateRepository(
 
     init {
         scope.launch {
+            observeCurrentTopic()
+        }
+        scope.launch {
             reloadSettings()
         }
+    }
+
+    private suspend fun observeCurrentTopic() {
+        _currentTopicId
+            .flatMapLatest { id -> topicRepository.observeTopicById(id).map { id to it } }
+            .collect { (id, topic) ->
+                if (id != _currentTopicId.value) return@collect // another topic has been selected
+                if (topic != null) {
+                    publishTopic(topic)
+                } else { // the selected topic has been deleted
+                    if (id != defaultTopic.id) {
+                        _currentTopicId.value = defaultTopic.id
+                        preferenceRepository.saveLongPreference(CURRENT_TOPIC_KEY, defaultTopic.id)
+                    }
+                    publishTopic(defaultTopic)
+                }
+            }
     }
 
     suspend fun reloadSettings() {
@@ -165,38 +183,61 @@ class StateRepository(
 
         if (isFirstLoad) {
             isFirstLoad = false
-            val topic = restoreCurrentTopic()
-            time.update { topic.focusTime }
-            timerState.update { currentState ->
-                currentState.copy(
-                    timerMode = TimerMode.FOCUS,
-                    timeStr = millisecondsToStr(topic.focusTime),
-                    totalTime = topic.focusTime,
-                    nextTimerMode = if (topic.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
-                    nextTimeStr = millisecondsToStr(if (topic.sessionLength > 1) topic.shortBreakTime else topic.longBreakTime),
-                    currentFocusCount = 1,
-                    totalFocusCount = topic.sessionLength
-                )
-            }
+            restoreCurrentTopic()
         }
     }
 
     suspend fun setTopic(topic: Topic) {
-        if (currentTopicId.value == topic.id) return
-        currentTopicId.value = topic.id
+        if (_currentTopicId.value == topic.id) return
+        _currentTopicId.value = topic.id
+        publishTopic(topic)
         preferenceRepository.saveLongPreference(CURRENT_TOPIC_KEY, topic.id)
-        currentTopic.first { it.id == topic.id || it.id == defaultTopic.id }
     }
 
-    private suspend fun restoreCurrentTopic(): Topic {
+    private fun publishTopic(topic: Topic) {
+        val previous = _currentTopic.value
+        _currentTopic.value = topic
+        if (topic.id != previous.id || !topic.hasSameIntervals(previous)) refreshTimer(topic)
+    }
+
+    private fun refreshTimer(topic: Topic) {
+        val currentState = timerState.value
+        if (currentState.serviceRunning || currentState.infiniteFocus) return
+
+        time.value = topic.focusTime
+        timerState.update {
+            it.copy(
+                timerMode = TimerMode.FOCUS,
+                timeStr = millisecondsToStr(topic.focusTime),
+                totalTime = topic.focusTime,
+                nextTimerMode = if (topic.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
+                nextTimeStr = millisecondsToStr(if (topic.sessionLength > 1) topic.shortBreakTime else topic.longBreakTime),
+                currentFocusCount = 1,
+                totalFocusCount = topic.sessionLength
+            )
+        }
+    }
+
+    private fun Topic.hasSameIntervals(other: Topic) =
+        focusTime == other.focusTime &&
+                shortBreakTime == other.shortBreakTime &&
+                longBreakTime == other.longBreakTime &&
+                sessionLength == other.sessionLength
+
+    private suspend fun restoreCurrentTopic() {
         val storedId = preferenceRepository.getLongPreference(CURRENT_TOPIC_KEY)
-            ?: currentTopicId.value
-        val topic = topicRepository.getTopicById(storedId)
+        val topic = storedId?.let { topicRepository.getTopicById(it) }
             ?: topicRepository.getTopicById(defaultTopic.id)
             ?: defaultTopic
 
-        currentTopicId.value = topic.id
-        return topic
+        // the stored topic may be missing, or have never been written in the first place
+        if (storedId != topic.id) {
+            preferenceRepository.saveLongPreference(CURRENT_TOPIC_KEY, topic.id)
+        }
+
+        _currentTopicId.value = topic.id
+        _currentTopic.value = topic
+        refreshTimer(topic)
     }
 
     private companion object {

@@ -53,9 +53,7 @@ import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.ui.Screen
 import org.nsh07.pomodoro.ui.settingsScreen.components.isValidMinutesInput
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
-import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.utils.logError
-import org.nsh07.pomodoro.utils.millisecondsToStr
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
@@ -67,8 +65,6 @@ class SettingsViewModel(
     private val topicRepository: TopicRepository,
     private val timerHelper: TimerHelper
 ) : ViewModel() {
-    private val time: MutableStateFlow<Long> = stateRepository.time
-
     val backStack = mutableStateListOf<Screen.Settings>(Screen.Settings.Main)
 
     val isPlus = billingManager.isPlus
@@ -84,7 +80,7 @@ class SettingsViewModel(
     private val isServiceRunning: Boolean
         get() = stateRepository.timerState.value.serviceRunning
 
-    val currentTopicId = stateRepository.currentTopicId.asStateFlow()
+    val currentTopicId = stateRepository.currentTopicId
 
     private val _settingsState = stateRepository.settingsState
     val settingsState = _settingsState.asStateFlow()
@@ -169,7 +165,6 @@ class SettingsViewModel(
 
             if (setAsCurrent && !isServiceRunning) {
                 stateRepository.setTopic(created)
-                refreshTimer(created)
             }
         }
     }
@@ -184,7 +179,6 @@ class SettingsViewModel(
 
             if (stateRepository.currentTopicId.value == topic.id) {
                 stateRepository.setTopic(fallback)
-                refreshTimer(fallback)
             }
             if (_editingTopic.value.id == topic.id) setEditingTopic(fallback)
         }
@@ -201,21 +195,16 @@ class SettingsViewModel(
     /**
      * Applies [transform] to the topic being edited and writes it to the database
      */
-    private suspend fun editTopic(refreshesTimer: Boolean = false, transform: (Topic) -> Topic) {
-        val topic = editTopicMutex.withLock {
+    private suspend fun editTopic(transform: (Topic) -> Topic) {
+        editTopicMutex.withLock {
             val previous = _editingTopic.value
             val topic = _editingTopic.updateAndGet(transform)
 
             if (!topicRepository.updateTopic(topic)) {
                 // saving edit failed, roll back unless the topic being edited has since changed
                 _editingTopic.update { if (it == topic) previous else it }
-                return
             }
-
-            topic
         }
-
-        if (refreshesTimer && topic.id == stateRepository.currentTopicId.value) refreshTimer(topic)
     }
 
     private fun setEditingTopicName(name: String) {
@@ -256,7 +245,7 @@ class SettingsViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val value = sessionsSliderState.value.toInt()
 
-            editTopic(refreshesTimer = true) { it.copy(sessionLength = value) }
+            editTopic { it.copy(sessionLength = value) }
         }
     }
 
@@ -279,7 +268,7 @@ class SettingsViewModel(
                     if (it.isValidMinutesInput()) {
                         val value = it.toString().toLong() * 60 * 1000
 
-                        editTopic(refreshesTimer = true) { it.copy(focusTime = value) }
+                        editTopic { it.copy(focusTime = value) }
                     }
                 }
         }
@@ -290,7 +279,7 @@ class SettingsViewModel(
                     if (it.isValidMinutesInput()) {
                         val value = it.toString().toLong() * 60 * 1000
 
-                        editTopic(refreshesTimer = true) { it.copy(shortBreakTime = value) }
+                        editTopic { it.copy(shortBreakTime = value) }
                     }
                 }
         }
@@ -301,7 +290,7 @@ class SettingsViewModel(
                     if (it.isValidMinutesInput()) {
                         val value = it.toString().toLong() * 60 * 1000
 
-                        editTopic(refreshesTimer = true) { it.copy(longBreakTime = value) }
+                        editTopic { it.copy(longBreakTime = value) }
                     }
                 }
         }
@@ -476,26 +465,6 @@ class SettingsViewModel(
                 "vibration_amplitude",
                 vibrationAmplitude
             )
-        }
-    }
-
-    private fun refreshTimer(currentTopic: Topic) {
-        if (!isServiceRunning) {
-            val infFocus = stateRepository.timerState.value.infiniteFocus
-
-            if (!infFocus) time.update { currentTopic.focusTime }
-
-            if (!infFocus) stateRepository.timerState.update { currentState ->
-                currentState.copy(
-                    timerMode = TimerMode.FOCUS,
-                    timeStr = millisecondsToStr(time.value),
-                    totalTime = time.value,
-                    nextTimerMode = if (currentTopic.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
-                    nextTimeStr = millisecondsToStr(if (currentTopic.sessionLength > 1) currentTopic.shortBreakTime else currentTopic.longBreakTime),
-                    currentFocusCount = 1,
-                    totalFocusCount = currentTopic.sessionLength
-                )
-            }
         }
     }
 }

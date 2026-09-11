@@ -73,13 +73,10 @@ fun SettingsScreenRoot(
     val backStack = viewModel.backStack
 
     DisposableEffect(Unit) {
-        viewModel.runTextFieldFlowCollection()
-        onDispose { viewModel.cancelTextFieldFlowCollection() }
+        onDispose { viewModel.onSettingsClosed() }
     }
 
-    val focusTimeInputFieldState = viewModel.focusTimeTextFieldState
-    val shortBreakTimeInputFieldState = viewModel.shortBreakTimeTextFieldState
-    val longBreakTimeInputFieldState = viewModel.longBreakTimeTextFieldState
+    val minuteInputs = viewModel.minuteInputs
 
     val serviceRunning by viewModel.serviceRunning.collectAsStateWithLifecycle()
     val currentTopicId by viewModel.currentTopicId.collectAsStateWithLifecycle()
@@ -183,9 +180,7 @@ fun SettingsScreenRoot(
                     currentTopicId = currentTopicId,
                     settingsState = settingsState,
                     contentPadding = contentPadding,
-                    focusTimeInputFieldState = focusTimeInputFieldState,
-                    shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
-                    longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                    minuteInputs = minuteInputs,
                     sessionsSliderState = sessionsSliderState,
                     topics = topics,
                     editingTopic = editingTopic,
@@ -206,9 +201,7 @@ fun SettingsScreenRoot(
                     editingTopic = editingTopic,
                     serviceRunning = serviceRunning,
                     currentTopicId = currentTopicId,
-                    focusTimeInputFieldState = focusTimeInputFieldState,
-                    shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
-                    longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                    minuteInputs = minuteInputs,
                     sessionsSliderState = sessionsSliderState,
                     contentPadding = contentPadding,
                     onBack = backStack::onBack,

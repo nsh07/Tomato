@@ -49,7 +49,6 @@ import androidx.compose.foundation.style.animate
 import androidx.compose.foundation.style.externalPaddingVertical
 import androidx.compose.foundation.style.size
 import androidx.compose.foundation.style.styleable
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -99,6 +98,7 @@ import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.performSegmentTick
 import org.nsh07.pomodoro.ui.settingsScreen.components.CreateTopicBottomSheet
+import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputs
 import org.nsh07.pomodoro.ui.settingsScreen.components.TopicTimerSettings
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
@@ -141,9 +141,7 @@ fun TopicsSettings(
     editingTopic: Topic,
     serviceRunning: Boolean,
     currentTopicId: Long,
-    focusTimeInputFieldState: TextFieldState,
-    shortBreakTimeInputFieldState: TextFieldState,
-    longBreakTimeInputFieldState: TextFieldState,
+    minuteInputs: MinuteInputs,
     sessionsSliderState: SliderState,
     contentPadding: PaddingValues,
     onBack: () -> Unit,
@@ -442,9 +440,7 @@ fun TopicsSettings(
                                     topic = topic,
                                     topics = topics,
                                     topicRunning = serviceRunning && topic.id == currentTopicId,
-                                    focusTimeInputFieldState = focusTimeInputFieldState,
-                                    shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
-                                    longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                                    minuteInputs = minuteInputs,
                                     sessionsSliderState = sessionsSliderState,
                                     onAction = onAction,
                                     modifier = Modifier.padding(
@@ -484,9 +480,7 @@ fun TopicsSettingsPreview() {
             editingTopic = editingTopic,
             serviceRunning = false,
             currentTopicId = editingTopic.id,
-            focusTimeInputFieldState = TextFieldState("25"),
-            shortBreakTimeInputFieldState = TextFieldState("5"),
-            longBreakTimeInputFieldState = TextFieldState("15"),
+            minuteInputs = MinuteInputs("25", "5", "15"),
             sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
             contentPadding = PaddingValues(0.dp),
             onBack = {},
@@ -519,9 +513,7 @@ fun TopicsSettingsDarkPreview() {
             editingTopic = editingTopic,
             serviceRunning = false,
             currentTopicId = editingTopic.id,
-            focusTimeInputFieldState = TextFieldState("25"),
-            shortBreakTimeInputFieldState = TextFieldState("5"),
-            longBreakTimeInputFieldState = TextFieldState("15"),
+            minuteInputs = MinuteInputs("25", "5", "15"),
             sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
             contentPadding = PaddingValues(0.dp),
             onBack = {},

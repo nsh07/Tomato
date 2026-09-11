@@ -24,8 +24,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
@@ -47,19 +45,19 @@ import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MinuteInputField(
-    state: TextFieldState,
+    minutes: String,
+    onMinutesChange: (String) -> Unit,
     enabled: Boolean,
     shape: Shape,
     modifier: Modifier = Modifier,
-    inputTransformation: MinutesInputTransformation = MinutesInputTransformation2Digits,
+    maxDigits: Int = 2,
     imeAction: ImeAction = ImeAction.Next
 ) {
     BasicTextField(
-        state = state,
+        value = minutes,
+        onValueChange = { if (it.isMinutesInput(maxDigits)) onMinutesChange(it) },
         enabled = enabled,
-        lineLimits = TextFieldLineLimits.SingleLine,
-        inputTransformation = inputTransformation,
-//        outputTransformation = MinutesOutputTransformation,
+        singleLine = true,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.NumberPassword,
             imeAction = imeAction
@@ -72,10 +70,9 @@ fun MinuteInputField(
             textAlign = TextAlign.Center
         ),
         cursorBrush = SolidColor(colorScheme.onSurface),
-        decorator = { innerTextField ->
-            val text = state.text
+        decorationBox = { innerTextField ->
             val width by animateDpAsState(
-                if (text.length < 3) 112.dp else 140.dp,
+                if (minutes.length < 3) 112.dp else 140.dp,
                 motionScheme.defaultSpatialSpec()
             )
             Box(
@@ -84,7 +81,7 @@ fun MinuteInputField(
                     .size(width, 100.dp)
                     .background(
                         animateColorAsState(
-                            if (text.isValidMinutesInput())
+                            if (minutes.isValidMinutesInput())
                                 listItemColors.containerColor
                             else colorScheme.errorContainer,
                             motionScheme.defaultEffectsSpec()

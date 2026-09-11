@@ -36,8 +36,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -114,11 +112,7 @@ fun CreateTopicBottomSheet(
     var color by remember { mutableStateOf(Color.White) }
     var shape by remember { mutableStateOf(defaultTopic.shape) }
 
-    val focusTimeInputFieldState = rememberTextFieldState(defaultTopic.focusTime.toMinutes())
-    val shortBreakTimeInputFieldState =
-        rememberTextFieldState(defaultTopic.shortBreakTime.toMinutes())
-    val longBreakTimeInputFieldState =
-        rememberTextFieldState(defaultTopic.longBreakTime.toMinutes())
+    var minuteInputs by remember { mutableStateOf(MinuteInputs(defaultTopic)) }
     val sessionsSliderState = rememberSliderState(
         value = defaultTopic.sessionLength.toFloat(),
         steps = 8,
@@ -132,9 +126,9 @@ fun CreateTopicBottomSheet(
         topics.any { it.name.equals(trimmedName, true) }
     }
     val nameValid = trimmedName.isNotEmpty() && !nameTaken
-    val timesValid = focusTimeInputFieldState.text.isValidMinutesInput() &&
-            shortBreakTimeInputFieldState.text.isValidMinutesInput() &&
-            longBreakTimeInputFieldState.text.isValidMinutesInput()
+    val timesValid = minuteInputs.focus.isValidMinutesInput() &&
+            minuteInputs.shortBreak.isValidMinutesInput() &&
+            minuteInputs.longBreak.isValidMinutesInput()
 
     fun hideSheet(onHidden: () -> Unit = {}) {
         coroutineScope
@@ -163,9 +157,8 @@ fun CreateTopicBottomSheet(
                 color = color,
                 shape = shape,
                 nameTaken = nameTaken,
-                focusTimeInputFieldState = focusTimeInputFieldState,
-                shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
-                longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                minuteInputs = minuteInputs,
+                onMinuteInputsChange = { minuteInputs = it },
                 sessionsSliderState = sessionsSliderState,
                 autostartNextSession = autostartNextSession,
                 dndEnabled = dndEnabled,
@@ -183,20 +176,17 @@ fun CreateTopicBottomSheet(
                     hideSheet {
                         onAction(
                             SettingsAction.CreateTopic(
-                                topic = defaultTopic.copy(
+                                topic = Topic(
                                     id = 0,
                                     name = trimmedName,
                                     color = color,
                                     shape = shape,
-                                    focusTime = focusTimeInputFieldState.toMillis(
-                                        defaultTopic.focusTime
-                                    ),
-                                    shortBreakTime = shortBreakTimeInputFieldState.toMillis(
-                                        defaultTopic.shortBreakTime
-                                    ),
-                                    longBreakTime = longBreakTimeInputFieldState.toMillis(
-                                        defaultTopic.longBreakTime
-                                    ),
+                                    focusTime = minuteInputs.focus.minutesToMillisOrNull()
+                                        ?: defaultTopic.focusTime,
+                                    shortBreakTime = minuteInputs.shortBreak.minutesToMillisOrNull()
+                                        ?: defaultTopic.shortBreakTime,
+                                    longBreakTime = minuteInputs.longBreak.minutesToMillisOrNull()
+                                        ?: defaultTopic.longBreakTime,
                                     sessionLength = sessionsSliderState.value.toInt(),
                                     autostartNextSession = autostartNextSession,
                                     dndEnabled = dndEnabled
@@ -222,9 +212,8 @@ private fun CreateTopicSheetContent(
     color: Color,
     shape: TopicShape,
     nameTaken: Boolean,
-    focusTimeInputFieldState: TextFieldState,
-    shortBreakTimeInputFieldState: TextFieldState,
-    longBreakTimeInputFieldState: TextFieldState,
+    minuteInputs: MinuteInputs,
+    onMinuteInputsChange: (MinuteInputs) -> Unit,
     sessionsSliderState: SliderState,
     autostartNextSession: Boolean,
     dndEnabled: Boolean,
@@ -302,9 +291,8 @@ private fun CreateTopicSheetContent(
                             dndEnabled = dndEnabled,
                             topicRunning = false,
                             inTimerScreen = true,
-                            focusTimeInputFieldState = focusTimeInputFieldState,
-                            shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
-                            longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                            minuteInputs = minuteInputs,
+                            onMinuteInputsChange = onMinuteInputsChange,
                             sessionsSliderState = sessionsSliderState,
                             onAutostartNextSessionChange = onAutostartNextSessionChange,
                             onDndEnabledChange = onDndEnabledChange,
@@ -378,11 +366,6 @@ private fun CreateTopicSheetContent(
     }
 }
 
-private fun Long.toMinutes() = (this / (60 * 1000)).toString()
-
-private fun TextFieldState.toMillis(fallback: Long) =
-    text.toString().toLongOrNull()?.times(60 * 1000) ?: fallback
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(widthDp = 412, heightDp = 600)
 @Composable
@@ -393,6 +376,7 @@ private fun CreateTopicSheetContentPreview() {
     var shape by remember { mutableStateOf(TopicShape.COOKIE_7_SIDED) }
     var autostartNextSession by remember { mutableStateOf(false) }
     var dndEnabled by remember { mutableStateOf(false) }
+    var minuteInputs by remember { mutableStateOf(MinuteInputs("25", "5", "15")) }
 
     TomatoTheme(dynamicColor = false) {
         SeededTheme(color) {
@@ -406,9 +390,8 @@ private fun CreateTopicSheetContentPreview() {
                     color = color,
                     shape = shape,
                     nameTaken = false,
-                    focusTimeInputFieldState = rememberTextFieldState("25"),
-                    shortBreakTimeInputFieldState = rememberTextFieldState("5"),
-                    longBreakTimeInputFieldState = rememberTextFieldState("15"),
+                    minuteInputs = minuteInputs,
+                    onMinuteInputsChange = { minuteInputs = it },
                     sessionsSliderState = rememberSliderState(
                         value = 4f,
                         steps = 8,

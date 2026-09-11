@@ -36,8 +36,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -86,6 +84,7 @@ import org.nsh07.pomodoro.ui.performSegmentTick
 import org.nsh07.pomodoro.ui.performToggle
 import org.nsh07.pomodoro.ui.settingsScreen.SettingsSwitchItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.CreateTopicBottomSheet
+import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputs
 import org.nsh07.pomodoro.ui.settingsScreen.components.PlusDivider
 import org.nsh07.pomodoro.ui.settingsScreen.components.SliderListItem
 import org.nsh07.pomodoro.ui.settingsScreen.components.TopicTimerSettings
@@ -137,9 +136,7 @@ fun TimerSettings(
     currentTopicId: Long,
     settingsState: SettingsState,
     contentPadding: PaddingValues,
-    focusTimeInputFieldState: TextFieldState,
-    shortBreakTimeInputFieldState: TextFieldState,
-    longBreakTimeInputFieldState: TextFieldState,
+    minuteInputs: MinuteInputs,
     sessionsSliderState: SliderState,
     topics: List<Topic>,
     editingTopic: Topic,
@@ -302,9 +299,7 @@ fun TimerSettings(
                             topic = editingTopic,
                             topics = topics,
                             topicRunning = topicRunning,
-                            focusTimeInputFieldState = focusTimeInputFieldState,
-                            shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
-                            longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                            minuteInputs = minuteInputs,
                             sessionsSliderState = sessionsSliderState,
                             onAction = onAction
                         )
@@ -537,9 +532,6 @@ fun TimerSettings(
 @Preview
 @Composable
 private fun TimerSettingsPreview() {
-    val focusTimeInputFieldState = rememberTextFieldState("25")
-    val shortBreakTimeInputFieldState = rememberTextFieldState("5")
-    val longBreakTimeInputFieldState = rememberTextFieldState("15")
     val sessionsSliderState = rememberSliderState(
         value = 4f,
         valueRange = 1f..10f,
@@ -552,9 +544,7 @@ private fun TimerSettingsPreview() {
                 currentTopicId = defaultTopic.id,
                 settingsState = remember { SettingsState() },
                 contentPadding = PaddingValues(),
-                focusTimeInputFieldState = focusTimeInputFieldState,
-                shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
-                longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                minuteInputs = MinuteInputs("25", "5", "15"),
                 sessionsSliderState = sessionsSliderState,
                 topics = listOf(
                     defaultTopic,

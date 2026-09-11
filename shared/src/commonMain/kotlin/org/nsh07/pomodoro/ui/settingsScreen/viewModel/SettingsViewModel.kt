@@ -17,22 +17,21 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -51,12 +50,13 @@ import org.nsh07.pomodoro.data.TopicRepository
 import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.ui.Screen
-import org.nsh07.pomodoro.ui.settingsScreen.components.isValidMinutesInput
+import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputs
+import org.nsh07.pomodoro.ui.settingsScreen.components.minutesToMillisOrNull
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.utils.logError
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 class SettingsViewModel(
     billingManager: BillingManager,
     private val preferenceRepository: PreferenceRepository,
@@ -90,15 +90,8 @@ class SettingsViewModel(
     private val _editingTopic = MutableStateFlow(_currentTopic.value)
     val editingTopic = _editingTopic.asStateFlow()
 
-    val focusTimeTextFieldState by lazy {
-        TextFieldState((_currentTopic.value.focusTime / 60000).toString())
-    }
-    val shortBreakTimeTextFieldState by lazy {
-        TextFieldState((_currentTopic.value.shortBreakTime / 60000).toString())
-    }
-    val longBreakTimeTextFieldState by lazy {
-        TextFieldState((_currentTopic.value.longBreakTime / 60000).toString())
-    }
+    var minuteInputs by mutableStateOf(MinuteInputs(_editingTopic.value))
+        private set
 
     val sessionsSliderState by lazy {
         SliderState(
@@ -117,9 +110,7 @@ class SettingsViewModel(
 
     private val editTopicMutex = Mutex()
 
-    private var focusFlowCollectionJob: Job? = null
-    private var shortBreakFlowCollectionJob: Job? = null
-    private var longBreakFlowCollectionJob: Job? = null
+    private var minutesWriteJob: Job? = null
 
     fun onAction(action: SettingsAction) {
         when (action) {
@@ -146,6 +137,7 @@ class SettingsViewModel(
             is SettingsAction.DeleteTopic -> deleteTopic(action.topic, action.deleteStats)
             is SettingsAction.SetEditingTopic -> setEditingTopic(action.topic)
             is SettingsAction.SetEditingTopicName -> setEditingTopicName(action.name)
+            is SettingsAction.SetEditingTopicMinutes -> setEditingTopicMinutes(action.minutes)
             is SettingsAction.SetEditingTopicColor -> setEditingTopicColor(action.color)
             is SettingsAction.SetEditingTopicShape -> setEditingTopicShape(action.shape)
 
@@ -186,9 +178,7 @@ class SettingsViewModel(
 
     fun setEditingTopic(topic: Topic) {
         _editingTopic.update { topic }
-        focusTimeTextFieldState.setTextAndPlaceCursorAtEnd((topic.focusTime / (60 * 1000)).toString())
-        shortBreakTimeTextFieldState.setTextAndPlaceCursorAtEnd((topic.shortBreakTime / (60 * 1000)).toString())
-        longBreakTimeTextFieldState.setTextAndPlaceCursorAtEnd((topic.longBreakTime / (60 * 1000)).toString())
+        minuteInputs = MinuteInputs(topic)
         sessionsSliderState.value = topic.sessionLength.toFloat()
     }
 
@@ -260,43 +250,33 @@ class SettingsViewModel(
         }
     }
 
-    fun runTextFieldFlowCollection() {
-        focusFlowCollectionJob = viewModelScope.launch(Dispatchers.IO) {
-            snapshotFlow { focusTimeTextFieldState.text }
-                .debounce(500.milliseconds)
-                .collect {
-                    if (it.isValidMinutesInput()) {
-                        val value = it.toString().toLong() * 60 * 1000
-
-                        editTopic { it.copy(focusTime = value) }
-                    }
-                }
-        }
-        shortBreakFlowCollectionJob = viewModelScope.launch(Dispatchers.IO) {
-            snapshotFlow { shortBreakTimeTextFieldState.text }
-                .debounce(500.milliseconds)
-                .collect {
-                    if (it.isValidMinutesInput()) {
-                        val value = it.toString().toLong() * 60 * 1000
-
-                        editTopic { it.copy(shortBreakTime = value) }
-                    }
-                }
-        }
-        longBreakFlowCollectionJob = viewModelScope.launch(Dispatchers.IO) {
-            snapshotFlow { longBreakTimeTextFieldState.text }
-                .debounce(500.milliseconds)
-                .collect {
-                    if (it.isValidMinutesInput()) {
-                        val value = it.toString().toLong() * 60 * 1000
-
-                        editTopic { it.copy(longBreakTime = value) }
-                    }
-                }
+    private fun setEditingTopicMinutes(minutes: MinuteInputs) {
+        minuteInputs = minutes // set right away, so that the write never interrupts typing
+        minutesWriteJob?.cancel()
+        minutesWriteJob = viewModelScope.launch(Dispatchers.IO) {
+            delay(500.milliseconds)
+            saveMinutes(minutes)
         }
     }
 
-    fun cancelTextFieldFlowCollection() {
+    /** Saves the durations in [minutes] that are valid, leaving the rest as they were */
+    private suspend fun saveMinutes(minutes: MinuteInputs) {
+        editTopic {
+            it.copy(
+                focusTime = minutes.focus.minutesToMillisOrNull() ?: it.focusTime,
+                shortBreakTime = minutes.shortBreak.minutesToMillisOrNull() ?: it.shortBreakTime,
+                longBreakTime = minutes.longBreak.minutesToMillisOrNull() ?: it.longBreakTime
+            )
+        }
+    }
+
+    fun onSettingsClosed() {
+        // an edit still being debounced is saved rather than dropped
+        if (minutesWriteJob?.isActive == true) {
+            minutesWriteJob?.cancel()
+            viewModelScope.launch(Dispatchers.IO) { saveMinutes(minuteInputs) }
+        }
+
         if (!isServiceRunning)
             try {
                 timerHelper.onAction(TimerAction.ResetTimer)
@@ -307,9 +287,6 @@ class SettingsViewModel(
                 )
                 e.printStackTrace()
             }
-        focusFlowCollectionJob?.cancel()
-        shortBreakFlowCollectionJob?.cancel()
-        longBreakFlowCollectionJob?.cancel()
     }
 
     private fun saveFocusGoal(goal: Long) {

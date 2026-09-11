@@ -34,7 +34,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -116,9 +115,7 @@ fun TopicTimerSettings(
     topic: Topic,
     topics: List<Topic>,
     topicRunning: Boolean,
-    focusTimeInputFieldState: TextFieldState,
-    shortBreakTimeInputFieldState: TextFieldState,
-    longBreakTimeInputFieldState: TextFieldState,
+    minuteInputs: MinuteInputs,
     sessionsSliderState: SliderState,
     onAction: (SettingsAction) -> Unit,
     modifier: Modifier = Modifier,
@@ -194,9 +191,8 @@ fun TopicTimerSettings(
             inTimerScreen = inTimerScreen,
             showDeleteDialog = showDeleteDialog,
             showColorShapeSheet = showColorShapeSheet,
-            focusTimeInputFieldState = focusTimeInputFieldState,
-            shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
-            longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+            minuteInputs = minuteInputs,
+            onMinuteInputsChange = { onAction(SettingsAction.SetEditingTopicMinutes(it)) },
             sessionsSliderState = sessionsSliderState,
             onAutostartNextSessionChange = {
                 onAction(SettingsAction.SaveAutostartNextSession(it))
@@ -242,9 +238,8 @@ fun TopicTimerProperties(
     autostartNextSession: Boolean,
     dndEnabled: Boolean,
     topicRunning: Boolean,
-    focusTimeInputFieldState: TextFieldState,
-    shortBreakTimeInputFieldState: TextFieldState,
-    longBreakTimeInputFieldState: TextFieldState,
+    minuteInputs: MinuteInputs,
+    onMinuteInputsChange: (MinuteInputs) -> Unit,
     sessionsSliderState: SliderState,
     inTimerScreen: Boolean,
     onAutostartNextSessionChange: (Boolean) -> Unit,
@@ -278,7 +273,8 @@ fun TopicTimerProperties(
                     style = typography.titleSmallEmphasized
                 )
                 MinuteInputField(
-                    state = focusTimeInputFieldState,
+                    minutes = minuteInputs.focus,
+                    onMinutesChange = { onMinuteInputsChange(minuteInputs.copy(focus = it)) },
                     enabled = !topicRunning,
                     shape = RoundedCornerShape(
                         topStart = topListItemShape.topStart,
@@ -286,7 +282,7 @@ fun TopicTimerProperties(
                         topEnd = topListItemShape.bottomStart,
                         bottomEnd = topListItemShape.bottomStart
                     ),
-                    inputTransformation = MinutesInputTransformation3Digits,
+                    maxDigits = 3,
                     imeAction = ImeAction.Next
                 )
             }
@@ -300,7 +296,8 @@ fun TopicTimerProperties(
                     style = typography.titleSmallEmphasized
                 )
                 MinuteInputField(
-                    state = shortBreakTimeInputFieldState,
+                    minutes = minuteInputs.shortBreak,
+                    onMinutesChange = { onMinuteInputsChange(minuteInputs.copy(shortBreak = it)) },
                     enabled = !topicRunning,
                     shape = RoundedCornerShape(middleListItemShape.topStart),
                     imeAction = ImeAction.Next
@@ -316,7 +313,8 @@ fun TopicTimerProperties(
                     style = typography.titleSmallEmphasized
                 )
                 MinuteInputField(
-                    state = longBreakTimeInputFieldState,
+                    minutes = minuteInputs.longBreak,
+                    onMinutesChange = { onMinuteInputsChange(minuteInputs.copy(longBreak = it)) },
                     enabled = !topicRunning,
                     shape = RoundedCornerShape(
                         topStart = bottomListItemShape.topStart,
@@ -514,9 +512,7 @@ fun TopicTimerSettingsPreview() {
                 topic = sampleTopics.random(),
                 topics = sampleTopics,
                 topicRunning = false,
-                focusTimeInputFieldState = TextFieldState("25"),
-                shortBreakTimeInputFieldState = TextFieldState("5"),
-                longBreakTimeInputFieldState = TextFieldState("15"),
+                minuteInputs = MinuteInputs("25", "5", "15"),
                 sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
                 onAction = {}
             )
@@ -534,9 +530,7 @@ fun TopicTimerSettingsDarkPreview() {
                 topic = sampleTopics.random(),
                 topics = sampleTopics,
                 topicRunning = false,
-                focusTimeInputFieldState = TextFieldState("25"),
-                shortBreakTimeInputFieldState = TextFieldState("5"),
-                longBreakTimeInputFieldState = TextFieldState("15"),
+                minuteInputs = MinuteInputs("25", "5", "15"),
                 sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
                 onAction = {}
             )

@@ -26,7 +26,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.SliderState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.detailPane
@@ -35,7 +34,6 @@ import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneSt
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
@@ -83,12 +81,7 @@ fun SettingsScreenRoot(
 
     val settingsState by viewModel.settingsState.collectAsStateWithLifecycle()
 
-    val sessionsSliderState = rememberSaveable(
-        saver = SliderState.Saver(
-            viewModel.sessionsSliderState.onValueChangeFinished,
-            viewModel.sessionsSliderState.valueRange
-        )
-    ) { viewModel.sessionsSliderState }
+    val sessionsSliderState = viewModel.sessionsSliderState
 
     val directionMultiplier = if (LocalLayoutDirection.current == LayoutDirection.Ltr) 1 else -1
 

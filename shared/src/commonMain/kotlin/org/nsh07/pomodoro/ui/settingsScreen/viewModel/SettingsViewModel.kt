@@ -90,12 +90,15 @@ class SettingsViewModel(
     private val _editingTopic = MutableStateFlow(_currentTopic.value)
     val editingTopic = _editingTopic.asStateFlow()
 
+    /** Until the user picks a topic to edit, or edits one, the current topic is edited */
+    private var editingTopicChosen = false
+
     var minuteInputs by mutableStateOf(MinuteInputs(_editingTopic.value))
         private set
 
     val sessionsSliderState by lazy {
         SliderState(
-            value = _currentTopic.value.sessionLength.toFloat(),
+            value = _editingTopic.value.sessionLength.toFloat(),
             steps = 8,
             valueRange = 1f..10f,
             onValueChangeFinished = ::updateSessionLength
@@ -111,6 +114,13 @@ class SettingsViewModel(
     private val editTopicMutex = Mutex()
 
     private var minutesWriteJob: Job? = null
+
+    init {
+        // the view model is created on startup, before the saved topic has been restored
+        viewModelScope.launch {
+            _currentTopic.collect { if (!editingTopicChosen) showTopic(it) }
+        }
+    }
 
     fun onAction(action: SettingsAction) {
         when (action) {
@@ -177,6 +187,11 @@ class SettingsViewModel(
     }
 
     fun setEditingTopic(topic: Topic) {
+        editingTopicChosen = true
+        showTopic(topic)
+    }
+
+    private fun showTopic(topic: Topic) {
         _editingTopic.update { topic }
         minuteInputs = MinuteInputs(topic)
         sessionsSliderState.value = topic.sessionLength.toFloat()
@@ -186,9 +201,11 @@ class SettingsViewModel(
      * Applies [transform] to the topic being edited and writes it to the database
      */
     private suspend fun editTopic(transform: (Topic) -> Topic) {
+        editingTopicChosen = true
         editTopicMutex.withLock {
             val previous = _editingTopic.value
             val topic = _editingTopic.updateAndGet(transform)
+            if (topic == previous) return
 
             if (!topicRepository.updateTopic(topic)) {
                 // saving edit failed, roll back unless the topic being edited has since changed
@@ -251,7 +268,9 @@ class SettingsViewModel(
     }
 
     private fun setEditingTopicMinutes(minutes: MinuteInputs) {
-        minuteInputs = minutes // set right away, so that the write never interrupts typing
+        // set right away, so that neither the restored topic nor the write interrupts typing
+        editingTopicChosen = true
+        minuteInputs = minutes
         minutesWriteJob?.cancel()
         minutesWriteJob = viewModelScope.launch(Dispatchers.IO) {
             delay(500.milliseconds)

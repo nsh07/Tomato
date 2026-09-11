@@ -111,11 +111,18 @@ class FakePreferenceRepository(currentTopicId: Long) : PreferenceRepository {
 class FakeTopicRepository(vararg topics: Topic) : TopicRepository {
     private val topics = MutableStateFlow(topics.associateBy { it.id })
 
+    /** The number of topics written with [updateTopic] */
+    var updates = 0
+        private set
+
     override suspend fun insertTopic(topic: Topic): Long =
         topic.id.also { id -> this.topics.update { it + (id to topic) } }
 
-    override suspend fun updateTopic(topic: Topic): Boolean =
-        true.also { this.topics.update { it + (topic.id to topic) } }
+    override suspend fun updateTopic(topic: Topic): Boolean {
+        updates++
+        topics.update { it + (topic.id to topic) }
+        return true
+    }
 
     override suspend fun deleteTopic(topic: Topic) {
         topics.update { it - topic.id }

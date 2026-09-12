@@ -36,6 +36,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -76,7 +78,6 @@ import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.data.TopicShape
 import org.nsh07.pomodoro.ui.performConfirm
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
-import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.SeededTheme
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import tomato.shared.generated.resources.Res
@@ -86,6 +87,7 @@ import tomato.shared.generated.resources.cancel
 import tomato.shared.generated.resources.check
 import tomato.shared.generated.resources.create_new_topic
 import tomato.shared.generated.resources.keyboard_arrow_right
+import tomato.shared.generated.resources.new_label
 import tomato.shared.generated.resources.next
 
 private enum class CreateTopicStep { Appearance, Timer }
@@ -203,7 +205,10 @@ fun CreateTopicBottomSheet(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalFoundationStyleApi::class
+)
 @Composable
 private fun CreateTopicSheetContent(
     step: CreateTopicStep,
@@ -243,15 +248,39 @@ private fun CreateTopicSheetContent(
                 .verticalScroll(scrollState)
                 .padding(bottom = 96.dp)
         ) {
-            AnimatedContent(step) { currentStep ->
-                Text(
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                AnimatedContent(step) { currentStep ->
                     if (currentStep == CreateTopicStep.Appearance)
-                        stringResource(Res.string.create_new_topic)
-                    else name,
-                    style = typography.titleLargeEmphasized,
-                    fontFamily = LocalAppFonts.current.topBarTitle,
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
-                )
+                        Icon(
+                            painterResource(Res.drawable.new_label),
+                            contentDescription = null,
+                            tint = colorScheme.onSurface,
+                            modifier = Modifier
+                                .background(colorScheme.surfaceBright, CircleShape)
+                                .padding(8.dp)
+                        )
+                    else
+                        TopicShapeIcon(
+                            shape = shape.toShape(),
+                            containerColor = colorScheme.primaryContainer,
+                            shapeColor = colorScheme.primary,
+                            size = 40.dp,
+                            shapeSize = 22.dp
+                        )
+                }
+                AnimatedContent(step) { currentStep ->
+                    Text(
+                        if (currentStep == CreateTopicStep.Appearance)
+                            stringResource(Res.string.create_new_topic)
+                        else name,
+                        style = typography.headlineSmall,
+                        color = colorScheme.onSurface
+                    )
+                }
             }
 
             AnimatedContent(

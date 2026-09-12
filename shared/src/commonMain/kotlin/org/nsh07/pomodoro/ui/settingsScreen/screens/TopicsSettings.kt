@@ -46,7 +46,6 @@ import androidx.compose.foundation.style.MutableStyleState
 import androidx.compose.foundation.style.StyleScope
 import androidx.compose.foundation.style.StyleStateKey
 import androidx.compose.foundation.style.animate
-import androidx.compose.foundation.style.externalPaddingVertical
 import androidx.compose.foundation.style.size
 import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.verticalScroll
@@ -99,6 +98,7 @@ import org.nsh07.pomodoro.ui.mergePaddingValues
 import org.nsh07.pomodoro.ui.performSegmentTick
 import org.nsh07.pomodoro.ui.settingsScreen.components.CreateTopicBottomSheet
 import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputs
+import org.nsh07.pomodoro.ui.settingsScreen.components.TopicShapeIcon
 import org.nsh07.pomodoro.ui.settingsScreen.components.TopicTimerSettings
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsAction
 import org.nsh07.pomodoro.ui.theme.CustomColors.detailPaneTopBarColors
@@ -373,27 +373,15 @@ fun TopicsSettings(
                                 ),
                                 verticalAlignment = Alignment.CenterVertically,
                                 leadingContent = {
-                                    Box(
-                                        contentAlignment = Alignment.Center,
-                                        modifier = Modifier
-                                            .styleable(styleState) {
-                                                externalPaddingVertical(4.dp)
-                                                size(72.dp)
-                                                shape(CircleShape)
-                                                background(primaryContainer)
-                                                selected { animate { background(primary) } }
-                                            }
-                                    ) {
-                                        Box(
-                                            Modifier
-                                                .styleable(styleState) {
-                                                    size(40.dp)
-                                                    shape(shape)
-                                                    background(primary)
-                                                    selected { animate { background(onPrimary) } }
-                                                }
-                                        )
-                                    }
+                                    TopicShapeIcon(
+                                        shape = shape,
+                                        containerColor = primaryContainer,
+                                        shapeColor = primary,
+                                        selectedContainerColor = primary,
+                                        selectedShapeColor = onPrimary,
+                                        styleState = styleState,
+                                        modifier = Modifier.padding(vertical = 4.dp)
+                                    )
                                 },
                                 supportingContent = {
                                     Text(

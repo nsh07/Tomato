@@ -17,8 +17,10 @@
 
 package org.nsh07.pomodoro
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -30,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.android.ext.android.inject
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.di.ActivityCallbacks
+import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.AppScreen
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
@@ -94,5 +97,18 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         // Increase the timer loop frequency again when visible to make the progress smoother
         stateRepository.timerFrequency = 60f
+        resumeRestoredTimer()
+    }
+
+    /** Hands a session left over from a killed process back to [TimerService], which may ignore it. */
+    private fun resumeRestoredTimer() {
+        try {
+            startService(
+                Intent(this, TimerService::class.java)
+                    .setAction(TimerService.Actions.RESUME.toString())
+            )
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Cannot resume the stored timer: ${e.message}")
+        }
     }
 }

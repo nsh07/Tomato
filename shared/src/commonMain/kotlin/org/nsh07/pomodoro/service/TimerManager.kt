@@ -18,8 +18,11 @@
 package org.nsh07.pomodoro.service
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -27,7 +30,9 @@ import kotlinx.coroutines.sync.withLock
 import org.jetbrains.compose.resources.getString
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
+import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
+import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import org.nsh07.pomodoro.utils.millisecondsToStr
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.infinite
@@ -37,6 +42,7 @@ class TimerManager(
     private val stateRepository: StateRepository,
     private val statRepository: StatRepository,
     private val currentTime: () -> Long,
+    private val stateStore: TimerStateStore = TimerStateStore.None,
     /**
      * Platform hook that schedules a wakeup at the given value of [currentTime], or cancels the
      * pending wakeup when passed `null`. The wakeup must call [expireIntervalIfDue].
@@ -66,6 +72,67 @@ class TimerManager(
     private val expiryLock = Mutex()
 
     private var timerJob: Job? = null
+
+    private val restoreScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    private val restoreJob = restoreScope.launch {
+        stateRepository.topicLoaded.first { it }
+        restoreSession()
+    }
+
+    /**
+     * Suspends until the stored session has been brought back. Everything that changes the timer
+     * must await this first, or it would be overwritten by the session it raced.
+     */
+    suspend fun awaitRestore() = restoreJob.join()
+
+    /** Writes the session out so that it outlives the process. */
+    private fun persist() {
+        // Until the stored session has been read back, writing would overwrite it
+        if (!restoreJob.isCompleted) return
+
+        stateStore.save(
+            PersistedTimerState(
+                cycles = cycles,
+                startTime = startTime,
+                pauseTime = pauseTime,
+                pauseDuration = pauseDuration,
+                lastSavedDuration = lastSavedDuration,
+                timerRunning = _timerState.value.timerRunning,
+                infiniteFocus = _timerState.value.infiniteFocus
+            )
+        )
+    }
+
+    /** Picks a killed process' session back up, instead of starting the first interval over. */
+    private suspend fun restoreSession() {
+        val stored = stateStore.load() ?: return
+        val now = currentTime()
+        // Timestamps ahead of the clock can only be left over from before a reboot
+        if (stored.startTime > now || stored.pauseTime > now) return
+
+        val topic = stateRepository.currentTopic.value
+        cycles = stored.cycles.coerceIn(0, topic.sessionLength * 2 - 1)
+        startTime = stored.startTime
+        pauseTime = stored.pauseTime
+        pauseDuration = stored.pauseDuration
+        lastSavedDuration = stored.lastSavedDuration
+
+        val infiniteLabel = getString(Res.string.infinite)
+        _timerState.update {
+            intervalStateOf(
+                it.copy(timerRunning = stored.timerRunning, infiniteFocus = stored.infiniteFocus),
+                topic,
+                infiniteLabel
+            )
+        }
+
+        val remaining = remainingInInterval()
+        time = remaining
+        _timerState.update { it.copy(timeStr = remainingStr(it, remaining)) }
+
+        updateExpiryAlarm()
+    }
 
     /**
      * Time actually spent in the current interval, measured with the monotonic clock provided by
@@ -167,6 +234,7 @@ class TimerManager(
                 currentState.copy(timerRunning = false)
             }
             updateExpiryAlarm()
+            persist()
         } else {
             if (_timerState.value.timerMode == TimerMode.FOCUS) setDoNotDisturb(true)
             else setDoNotDisturb(false)
@@ -174,52 +242,77 @@ class TimerManager(
             _timerState.update { it.copy(timerRunning = true) }
             resumeInterval()
             updateExpiryAlarm()
-
-            var iterations = -1
-            var notificationUpdateCounter = -1
-
-            timerJob?.cancel() // never let two timer loops run at once
-            timerJob = scope.launch {
-                while (true) {
-                    if (!_timerState.value.timerRunning) break
-
-                    val elapsed = elapsedInInterval()
-                    time = remainingInInterval()
-
-                    val freq = stateRepository.timerFrequency.toInt().coerceAtLeast(1)
-
-                    iterations = (iterations + 1) % freq
-                    notificationUpdateCounter =
-                        (notificationUpdateCounter + 1) % (freq * 10) // update widget every 10 seconds
-
-                    if (iterations == 0) {
-                        onTick(time, true, notificationUpdateCounter == 0)
-                    } else if (notificationUpdateCounter == 0) {
-                        onTick(time, false, true)
-                    }
-
-                    if (time < 0) {
-                        expireIntervalIfDue(onTimerExpired, onSkipComplete, setDoNotDisturb)
-                        break
-                    } else {
-                        _timerState.update { currentState ->
-                            currentState.copy(
-                                timeStr = if (!currentState.infiniteFocus || currentState.timerMode != TimerMode.FOCUS)
-                                    millisecondsToStr(time)
-                                else millisecondsToStr(currentState.totalTime - time) // elapsed time
-                            )
-                        }
-
-                        if (elapsed - lastSavedDuration > SAVE_INTERVAL) saveTimeToDb()
-                    }
-
-                    delay((1000f / stateRepository.timerFrequency).toLong().milliseconds)
-                }
-            }
+            persist()
+            startTimerLoop(scope, onTick, onTimerExpired, onSkipComplete, setDoNotDisturb)
         }
 
         onStateChanged()
     }
+
+    /**
+     * Starts ticking a restored session, for a process that has no timer loop of its own yet.
+     * See [toggleTimer] for the callbacks.
+     */
+    fun startLoopIfRunning(
+        scope: CoroutineScope,
+        onTick: suspend (remainingTime: Long, updateNotification: Boolean, updateWidget: Boolean) -> Unit,
+        onTimerExpired: suspend () -> Unit,
+        onSkipComplete: suspend () -> Unit,
+        setDoNotDisturb: (Boolean) -> Unit,
+    ) {
+        if (!_timerState.value.timerRunning || timerJob?.isActive == true) return
+        if (_timerState.value.timerMode == TimerMode.FOCUS) setDoNotDisturb(true)
+        startTimerLoop(scope, onTick, onTimerExpired, onSkipComplete, setDoNotDisturb)
+    }
+
+    private fun startTimerLoop(
+        scope: CoroutineScope,
+        onTick: suspend (remainingTime: Long, updateNotification: Boolean, updateWidget: Boolean) -> Unit,
+        onTimerExpired: suspend () -> Unit,
+        onSkipComplete: suspend () -> Unit,
+        setDoNotDisturb: (Boolean) -> Unit,
+    ) {
+        var iterations = -1
+        var notificationUpdateCounter = -1
+
+        timerJob?.cancel() // never let two timer loops run at once
+        timerJob = scope.launch {
+            while (true) {
+                if (!_timerState.value.timerRunning) break
+
+                val elapsed = elapsedInInterval()
+                time = remainingInInterval()
+
+                val freq = stateRepository.timerFrequency.toInt().coerceAtLeast(1)
+
+                iterations = (iterations + 1) % freq
+                notificationUpdateCounter =
+                    (notificationUpdateCounter + 1) % (freq * 10) // update widget every 10 seconds
+
+                if (iterations == 0) {
+                    onTick(time, true, notificationUpdateCounter == 0)
+                } else if (notificationUpdateCounter == 0) {
+                    onTick(time, false, true)
+                }
+
+                if (time < 0) {
+                    expireIntervalIfDue(onTimerExpired, onSkipComplete, setDoNotDisturb)
+                    break
+                } else {
+                    _timerState.update { it.copy(timeStr = remainingStr(it, time)) }
+
+                    if (elapsed - lastSavedDuration > SAVE_INTERVAL) saveTimeToDb()
+                }
+
+                delay((1000f / stateRepository.timerFrequency).toLong().milliseconds)
+            }
+        }
+    }
+
+    private fun remainingStr(state: TimerState, remaining: Long): String =
+        if (!state.infiniteFocus || state.timerMode != TimerMode.FOCUS)
+            millisecondsToStr(remaining.coerceAtLeast(0))
+        else millisecondsToStr((state.totalTime - remaining).coerceAtLeast(0)) // elapsed time
 
     /**
      * Ends the current interval if its time has run out, leaving the timer paused at the start of
@@ -249,6 +342,7 @@ class TimerManager(
             currentState.copy(timerRunning = false)
         }
         updateExpiryAlarm()
+        persist()
 
         true
     }
@@ -256,7 +350,10 @@ class TimerManager(
     /**
      * Writes the part of the current interval that has elapsed since the last save to the database.
      */
-    suspend fun saveTimeToDb() = saveLock.withLock { saveElapsedTime() }
+    suspend fun saveTimeToDb() {
+        saveLock.withLock { saveElapsedTime() }
+        persist()
+    }
 
     /**
      * See [saveTimeToDb]. Must only be called while holding [saveLock].
@@ -330,48 +427,58 @@ class TimerManager(
 
         cycles = (cycles + 1) % (currentTopic.sessionLength * 2)
 
-        val timerRunning = _timerState.value.timerRunning
-        val infiniteFocus = _timerState.value.infiniteFocus
+        val infiniteLabel = getString(Res.string.infinite)
 
-        if (cycles % 2 == 0) {
-            if (timerRunning) setDoNotDisturb(true)
-            val newTime = if (!infiniteFocus) currentTopic.focusTime else Long.MAX_VALUE
-            time = newTime
-            val long = cycles == (currentTopic.sessionLength - 1) * 2
+        if (_timerState.value.timerRunning) setDoNotDisturb(cycles % 2 == 0)
 
-            _timerState.update { currentState ->
-                currentState.copy(
-                    timerMode = TimerMode.FOCUS,
-                    timeStr = if (!infiniteFocus) millisecondsToStr(newTime)
-                    else millisecondsToStr(0),
-                    totalTime = newTime,
-                    nextTimerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                    nextTimeStr = if (long) millisecondsToStr(currentTopic.longBreakTime)
-                    else millisecondsToStr(currentTopic.shortBreakTime),
-                    currentFocusCount = cycles / 2 + 1,
-                    totalFocusCount = currentTopic.sessionLength
-                )
-            }
-        } else {
-            if (timerRunning) setDoNotDisturb(false)
-            val long = cycles == (currentTopic.sessionLength * 2) - 1
-            val newTime = if (long) currentTopic.longBreakTime else currentTopic.shortBreakTime
-            time = newTime
-            val nextTimeStr = if (!infiniteFocus) millisecondsToStr(currentTopic.focusTime)
-            else getString(Res.string.infinite)
+        _timerState.update { intervalStateOf(it, currentTopic, infiniteLabel) }
+        time = _timerState.value.totalTime
 
-            _timerState.update { currentState ->
-                currentState.copy(
-                    timerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
-                    timeStr = millisecondsToStr(newTime),
-                    totalTime = newTime,
-                    nextTimerMode = TimerMode.FOCUS,
-                    nextTimeStr = nextTimeStr
-                )
-            }
-        }
+        persist()
 
         onCompletion()
+    }
+
+    /**
+     * [state] rewritten to describe the interval [cycles] points at.
+     *
+     * @param infiniteLabel [Res.string.infinite], resolved by the caller since this cannot suspend
+     */
+    private fun intervalStateOf(
+        state: TimerState,
+        topic: Topic,
+        infiniteLabel: String
+    ): TimerState {
+        val infiniteFocus = state.infiniteFocus
+
+        return if (cycles % 2 == 0) {
+            val newTime = if (!infiniteFocus) topic.focusTime else Long.MAX_VALUE
+            val long = cycles == (topic.sessionLength - 1) * 2
+
+            state.copy(
+                timerMode = TimerMode.FOCUS,
+                timeStr = if (!infiniteFocus) millisecondsToStr(newTime)
+                else millisecondsToStr(0),
+                totalTime = newTime,
+                nextTimerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
+                nextTimeStr = if (long) millisecondsToStr(topic.longBreakTime)
+                else millisecondsToStr(topic.shortBreakTime),
+                currentFocusCount = cycles / 2 + 1,
+                totalFocusCount = topic.sessionLength
+            )
+        } else {
+            val long = cycles == (topic.sessionLength * 2) - 1
+            val newTime = if (long) topic.longBreakTime else topic.shortBreakTime
+
+            state.copy(
+                timerMode = if (long) TimerMode.LONG_BREAK else TimerMode.SHORT_BREAK,
+                timeStr = millisecondsToStr(newTime),
+                totalTime = newTime,
+                nextTimerMode = TimerMode.FOCUS,
+                nextTimeStr = if (!infiniteFocus) millisecondsToStr(topic.focusTime)
+                else infiniteLabel
+            )
+        }
     }
 
     suspend fun resetTimer(onCompletion: () -> Unit) {
@@ -413,6 +520,7 @@ class TimerManager(
         }
 
         updateExpiryAlarm()
+        persist()
 
         onCompletion()
     }
@@ -427,6 +535,7 @@ class TimerManager(
         pauseDuration = timerStateSnapshot.pauseDuration
         _timerState.update { timerStateSnapshot.timerState }
         updateExpiryAlarm()
+        persist()
     }
 
     private companion object {

@@ -138,49 +138,59 @@ class TimerService : Service(), KoinComponent {
 
         val action = intent.action
 
-        // EXPIRE and UPDATE_ALARM_TONE arrive through plain startService()
-        if (action != Actions.EXPIRE.toString() && action != Actions.UPDATE_ALARM_TONE.toString())
-            startForegroundService()
+        // These arrive through plain startService(), and promote only if a session needs it
+        if (action != Actions.EXPIRE.toString() &&
+            action != Actions.RESUME.toString() &&
+            action != Actions.UPDATE_ALARM_TONE.toString()
+        ) startForegroundService()
 
+        // Every action below changes the timer, so none may run before the stored session is back
         when (action) {
-            Actions.TOGGLE.toString() -> toggleTimer()
-
-            Actions.RESET.toString() -> {
-                if (_timerState.value.timerRunning) toggleTimer()
-                skipScope.launch {
-                    timerManager.resetTimer(::updateProgressSegments)
-                    stopForegroundService()
-                }
+            Actions.TOGGLE.toString() -> skipScope.launch {
+                timerManager.awaitRestore()
+                toggleTimer()
             }
 
-            Actions.UNDO_RESET.toString() -> timerManager.undoReset()
+            Actions.RESET.toString() -> skipScope.launch {
+                timerManager.awaitRestore()
+                if (_timerState.value.timerRunning) toggleTimer()
+                timerManager.resetTimer(::updateProgressSegments)
+                stopForegroundService()
+            }
+
+            Actions.UNDO_RESET.toString() -> skipScope.launch {
+                timerManager.awaitRestore()
+                timerManager.undoReset()
+            }
 
             Actions.SKIP.toString() -> skipScope.launch {
+                timerManager.awaitRestore()
                 timerManager.skipTimer(
                     onStart = { showTimerNotification(0, paused = true, complete = false) },
-                    onCompletion = {
-                        updateProgressSegments()
-                        updateWidget()
-                    },
+                    onCompletion = ::onIntervalAdvanced,
                     setDoNotDisturb = ::setDoNotDisturb
                 )
             }
 
             Actions.EXPIRE.toString() -> skipScope.launch {
+                timerManager.awaitRestore()
                 val expired = timerManager.expireIntervalIfDue(
                     onTimerExpired = {
                         startForegroundService()
                         showTimerNotification(0, paused = true, complete = true)
                     },
-                    onSkipComplete = {
-                        updateProgressSegments()
-                        updateWidget()
-                    },
+                    onSkipComplete = ::onIntervalAdvanced,
                     setDoNotDisturb = ::setDoNotDisturb
                 )
-                // A service that was never promoted only exists because of a stale alarm
                 if (expired) updateQSTile()
-                else if (!foreground) stopSelf()
+                // An alarm that fired early still leaves a session that needs ticking
+                else if (!resumeRestoredTimer() && !foreground) stopSelf()
+            }
+
+            Actions.RESUME.toString() -> skipScope.launch {
+                timerManager.awaitRestore()
+                // A service that was never promoted only exists because of a stale alarm
+                if (!resumeRestoredTimer() && !foreground) stopSelf()
             }
 
             Actions.STOP_ALARM.toString() -> stopAlarm()
@@ -188,6 +198,39 @@ class TimerService : Service(), KoinComponent {
             Actions.UPDATE_ALARM_TONE.toString() -> updateAlarmTone()
         }
         return START_NOT_STICKY
+    }
+
+    /** Takes over a restored session, returning whether there was a running one to take over. */
+    private fun resumeRestoredTimer(): Boolean {
+        if (!_timerState.value.timerRunning) return false
+
+        startForegroundService()
+        updateProgressSegments()
+        notificationBuilder.clearActions().addTimerActions(this, getString(R.string.stop))
+        timerManager.startLoopIfRunning(
+            scope = timerScope,
+            onTick = ::onTimerTick,
+            onTimerExpired = { showTimerNotification(0, paused = true, complete = true) },
+            onSkipComplete = ::onIntervalAdvanced,
+            setDoNotDisturb = ::setDoNotDisturb
+        )
+        updateQSTile()
+
+        return true
+    }
+
+    private suspend fun onTimerTick(
+        remainingTime: Long,
+        updateNotification: Boolean,
+        updateWidget: Boolean
+    ) {
+        if (updateNotification) showTimerNotification(remainingTime.toInt())
+        if (updateWidget) updateWidget()
+    }
+
+    private suspend fun onIntervalAdvanced() {
+        updateProgressSegments()
+        updateWidget()
     }
 
     private fun toggleTimer() {
@@ -205,17 +248,9 @@ class TimerService : Service(), KoinComponent {
                     this, getString(R.string.stop)
                 )
             },
-            onTick = { remainingTime, updateNotification, updateWidget ->
-                if (updateNotification) {
-                    showTimerNotification(remainingTime.toInt())
-                }
-                if (updateWidget) updateWidget()
-            },
+            onTick = ::onTimerTick,
             onTimerExpired = { showTimerNotification(0, paused = true, complete = true) },
-            onSkipComplete = {
-                updateProgressSegments()
-                updateWidget()
-            },
+            onSkipComplete = ::onIntervalAdvanced,
             setDoNotDisturb = ::setDoNotDisturb,
             onStateChanged = ::updateQSTile
         )
@@ -504,6 +539,6 @@ class TimerService : Service(), KoinComponent {
     }
 
     enum class Actions {
-        TOGGLE, SKIP, RESET, UNDO_RESET, EXPIRE, STOP_ALARM, UPDATE_ALARM_TONE
+        TOGGLE, SKIP, RESET, UNDO_RESET, EXPIRE, RESUME, STOP_ALARM, UPDATE_ALARM_TONE
     }
 }

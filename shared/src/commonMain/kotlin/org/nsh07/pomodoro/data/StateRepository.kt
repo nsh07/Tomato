@@ -62,6 +62,9 @@ class StateRepository(
 
     val windowVisible = MutableStateFlow(true) // Used on desktop
 
+    private val _topicLoaded = MutableStateFlow(false)
+    val topicLoaded: StateFlow<Boolean> = _topicLoaded.asStateFlow()
+
     private var isFirstLoad = true
 
     init {
@@ -69,7 +72,12 @@ class StateRepository(
             observeCurrentTopic()
         }
         scope.launch {
-            reloadSettings()
+            // signalled even if the load fails, so that a restore can never wait forever
+            try {
+                reloadSettings()
+            } finally {
+                _topicLoaded.value = true
+            }
         }
     }
 

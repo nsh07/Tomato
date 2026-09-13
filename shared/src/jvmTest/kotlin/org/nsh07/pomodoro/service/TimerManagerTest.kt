@@ -62,6 +62,7 @@ class TimerManagerTest {
 
     private lateinit var statRepository: FakeStatRepository
     private lateinit var stateRepository: StateRepository
+    private lateinit var stateStore: FakeTimerStateStore
     private lateinit var timerManager: TimerManager
 
     private val loopScope = CoroutineScope(NeverDispatcher)
@@ -72,6 +73,12 @@ class TimerManagerTest {
     @BeforeTest
     fun setUp() = runBlocking {
         statRepository = FakeStatRepository()
+        stateStore = FakeTimerStateStore()
+        timerManager = startProcess()
+    }
+
+    /** Builds the repositories and timer the way a fresh process would, on top of [stateStore]. */
+    private suspend fun startProcess(): TimerManager {
         stateRepository = StateRepository(
             FakePreferenceRepository(currentTopicId = topic.id),
             FakeTopicRepository(topic)
@@ -82,9 +89,9 @@ class TimerManagerTest {
             while (stateRepository.timerState.value.totalTime != topic.focusTime) yield()
         }
         scheduledExpiry = null
-        timerManager = TimerManager(stateRepository, statRepository, { clock }) {
+        return TimerManager(stateRepository, statRepository, { clock }, stateStore) {
             scheduledExpiry = it
-        }
+        }.also { withTimeout(TIMEOUT.milliseconds) { it.awaitRestore() } }
     }
 
     @Test
@@ -314,6 +321,93 @@ class TimerManagerTest {
         assertEquals(TimerMode.SHORT_BREAK, stateRepository.timerState.value.timerMode)
         assertEquals(topic.focusTime, statRepository.focusTime)
         assertEquals(0L, statRepository.breakTime)
+    }
+
+    @Test
+    fun `a session outlives the process that started it`() = runBlocking {
+        timerManager.toggle()
+        clock += 10 * MINUTE
+        timerManager.skip() // focus -> short break, still running
+        clock += 2 * MINUTE
+
+        val restored = startProcess()
+
+        assertEquals(TimerMode.SHORT_BREAK, stateRepository.timerState.value.timerMode)
+        assertTrue(stateRepository.timerState.value.timerRunning)
+        assertEquals(1, restored.cycles)
+        assertEquals(topic.shortBreakTime - 2 * MINUTE, stateRepository.time.value)
+    }
+
+    @Test
+    fun `a paused session is restored paused, with the time it had left`() = runBlocking {
+        timerManager.toggle()
+        clock += 10 * MINUTE
+        timerManager.toggle() // pause
+        clock += 3 * 60 * MINUTE // the process is killed and three hours pass
+
+        startProcess()
+
+        val timerState = stateRepository.timerState.value
+        assertFalse(timerState.timerRunning)
+        assertEquals(TimerMode.FOCUS, timerState.timerMode)
+        assertEquals(topic.focusTime - 10 * MINUTE, stateRepository.time.value)
+        assertEquals("15:00", timerState.timeStr)
+        assertNull(scheduledExpiry)
+    }
+
+    @Test
+    fun `the expiry alarm ends an interval that outlived its process`() = runBlocking {
+        timerManager.toggle()
+        timerManager.skip() // focus -> short break, still running
+        clock += topic.shortBreakTime + 1
+
+        val restored = startProcess()
+
+        assertTrue(restored.expire(), "the alarm did not end the break")
+        assertEquals(TimerMode.FOCUS, stateRepository.timerState.value.timerMode)
+        assertEquals(2, stateRepository.timerState.value.currentFocusCount)
+        assertFalse(stateRepository.timerState.value.timerRunning)
+    }
+
+    @Test
+    fun `a restored session picks up the expiry alarm`() = runBlocking {
+        timerManager.toggle()
+        clock += 10 * MINUTE
+
+        startProcess()
+
+        assertEquals(clock + topic.focusTime - 10 * MINUTE, scheduledExpiry)
+    }
+
+    @Test
+    fun `time recorded before a restart is not recorded again`() = runBlocking {
+        timerManager.toggle()
+        clock += 10 * MINUTE
+        timerManager.saveTimeToDb()
+        assertEquals(10 * MINUTE, statRepository.focusTime)
+
+        val restored = startProcess()
+        clock += 5 * MINUTE
+        restored.saveTimeToDb()
+
+        assertEquals(15 * MINUTE, statRepository.focusTime)
+    }
+
+    @Test
+    fun `a session stored before a reboot is discarded`() = runBlocking {
+        timerManager.toggle()
+        clock += 10 * MINUTE
+        timerManager.saveTimeToDb()
+
+        clock = 30 * MINUTE // the device reboots, so the uptime starts over
+
+        startProcess()
+
+        val timerState = stateRepository.timerState.value
+        assertFalse(timerState.timerRunning)
+        assertEquals(TimerMode.FOCUS, timerState.timerMode)
+        assertEquals(topic.focusTime, stateRepository.time.value)
+        assertNull(scheduledExpiry)
     }
 
     private fun TimerManager.toggle() = toggleTimer(

@@ -107,6 +107,17 @@ class FakePreferenceRepository(currentTopicId: Long) : PreferenceRepository {
     }
 }
 
+/** [TimerStateStore] kept in memory, so that a session can outlive its [TimerManager] */
+class FakeTimerStateStore : TimerStateStore {
+    private var stored: PersistedTimerState? = null
+
+    override fun load(): PersistedTimerState? = stored
+
+    override fun save(state: PersistedTimerState) {
+        stored = state
+    }
+}
+
 /** In-memory [TopicRepository], whose contents may change while a test runs */
 class FakeTopicRepository(vararg topics: Topic) : TopicRepository {
     private val topics = MutableStateFlow(topics.associateBy { it.id })

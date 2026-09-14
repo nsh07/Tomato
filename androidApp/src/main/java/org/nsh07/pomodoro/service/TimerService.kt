@@ -137,12 +137,13 @@ class TimerService : Service(), KoinComponent {
         }
 
         val action = intent.action
+        // Noted before promoting, to tell a service that was already showing something apart from
+        // one that exists only to carry this action
+        val wasForeground = foreground
 
-        // These arrive through plain startService(), and promote only if a session needs it
-        if (action != Actions.EXPIRE.toString() &&
-            action != Actions.RESUME.toString() &&
-            action != Actions.UPDATE_ALARM_TONE.toString()
-        ) startForegroundService()
+        // RESUME arrives through plain startService(), and promotes only if a session needs it
+        if (action != Actions.RESUME.toString() && action != Actions.UPDATE_ALARM_TONE.toString())
+            startForegroundService()
 
         // Every action below changes the timer, so none may run before the stored session is back
         when (action) {
@@ -183,14 +184,15 @@ class TimerService : Service(), KoinComponent {
                     setDoNotDisturb = ::setDoNotDisturb
                 )
                 if (expired) updateQSTile()
-                // An alarm that fired early still leaves a session that needs ticking
-                else if (!resumeRestoredTimer() && !foreground) stopSelf()
+                // An alarm that fired early still leaves a session that needs ticking, while a
+                // stale one leaves nothing this service was not already showing
+                else if (!resumeRestoredTimer() && !wasForeground) stopForegroundService()
             }
 
             Actions.RESUME.toString() -> skipScope.launch {
                 timerManager.awaitRestore()
-                // A service that was never promoted only exists because of a stale alarm
-                if (!resumeRestoredTimer() && !foreground) stopSelf()
+                // A service that was never promoted only exists to carry this action
+                if (!resumeRestoredTimer() && !wasForeground) stopSelf()
             }
 
             Actions.STOP_ALARM.toString() -> stopAlarm()

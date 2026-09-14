@@ -31,9 +31,10 @@ class ExpiryAlarmScheduler(private val context: Context) {
 
     private val alarmManager by lazy { context.getSystemService(AlarmManager::class.java) }
 
-    // Reused, so that setting a new alarm replaces the pending one
+    // Reused, so that setting a new alarm replaces the pending one. Starts the service in the
+    // foreground, which an exact alarm is allowed to do from the background
     private val pendingIntent by lazy {
-        PendingIntent.getService(
+        PendingIntent.getForegroundService(
             context,
             0,
             Intent(context, TimerService::class.java)

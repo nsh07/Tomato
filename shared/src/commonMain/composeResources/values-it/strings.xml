@@ -17,7 +17,7 @@
   --><resources>
     <string name="start">Inizia</string>
     <string name="stop">Ferma</string>
-    <string name="focus">Tempo di concentrazione</string>
+    <string name="focus">Concentrazione</string>
     <string name="short_break">Pausa breve</string>
     <string name="long_break">Pausa lunga</string>
     <string name="exit">Esci</string>
@@ -130,7 +130,7 @@
     <string name="total">totale</string>
     <string name="undo">Annulla</string>
     <string name="vibration_strength">Intensità</string>
-    <string name="daily_focus_goal">Obiettivo di concentrazione giornaliero</string>
+    <string name="daily_focus_goal">Obiettivo giornaliero</string>
     <string name="milliseconds_format">%1$dms</string>
     <string name="backup_and_restore">Backup e ripristino</string>
     <string name="backup">Backup</string>
@@ -175,4 +175,5 @@
     <string name="yellow">Giallo</string>
     <string name="orange">Arancione</string>
     <string name="topic_name_empty">Il nome dell\u0027argomento non può essere vuoto</string>
+    <string name="shape">Forma</string>
 </resources>

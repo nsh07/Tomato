@@ -175,4 +175,5 @@
     <string name="orange">橙色</string>
     <string name="default_name">默认</string>
     <string name="topic_name_empty">主题名称不能为空</string>
+    <string name="shape">图形</string>
 </resources>

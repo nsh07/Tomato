@@ -29,9 +29,12 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.di.ActivityCallbacks
+import org.nsh07.pomodoro.service.TimerManager
 import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.AppScreen
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
@@ -42,6 +45,8 @@ class MainActivity : ComponentActivity() {
     private val settingsViewModel: SettingsViewModel by inject()
     private val stateRepository: StateRepository by inject()
     private val activityCallbacks: ActivityCallbacks by inject()
+
+    private val timerManager: TimerManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,14 +102,19 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         // Increase the timer loop frequency again when visible to make the progress smoother
         stateRepository.timerFrequency = 60f
-        resumeRestoredTimer()
+        resumeStoredTimer()
     }
 
-    /** Hands a session left over from a killed process back to [TimerService], which may ignore it. */
-    private fun resumeRestoredTimer() {
+    /** Restores the stored session, and hands it to [TimerService] if it is still running */
+    private fun resumeStoredTimer() = lifecycleScope.launch {
+        timerManager.awaitRestore()
+
+        val timerState = stateRepository.timerState.value
+        if (!timerState.timerRunning || timerState.serviceRunning) return@launch
+
         try {
             startService(
-                Intent(this, TimerService::class.java)
+                Intent(this@MainActivity, TimerService::class.java)
                     .setAction(TimerService.Actions.RESUME.toString())
             )
         } catch (e: Exception) {

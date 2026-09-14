@@ -226,7 +226,9 @@ class TimerManager(
         setDoNotDisturb: (Boolean) -> Unit,
         onStateChanged: () -> Unit,
     ) {
-        if (_timerState.value.timerRunning) {
+        // A session whose loop died with its service only looks like it is running, so take it
+        // over instead of pausing it. Pausing would leave the button doing nothing visible.
+        if (_timerState.value.timerRunning && timerJob?.isActive == true) {
             pauseTime = currentTime()
             setDoNotDisturb(false)
             onPause(time)

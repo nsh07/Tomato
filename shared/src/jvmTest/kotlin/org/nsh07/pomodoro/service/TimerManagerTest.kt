@@ -20,6 +20,7 @@ package org.nsh07.pomodoro.service
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -410,8 +411,41 @@ class TimerManagerTest {
         assertNull(scheduledExpiry)
     }
 
-    private fun TimerManager.toggle() = toggleTimer(
-        scope = loopScope,
+    /** The timer loop dies with the service that started it, but the session does not */
+    @Test
+    fun `a session left without a loop is taken over instead of paused`() = runBlocking {
+        val serviceScope = CoroutineScope(NeverDispatcher)
+        timerManager.toggle(serviceScope)
+        clock += 10 * MINUTE
+
+        serviceScope.cancel() // the service is destroyed, taking the timer loop with it
+
+        timerManager.toggle() // the user presses play on the frozen timer
+
+        assertTrue(
+            stateRepository.timerState.value.timerRunning,
+            "the press paused the frozen session instead of taking it over"
+        )
+        assertEquals(clock + topic.focusTime - 10 * MINUTE, scheduledExpiry)
+
+        clock += 5 * MINUTE
+        timerManager.saveTimeToDb()
+        assertEquals(15 * MINUTE, statRepository.focusTime)
+    }
+
+    @Test
+    fun `a running session is still paused by the button while its loop is alive`() = runBlocking {
+        timerManager.toggle()
+        clock += 10 * MINUTE
+
+        timerManager.toggle()
+
+        assertFalse(stateRepository.timerState.value.timerRunning)
+        assertNull(scheduledExpiry)
+    }
+
+    private fun TimerManager.toggle(scope: CoroutineScope = loopScope) = toggleTimer(
+        scope = scope,
         onPause = {},
         onStart = {},
         onTick = { _, _, _ -> },

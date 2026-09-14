@@ -31,6 +31,7 @@ import org.nsh07.pomodoro.di.androidModule
 import org.nsh07.pomodoro.di.dbModule
 import org.nsh07.pomodoro.di.servicesModule
 import org.nsh07.pomodoro.di.viewModels
+import org.nsh07.pomodoro.service.TimerManager
 
 class TomatoApplication : Application() {
     override fun onCreate() {
@@ -60,5 +61,8 @@ class TomatoApplication : Application() {
         }
 
         get<NotificationManagerCompat>().createNotificationChannel(notificationChannel)
+
+        // created eagerly so that a stored session is restored however the process was started
+        get<TimerManager>()
     }
 }

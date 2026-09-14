@@ -24,6 +24,7 @@ data class TimerState(
     val timerMode: TimerMode = TimerMode.FOCUS,
     val timeStr: String = "25:00",
     val totalTime: Long = 25 * 60 * 1000,
+    /** Whether the interval is counting down. Independent of [serviceRunning]. */
     val timerRunning: Boolean = false,
     val nextTimerMode: TimerMode = TimerMode.SHORT_BREAK,
     val nextTimeStr: String = "5:00",
@@ -31,6 +32,7 @@ data class TimerState(
     val currentFocusCount: Int = 1,
     val totalFocusCount: Int = 4,
     val alarmRinging: Boolean = false,
+    /** Whether a service is up to tick the timer. A running session left without one is frozen. */
     val serviceRunning: Boolean = false,
     val infiniteFocus: Boolean = false
 )

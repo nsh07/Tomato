@@ -483,8 +483,17 @@ class TimerManager(
         }
     }
 
+    /**
+     * Stops the timer and puts it back at the start of the first focus interval.
+     */
     suspend fun resetTimer(onCompletion: () -> Unit) {
         val currentTopic = stateRepository.currentTopic.value
+
+        timerJob?.cancel()
+        if (_timerState.value.timerRunning) {
+            pauseTime = currentTime()
+            _timerState.update { it.copy(timerRunning = false) }
+        }
 
         saveLock.withLock {
             saveElapsedTime()

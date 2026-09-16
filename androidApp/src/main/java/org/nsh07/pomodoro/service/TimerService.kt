@@ -154,7 +154,6 @@ class TimerService : Service(), KoinComponent {
 
             Actions.RESET.toString() -> skipScope.launch {
                 timerManager.awaitRestore()
-                if (_timerState.value.timerRunning) toggleTimer()
                 timerManager.resetTimer(::updateProgressSegments)
                 stopForegroundService()
             }

@@ -434,6 +434,44 @@ class TimerManagerTest {
     }
 
     @Test
+    fun `resetting a running timer stops it`() = runBlocking {
+        timerManager.toggle()
+        clock += 10 * MINUTE
+
+        timerManager.resetTimer {}
+
+        val timerState = stateRepository.timerState.value
+        assertFalse(timerState.timerRunning)
+        assertEquals(TimerMode.FOCUS, timerState.timerMode)
+        assertEquals(topic.focusTime, stateRepository.time.value)
+        assertNull(scheduledExpiry)
+        assertEquals(10 * MINUTE, statRepository.focusTime)
+
+        // The time before the reset was kept, and the time after it was not
+        clock += 5 * MINUTE
+        timerManager.undoReset()
+        timerManager.toggle() // resume
+        clock += 5 * MINUTE
+        timerManager.saveTimeToDb()
+        assertEquals(15 * MINUTE, statRepository.focusTime)
+    }
+
+    /** Regression test: pausing a frozen session takes it over, so the reset must not rely on it */
+    @Test
+    fun `resetting a session left without a loop stops it`() = runBlocking {
+        val serviceScope = CoroutineScope(NeverDispatcher)
+        timerManager.toggle(serviceScope)
+        clock += 10 * MINUTE
+        serviceScope.cancel() // the service is destroyed, taking the timer loop with it
+
+        timerManager.resetTimer {}
+
+        assertFalse(stateRepository.timerState.value.timerRunning)
+        assertNull(scheduledExpiry)
+        assertEquals(topic.focusTime, stateRepository.time.value)
+    }
+
+    @Test
     fun `a running session is still paused by the button while its loop is alive`() = runBlocking {
         timerManager.toggle()
         clock += 10 * MINUTE

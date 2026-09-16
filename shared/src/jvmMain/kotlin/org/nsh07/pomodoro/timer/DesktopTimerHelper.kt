@@ -47,11 +47,8 @@ class DesktopTimerHelper(
 
     override fun onAction(action: TimerAction) {
         when (action) {
-            TimerAction.ResetTimer -> {
-                if (_timerState.value.timerRunning) toggleTimer()
-                skipScope.launch {
-                    timerManager.resetTimer {}
-                }
+            TimerAction.ResetTimer -> skipScope.launch {
+                timerManager.resetTimer {}
             }
 
             is TimerAction.SkipTimer -> skipScope.launch {

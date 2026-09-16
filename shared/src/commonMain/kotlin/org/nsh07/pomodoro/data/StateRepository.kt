@@ -37,6 +37,7 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import org.nsh07.pomodoro.utils.getDefaultAlarmTone
 import org.nsh07.pomodoro.utils.millisecondsToStr
+import kotlin.concurrent.Volatile
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class StateRepository(
@@ -55,7 +56,19 @@ class StateRepository(
     val currentTopic: StateFlow<Topic> = _currentTopic.asStateFlow()
 
     val time = MutableStateFlow(25 * 60 * 1000L)
-    var timerFrequency: Float = 60f
+
+    /** Tick rate wanted by the screen being shown, while the app is [foreground] */
+    @Volatile
+    var screenTimerFrequency: Float = 60f
+
+    /** Whether the app is on screen at all */
+    @Volatile
+    var foreground: Boolean = true
+
+    /** Ticks per second of the timer loop */
+    val timerFrequency: Float
+        get() = if (foreground) screenTimerFrequency else 1f
+
     var colorScheme: ColorScheme = lightColorScheme()
     var timerStateSnapshot: TimerStateSnapshot =
         TimerStateSnapshot(time = 0, timerState = TimerState())

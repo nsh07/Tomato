@@ -154,6 +154,19 @@ class StateRepositoryTest {
     }
 
     @Test
+    fun `the timer only ticks at the screen's rate while the app is in the foreground`() {
+        val stateRepository = stateRepository()
+
+        stateRepository.screenTimerFrequency = 1f // the AOD is shown
+        stateRepository.foreground = false
+        stateRepository.screenTimerFrequency = 60f // the AOD leaves the screen
+        assertEquals(1f, stateRepository.timerFrequency)
+
+        stateRepository.foreground = true
+        assertEquals(60f, stateRepository.timerFrequency)
+    }
+
+    @Test
     fun `deleting the selected topic selects the default topic`() = runBlocking {
         val preferenceRepository = preferenceRepository(work.id)
         val topicRepository = topicRepository()

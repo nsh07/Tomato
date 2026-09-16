@@ -137,7 +137,7 @@ fun ApplicationScope.AppWindow(
                             AppScreen(
                                 isAODEnabled = settingsState.aodEnabled,
                                 setTimerFrequency = {
-                                    stateRepository.timerFrequency = it
+                                    stateRepository.screenTimerFrequency = it
                                 }
                             )
 

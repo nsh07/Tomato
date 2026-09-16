@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
                 AppScreen(
                     isAODEnabled = settingsState.aodEnabled,
                     setTimerFrequency = {
-                        stateRepository.timerFrequency = it
+                        stateRepository.screenTimerFrequency = it
                     }
                 )
             }
@@ -94,14 +94,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onStop() {
         super.onStop()
-        // Reduce the timer loop frequency when not visible to save battery
-        stateRepository.timerFrequency = 1f
+        stateRepository.foreground = false
     }
 
     override fun onStart() {
         super.onStart()
-        // Increase the timer loop frequency again when visible to make the progress smoother
-        stateRepository.timerFrequency = 60f
+        stateRepository.foreground = true
         resumeStoredTimer()
     }
 

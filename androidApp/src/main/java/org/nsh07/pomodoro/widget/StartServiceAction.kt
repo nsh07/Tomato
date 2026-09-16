@@ -17,13 +17,11 @@
 
 package org.nsh07.pomodoro.widget
 
-import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
-import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.action.ActionCallback
 import org.nsh07.pomodoro.service.TimerService
 
@@ -34,11 +32,9 @@ class StartServiceAction : ActionCallback {
         parameters: ActionParameters
     ) {
         val timerAction = parameters[key] as TimerService.Actions
-        val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
 
         val serviceIntent = Intent(context, TimerService::class.java).apply {
             action = timerAction.toString()
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         }
 
         try {

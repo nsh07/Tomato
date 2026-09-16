@@ -20,7 +20,6 @@ package org.nsh07.pomodoro.service
 import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.Service
-import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
 import android.media.AudioAttributes
@@ -36,8 +35,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
-import androidx.glance.GlanceId
-import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.updateAll
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -71,8 +69,6 @@ class TimerService : Service(), KoinComponent {
     private val _settingsState by lazy { stateRepository.settingsState }
 
     private val widget by lazy { TimerAppWidget() }
-    private val widgetManager by lazy { GlanceAppWidgetManager(this) }
-    private var glanceId: GlanceId? = null
 
     private var job = SupervisorJob()
     private val timerScope = CoroutineScope(Dispatchers.IO + job)
@@ -124,16 +120,6 @@ class TimerService : Service(), KoinComponent {
         if (intent == null) {
             stopForegroundService()
             return START_NOT_STICKY
-        }
-
-        if (glanceId == null) {
-            val widgetId = intent.getIntExtra(
-                AppWidgetManager.EXTRA_APPWIDGET_ID,
-                AppWidgetManager.INVALID_APPWIDGET_ID
-            )
-
-            glanceId = if (widgetId == AppWidgetManager.INVALID_APPWIDGET_ID) null
-            else widgetManager.getGlanceIdBy(widgetId)
         }
 
         val action = intent.action
@@ -342,13 +328,10 @@ class TimerService : Service(), KoinComponent {
     }
 
     /**
-     * Updates the most recently interacted [TimerAppWidget] widget to make it show the correct time
-     * as long as the timer runs
+     * Updates all instance of [TimerAppWidget] widget to make them show the correct time as long as
+     * the timer runs
      */
-    private suspend fun updateWidget() =
-        glanceId?.let {
-            widget.update(this@TimerService, it)
-        }
+    private suspend fun updateWidget() = widget.updateAll(this)
 
     private fun updateProgressSegments() {
         val settingsState = _settingsState.value

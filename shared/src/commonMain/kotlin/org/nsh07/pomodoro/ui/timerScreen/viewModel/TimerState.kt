@@ -18,13 +18,14 @@
 package org.nsh07.pomodoro.ui.timerScreen.viewModel
 
 import androidx.compose.runtime.Immutable
+import org.nsh07.pomodoro.utils.millisecondsToStr
 
 @Immutable
 data class TimerState(
     val timerMode: TimerMode = TimerMode.FOCUS,
     val timeStr: String = "25:00",
     val totalTime: Long = 25 * 60 * 1000,
-    /** Whether the interval is counting down. Independent of [serviceRunning]. */
+    /** Whether the interval is counting down. Independent of [sessionActive]. */
     val timerRunning: Boolean = false,
     val nextTimerMode: TimerMode = TimerMode.SHORT_BREAK,
     val nextTimeStr: String = "5:00",
@@ -32,10 +33,18 @@ data class TimerState(
     val currentFocusCount: Int = 1,
     val totalFocusCount: Int = 4,
     val alarmRinging: Boolean = false,
-    /** Whether a service is up to tick the timer. A running session left without one is frozen. */
-    val serviceRunning: Boolean = false,
     val infiniteFocus: Boolean = false
-)
+) {
+    /**
+     * Whether the timer has been moved off its reset state, which is when the topic must not be
+     * switched or edited
+     */
+    val sessionActive: Boolean
+        get() = timerRunning ||
+                timerMode != TimerMode.FOCUS ||
+                currentFocusCount != 1 ||
+                timeStr != millisecondsToStr(if (infiniteFocus) 0 else totalTime)
+}
 
 enum class TimerMode {
     FOCUS, SHORT_BREAK, LONG_BREAK, BRAND

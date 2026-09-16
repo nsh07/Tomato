@@ -46,15 +46,6 @@ class DesktopTimerHelper(
     private var mp3Player: MP3Player = MP3Player(null)
 
     override fun onAction(action: TimerAction) {
-        if (action == TimerAction.ResetTimer)
-            _timerState.update { currentState ->
-                currentState.copy(serviceRunning = false)
-            }
-        else
-            _timerState.update { currentState ->
-                currentState.copy(serviceRunning = true)
-            }
-
         when (action) {
             TimerAction.ResetTimer -> {
                 if (_timerState.value.timerRunning) toggleTimer()

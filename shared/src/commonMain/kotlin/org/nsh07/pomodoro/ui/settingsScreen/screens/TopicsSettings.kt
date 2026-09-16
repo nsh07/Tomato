@@ -139,7 +139,7 @@ fun StyleScope.selected(block: () -> Unit) {
 fun TopicsSettings(
     topics: List<Topic>,
     editingTopic: Topic,
-    serviceRunning: Boolean,
+    sessionActive: Boolean,
     currentTopicId: Long,
     minuteInputs: MinuteInputs,
     sessionsSliderState: SliderState,
@@ -427,7 +427,7 @@ fun TopicsSettings(
                                 TopicTimerSettings(
                                     topic = topic,
                                     topics = topics,
-                                    topicRunning = serviceRunning && topic.id == currentTopicId,
+                                    topicRunning = sessionActive && topic.id == currentTopicId,
                                     minuteInputs = minuteInputs,
                                     sessionsSliderState = sessionsSliderState,
                                     onAction = onAction,
@@ -466,7 +466,7 @@ fun TopicsSettingsPreview() {
         TopicsSettings(
             topics = topics,
             editingTopic = editingTopic,
-            serviceRunning = false,
+            sessionActive = false,
             currentTopicId = editingTopic.id,
             minuteInputs = MinuteInputs("25", "5", "15"),
             sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
@@ -499,7 +499,7 @@ fun TopicsSettingsDarkPreview() {
         TopicsSettings(
             topics = topics,
             editingTopic = editingTopic,
-            serviceRunning = false,
+            sessionActive = false,
             currentTopicId = editingTopic.id,
             minuteInputs = MinuteInputs("25", "5", "15"),
             sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),

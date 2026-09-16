@@ -210,7 +210,7 @@ class StateRepository(
 
     private fun refreshTimer(topic: Topic) {
         val currentState = timerState.value
-        if (currentState.serviceRunning || currentState.infiniteFocus) return
+        if (currentState.sessionActive || currentState.infiniteFocus) return
 
         time.value = topic.focusTime
         timerState.update {

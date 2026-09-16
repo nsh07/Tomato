@@ -103,12 +103,12 @@ class TimerService : Service(), KoinComponent {
     override fun onCreate() {
         super.onCreate()
         updateProgressSegments()
-        stateRepository.timerState.update { it.copy(serviceRunning = true) }
+        isRunning = true
         alarm = initializeMediaPlayer()
     }
 
     override fun onDestroy() {
-        stateRepository.timerState.update { it.copy(serviceRunning = false) }
+        isRunning = false
         updateQSTile()
         runBlocking {
             job.cancel()
@@ -542,5 +542,11 @@ class TimerService : Service(), KoinComponent {
 
     enum class Actions {
         TOGGLE, SKIP, RESET, UNDO_RESET, EXPIRE, RESUME, STOP_ALARM, UPDATE_ALARM_TONE
+    }
+
+    companion object {
+        /** Whether a service is up to tick the timer */
+        var isRunning = false
+            private set
     }
 }

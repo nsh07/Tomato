@@ -32,6 +32,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -68,17 +69,17 @@ class SettingsViewModel(
     val backStack = mutableStateListOf<Screen.Settings>(Screen.Settings.Main)
 
     val isPlus = billingManager.isPlus
-    val serviceRunning = stateRepository.timerState
-        .map { it.serviceRunning }
-        .flowOn(Dispatchers.IO)
+    val sessionActive = stateRepository.timerState
+        .map { it.sessionActive }
+        .distinctUntilChanged()
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            false
+            stateRepository.timerState.value.sessionActive
         )
 
-    private val isServiceRunning: Boolean
-        get() = stateRepository.timerState.value.serviceRunning
+    private val isSessionActive: Boolean
+        get() = stateRepository.timerState.value.sessionActive
 
     val currentTopicId = stateRepository.currentTopicId
 
@@ -165,7 +166,7 @@ class SettingsViewModel(
             val created = topic.copy(id = id)
             setEditingTopic(created)
 
-            if (setAsCurrent && !isServiceRunning) {
+            if (setAsCurrent && !isSessionActive) {
                 stateRepository.setTopic(created)
             }
         }
@@ -296,7 +297,7 @@ class SettingsViewModel(
             viewModelScope.launch(Dispatchers.IO) { saveMinutes(minuteInputs) }
         }
 
-        if (!isServiceRunning)
+        if (!isSessionActive)
             try {
                 timerHelper.onAction(TimerAction.ResetTimer)
             } catch (e: Exception) {

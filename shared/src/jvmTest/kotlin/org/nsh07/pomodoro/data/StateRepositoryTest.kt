@@ -20,6 +20,7 @@ package org.nsh07.pomodoro.data
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -45,9 +46,9 @@ class StateRepositoryTest {
     fun `the restored topic is published before the first load completes`() = runBlocking {
         val stateRepository = stateRepository(preferenceRepository(work.id))
 
-        // The timer state is the last thing the initial load publishes, so by the time it holds the
-        // restored topic's focus time, currentTopic must hold the restored topic itself
-        awaitLoad(stateRepository, work)
+        // topicLoaded is the last thing the initial load sets, so by then currentTopic must hold
+        // the restored topic already
+        awaitLoad(stateRepository)
         assertEquals(work, stateRepository.currentTopic.value)
         assertEquals(work.id, stateRepository.currentTopicId.value)
     }
@@ -56,7 +57,7 @@ class StateRepositoryTest {
     fun `switching topic publishes it before setTopic returns`() = runBlocking {
         // Without database updates, currentTopic only holds what StateRepository publishes itself
         val stateRepository = stateRepository(topicRepository = NoUpdatesTopicRepository())
-        awaitLoad(stateRepository, storedDefaultTopic)
+        awaitLoad(stateRepository)
 
         // Switching away from the default topic used to wait for a database emission that the
         // default topic already in currentTopic satisfied, so the switch had not taken effect yet
@@ -70,7 +71,7 @@ class StateRepositoryTest {
     fun `switching topic is persisted`() = runBlocking {
         val preferenceRepository = preferenceRepository(DEFAULT_TOPIC_ID)
         val stateRepository = stateRepository(preferenceRepository)
-        awaitLoad(stateRepository, storedDefaultTopic)
+        awaitLoad(stateRepository)
 
         stateRepository.setTopic(study)
 
@@ -81,7 +82,7 @@ class StateRepositoryTest {
     fun `edits to the selected topic are picked up`() = runBlocking {
         val topicRepository = topicRepository()
         val stateRepository = stateRepository(preferenceRepository(work.id), topicRepository)
-        awaitLoad(stateRepository, work)
+        awaitLoad(stateRepository)
 
         val edited = work.copy(focusTime = 5 * MINUTE)
         topicRepository.updateTopic(edited)
@@ -95,7 +96,7 @@ class StateRepositoryTest {
     fun `editing the selected topic sets the timer up again`() = runBlocking {
         val topicRepository = topicRepository()
         val stateRepository = stateRepository(preferenceRepository(work.id), topicRepository)
-        awaitLoad(stateRepository, work)
+        awaitLoad(stateRepository)
 
         val edited = work.copy(focusTime = 5 * MINUTE, sessionLength = 2)
         topicRepository.updateTopic(edited)
@@ -111,7 +112,7 @@ class StateRepositoryTest {
     @Test
     fun `switching topic sets the timer up for it`() = runBlocking {
         val stateRepository = stateRepository(topicRepository = NoUpdatesTopicRepository())
-        awaitLoad(stateRepository, storedDefaultTopic)
+        awaitLoad(stateRepository)
 
         stateRepository.setTopic(study)
 
@@ -123,7 +124,7 @@ class StateRepositoryTest {
     fun `an edit that leaves the intervals alone does not set the timer up again`() = runBlocking {
         val topicRepository = topicRepository()
         val stateRepository = stateRepository(preferenceRepository(work.id), topicRepository)
-        awaitLoad(stateRepository, work)
+        awaitLoad(stateRepository)
         stateRepository.timerState.update { it.copy(currentFocusCount = 3) }
 
         val renamed = work.copy(name = "Work again")
@@ -139,8 +140,8 @@ class StateRepositoryTest {
     fun `a running timer is left alone`() = runBlocking {
         val topicRepository = topicRepository()
         val stateRepository = stateRepository(preferenceRepository(work.id), topicRepository)
-        awaitLoad(stateRepository, work)
-        stateRepository.timerState.update { it.copy(serviceRunning = true) }
+        awaitLoad(stateRepository)
+        stateRepository.timerState.update { it.copy(timerRunning = true) }
 
         val edited = work.copy(focusTime = 5 * MINUTE)
         topicRepository.updateTopic(edited)
@@ -157,7 +158,7 @@ class StateRepositoryTest {
         val preferenceRepository = preferenceRepository(work.id)
         val topicRepository = topicRepository()
         val stateRepository = stateRepository(preferenceRepository, topicRepository)
-        awaitLoad(stateRepository, work)
+        awaitLoad(stateRepository)
 
         topicRepository.deleteTopic(work)
 
@@ -175,7 +176,7 @@ class StateRepositoryTest {
         val preferenceRepository = preferenceRepository(404L)
         val stateRepository = stateRepository(preferenceRepository)
 
-        awaitLoad(stateRepository, storedDefaultTopic)
+        awaitLoad(stateRepository)
         assertEquals(storedDefaultTopic, stateRepository.currentTopic.value)
         assertEquals(DEFAULT_TOPIC_ID, stateRepository.currentTopicId.value)
         assertEquals(DEFAULT_TOPIC_ID, preferenceRepository.getLongPreference(CURRENT_TOPIC_KEY))
@@ -198,11 +199,9 @@ class StateRepositoryTest {
     private fun preferenceRepository(storedId: Long) =
         FakePreferenceRepository(currentTopicId = storedId)
 
-    /** Waits for the load started by the [StateRepository] constructor to publish [topic] */
-    private suspend fun awaitLoad(stateRepository: StateRepository, topic: Topic) =
-        awaitUntil("the initial load of ${topic.name}") {
-            stateRepository.timerState.value.totalTime == topic.focusTime
-        }
+    /** Waits for the load started by the [StateRepository] constructor to finish */
+    private suspend fun awaitLoad(stateRepository: StateRepository) =
+        withTimeout(TIMEOUT.milliseconds) { stateRepository.topicLoaded.first { it } }
 
     private suspend fun awaitUntil(description: String, condition: () -> Boolean) {
         try {

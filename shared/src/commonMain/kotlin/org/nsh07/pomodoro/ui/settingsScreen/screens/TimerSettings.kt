@@ -132,7 +132,7 @@ import tomato.shared.generated.resources.view_day
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TimerSettings(
-    serviceRunning: Boolean,
+    sessionActive: Boolean,
     currentTopicId: Long,
     settingsState: SettingsState,
     contentPadding: PaddingValues,
@@ -151,7 +151,7 @@ fun TimerSettings(
 
     SeededTheme(editingTopic.color) {
         val colorScheme = colorScheme
-        val topicRunning = serviceRunning && editingTopic.id == currentTopicId
+        val topicRunning = sessionActive && editingTopic.id == currentTopicId
 
         val widthExpanded = currentWindowAdaptiveInfoV2()
             .windowSizeClass
@@ -161,7 +161,7 @@ fun TimerSettings(
             settingsState.aodEnabled,
             settingsState.secureAod,
             isPlus,
-            serviceRunning
+            sessionActive
         ) {
             listOf(
                 SettingsSwitchItem(
@@ -397,7 +397,7 @@ fun TimerSettings(
                                 trailingContent = {
                                     Switch(
                                         checked = settingsState.singleProgressBar,
-                                        enabled = !serviceRunning,
+                                        enabled = !sessionActive,
                                         onCheckedChange = {
                                             haptic.performToggle(it)
                                             onAction(
@@ -540,7 +540,7 @@ private fun TimerSettingsPreview() {
     TomatoTheme(dynamicColor = false) {
         Surface(Modifier.fillMaxSize()) {
             TimerSettings(
-                serviceRunning = false,
+                sessionActive = false,
                 currentTopicId = defaultTopic.id,
                 settingsState = remember { SettingsState() },
                 contentPadding = PaddingValues(),

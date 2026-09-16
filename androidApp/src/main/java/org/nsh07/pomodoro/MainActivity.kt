@@ -109,8 +109,7 @@ class MainActivity : ComponentActivity() {
     private fun resumeStoredTimer() = lifecycleScope.launch {
         timerManager.awaitRestore()
 
-        val timerState = stateRepository.timerState.value
-        if (!timerState.timerRunning || timerState.serviceRunning) return@launch
+        if (!stateRepository.timerState.value.timerRunning || TimerService.isRunning) return@launch
 
         try {
             startService(

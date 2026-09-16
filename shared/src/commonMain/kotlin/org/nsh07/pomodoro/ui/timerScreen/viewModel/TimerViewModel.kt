@@ -99,7 +99,7 @@ class TimerViewModel(
             }
 
             is TimerAction.SetTopic -> {
-                if (!timerState.value.serviceRunning) {
+                if (!timerState.value.sessionActive) {
                     viewModelScope.launch {
                         stateRepository.setTopic(action.topic)
                         onAction(TimerAction.ResetTimer)

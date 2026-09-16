@@ -288,7 +288,7 @@ fun SharedTransitionScope.TimerMainPane(
                 actions = {
                     var expanded by remember { mutableStateOf(false) }
 
-                    val canSwitchTopic = !timerState.serviceRunning
+                    val canSwitchTopic = !timerState.sessionActive
                     val topicItemColors = MenuDefaults.selectableItemColors()
 
                     FilledTonalIconToggleButton(

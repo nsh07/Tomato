@@ -76,7 +76,7 @@ fun SettingsScreenRoot(
 
     val minuteInputs = viewModel.minuteInputs
 
-    val serviceRunning by viewModel.serviceRunning.collectAsStateWithLifecycle()
+    val sessionActive by viewModel.sessionActive.collectAsStateWithLifecycle()
     val currentTopicId by viewModel.currentTopicId.collectAsStateWithLifecycle()
 
     val settingsState by viewModel.settingsState.collectAsStateWithLifecycle()
@@ -169,7 +169,7 @@ fun SettingsScreenRoot(
                 val editingTopic by viewModel.editingTopic.collectAsStateWithLifecycle()
 
                 TimerSettings(
-                    serviceRunning = serviceRunning,
+                    sessionActive = sessionActive,
                     currentTopicId = currentTopicId,
                     settingsState = settingsState,
                     contentPadding = contentPadding,
@@ -192,7 +192,7 @@ fun SettingsScreenRoot(
                 TopicsSettings(
                     topics = topics,
                     editingTopic = editingTopic,
-                    serviceRunning = serviceRunning,
+                    sessionActive = sessionActive,
                     currentTopicId = currentTopicId,
                     minuteInputs = minuteInputs,
                     sessionsSliderState = sessionsSliderState,

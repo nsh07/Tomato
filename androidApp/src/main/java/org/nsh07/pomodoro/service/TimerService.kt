@@ -106,13 +106,11 @@ class TimerService : Service(), KoinComponent {
     override fun onDestroy() {
         isRunning = false
         updateQSTile()
-        runBlocking {
-            job.cancel()
-            timerManager.saveTimeToDb()
-            setDoNotDisturb(false)
-            notificationManager.cancel(1)
-            alarm?.release()
-        }
+        job.cancel()
+        runBlocking(Dispatchers.IO) { timerManager.saveTimeToDb() }
+        setDoNotDisturb(false)
+        notificationManager.cancel(1)
+        alarm?.release()
         super.onDestroy()
     }
 
@@ -448,8 +446,9 @@ class TimerService : Service(), KoinComponent {
             }, paused = true, complete = false
         )
 
+        // Off the main thread like every other action, since starting writes the session out
         if (currentTopic.autostartNextSession && !fromAutoStop)  // auto start next session
-            toggleTimer()
+            skipScope.launch { toggleTimer() }
 
         CoroutineScope(Dispatchers.IO).launch {
             updateWidget()

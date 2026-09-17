@@ -465,6 +465,7 @@ class TimerService : Service(), KoinComponent {
                     true
                 }
 
+                isLooping = true
                 setAudioAttributes(
                     AudioAttributes.Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)

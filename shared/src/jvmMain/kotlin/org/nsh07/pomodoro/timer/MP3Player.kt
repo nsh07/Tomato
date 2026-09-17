@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.io.BufferedInputStream
 import java.io.File
@@ -47,7 +48,7 @@ class MP3Player(val audioPath: String?) {
         get() = playJob?.isActive == true
 
     /**
-     * Starts playback. If audio is already playing, it does nothing.
+     * Starts looping playback until [stop] is called. If audio is already playing, it does nothing.
      */
     fun play() {
         if (isPlaying) return
@@ -55,11 +56,13 @@ class MP3Player(val audioPath: String?) {
         playJob = audioScope.launch {
             try {
                 audioFile?.let {
-                    val fileInputStream = FileInputStream(audioFile)
-                    val bufferedInputStream = BufferedInputStream(fileInputStream)
+                    while (isActive) {
+                        val fileInputStream = FileInputStream(audioFile)
+                        val bufferedInputStream = BufferedInputStream(fileInputStream)
 
-                    player = Player(bufferedInputStream)
-                    player?.play()
+                        player = Player(bufferedInputStream)
+                        player?.play()
+                    }
                 }
             } catch (e: Exception) {
                 println("Playback stopped or encountered an error: ${e.message}")
@@ -74,8 +77,8 @@ class MP3Player(val audioPath: String?) {
      */
     fun stop() {
         if (isPlaying) {
-            player?.close()
             playJob?.cancel()
+            player?.close()
             reset()
         }
     }

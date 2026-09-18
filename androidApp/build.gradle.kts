@@ -69,9 +69,11 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")
+            buildConfigField("String", "REVENUECAT_API_KEY", "\"goog_jBpRIBjTYvhKYluCqkPXSHbuFbX\"")
         }
         debug {
             applicationIdSuffix = ".debug"
+            buildConfigField("String", "REVENUECAT_API_KEY", "\"test_YwOIjOuWhXcnCqSuqlIzMlstGeW\"")
         }
     }
 

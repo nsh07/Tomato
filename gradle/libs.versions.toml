@@ -1,8 +1,8 @@
 [versions]
 app-minSdk = "26"
 app-targetSdk = "37"
-app-versionName = "2.0.0"
-app-versionCode = "39"
+app-versionName = "2.0.1"
+app-versionCode = "40"
 
 activityCompose = "1.13.0"
 adaptive = "1.3.0-rc01"

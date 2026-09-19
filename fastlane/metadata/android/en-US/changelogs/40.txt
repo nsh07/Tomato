@@ -1,0 +1,13 @@
+New features:
+- Topics: create a topic for anything you focus on and give it its own color and shape
+- Switch between topics right from the timer screen, and add new ones without leaving it
+- Every topic remembers its own focus and break durations
+- Add, rename and delete topics from settings
+- Per-topic stats will be added in a future update
+
+Improvements:
+- Timers now restore after the app is quit
+- Haptic feedback, more reliable alarms, faster charts
+
+Fixes:
+- Many crash and UI fixes

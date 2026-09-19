@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -13,8 +14,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  -->
-<resources xmlns:tools="http://schemas.android.com/tools">
+  --><resources xmlns:tools="http://schemas.android.com/tools">
     <string name="alarm">Alarma</string>
     <string name="alarm_desc">Feu sonar l\u0027alarma quan s\u0027acabi un temporitzador</string>
     <string name="alarm_sound">So d\u0027alarma</string>
@@ -119,4 +119,7 @@
     <string name="reset_data_dialog_title">Restablir totes les estadístiques?</string>
     <string name="reset_data_dialog_text">Totes les estadístiques desades s\u0027eliminaran permanentment. Això no es pot desfer.</string>
     <string name="back">Enrere</string>
+    <string name="cancel">Cancel·lar</string>
+    <string name="duration">Durada</string>
+    <string name="gap">Espaiat</string>
 </resources>

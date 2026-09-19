@@ -48,27 +48,34 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.ui.LocalIsPlus
 import org.nsh07.pomodoro.ui.mergePaddingValues
+import org.nsh07.pomodoro.ui.performConfirm
+import org.nsh07.pomodoro.ui.performToggle
 import org.nsh07.pomodoro.ui.rememberRingtoneNameProviderCallback
 import org.nsh07.pomodoro.ui.rememberRingtonePickerLauncherCallback
 import org.nsh07.pomodoro.ui.settingsScreen.SYSTEM_DEFAULT_AMPLITUDE
@@ -89,6 +96,7 @@ import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.middleListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.topListItemShape
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import org.nsh07.pomodoro.ui.topBarWindowInsets
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.airwave
 import tomato.shared.generated.resources.alarm
@@ -126,17 +134,19 @@ import kotlin.math.roundToLong
 @Composable
 fun AlarmSettings(
     settingsState: SettingsState,
-    isPlus: Boolean,
     contentPadding: PaddingValues,
     onAction: (SettingsAction) -> Unit,
-    setShowPaywall: (Boolean) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isPlus = LocalIsPlus.current
+
+    val scope = rememberCoroutineScope()
+    val haptic = LocalHapticFeedback.current
     val inspectionMode = LocalInspectionMode.current // used to show all features in preview
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    val widthExpanded = currentWindowAdaptiveInfo()
+    val widthExpanded = currentWindowAdaptiveInfoV2()
         .windowSizeClass
         .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
 
@@ -215,6 +225,7 @@ fun AlarmSettings(
         Scaffold(
             topBar = {
                 LargeFlexibleTopAppBar(
+                    windowInsets = topBarWindowInsets(),
                     title = {
                         Text(
                             stringResource(Res.string.alarm),
@@ -262,7 +273,7 @@ fun AlarmSettings(
 
                 item {
                     SegmentedListItem(
-                        onClick = ringtonePickerLauncherCallback,
+                        onClick = { scope.launch(Dispatchers.IO) { ringtonePickerLauncherCallback() } },
                         leadingContent = {
                             Icon(painterResource(Res.drawable.alarm), null)
                         },
@@ -282,7 +293,10 @@ fun AlarmSettings(
                 switchItems.fastForEachIndexed { baseIndex, items ->
                     itemsIndexed(items) { index, item ->
                         SegmentedListItem(
-                            onClick = { item.onClick(!item.checked) },
+                            onClick = {
+                                haptic.performToggle(!item.checked)
+                                item.onClick(!item.checked)
+                            },
                             leadingContent = {
                                 Icon(painterResource(item.icon), contentDescription = null)
                             },
@@ -305,7 +319,10 @@ fun AlarmSettings(
                             trailingContent = {
                                 Switch(
                                     checked = item.checked,
-                                    onCheckedChange = { item.onClick(it) },
+                                    onCheckedChange = {
+                                        haptic.performToggle(it)
+                                        item.onClick(it)
+                                    },
                                     thumbContent = {
                                         if (item.checked) {
                                             Icon(
@@ -338,7 +355,7 @@ fun AlarmSettings(
                 }
 
                 if (hasVibrator) {
-                    if (!isPlus) item { PlusDivider(setShowPaywall) }
+                    if (!isPlus) item { PlusDivider() }
                     else item { Spacer(Modifier.height(12.dp)) }
 
                     item {
@@ -384,6 +401,7 @@ fun AlarmSettings(
                                         buttonGroupContent = {
                                             FilledTonalIconButton(
                                                 onClick = {
+                                                    haptic.performConfirm()
                                                     onAction(
                                                         SettingsAction.SaveVibrationOnDuration(
                                                             1000L
@@ -478,9 +496,7 @@ fun AlarmSettingsPreview() {
         AlarmSettings(
             settingsState = settingsState,
             contentPadding = PaddingValues(),
-            isPlus = false,
             onAction = {},
-            setShowPaywall = {},
             onBack = {}
         )
     }

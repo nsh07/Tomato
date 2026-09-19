@@ -17,8 +17,10 @@
 
 package org.nsh07.pomodoro
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,19 +29,24 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.di.ActivityCallbacks
+import org.nsh07.pomodoro.service.TimerManager
+import org.nsh07.pomodoro.service.TimerService
 import org.nsh07.pomodoro.ui.AppScreen
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
-import org.nsh07.pomodoro.utils.toColor
 
 class MainActivity : ComponentActivity() {
 
     private val settingsViewModel: SettingsViewModel by inject()
     private val stateRepository: StateRepository by inject()
     private val activityCallbacks: ActivityCallbacks by inject()
+
+    private val timerManager: TimerManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,9 +68,8 @@ class MainActivity : ComponentActivity() {
                 else -> isSystemInDarkTheme()
             }
 
-            val seed = settingsState.colorScheme.toColor()
+            val seed = settingsState.colorScheme
 
-            val isPlus by settingsViewModel.isPlus.collectAsStateWithLifecycle()
 
             TomatoTheme(
                 darkTheme = darkTheme,
@@ -76,10 +82,9 @@ class MainActivity : ComponentActivity() {
                 }
 
                 AppScreen(
-                    isPlus = isPlus,
                     isAODEnabled = settingsState.aodEnabled,
                     setTimerFrequency = {
-                        stateRepository.timerFrequency = it
+                        stateRepository.screenTimerFrequency = it
                     }
                 )
             }
@@ -89,13 +94,28 @@ class MainActivity : ComponentActivity() {
 
     override fun onStop() {
         super.onStop()
-        // Reduce the timer loop frequency when not visible to save battery
-        stateRepository.timerFrequency = 1f
+        stateRepository.foreground = false
     }
 
     override fun onStart() {
         super.onStart()
-        // Increase the timer loop frequency again when visible to make the progress smoother
-        stateRepository.timerFrequency = 60f
+        stateRepository.foreground = true
+        resumeStoredTimer()
+    }
+
+    /** Restores the stored session, and hands it to [TimerService] if it is still running */
+    private fun resumeStoredTimer() = lifecycleScope.launch {
+        timerManager.awaitRestore()
+
+        if (!stateRepository.timerState.value.timerRunning || TimerService.isRunning) return@launch
+
+        try {
+            startService(
+                Intent(this@MainActivity, TimerService::class.java)
+                    .setAction(TimerService.Actions.RESUME.toString())
+            )
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Cannot resume the stored timer: ${e.message}")
+        }
     }
 }

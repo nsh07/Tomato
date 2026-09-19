@@ -43,4 +43,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Tomato"
 include(":androidApp")
+include(":desktopApp")
 include(":shared")

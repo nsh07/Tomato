@@ -27,7 +27,11 @@ import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.occludingVerticalHingeBounds
 import androidx.compose.material3.adaptive.separatingVerticalHingeBounds
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.WindowInfo
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
@@ -49,6 +53,18 @@ fun mergePaddingValues(
 }
 
 /**
+ * A [androidx.compose.runtime.DisposableEffect] that makes the app full-screen and exits
+ * full-screen when this function exits composition
+ */
+@Composable
+expect fun AodSystemBarsHandler(
+    density: Density,
+    windowInfo: WindowInfo,
+    secureAod: Boolean,
+    setTimerFrequency: (Float) -> Unit
+)
+
+/**
  * Returns and remembers a lambda that requests the system for the DND permission
  *
  * @return an empty lambda on all platforms except Android, where it returns a lambda that launches
@@ -57,21 +73,46 @@ fun mergePaddingValues(
 @Composable
 expect fun rememberRequestDndPermissionCallback(): (Boolean) -> Unit
 
+/**
+ * Returns and remembers a lambda that requests the system for the notification permission
+ *
+ * @return a lambda that launches the current platform's corresponding notification permission
+ * dialog
+ */
+@Composable
+expect fun rememberRequestNotificationPermissionCallback(): () -> Unit
+
+/**
+ * Returns and remembers a lambda that launches the ringtone picker
+ *
+ * @param alarmSoundFilePath string representation of the existing ringtone's path
+ * @param onResult lambda that passes the ringtone picked by the user in an instance of
+ * [SettingsAction.SaveAlarmSound]. This should essentially be a [androidx.lifecycle.ViewModel]'s
+ * MVI intent handler.
+ *
+ * @return a lambda that launches the current platform's ringtone/media picker
+ */
 @Composable
 expect fun rememberRingtonePickerLauncherCallback(
     alarmSoundFilePath: String?,
     onResult: (SettingsAction) -> Unit
-): () -> Unit
+): suspend () -> Unit
 
+/**
+ * Returns and remembers a lambda that returns the name of the current ringtone
+ *
+ * @return a lambda that accepts the string representation of the existing ringtone's path and
+ * returns its name as a [String]
+ */
 @Composable
 expect fun rememberRingtoneNameProviderCallback(): suspend (String?) -> String
 
 /**
- * (Copied from [androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective] with
+ * (copied from [androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective] with
  * minor modifications, namely the reduction of horizontalPartitionSpacerSize to 0.dp)
  *
  * Calculates the recommended [PaneScaffoldDirective] from a given [WindowAdaptiveInfo]. Use this
- * method with [androidx.compose.material3.adaptive.currentWindowAdaptiveInfo] to acquire
+ * method with [androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2] to acquire
  * Material-recommended adaptive layout settings of the current activity window.
  *
  * See more details on the [Material design guideline site]
@@ -148,3 +189,9 @@ fun calculatePaneScaffoldDirective(
         }
     )
 }
+
+expect fun Modifier.androidSystemGestureExclusion(): Modifier
+
+expect fun htmlToAnnotatedString(html: String): AnnotatedString
+
+expect fun Modifier.hideCursor(): Modifier

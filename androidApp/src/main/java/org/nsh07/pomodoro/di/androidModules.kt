@@ -21,7 +21,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
-import android.os.Build
+import android.os.SystemClock
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
@@ -33,14 +33,21 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.create
 import org.koin.plugin.module.dsl.single
+import org.nsh07.pomodoro.BuildConfig
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.AppPreferenceRepository
 import org.nsh07.pomodoro.data.AppStatRepository
+import org.nsh07.pomodoro.data.AppTopicRepository
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
-import org.nsh07.pomodoro.service.AppServiceHelper
-import org.nsh07.pomodoro.service.ServiceHelper
+import org.nsh07.pomodoro.data.TopicRepository
+import org.nsh07.pomodoro.service.AndroidTimerHelper
+import org.nsh07.pomodoro.service.ExpiryAlarmScheduler
+import org.nsh07.pomodoro.service.SharedPreferencesTimerStateStore
+import org.nsh07.pomodoro.service.TimerHelper
+import org.nsh07.pomodoro.service.TimerManager
+import org.nsh07.pomodoro.service.TimerStateStore
 import org.nsh07.pomodoro.service.addTimerActions
 
 val servicesModule = module {
@@ -48,9 +55,21 @@ val servicesModule = module {
 
     single<AppInfo> { create(::createAppInfo) }
     single<AppStatRepository>() bind StatRepository::class
+    single<AppTopicRepository>() bind TopicRepository::class
     single<AppPreferenceRepository>() bind PreferenceRepository::class
     single<StateRepository>()
-    single<AppServiceHelper>() bind ServiceHelper::class
+    single<AndroidTimerHelper>() bind TimerHelper::class
+    single<ExpiryAlarmScheduler>()
+    single<SharedPreferencesTimerStateStore>() bind TimerStateStore::class
+    single<TimerManager> {
+        TimerManager(
+            get(),
+            get(),
+            SystemClock::elapsedRealtime,
+            get<TimerStateStore>(),
+            get<ExpiryAlarmScheduler>()::set
+        )
+    }
 
     single { NotificationManagerCompat.from(get()) }
     single { create(::createNotificationManager) }
@@ -59,19 +78,7 @@ val servicesModule = module {
     single<ActivityCallbacks>()
 }
 
-private fun createAppInfo(context: Context): AppInfo {
-    val debug = context.packageName.endsWith(".debug")
-
-    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-    val versionName = packageInfo.versionName ?: "-"
-    val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        packageInfo.longVersionCode
-    } else {
-        0L
-    }
-
-    return AppInfo(debug, versionName, versionCode)
-}
+private fun createAppInfo(): AppInfo = AppInfo(BuildConfig.DEBUG)
 
 private fun createNotificationManager(context: Context): NotificationManager {
     return context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -89,7 +96,7 @@ private fun createNotificationCompatBuilder(context: Context): NotificationCompa
                 PendingIntent.FLAG_IMMUTABLE
             )
         )
-        .addTimerActions(context, R.drawable.play, context.getString(R.string.start))
+        .addTimerActions(context, context.getString(R.string.start))
         .setShowWhen(true)
         .setSilent(true)
         .setOngoing(true)

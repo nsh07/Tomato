@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (c) 2026 Nishant Mishra
   ~
   ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
@@ -13,8 +14,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License along with Tomato.
   ~ If not, see <https://www.gnu.org/licenses/>.
-  -->
-<resources>
+  --><resources>
     <string name="start">Başlat</string>
     <string name="stop">Durdur</string>
     <string name="focus">Odak</string>
@@ -107,7 +107,7 @@
     <string name="undo">Geri al</string>
     <string name="reset_data">İstatistikleri sıfırla</string>
     <string name="reset_data_dialog_text">Kaydedilen tüm istatistikler kalıcı olarak silinecektir. Bu işlem geri alınamaz.</string>
-    <string name="focus_break_ratio">Odak kırılma oranı</string>
+    <string name="focus_break_ratio">Odak-mola oranı</string>
     <string name="focus_breakdown">Odak dağılımı</string>
     <string name="focus_breakdown_desc">Günün farklı saatlerinde ortalama odaklanma süreleri</string>
     <string name="focus_history">Odaklanma geçmişi</string>
@@ -115,7 +115,7 @@
     <string name="less">Daha az</string>
     <string name="show_chart">Grafiği göster</string>
     <string name="focus_history_heatmap">Odak geçmişi ısı haritası</string>
-    <string name="focus_history_heatmap_desc">Geçtiğimiz yılın odak geçmişi. Daha koyu renkler daha uzun süreyi temsil eder. Günler aya göre gruplandırılmıştır. Daha fazla bilgi için bir güne dokunun.</string>
+    <string name="focus_history_heatmap_desc">Geçtiğimiz yılın odak geçmişi. Daha açık tonlu renkler daha uzun süreyi temsil eder. Günler aya göre gruplandırılmıştır. Daha fazla bilgi için bir güne dokunun.</string>
     <string name="focus_history_calendar">Odak geçmişi takvimi</string>
     <string name="focus_history_calendar_desc">Geçen ayın odak geçmişi. Önceki ayın günleri farklı bir renkle işaretlenmiştir. Daha fazla bilgi için bir tarihe dokunun.</string>
     <string name="reset_data_dialog_title">Tüm istatistikleri sıfırla?</string>
@@ -145,4 +145,35 @@
     <string name="infinite_focus">Sonsuz odak</string>
     <string name="settings_infinite_focus_tip">Sonsuz odak modunu açmak için zamanlayıcı saatine uzun basın</string>
     <string name="cancel">İptal</string>
+    <string name="open_tomato">Tomato\u0027yu Aç</string>
+    <string name="quit_tomato">Tomato\u0027dan Çık</string>
+    <string name="advanced">Gelişmiş</string>
+    <string name="topics">Kategoriler</string>
+    <string name="create_new_topic">Yeni kategori</string>
+    <string name="topic_name">Ad</string>
+    <string name="topic_name_taken">Zaten bu isimle bir kategori var</string>
+    <string name="add_topic">Kategori ekle</string>
+    <string name="next">Sonraki</string>
+    <string name="delete_topic">Kategoriyi sil</string>
+    <string name="delete_topic_and_stats">Kategoriyi ve o kategorinin istatistiklerini sil</string>
+    <string name="delete_topic_dialog_title">Kategori silinsin mi?</string>
+    <string name="delete_topic_dialog_text">Bu işlem geri alınamaz. Bu kategoriyle ilişkilendirilmiş tüm istatistikler öntanımlı kategoriye alınacaktır (%1$s). İsterseniz bu kategoriye ait istatistikleri silebilirsiniz.</string>
+    <string name="edit_topic">Kategoriyi düzenle</string>
+    <string name="edit_topic_desc">İsim, renk ve şekil</string>
+    <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d sayaç</string>
+    <string name="red">Kırmızı</string>
+    <string name="rose">Gül</string>
+    <string name="purple">Mor</string>
+    <string name="indigo">Çivit mavisi</string>
+    <string name="blue">Mavi</string>
+    <string name="cyan">Camgöbeği</string>
+    <string name="teal">Turkuaz</string>
+    <string name="green">Yeşil</string>
+    <string name="chartreuse">Açık yeşil</string>
+    <string name="yellow">Sarı</string>
+    <string name="orange">Turuncu</string>
+    <string name="topic_settings">Kategori ayarları</string>
+    <string name="default_name">Öntanımlı</string>
+    <string name="topic_name_empty">Kategori adı boş olamaz</string>
+    <string name="shape">Şekil</string>
 </resources>

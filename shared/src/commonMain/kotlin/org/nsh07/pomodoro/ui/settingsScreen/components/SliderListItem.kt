@@ -45,7 +45,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.nsh07.pomodoro.ui.rememberSliderTickHaptics
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
+import kotlin.math.roundToInt
+
+/**
+ * Number of haptic steps spread across a slider's value range.
+ */
+private const val HAPTIC_SEGMENTS = 50
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -63,6 +70,11 @@ fun SliderListItem(
     onValueChangeFinished: (Float) -> Unit,
 ) {
     var animateSliderValue by remember { mutableStateOf(true) }
+
+    val performTickHaptics = rememberSliderTickHaptics {
+        val span = valueRange.endInclusive - valueRange.start
+        if (span == 0f) 0 else ((it - valueRange.start) / span * HAPTIC_SEGMENTS).roundToInt()
+    }
 
     var value by remember(value) { mutableFloatStateOf(value) }
     val valueAnimated by animateFloatAsState(
@@ -102,6 +114,7 @@ fun SliderListItem(
                 onValueChange = {
                     animateSliderValue = false
                     value = it
+                    performTickHaptics(it)
                 },
                 onValueChangeFinished = {
                     animateSliderValue = true

@@ -30,6 +30,7 @@ import androidx.compose.material3.ToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -40,6 +41,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.ui.performSegmentTick
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import tomato.shared.generated.resources.Res
@@ -61,6 +63,8 @@ fun ThemePickerListItem(
     onThemeChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val haptic = LocalHapticFeedback.current
+
     val themeMap: Map<String, Pair<DrawableResource, StringResource>> = remember {
         mapOf(
             "auto" to Pair(
@@ -95,7 +99,10 @@ fun ThemePickerListItem(
                     val isSelected = selectedIndex == index
                     ToggleButton(
                         checked = isSelected,
-                        onCheckedChange = { onThemeChange(theme.first) },
+                        onCheckedChange = {
+                            if (!isSelected) haptic.performSegmentTick()
+                            onThemeChange(theme.first)
+                        },
                         modifier = Modifier
                             .weight(1f)
                             .semantics { role = Role.RadioButton },

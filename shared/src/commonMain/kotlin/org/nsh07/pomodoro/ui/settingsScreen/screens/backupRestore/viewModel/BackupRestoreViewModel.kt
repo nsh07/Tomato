@@ -18,17 +18,17 @@
 package org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel
 
 import androidx.lifecycle.ViewModel
+import io.github.vinceglb.filekit.PlatformFile
 import org.nsh07.pomodoro.data.BackupRestoreManager
-import org.nsh07.pomodoro.data.FileLocator
 
 class BackupRestoreViewModel(
     val backupRestoreManager: BackupRestoreManager
 ) : ViewModel() {
-    suspend fun performBackup(directoryLocator: FileLocator) =
-        backupRestoreManager.performBackup(directoryLocator)
+    suspend fun performBackup(directory: PlatformFile) =
+        backupRestoreManager.performBackup(directory)
 
-    suspend fun performRestore(fileLocator: FileLocator) =
-        backupRestoreManager.performRestore(fileLocator)
+    suspend fun performRestore(file: PlatformFile?) =
+        backupRestoreManager.performRestore(file)
 
     fun restartApp() =
         backupRestoreManager.restartApp()

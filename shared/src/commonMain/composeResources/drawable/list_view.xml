@@ -1,0 +1,26 @@
+<!--
+  ~ Copyright (c) 2026 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+    <path
+        android:fillColor="#e3e3e3"
+        android:pathData="M400,800q-17,0 -28.5,-11.5T360,760v-80q0,-17 11.5,-28.5T400,640h440q17,0 28.5,11.5T880,680v80q0,17 -11.5,28.5T840,800L400,800ZM120,320q-17,0 -28.5,-11.5T80,280v-80q0,-17 11.5,-28.5T120,160h120q17,0 28.5,11.5T280,200v80q0,17 -11.5,28.5T240,320L120,320ZM120,560q-17,0 -28.5,-11.5T80,520v-80q0,-17 11.5,-28.5T120,400h120q17,0 28.5,11.5T280,440v80q0,17 -11.5,28.5T240,560L120,560ZM120,800q-17,0 -28.5,-11.5T80,760v-80q0,-17 11.5,-28.5T120,640h120q17,0 28.5,11.5T280,680v80q0,17 -11.5,28.5T240,800L120,800ZM400,560q-17,0 -28.5,-11.5T360,520v-80q0,-17 11.5,-28.5T400,400h440q17,0 28.5,11.5T880,440v80q0,17 -11.5,28.5T840,560L400,560ZM400,320q-17,0 -28.5,-11.5T360,280v-80q0,-17 11.5,-28.5T400,160h440q17,0 28.5,11.5T880,200v80q0,17 -11.5,28.5T840,320L400,320Z" />
+</vector>

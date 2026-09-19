@@ -5,7 +5,7 @@ Aplikace Tomato je kompletně bezplatná a open-source, navždy. Zdrojový kód 
 <b>Funkce:</b>
 - Jednoduché, minimalistické rozhraní založené na nejnovějším designu Material 3 Expressive
 - Podrobné statistiky časů práce/učení v jednoduše pochopitelném stylu
-- Statistiky za poslední týden či měsíc zobrazené v jednoduše pochopitelném grafu
-- Další statistiky za poslední týden či měsíc zobrazující, v jakém čase dne jste nejproduktivnější
-- Přizpůsobitelné parametry časomíry
+     - Statistiky za poslední týden či měsíc zobrazené v jednoduše pochopitelném grafu
+     - Další statistiky za poslední týden či měsíc zobrazující, v jakém čase dne jste nejproduktivnější
+     - Přizpůsobitelné parametry časomíry
 - Podpora Android 16 Live Updates

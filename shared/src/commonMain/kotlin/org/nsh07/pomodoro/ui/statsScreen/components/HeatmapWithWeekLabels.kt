@@ -49,19 +49,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.platform.LocalLocaleList
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastMaxBy
 import org.nsh07.pomodoro.data.Stat
+import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.time.format.TextStyle
+import java.util.Locale
 
 val HEATMAP_CELL_SIZE = 28.dp
 val HEATMAP_CELL_GAP = 2.dp
@@ -95,7 +97,7 @@ fun HeatmapWithWeekLabels(
         data.fastMaxBy { it?.totalFocusTime() ?: 0 }?.totalFocusTime() ?: 0
     }
 ) {
-    val locale = LocalLocale.current.platformLocale
+    val locale = LocalLocaleList.current.firstOrNull()?.platformLocale ?: Locale.US
     val shapes = shapes
 
     val daysOfWeek = remember(locale) {
@@ -200,7 +202,12 @@ fun HeatmapWithWeekLabelsPreview() {
         buildList {
             (0..93).forEach { index ->
                 val date = startDate.plusDays(index.toLong())
-                val focusStat = Stat(date, index % 10L / 2, 0, 0, 0, 0) // Varying focus durations
+                val focusStat =
+                    Stat(
+                        date,
+                        Topic.DEFAULT_TOPIC_ID,
+                        index % 10L / 2, 0, 0, 0, 0
+                    ) // Varying focus durations
 
                 if (date.month != date.minusDays(1).month && index > 0)
                     repeat(7) { add(null) }

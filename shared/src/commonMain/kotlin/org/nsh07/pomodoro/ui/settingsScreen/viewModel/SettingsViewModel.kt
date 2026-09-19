@@ -17,84 +17,111 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.StatRepository
 import org.nsh07.pomodoro.data.StateRepository
-import org.nsh07.pomodoro.service.ServiceHelper
+import org.nsh07.pomodoro.data.Topic
+import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
+import org.nsh07.pomodoro.data.TopicRepository
+import org.nsh07.pomodoro.data.TopicShape
+import org.nsh07.pomodoro.service.TimerHelper
 import org.nsh07.pomodoro.ui.Screen
+import org.nsh07.pomodoro.ui.settingsScreen.components.MinuteInputs
+import org.nsh07.pomodoro.ui.settingsScreen.components.minutesToMillisOrNull
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
-import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.utils.logError
-import org.nsh07.pomodoro.utils.millisecondsToStr
+import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 class SettingsViewModel(
     billingManager: BillingManager,
     private val preferenceRepository: PreferenceRepository,
     private val stateRepository: StateRepository,
     private val statRepository: StatRepository,
-    private val serviceHelper: ServiceHelper
+    private val topicRepository: TopicRepository,
+    private val timerHelper: TimerHelper
 ) : ViewModel() {
-    private val time: MutableStateFlow<Long> = stateRepository.time
-
     val backStack = mutableStateListOf<Screen.Settings>(Screen.Settings.Main)
 
     val isPlus = billingManager.isPlus
-    val serviceRunning = stateRepository.timerState
-        .map { it.serviceRunning }
-        .flowOn(Dispatchers.IO)
+    val sessionActive = stateRepository.timerState
+        .map { it.sessionActive }
+        .distinctUntilChanged()
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            false
+            stateRepository.timerState.value.sessionActive
         )
+
+    private val isSessionActive: Boolean
+        get() = stateRepository.timerState.value.sessionActive
+
+    val currentTopicId = stateRepository.currentTopicId
 
     private val _settingsState = stateRepository.settingsState
     val settingsState = _settingsState.asStateFlow()
 
-    val focusTimeTextFieldState by lazy {
-        TextFieldState((_settingsState.value.focusTime / 60000).toString())
-    }
-    val shortBreakTimeTextFieldState by lazy {
-        TextFieldState((_settingsState.value.shortBreakTime / 60000).toString())
-    }
-    val longBreakTimeTextFieldState by lazy {
-        TextFieldState((_settingsState.value.longBreakTime / 60000).toString())
-    }
+    private val _currentTopic = stateRepository.currentTopic
+
+    private val _editingTopic = MutableStateFlow(_currentTopic.value)
+    val editingTopic = _editingTopic.asStateFlow()
+
+    /** Until the user picks a topic to edit, or edits one, the current topic is edited */
+    private var editingTopicChosen = false
+
+    var minuteInputs by mutableStateOf(MinuteInputs(_editingTopic.value))
+        private set
 
     val sessionsSliderState by lazy {
         SliderState(
-            value = _settingsState.value.sessionLength.toFloat(),
+            value = _editingTopic.value.sessionLength.toFloat(),
             steps = 8,
             valueRange = 1f..10f,
             onValueChangeFinished = ::updateSessionLength
         )
     }
 
-    private var focusFlowCollectionJob: Job? = null
-    private var shortBreakFlowCollectionJob: Job? = null
-    private var longBreakFlowCollectionJob: Job? = null
+    val allTopics = topicRepository
+        .getAllTopics()
+        .map { it.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name }) }
+        .flowOn(Dispatchers.IO)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    private val editTopicMutex = Mutex()
+
+    private var minutesWriteJob: Job? = null
+
+    init {
+        // the view model is created on startup, before the saved topic has been restored
+        viewModelScope.launch {
+            _currentTopic.collect { if (!editingTopicChosen) showTopic(it) }
+        }
+    }
 
     fun onAction(action: SettingsAction) {
         when (action) {
@@ -117,9 +144,92 @@ class SettingsViewModel(
             is SettingsAction.SaveVibrationOffDuration -> saveVibrationOffDuration(action.duration)
             is SettingsAction.SaveVibrationAmplitude -> saveVibrationAmplitude(action.amplitude)
 
+            is SettingsAction.CreateTopic -> createTopic(action.topic, action.setAsCurrent)
+            is SettingsAction.DeleteTopic -> deleteTopic(action.topic, action.deleteStats)
+            is SettingsAction.SetEditingTopic -> setEditingTopic(action.topic)
+            is SettingsAction.SetEditingTopicName -> setEditingTopicName(action.name)
+            is SettingsAction.SetEditingTopicMinutes -> setEditingTopicMinutes(action.minutes)
+            is SettingsAction.SetEditingTopicColor -> setEditingTopicColor(action.color)
+            is SettingsAction.SetEditingTopicShape -> setEditingTopicShape(action.shape)
+
             is SettingsAction.AskEraseData -> askEraseData()
             is SettingsAction.CancelEraseData -> cancelEraseData()
             is SettingsAction.EraseData -> deleteStats()
+        }
+    }
+
+    private fun createTopic(topic: Topic, setAsCurrent: Boolean) {
+        viewModelScope.launch {
+            val id = topicRepository.insertTopic(topic)
+            if (id == -1L) return@launch
+
+            val created = topic.copy(id = id)
+            setEditingTopic(created)
+
+            if (setAsCurrent && !isSessionActive) {
+                stateRepository.setTopic(created)
+            }
+        }
+    }
+
+    private fun deleteTopic(topic: Topic, deleteStats: Boolean) {
+        if (topic.id == Topic.DEFAULT_TOPIC_ID) return
+        viewModelScope.launch(Dispatchers.IO) {
+            if (deleteStats) topicRepository.deleteTopic(topic)
+            else topicRepository.deleteTopicMergingStats(topic, Topic.DEFAULT_TOPIC_ID)
+
+            val fallback = topicRepository.getTopicById(Topic.DEFAULT_TOPIC_ID) ?: defaultTopic
+
+            if (stateRepository.currentTopicId.value == topic.id) {
+                stateRepository.setTopic(fallback)
+            }
+            if (_editingTopic.value.id == topic.id) setEditingTopic(fallback)
+        }
+    }
+
+    fun setEditingTopic(topic: Topic) {
+        editingTopicChosen = true
+        showTopic(topic)
+    }
+
+    private fun showTopic(topic: Topic) {
+        _editingTopic.update { topic }
+        minuteInputs = MinuteInputs(topic)
+        sessionsSliderState.value = topic.sessionLength.toFloat()
+    }
+
+    /**
+     * Applies [transform] to the topic being edited and writes it to the database
+     */
+    private suspend fun editTopic(transform: (Topic) -> Topic) {
+        editingTopicChosen = true
+        editTopicMutex.withLock {
+            val previous = _editingTopic.value
+            val topic = _editingTopic.updateAndGet(transform)
+            if (topic == previous) return
+
+            if (!topicRepository.updateTopic(topic)) {
+                // saving edit failed, roll back unless the topic being edited has since changed
+                _editingTopic.update { if (it == topic) previous else it }
+            }
+        }
+    }
+
+    private fun setEditingTopicName(name: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            editTopic { it.copy(name = name) }
+        }
+    }
+
+    private fun setEditingTopicColor(color: Color) {
+        viewModelScope.launch(Dispatchers.IO) {
+            editTopic { it.copy(color = color) }
+        }
+    }
+
+    private fun setEditingTopicShape(shape: TopicShape) {
+        viewModelScope.launch(Dispatchers.IO) {
+            editTopic { it.copy(shape = shape) }
         }
     }
 
@@ -141,22 +251,16 @@ class SettingsViewModel(
 
     private fun updateSessionLength() {
         viewModelScope.launch(Dispatchers.IO) {
-            _settingsState.update { currentState ->
-                currentState.copy(
-                    sessionLength = preferenceRepository.saveIntPreference(
-                        "session_length",
-                        sessionsSliderState.value.toInt()
-                    )
-                )
-            }
-            refreshTimer()
+            val value = sessionsSliderState.value.toInt()
+
+            editTopic { it.copy(sessionLength = value) }
         }
     }
 
     private fun deleteStats() {
         viewModelScope.launch(Dispatchers.IO) {
 
-            serviceHelper.startService(TimerAction.ResetTimer)
+            timerHelper.onAction(TimerAction.ResetTimer)
             statRepository.deleteAllStats()
             _settingsState.update {
                 it.copy(isShowingEraseDataDialog = false)
@@ -164,61 +268,38 @@ class SettingsViewModel(
         }
     }
 
-    fun runTextFieldFlowCollection() {
-        focusFlowCollectionJob = viewModelScope.launch(Dispatchers.IO) {
-            snapshotFlow { focusTimeTextFieldState.text }
-                .debounce(500)
-                .collect {
-                    if (it.isNotEmpty()) {
-                        _settingsState.update { currentState ->
-                            currentState.copy(focusTime = it.toString().toLong() * 60 * 1000)
-                        }
-                        refreshTimer()
-                        preferenceRepository.saveIntPreference(
-                            "focus_time",
-                            _settingsState.value.focusTime.toInt()
-                        )
-                    }
-                }
-        }
-        shortBreakFlowCollectionJob = viewModelScope.launch(Dispatchers.IO) {
-            snapshotFlow { shortBreakTimeTextFieldState.text }
-                .debounce(500)
-                .collect {
-                    if (it.isNotEmpty()) {
-                        _settingsState.update { currentState ->
-                            currentState.copy(shortBreakTime = it.toString().toLong() * 60 * 1000)
-                        }
-                        refreshTimer()
-                        preferenceRepository.saveIntPreference(
-                            "short_break_time",
-                            _settingsState.value.shortBreakTime.toInt()
-                        )
-                    }
-                }
-        }
-        longBreakFlowCollectionJob = viewModelScope.launch(Dispatchers.IO) {
-            snapshotFlow { longBreakTimeTextFieldState.text }
-                .debounce(500)
-                .collect {
-                    if (it.isNotEmpty()) {
-                        _settingsState.update { currentState ->
-                            currentState.copy(longBreakTime = it.toString().toLong() * 60 * 1000)
-                        }
-                        refreshTimer()
-                        preferenceRepository.saveIntPreference(
-                            "long_break_time",
-                            _settingsState.value.longBreakTime.toInt()
-                        )
-                    }
-                }
+    private fun setEditingTopicMinutes(minutes: MinuteInputs) {
+        // set right away, so that neither the restored topic nor the write interrupts typing
+        editingTopicChosen = true
+        minuteInputs = minutes
+        minutesWriteJob?.cancel()
+        minutesWriteJob = viewModelScope.launch(Dispatchers.IO) {
+            delay(500.milliseconds)
+            saveMinutes(minutes)
         }
     }
 
-    fun cancelTextFieldFlowCollection() {
-        if (!serviceRunning.value)
+    /** Saves the durations in [minutes] that are valid, leaving the rest as they were */
+    private suspend fun saveMinutes(minutes: MinuteInputs) {
+        editTopic {
+            it.copy(
+                focusTime = minutes.focus.minutesToMillisOrNull() ?: it.focusTime,
+                shortBreakTime = minutes.shortBreak.minutesToMillisOrNull() ?: it.shortBreakTime,
+                longBreakTime = minutes.longBreak.minutesToMillisOrNull() ?: it.longBreakTime
+            )
+        }
+    }
+
+    fun onSettingsClosed() {
+        // an edit still being debounced is saved rather than dropped
+        if (minutesWriteJob?.isActive == true) {
+            minutesWriteJob?.cancel()
+            viewModelScope.launch(Dispatchers.IO) { saveMinutes(minuteInputs) }
+        }
+
+        if (!isSessionActive)
             try {
-                serviceHelper.startService(TimerAction.ResetTimer)
+                timerHelper.onAction(TimerAction.ResetTimer)
             } catch (e: Exception) {
                 logError(
                     "Service",
@@ -226,9 +307,6 @@ class SettingsViewModel(
                 )
                 e.printStackTrace()
             }
-        focusFlowCollectionJob?.cancel()
-        shortBreakFlowCollectionJob?.cancel()
-        longBreakFlowCollectionJob?.cancel()
     }
 
     private fun saveFocusGoal(goal: Long) {
@@ -260,10 +338,7 @@ class SettingsViewModel(
 
     private fun saveDndEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            _settingsState.update { currentState ->
-                currentState.copy(dndEnabled = enabled)
-            }
-            preferenceRepository.saveBooleanPreference("dnd_enabled", enabled)
+            editTopic { it.copy(dndEnabled = enabled) }
         }
     }
 
@@ -279,9 +354,9 @@ class SettingsViewModel(
     private fun saveColorScheme(colorScheme: Color) {
         viewModelScope.launch {
             _settingsState.update { currentState ->
-                currentState.copy(colorScheme = colorScheme.toString())
+                currentState.copy(colorScheme = colorScheme)
             }
-            preferenceRepository.saveStringPreference("color_scheme", colorScheme.toString())
+            preferenceRepository.saveColorPreference("color_scheme", colorScheme)
         }
     }
 
@@ -338,13 +413,7 @@ class SettingsViewModel(
 
     private fun saveAutostartNextSession(autostartNextSession: Boolean) {
         viewModelScope.launch {
-            _settingsState.update { currentState ->
-                currentState.copy(autostartNextSession = autostartNextSession)
-            }
-            preferenceRepository.saveBooleanPreference(
-                "autostart_next_session",
-                autostartNextSession
-            )
+            editTopic { it.copy(autostartNextSession = autostartNextSession) }
         }
     }
 
@@ -393,27 +462,6 @@ class SettingsViewModel(
                 "vibration_amplitude",
                 vibrationAmplitude
             )
-        }
-    }
-
-    private fun refreshTimer() {
-        if (!serviceRunning.value) {
-            val settingsState = _settingsState.value
-            val infFocus = stateRepository.timerState.value.infiniteFocus
-
-            if (!infFocus) time.update { settingsState.focusTime }
-
-            if (!infFocus) stateRepository.timerState.update { currentState ->
-                currentState.copy(
-                    timerMode = TimerMode.FOCUS,
-                    timeStr = millisecondsToStr(time.value),
-                    totalTime = time.value,
-                    nextTimerMode = if (settingsState.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
-                    nextTimeStr = millisecondsToStr(if (settingsState.sessionLength > 1) settingsState.shortBreakTime else settingsState.longBreakTime),
-                    currentFocusCount = 1,
-                    totalFocusCount = settingsState.sessionLength
-                )
-            }
         }
     }
 }

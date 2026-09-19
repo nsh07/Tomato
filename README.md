@@ -132,18 +132,27 @@ or [my BuyMeACoffee page](https://coff.ee/nsh07):
 
 ## Special Thanks
 
-This app was made possible by the following libraries:
+Many thanks to Dimu ([@pdimu](https://github.com/pdimu) on GitHub) for helping design multiple features starting with version 2.0.
 
-- [Jetpack Navigation 3](https://developer.android.com/jetpack/androidx/releases/navigation3) -
-  Navigation
+This app was made possible by these awesome libraries:
+
+### All platforms
+
+- [FileKit](https://filekit.mintlify.app/introduction) - Cross-platform file operations for Kotlin
+  Multiplatform
+- [MaterialKolor](https://github.com/jordond/materialkolor) - Dynamic Material 3 color schemes
 - [Room](https://developer.android.com/jetpack/androidx/releases/room) - SQLite Database
-- [Vico](https://github.com/patrykandpatrick/vico) - Graphs and charts
-- [MaterialKolor](https://github.com/jordond/materialkolor)- Material 3 color schemes
+- [Vico](https://guide.vico.patrykandpatrick.com/) - Powerful and extensible multiplatform chart
+  library
 
-### Fonts:
+### Desktop
 
-- [Roboto Flex](https://fonts.google.com/specimen/Roboto+Flex) by
-  Google<br/><img src=".github/repo_photos/roboto-flex-banner.jpg" width="400">
+- [ComposeNativeTray](https://github.com/kdroidFilter/ComposeNativeTray) - System tray applications
+  with native support for Mac, Linux and Windows
+- [Java Audio Stack](https://github.com/bowbahdoe/java-audio-stack) - Repackaged and modularized
+  com.googlecode.soundlibs libraries
+
+### Fonts
 
 - [Google Sans Flex](https://fonts.google.com/specimen/Google+Sans+Flex) by
   Google<br/><img src=".github/repo_photos/google-sans-flex.jpg" width="400">

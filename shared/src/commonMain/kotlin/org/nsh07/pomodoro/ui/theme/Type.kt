@@ -32,31 +32,30 @@ val TYPOGRAPHY = Typography()
 
 data class AppFonts(
     val topBarTitle: FontFamily,
+    val unselectedTopicTitle: FontFamily,
     val annotatedString: FontFamily
 )
 
 @Composable
 fun typography(): Typography {
-    val googleFlex400 = FontFamily(
-        Font(
-            Res.font.google_sans_flex,
-            FontWeight.Normal,
-            variationSettings = FontVariation.Settings(FontVariation.weight(400))
+    val googleFlex400Font = Font(
+        Res.font.google_sans_flex,
+        FontWeight.Normal,
+        variationSettings = FontVariation.Settings(FontVariation.weight(400))
+    )
+    val googleFlex400 = remember(googleFlex400Font) { FontFamily(googleFlex400Font) }
+
+    val googleFlex600Font = Font(
+        Res.font.google_sans_flex,
+        FontWeight.Bold,
+        variationSettings = FontVariation.Settings(
+            FontVariation.weight(600),
+            FontVariation.Setting("ROND", 100f)
         )
     )
+    val googleFlex600 = remember(googleFlex600Font) { FontFamily(googleFlex600Font) }
 
-    val googleFlex600 = FontFamily(
-        Font(
-            Res.font.google_sans_flex,
-            FontWeight.Bold,
-            variationSettings = FontVariation.Settings(
-                FontVariation.weight(600),
-                FontVariation.Setting("ROND", 100f)
-            )
-        )
-    )
-
-    return remember {
+    return remember(googleFlex400, googleFlex600) {
         Typography(
             displayLarge = TYPOGRAPHY.displayLarge.copy(
                 fontFamily = googleFlex600,
@@ -124,35 +123,48 @@ fun typography(): Typography {
 
 @Composable
 fun getAppFonts(): AppFonts {
-    val robotoFlexTopBar = FontFamily(
-        Font(
-            Res.font.google_sans_flex,
-            variationSettings = FontVariation.Settings(
-                FontVariation.weight(900),
-                FontVariation.width(112.5f),
-                FontVariation.Setting("ROND", 35f)
-            )
+    val robotoFlexTopBarFont = Font(
+        Res.font.google_sans_flex,
+        variationSettings = FontVariation.Settings(
+            FontVariation.weight(900),
+            FontVariation.width(112.5f),
+            FontVariation.Setting("ROND", 35f)
         )
     )
+    val robotoFlexTopBar = remember(robotoFlexTopBarFont) { FontFamily(robotoFlexTopBarFont) }
 
-    val annotatedStringFontFamily = FontFamily(
-        Font(
-            Res.font.google_sans_flex,
-            FontWeight.Normal,
-            variationSettings = FontVariation.Settings(FontVariation.weight(400))
-        ),
-        Font(
-            Res.font.google_sans_flex,
-            FontWeight.Bold,
-            variationSettings = FontVariation.Settings(
-                FontVariation.weight(600),
-                FontVariation.Setting("ROND", 100f)
-            )
-        ) // Used for <b> tags
+    val unselectedTopicTitleFont = Font(
+        Res.font.google_sans_flex,
+        variationSettings = FontVariation.Settings(
+            FontVariation.weight(600),
+            FontVariation.width(100f),
+            FontVariation.Setting("ROND", 35f)
+        )
     )
+    val unselectedTopicTitle =
+        remember(unselectedTopicTitleFont) { FontFamily(unselectedTopicTitleFont) }
+
+    val annotatedStringNormalFont = Font(
+        Res.font.google_sans_flex,
+        FontWeight.Normal,
+        variationSettings = FontVariation.Settings(FontVariation.weight(400))
+    )
+    val annotatedStringBoldFont = Font(
+        Res.font.google_sans_flex,
+        FontWeight.Bold,
+        variationSettings = FontVariation.Settings(
+            FontVariation.weight(600),
+            FontVariation.Setting("ROND", 100f)
+        )
+    ) // Used for <b> tags
+
+    val annotatedStringFontFamily = remember(annotatedStringNormalFont, annotatedStringBoldFont) {
+        FontFamily(annotatedStringNormalFont, annotatedStringBoldFont)
+    }
 
     return AppFonts(
         topBarTitle = robotoFlexTopBar,
+        unselectedTopicTitle = unselectedTopicTitle,
         annotatedString = annotatedStringFontFamily
     )
 }

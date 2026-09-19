@@ -19,6 +19,9 @@ package org.nsh07.pomodoro.ui.statsScreen.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -136,6 +139,10 @@ fun HorizontalStackedBar(
                             else -> shapes.extraSmall
                         }
                     }
+
+                    val interactionSource = remember { MutableInteractionSource() }
+                    val isHovered by interactionSource.collectIsHoveredAsState()
+
                     Box(
                         Modifier
                             .weight(item.toFloat())
@@ -149,9 +156,10 @@ fun HorizontalStackedBar(
                                     )
                                 )
                             )
-                            .clickable { showTooltip = true }
+                            .clickable(interactionSource = interactionSource) { showTooltip = true }
+                            .hoverable(interactionSource)
                     ) {
-                        if (showTooltip) {
+                        if (showTooltip || isHovered) {
                             Popup(
                                 alignment = Alignment.TopCenter,
                                 offset = IntOffset(0, -tooltipOffset),
@@ -198,7 +206,7 @@ fun FocusBreakRatioVisualization(
     if (focusDuration + breakDuration > 0) {
         val shapes = shapes
         val focusPercentage = ((focusDuration / (focusDuration.toFloat() + breakDuration)) * 100)
-        val breakPercentage = 100 - focusPercentage
+        val breakPercentage = 100f - focusPercentage
 
         val focusShape = remember(breakDuration) {
             if (breakDuration > 0) shapes.large.copy(
@@ -224,7 +232,7 @@ fun FocusBreakRatioVisualization(
                 color = colorScheme.primary,
                 modifier = Modifier.padding(end = 6.dp)
             )
-            if (focusDuration > 0) Spacer(
+            if (focusPercentage > 0) Spacer(
                 Modifier
                     .weight(focusPercentage)
                     .height(height)
@@ -233,7 +241,7 @@ fun FocusBreakRatioVisualization(
                         focusShape
                     )
             )
-            if (breakDuration > 0) Spacer(
+            if (breakPercentage > 0) Spacer(
                 Modifier
                     .weight(breakPercentage)
                     .height(height)
@@ -282,6 +290,10 @@ fun HorizontalStackedBarPreview() {
                         gap = 2.dp,
                     )
                 }
+
+                FocusBreakRatioVisualization(90, 10, Modifier.padding(16.dp))
+                FocusBreakRatioVisualization(100, 0, Modifier.padding(16.dp))
+                FocusBreakRatioVisualization(0, 100, Modifier.padding(16.dp))
             }
         }
     }

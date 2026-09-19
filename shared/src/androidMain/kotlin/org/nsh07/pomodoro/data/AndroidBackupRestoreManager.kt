@@ -19,41 +19,34 @@ package org.nsh07.pomodoro.data
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.provider.DocumentsContract
-import androidx.sqlite.db.SimpleSQLiteQuery
+import androidx.core.net.toUri
+import androidx.room.RoomRawQuery
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.path
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.nsh07.pomodoro.BuildKonfig
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import kotlin.time.Clock
-
-actual data class FileLocator(val uri: Uri?) {
-    actual constructor() : this(null)
-
-    actual val path: String?
-        get() = uri?.path
-
-    actual val isNull: Boolean
-        get() = uri == null
-}
 
 class AndroidBackupRestoreManager(
     private val database: AppDatabase,
     private val systemDao: SystemDao,
     private val context: Context
 ) : BackupRestoreManager {
-    override suspend fun performBackup(directoryLocator: FileLocator) {
+    override suspend fun performBackup(directory: PlatformFile) {
         withContext(Dispatchers.IO) {
-            systemDao.checkpoint(SimpleSQLiteQuery("pragma wal_checkpoint(full)"))
+            systemDao.checkpoint(RoomRawQuery("PRAGMA wal_checkpoint(full)"))
 
-            val dbName = "app_database"
+            val dbName = BuildKonfig.DATABASE_NAME
             val dbFile = context.getDatabasePath(dbName)
 
-            val documentId = DocumentsContract.getTreeDocumentId(directoryLocator.uri)
+            val documentId = DocumentsContract.getTreeDocumentId(directory.path.toUri())
             val parentDocumentUri =
-                DocumentsContract.buildDocumentUriUsingTree(directoryLocator.uri, documentId)
+                DocumentsContract.buildDocumentUriUsingTree(directory.path.toUri(), documentId)
 
             val fileUri = DocumentsContract.createDocument(
                 context.contentResolver,
@@ -72,12 +65,12 @@ class AndroidBackupRestoreManager(
         }
     }
 
-    override suspend fun performRestore(fileLocator: FileLocator) {
-        if (fileLocator.isNull) return
+    override suspend fun performRestore(file: PlatformFile?) {
+        if (file == null) return
         withContext(Dispatchers.IO) {
             database.close()
 
-            val dbName = "app_database"
+            val dbName = BuildKonfig.DATABASE_NAME
             val dbFile = context.getDatabasePath(dbName)
 
             if (!dbFile.parentFile!!.exists()) dbFile.parentFile!!.mkdirs()
@@ -85,7 +78,7 @@ class AndroidBackupRestoreManager(
             File("${dbFile.path}-wal").delete()
             File("${dbFile.path}-shm").delete()
 
-            context.contentResolver.openInputStream(fileLocator.uri!!)?.use { input ->
+            context.contentResolver.openInputStream(file.path.toUri())?.use { input ->
                 FileOutputStream(dbFile).use { output ->
                     input.copyTo(output)
                 }

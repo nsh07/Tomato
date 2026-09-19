@@ -19,8 +19,8 @@
     <string name="alarm">Аларма</string>
     <string name="alarm_desc">Аларма да позвънява, когато таймер приключи.</string>
     <string name="alarm_sound">Алармен звън</string>
-    <string name="always_on_display_desc">"Натисни някъде, докято  виждяаш таймера, за да превключиш към режим на постоянно включен екран."</string>
-    <string name="always_on_display">Винаги включен екран.</string>
+    <string name="always_on_display_desc">Натисни някъде, докято виждяаш таймера, за да превключиш към режим на постоянно включен екран.</string>
+    <string name="always_on_display">Винаги включен екран</string>
     <string name="appearance">Изглед</string>
     <string name="auto_start_next_timer">Автоматично начало на следващия таймер.</string>
     <string name="auto_start_next_timer_desc">Зяпочни следващия таймер след спиране на аларма</string>

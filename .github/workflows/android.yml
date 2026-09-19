@@ -1,38 +1,279 @@
-name: Android CI
+name: Multiplatform Build CI
 
 on:
   push:
     branches:
       - 'main'
       - 'dev'
+    tags:
+      - 'v*'
 
   pull_request:
     types: [ opened, synchronize, reopened ]
 
 jobs:
-  build:
+  build-android-debug:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
-      - name: Set up JDK 21
-        uses: actions/setup-java@v5
+      - uses: actions/checkout@v7
+      - name: Set up JDK 25
+        uses: actions/setup-java@v6
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
+          token: ${{ secrets.GITHUB_TOKEN }}
           cache: gradle
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build debug APK with Gradle
+      - name: Build debug APK
         run: ./gradlew assembleFossDebug
 
       - name: Run tests
-        run: ./gradlew testFossDebugUnitTest
+        run: ./gradlew :shared:allTests :shared:testAndroidHostTest
 
       - name: Upload debug APK artifact
         uses: actions/upload-artifact@v7
         with:
           archive: false
           path: ./androidApp/build/outputs/apk/foss/debug/androidApp-foss-debug.apk
+
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up JDK 25
+        uses: actions/setup-java@v6
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Package DEB archive
+        run: |
+          ./gradlew packageReleaseDeb
+          ref_name="${{ github.ref_name }}"
+          mv ./desktopApp/build/compose/binaries/main-release/deb/*.deb "./desktopApp/build/compose/binaries/main-release/deb/tomato-${ref_name////-}-$(uname -m).deb"
+
+
+      - name: Upload packaged DEB archive
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: ./desktopApp/build/compose/binaries/main-release/deb/*.deb
+
+      - name: Package RPM archive
+        run: |
+          ./gradlew packageReleaseRpm
+          ref_name="${{ github.ref_name }}"
+          mv ./desktopApp/build/compose/binaries/main-release/rpm/*.rpm "./desktopApp/build/compose/binaries/main-release/rpm/tomato-${ref_name////-}-$(uname -m).rpm"
+
+      - name: Upload packaged RPM archive
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: ./desktopApp/build/compose/binaries/main-release/rpm/*.rpm
+  
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up JDK 25
+        uses: actions/setup-java@v6
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Package DMG
+        run: |
+          ./gradlew packageReleaseDmg
+          ref_name="${{ github.ref_name }}"
+          mv ./desktopApp/build/compose/binaries/main-release/dmg/*.dmg "./desktopApp/build/compose/binaries/main-release/dmg/tomato-${ref_name////-}-$(uname -m).dmg"
+
+      - name: Upload packaged DMG
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: ./desktopApp/build/compose/binaries/main-release/dmg/*.dmg
+
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up JDK 25
+        uses: actions/setup-java@v6
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          cache: gradle
+
+      - name: Package EXE
+        shell: bash
+        run: |
+          ./gradlew packageReleaseExe
+          ref_name="${{ github.ref_name }}"
+          mv ./desktopApp/build/compose/binaries/main-release/exe/*.exe "./desktopApp/build/compose/binaries/main-release/exe/tomato-${ref_name////-}-$(uname -m).exe"
+
+      - name: Upload packaged EXE
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: ./desktopApp/build/compose/binaries/main-release/exe/*.exe
+
+  validate-linux-metadata:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install validators
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y appstream desktop-file-utils libxml2-utils
+
+      - name: Generate metadata from fastlane
+        run: python3 linux/generate-metadata.py --output-dir "$RUNNER_TEMP/share"
+
+      - name: Validate AppStream metadata
+        run: |
+          metainfo="$RUNNER_TEMP/share/metainfo/org.nsh07.pomodoro.metainfo.xml"
+          xmllint --noout "$metainfo"
+          report=$(appstreamcli validate --no-net --explain "$metainfo" || true)
+          echo "$report"
+          if echo "$report" | grep -q '^E: '; then
+            echo "::error::AppStream validation reported errors"
+            exit 1
+          fi
+
+      - name: Validate desktop entry
+        run: desktop-file-validate "$RUNNER_TEMP/share/applications/org.nsh07.pomodoro.desktop"
+
+  package-linux-flatpak:
+    needs: [ build-linux, validate-linux-metadata ]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-24.08
+      options: --privileged
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Get architecture
+        run: |
+          echo "ARCH=$(uname -m)" >> $GITHUB_ENV
+
+      - name: Build Flatpak
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: tomato-${{ github.ref_name }}-${{ env.ARCH }}.flatpak
+          manifest-path: flatpak/org.nsh07.pomodoro.yml
+          cache-key: flatpak-builder-${{ github.sha }}
+
+      - name: Upload packaged Flatpak
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: tomato-${{ github.ref_name }}-${{ env.ARCH }}.flatpak
+
+  package-linux-snap:
+    needs: [ build-linux, validate-linux-metadata ]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build Snap
+        uses: snapcore/action-build@v1
+        id: snapcraft
+
+      - name: Rename Snap
+        run: mv ${{ steps.snapcraft.outputs.snap }} tomato-${{ github.ref_name }}-$(uname -m).snap
+
+      - name: Upload packaged Snap
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: tomato-${{ github.ref_name }}-*.snap
+
+  build-android-release:
+    needs: build-android-debug
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up JDK 25
+        uses: actions/setup-java@v6
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          cache: gradle
+
+      - name: Decode Keystore
+        env:
+          ENCODED_STRING: ${{ secrets.SIGNING_KEY_STORE_BASE64 }}
+          SIGNING_KEY_STORE_PATH: androidApp/keystore.jks
+        run: echo "$ENCODED_STRING" | base64 -d > $SIGNING_KEY_STORE_PATH
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build release apk
+        env:
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+        run: ./gradlew assembleFossRelease
+
+      - name: Rename apk
+        run: mv ./androidApp/build/outputs/apk/foss/release/androidApp-foss-release.apk ./androidApp/build/outputs/apk/foss/release/tomato-${{ github.ref_name }}-release.apk
+
+      - name: Upload release APK artifact
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: ./androidApp/build/outputs/apk/foss/release/*.apk
+
+  create-release-draft:
+    needs: [ build-android-release, build-linux, package-linux-flatpak, package-linux-snap, build-macos, build-windows ]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: artifacts/
+
+      - name: Create or Update Release Draft
+        uses: softprops/action-gh-release@v3
+        with:
+          draft: true
+          files: |
+            artifacts/**/*release.apk
+            artifacts/**/*.deb
+            artifacts/**/*.rpm
+            artifacts/**/*.flatpak
+            artifacts/**/*.snap
+            artifacts/**/*.dmg
+            artifacts/**/*.exe

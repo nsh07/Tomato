@@ -37,7 +37,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -65,6 +65,7 @@ import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.PANE_MAX_WIDTH
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import org.nsh07.pomodoro.ui.topBarWindowInsets
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.arrow_back
 import tomato.shared.generated.resources.back
@@ -90,7 +91,7 @@ fun BackupRestoreScreen(
 
     var backupState by remember { mutableStateOf(BackupRestoreState.CHOOSE_FILE) }
 
-    val widthExpanded = currentWindowAdaptiveInfo()
+    val widthExpanded = currentWindowAdaptiveInfoV2()
         .windowSizeClass
         .isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
 
@@ -135,6 +136,7 @@ fun BackupRestoreScreen(
         Scaffold(
             topBar = {
                 LargeFlexibleTopAppBar(
+                    windowInsets = topBarWindowInsets(),
                     title = {
                         Text(
                             stringResource(Res.string.backup_and_restore),

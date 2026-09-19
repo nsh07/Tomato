@@ -45,7 +45,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalLocaleList
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,12 +55,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
 import org.nsh07.pomodoro.data.Stat
+import org.nsh07.pomodoro.data.Topic
+import org.nsh07.pomodoro.ui.performSegmentTick
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.time.format.TextStyle
+import java.util.Locale
 import kotlin.random.Random
 
 val CALENDAR_CELL_SIZE = 40.dp
@@ -100,7 +104,7 @@ fun FocusHistoryCalendar(
     verticalGap: Dp = CALENDAR_CELL_VERTICAL_GAP,
     internalPadding: Dp = CALENDAR_INTERNAL_PADDING
 ) {
-    val locale = LocalLocale.current.platformLocale
+    val locale = LocalLocaleList.current.firstOrNull()?.platformLocale ?: Locale.US
     val shapes = shapes
     val last = data.lastOrNull { it != null }
 
@@ -121,6 +125,7 @@ fun FocusHistoryCalendar(
         data.chunked(7)
     }
     var selectedItemIndex by remember { mutableIntStateOf(-1) }
+    val haptic = LocalHapticFeedback.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -191,6 +196,9 @@ fun FocusHistoryCalendar(
                                     else Modifier
                                 )
                                 .clickable(enabled = it != null) {
+                                    if (selectedItemIndex != flatIndex) {
+                                        haptic.performSegmentTick()
+                                    }
                                     selectedItemIndex = flatIndex
                                 }
                         ) {
@@ -238,9 +246,10 @@ private fun FocusHistoryCalendarPreview() {
                 val random = Random.nextInt() % 3
 
                 if (random == 0) Stat(
-                    date, 0, 0, 0, 0, 0
+                    date, Topic.DEFAULT_TOPIC_ID, 0, 0, 0, 0, 0
                 ) else Stat(
                     date = date,
+                    topicId = Topic.DEFAULT_TOPIC_ID,
                     focusTimeQ1 = quarterTime,
                     focusTimeQ2 = quarterTime,
                     focusTimeQ3 = quarterTime,

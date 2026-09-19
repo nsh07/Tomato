@@ -1,0 +1,9 @@
+Improvements:
+- Added haptic feedback across most interactions
+- Timer alarms are now more reliable
+- Improved charts performance
+- Translation updates (thanks to contributors on Weblate)
+
+Fixes:
+- Topic names can now be edited
+- Fixed a crash in the topic settings screen

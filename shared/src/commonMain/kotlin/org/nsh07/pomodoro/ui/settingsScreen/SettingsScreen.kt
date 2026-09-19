@@ -26,16 +26,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.SliderState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.detailPane
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.listPane
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
@@ -50,6 +48,7 @@ import org.nsh07.pomodoro.ui.settingsScreen.screens.AlarmSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.AppearanceSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.SettingsMainScreen
 import org.nsh07.pomodoro.ui.settingsScreen.screens.TimerSettings
+import org.nsh07.pomodoro.ui.settingsScreen.screens.TopicsSettings
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.BackupRestoreScreen
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsViewModel
 import org.nsh07.pomodoro.ui.theme.CustomColors.topBarColors
@@ -65,7 +64,6 @@ import tomato.shared.generated.resources.settings_filled
 )
 @Composable
 fun SettingsScreenRoot(
-    setShowPaywall: (Boolean) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = koinViewModel()
@@ -73,25 +71,17 @@ fun SettingsScreenRoot(
     val backStack = viewModel.backStack
 
     DisposableEffect(Unit) {
-        viewModel.runTextFieldFlowCollection()
-        onDispose { viewModel.cancelTextFieldFlowCollection() }
+        onDispose { viewModel.onSettingsClosed() }
     }
 
-    val focusTimeInputFieldState = viewModel.focusTimeTextFieldState
-    val shortBreakTimeInputFieldState = viewModel.shortBreakTimeTextFieldState
-    val longBreakTimeInputFieldState = viewModel.longBreakTimeTextFieldState
+    val minuteInputs = viewModel.minuteInputs
 
-    val isPlus by viewModel.isPlus.collectAsStateWithLifecycle()
-    val serviceRunning by viewModel.serviceRunning.collectAsStateWithLifecycle()
+    val sessionActive by viewModel.sessionActive.collectAsStateWithLifecycle()
+    val currentTopicId by viewModel.currentTopicId.collectAsStateWithLifecycle()
 
     val settingsState by viewModel.settingsState.collectAsStateWithLifecycle()
 
-    val sessionsSliderState = rememberSaveable(
-        saver = SliderState.Saver(
-            viewModel.sessionsSliderState.onValueChangeFinished,
-            viewModel.sessionsSliderState.valueRange
-        )
-    ) { viewModel.sessionsSliderState }
+    val sessionsSliderState = viewModel.sessionsSliderState
 
     val directionMultiplier = if (LocalLayoutDirection.current == LayoutDirection.Ltr) 1 else -1
 
@@ -110,8 +100,10 @@ fun SettingsScreenRoot(
             (slideInHorizontally(initialOffsetX = { directionMultiplier * -it / 4 }) + fadeIn())
                 .togetherWith(slideOutHorizontally(targetOffsetX = { directionMultiplier * it }))
         },
-        sceneStrategy = rememberListDetailSceneStrategy(
-            directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
+        sceneStrategies = listOf(
+            rememberListDetailSceneStrategy(
+                directive = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())
+            )
         ),
         entryProvider = entryProvider {
             entry<Screen.Settings.Main>(
@@ -121,10 +113,8 @@ fun SettingsScreenRoot(
                     settingsState = settingsState,
                     contentPadding = contentPadding,
                     currentScreen = backStack.last(),
-                    isPlus = isPlus,
                     onAction = viewModel::onAction,
                     onNavigate = backStack::onTopLevelNavigate,
-                    setShowPaywall = setShowPaywall,
                     modifier = modifier,
                 )
             }
@@ -134,7 +124,6 @@ fun SettingsScreenRoot(
             ) {
                 AboutScreen(
                     contentPadding = contentPadding,
-                    isPlus = isPlus,
                     onBack = backStack::onBack
                 )
             }
@@ -144,10 +133,8 @@ fun SettingsScreenRoot(
             ) {
                 AlarmSettings(
                     settingsState = settingsState,
-                    isPlus = isPlus,
                     contentPadding = contentPadding,
                     onAction = viewModel::onAction,
-                    setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,
                     modifier = modifier
                 )
@@ -159,9 +146,7 @@ fun SettingsScreenRoot(
                 AppearanceSettings(
                     settingsState = settingsState,
                     contentPadding = contentPadding,
-                    isPlus = isPlus,
                     onAction = viewModel::onAction,
-                    setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,
                     modifier = modifier,
                 )
@@ -180,19 +165,40 @@ fun SettingsScreenRoot(
             entry<Screen.Settings.Timer>(
                 metadata = detailPane()
             ) {
+                val topics by viewModel.allTopics.collectAsStateWithLifecycle()
+                val editingTopic by viewModel.editingTopic.collectAsStateWithLifecycle()
+
                 TimerSettings(
-                    isPlus = isPlus,
-                    serviceRunning = serviceRunning,
+                    sessionActive = sessionActive,
+                    currentTopicId = currentTopicId,
                     settingsState = settingsState,
                     contentPadding = contentPadding,
-                    focusTimeInputFieldState = focusTimeInputFieldState,
-                    shortBreakTimeInputFieldState = shortBreakTimeInputFieldState,
-                    longBreakTimeInputFieldState = longBreakTimeInputFieldState,
+                    minuteInputs = minuteInputs,
                     sessionsSliderState = sessionsSliderState,
+                    topics = topics,
+                    editingTopic = editingTopic,
                     onAction = viewModel::onAction,
-                    setShowPaywall = setShowPaywall,
                     onBack = backStack::onBack,
                     modifier = modifier,
+                )
+            }
+
+            entry<Screen.Settings.Topics>(
+                metadata = detailPane()
+            ) {
+                val topics by viewModel.allTopics.collectAsStateWithLifecycle()
+                val editingTopic by viewModel.editingTopic.collectAsStateWithLifecycle()
+
+                TopicsSettings(
+                    topics = topics,
+                    editingTopic = editingTopic,
+                    sessionActive = sessionActive,
+                    currentTopicId = currentTopicId,
+                    minuteInputs = minuteInputs,
+                    sessionsSliderState = sessionsSliderState,
+                    contentPadding = contentPadding,
+                    onBack = backStack::onBack,
+                    onAction = viewModel::onAction
                 )
             }
         },

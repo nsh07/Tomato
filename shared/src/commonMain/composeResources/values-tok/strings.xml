@@ -33,17 +33,17 @@
     <string name="gap">awen</string>
     <string name="get_plus">o kama jo e Tomato+</string>
     <string name="help_with_translation">o ante toki e Tomato</string>
-    <string name="help_with_translation_desc">o ante toki e Tomoto tawa toki sina</string>
+    <string name="help_with_translation_desc">o ante toki e ilo Tomoto tawa toki sina</string>
     <string name="hours_and_minutes_format">%1$dh %2$dm</string>
     <string name="hours_format">%1$dh</string>
     <string name="language">toki</string>
     <string name="last_month">tenpo mun ni</string>
     <string name="last_week">tenpo esun ni</string>
     <string name="last_year">tenpo sike ni</string>
-    <string name="license">nasin lawa</string>
+    <string name="license">lipu lawa</string>
     <string name="lifetime">tenpo ale</string>
     <string name="light">walo</string>
-    <string name="long_break">tenpo pi awen suli</string>
+    <string name="long_break">tenpo awen suli</string>
     <string name="min_remaining_notification">%1$sm li awen</string>
     <string name="minutes_format">%1$dm</string>
     <string name="ok">oke</string>
@@ -60,7 +60,7 @@
     <string name="session_only_progress">o nanpa ala</string>
     <string name="session_only_progress_desc">pana e nanpa lon kalama taso</string>
     <string name="settings">nasin ilo</string>
-    <string name="short_break">tenpo pi awen lili</string>
+    <string name="short_break">tenpo awen lili</string>
     <string name="show_chart">o pana e sitelen nanpa</string>
     <string name="sound">kalama</string>
     <string name="start">o open</string>
@@ -79,12 +79,12 @@
     <string name="timer_settings_reset_info">sina wile ante e nasin ilo la, o sin e ilo tenpo</string>
     <string name="today">tenpo suno ni</string>
     <string name="today_widget_desc">nanpa pi tenpo suno ni</string>
-    <string name="tomato_foss_desc">sina ken ale lon ilo ni. ilo li pona tawa sina la, o pana e mani lon %1$s.</string>
+    <string name="tomato_foss_desc">sina ken ale lon ilo ni. ilo li pona tawa sina la, o pana e mani kepeken ilo %1$s.</string>
     <string name="tomato_plus_desc">o ante ale lon Tomato+</string>
     <string name="total">ale</string>
     <string name="undo">o weka</string>
-    <string name="up_next">kama li</string>
-    <string name="up_next_notification">kama li %1$s (%2$s)</string>
+    <string name="up_next">tenpo kama</string>
+    <string name="up_next_notification">tenpo kama li %1$s (%2$s)</string>
     <string name="vibrate">tawa lili</string>
     <string name="vibrate_desc">ilo tenpo li pini la, tawa lili</string>
     <string name="vibration_strength">mute wawa</string>
@@ -129,4 +129,6 @@
     <string name="secure_aod_desc">o ken e lape ilo (taso AOD li lon sitelen ilo lon lape)</string>
     <string name="session_length_desc">tenpo pali lon kulupu pomotolo: %1$d</string>
     <string name="pomodoro_info">kulupu pomotolo li jo e tenpo pali tu tu, e tenpo awen tu tu. tenpo awen pini li suli.</string>
+    <string name="open_tomato">o open e ilo Tomato</string>
+    <string name="quit_tomato">o pini e ilo Tomato</string>
 </resources>

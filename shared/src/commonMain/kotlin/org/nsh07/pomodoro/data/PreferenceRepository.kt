@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.data
 
+import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -33,6 +34,12 @@ interface PreferenceRepository {
     suspend fun saveIntPreference(key: String, value: Int): Int
 
     /**
+     * Saves a long preference key-value pair to the database. Shares its storage with
+     * [saveIntPreference].
+     */
+    suspend fun saveLongPreference(key: String, value: Long): Long
+
+    /**
      * Saves a boolean preference key-value pair to the database.
      */
     suspend fun saveBooleanPreference(key: String, value: Boolean): Boolean
@@ -42,10 +49,17 @@ interface PreferenceRepository {
      */
     suspend fun saveStringPreference(key: String, value: String): String
 
+    suspend fun saveColorPreference(key: String, value: Color): Color
+
     /**
      * Retrieves an integer preference key-value pair from the database.
      */
     suspend fun getIntPreference(key: String): Int?
+
+    /**
+     * Retrieves a long preference key-value pair from the database.
+     */
+    suspend fun getLongPreference(key: String): Long?
 
     /**
      * Retrieves a boolean preference key-value pair from the database.
@@ -61,6 +75,8 @@ interface PreferenceRepository {
      * Retrieves a string preference key-value pair from the database.
      */
     suspend fun getStringPreference(key: String): String?
+
+    suspend fun getColorPreference(key: String): Color?
 
     /**
      * Retrieves a string preference key-value pair as a flow from the database.
@@ -83,6 +99,12 @@ class AppPreferenceRepository(
 ) : PreferenceRepository {
     override suspend fun saveIntPreference(key: String, value: Int): Int =
         withContext(ioDispatcher) {
+            preferenceDao.insertIntPreference(IntPreference(key, value.toLong()))
+            value
+        }
+
+    override suspend fun saveLongPreference(key: String, value: Long): Long =
+        withContext(ioDispatcher) {
             preferenceDao.insertIntPreference(IntPreference(key, value))
             value
         }
@@ -99,7 +121,22 @@ class AppPreferenceRepository(
             value
         }
 
+    override suspend fun saveColorPreference(key: String, value: Color): Color =
+        withContext(ioDispatcher) {
+            preferenceDao.insertIntPreference(
+                IntPreference(
+                    key,
+                    ComposeColorConverter.fromColor(value)
+                )
+            )
+            value
+        }
+
     override suspend fun getIntPreference(key: String): Int? = withContext(ioDispatcher) {
+        preferenceDao.getIntPreference(key)?.toInt()
+    }
+
+    override suspend fun getLongPreference(key: String): Long? = withContext(ioDispatcher) {
         preferenceDao.getIntPreference(key)
     }
 
@@ -112,6 +149,10 @@ class AppPreferenceRepository(
 
     override suspend fun getStringPreference(key: String): String? = withContext(ioDispatcher) {
         preferenceDao.getStringPreference(key)
+    }
+
+    override suspend fun getColorPreference(key: String): Color? = withContext(ioDispatcher) {
+        preferenceDao.getIntPreference(key)?.let { ComposeColorConverter.toColor(it) }
     }
 
     override fun getStringPreferenceFlow(key: String): Flow<String> =

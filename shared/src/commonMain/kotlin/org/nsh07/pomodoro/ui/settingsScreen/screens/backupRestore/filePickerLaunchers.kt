@@ -18,15 +18,16 @@
 package org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore
 
 import androidx.compose.runtime.Composable
-import org.nsh07.pomodoro.data.FileLocator
+import io.github.vinceglb.filekit.PlatformFile
 
 @Composable
 expect fun rememberDirectoryPickerLauncher(
-    onResult: (FileLocator) -> Unit
-): () -> Unit
+    onResult: (PlatformFile) -> Unit
+): suspend () -> Unit
 
 @Composable
 expect fun rememberFilePickerLauncher(
     mimeType: String,
-    onResult: (FileLocator) -> Unit
-): () -> Unit
+    fileExtension: String? = null,
+    onResult: (PlatformFile) -> Unit
+): suspend () -> Unit

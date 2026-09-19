@@ -20,6 +20,6 @@
     <style name="Theme.Tomato" parent="android:Theme.Material.Light.NoActionBar" />
 
     <style name="Theme.Tomato.Splash" parent="Theme.Tomato">
-        <item name="android:windowBackground">@color/ic_launcher_background</item>
+        <item name="android:windowBackground">@color/splash_background</item>
     </style>
 </resources>

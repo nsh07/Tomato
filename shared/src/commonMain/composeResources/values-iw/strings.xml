@@ -16,15 +16,15 @@
   ~ If not, see <https://www.gnu.org/licenses/>.
   --><resources xmlns:tools="http://schemas.android.com/tools">
     <string name="alarm">התראה</string>
-    <string name="alarm_desc">השמעת התראה בעת סיום של קוצב זמן</string>
-    <string name="alarm_sound">קול התראה</string>
+    <string name="alarm_desc">השמעת התראה כאשר מסתיים קוצב זמן</string>
+    <string name="alarm_sound">צליל התראה</string>
     <string name="always_on_display">‏Always On Display</string>
     <string name="always_on_display_desc">הקשה על מקום כלשהו בעת הצגת קוצב הזמן תפעיל את מצב AOD</string>
-    <string name="black_theme">ערכת נושא כהה</string>
-    <string name="black_theme_desc">שימוש בצבע שחור מוחלט לערכת הנושא הכהה</string>
+    <string name="black_theme">עיצוב שחור</string>
+    <string name="black_theme_desc">שימוש בצבע שחור מוחלט לעיצוב הכהה</string>
     <string name="break_">הפסקה</string>
     <string name="choose_color_scheme">בחירת ערכת צבעים</string>
-    <string name="choose_theme">בחירת ערכת נושא</string>
+    <string name="choose_theme">בחירת עיצוב</string>
     <string name="color">צבע</string>
     <string name="color_scheme">צבע נושא</string>
     <string name="completed">הושלם</string>
@@ -53,7 +53,7 @@
     <string name="stats">סטטיסטיקה</string>
     <string name="stop">עצירה</string>
     <string name="system_default">מערכת</string>
-    <string name="theme">ערכת נושא</string>
+    <string name="theme">עיצוב</string>
     <string name="up_next">הבא בתור</string>
     <string name="vibrate">רטט</string>
     <string name="appearance">מראה</string>
@@ -119,7 +119,7 @@
     <string name="restart_app">פתיחת היישום מחדש</string>
     <string name="restart">פתיחה מחדש</string>
     <string name="dnd_permission_message">הפעלת הרשאה עבור %1$s</string>
-    <string name="dynamic_color_desc">אימוץ צבעי הנושא מהרקע שלך</string>
+    <string name="dynamic_color_desc">השאלת צבעי העיצוב מהרקע שלך</string>
     <string name="focus_breakdown_desc">משכי זמן ממוצעים של מיקוד במהלך שעות שונות ביום</string>
     <string name="get_plus">רכישת Tomato+</string>
     <string name="less">פחות</string>
@@ -144,4 +144,6 @@
     <string name="cancel">ביטול</string>
     <string name="focus_history_heatmap">מפת היסטוריית מיקוד</string>
     <string name="history_widget_desc">צפייה בטבלה של משכי הזמן של המיקוד בימים קודמים. מספר הימים שיוצגו תלוי בגודל הווידג׳ט.</string>
+    <string name="open_tomato">פתיחת Tomato</string>
+    <string name="quit_tomato">יציאה מ־Tomato</string>
 </resources>

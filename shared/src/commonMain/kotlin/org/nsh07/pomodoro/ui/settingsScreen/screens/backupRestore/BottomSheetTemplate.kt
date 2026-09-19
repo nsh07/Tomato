@@ -40,21 +40,26 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.name
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.nsh07.pomodoro.data.FileLocator
+import org.nsh07.pomodoro.ui.performConfirm
 import org.nsh07.pomodoro.ui.settingsScreen.screens.backupRestore.viewModel.BackupRestoreState
 import org.nsh07.pomodoro.ui.theme.LocalAppFonts
 import tomato.shared.generated.resources.Res
@@ -67,17 +72,23 @@ import tomato.shared.generated.resources.folder
 fun BackupBottomSheetTemplate(
     backupState: BackupRestoreState,
     onDismissRequest: () -> Unit,
-    onStartAction: (FileLocator) -> Unit,
+    onStartAction: (PlatformFile) -> Unit,
     resetBackupState: () -> Unit,
-    openPicker: () -> Unit,
+    openPicker: suspend () -> Unit,
     icon: @Composable () -> Unit,
     titleText: String,
     labelText: AnnotatedString,
     buttonText: String,
-    selectedFileLocator: FileLocator,
+    selectedFile: PlatformFile?,
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
+    val haptic = LocalHapticFeedback.current
+
+    // The backup or restore finished while the user was waiting on the sheet.
+    LaunchedEffect(backupState) {
+        if (backupState == BackupRestoreState.DONE) haptic.performConfirm()
+    }
 
     val animatedBgColor by animateColorAsState(
         targetValue = when (backupState) {
@@ -87,7 +98,10 @@ fun BackupBottomSheetTemplate(
         label = "backupBackground"
     )
 
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+    )
 
     ModalBottomSheet(
         onDismissRequest = {
@@ -121,7 +135,7 @@ fun BackupBottomSheetTemplate(
                 modifier = Modifier
                     .clip(RoundedCornerShape(40.dp))
                     .clickable(
-                        onClick = { openPicker() },
+                        onClick = { scope.launch { openPicker() } },
                         enabled = backupState == BackupRestoreState.CHOOSE_FILE
                     )
                     .drawBehind { drawRect(animatedBgColor) }
@@ -166,7 +180,7 @@ fun BackupBottomSheetTemplate(
                 }
 
                 Text(
-                    selectedFileLocator.path?.substringAfter(':')
+                    selectedFile?.name
                         ?: buttonText,
                     style = typography.bodyMedium,
                     color = colorScheme.onSurfaceVariant,
@@ -196,8 +210,8 @@ fun BackupBottomSheetTemplate(
                                 resetBackupState()
                                 onDismissRequest()
                             }
-                        } else if (selectedFileLocator.isNull) openPicker()
-                        else onStartAction(selectedFileLocator)
+                        } else if (selectedFile == null) scope.launch { openPicker() }
+                        else onStartAction(selectedFile)
                     },
                     enabled = backupState != BackupRestoreState.LOADING,
                     shapes = ButtonDefaults.shapes()

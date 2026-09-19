@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2026 Nishant Mishra
+  ~
+  ~ This file is part of Tomato - a minimalist pomodoro timer for Android.
+  ~
+  ~ Tomato is free software: you can redistribute it and/or modify it under the terms of the GNU
+  ~ General Public License as published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ Tomato is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  ~ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  ~ Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Tomato.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<!-- Generated from fastlane/metadata/android by linux/generate-metadata.py -->
+
+<component type="desktop-application">
+    <id>org.nsh07.pomodoro</id>
+
+@NAMES@
+
+@SUMMARIES@
+
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>GPL-3.0-or-later</project_license>
+
+    <developer id="org.nsh07">
+        <name>Nishant Mishra</name>
+    </developer>
+
+@DESCRIPTIONS@
+
+    <launchable type="desktop-id">org.nsh07.pomodoro.desktop</launchable>
+
+    <url type="homepage">https://github.com/nsh07/Tomato</url>
+    <url type="bugtracker">https://github.com/nsh07/Tomato/issues</url>
+    <url type="vcs-browser">https://github.com/nsh07/Tomato</url>
+    <url type="donation">https://coff.ee/nsh07</url>
+    <url type="translate">https://hosted.weblate.org/engage/tomato/</url>
+    <url type="contribute">https://github.com/nsh07/Tomato</url>
+
+    <content_rating type="oars-1.1" />
+
+    <branding>
+        <color scheme_preference="light" type="primary">#4C662B</color>
+        <color scheme_preference="dark" type="primary">#B1D18A</color>
+    </branding>
+
+    <supports>
+        <control>keyboard</control>
+        <control>pointing</control>
+        <control>touch</control>
+    </supports>
+
+    <requires>
+        <display_length compare="ge">360</display_length>
+    </requires>
+
+    <categories>
+        <category>Utility</category>
+    </categories>
+
+    <keywords>
+        <keyword>pomodoro</keyword>
+        <keyword>timer</keyword>
+        <keyword>focus</keyword>
+        <keyword>productivity</keyword>
+    </keywords>
+
+@SCREENSHOTS@
+
+@RELEASES@
+</component>

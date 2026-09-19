@@ -13,9 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License along with Tomato.
  * If not, see <https://www.gnu.org/licenses/>.
- */
-
-package org.nsh07.pomodoro.billing
+ */package org.nsh07.pomodoro.billing
 
 import kotlinx.coroutines.flow.StateFlow
 

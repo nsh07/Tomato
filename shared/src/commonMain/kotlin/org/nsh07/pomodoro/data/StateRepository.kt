@@ -21,63 +21,102 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.lightColorScheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.service.TimerStateSnapshot
 import org.nsh07.pomodoro.ui.settingsScreen.viewModel.SettingsState
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 import org.nsh07.pomodoro.utils.getDefaultAlarmTone
 import org.nsh07.pomodoro.utils.millisecondsToStr
+import kotlin.concurrent.Volatile
 
-class StateRepository(private val preferenceRepository: PreferenceRepository) {
+@OptIn(ExperimentalCoroutinesApi::class)
+class StateRepository(
+    private val preferenceRepository: PreferenceRepository,
+    private val topicRepository: TopicRepository
+) {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     val timerState = MutableStateFlow(TimerState())
     val settingsState = MutableStateFlow(SettingsState())
+
+    private val _currentTopicId = MutableStateFlow(defaultTopic.id)
+    val currentTopicId: StateFlow<Long> = _currentTopicId.asStateFlow()
+
+    private val _currentTopic = MutableStateFlow(defaultTopic)
+    val currentTopic: StateFlow<Topic> = _currentTopic.asStateFlow()
+
     val time = MutableStateFlow(25 * 60 * 1000L)
-    var timerFrequency: Float = 60f
+
+    /** Tick rate wanted by the screen being shown, while the app is [foreground] */
+    @Volatile
+    var screenTimerFrequency: Float = 60f
+
+    /** Whether the app is on screen at all */
+    @Volatile
+    var foreground: Boolean = true
+
+    /** Ticks per second of the timer loop */
+    val timerFrequency: Float
+        get() = if (foreground) screenTimerFrequency else 1f
+
     var colorScheme: ColorScheme = lightColorScheme()
     var timerStateSnapshot: TimerStateSnapshot =
         TimerStateSnapshot(time = 0, timerState = TimerState())
 
+    val windowVisible = MutableStateFlow(true) // Used on desktop
+
+    private val _topicLoaded = MutableStateFlow(false)
+    val topicLoaded: StateFlow<Boolean> = _topicLoaded.asStateFlow()
+
     private var isFirstLoad = true
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
-            reloadSettings()
+        scope.launch {
+            observeCurrentTopic()
         }
+        scope.launch {
+            // signalled even if the load fails, so that a restore can never wait forever
+            try {
+                reloadSettings()
+            } finally {
+                _topicLoaded.value = true
+            }
+        }
+    }
+
+    private suspend fun observeCurrentTopic() {
+        _currentTopicId
+            .flatMapLatest { id -> topicRepository.observeTopicById(id).map { id to it } }
+            .collect { (id, topic) ->
+                if (id != _currentTopicId.value) return@collect // another topic has been selected
+                if (topic != null) {
+                    publishTopic(topic)
+                } else { // the selected topic has been deleted
+                    if (id != defaultTopic.id) {
+                        _currentTopicId.value = defaultTopic.id
+                        preferenceRepository.saveLongPreference(CURRENT_TOPIC_KEY, defaultTopic.id)
+                    }
+                    publishTopic(defaultTopic)
+                }
+            }
     }
 
     suspend fun reloadSettings() {
         val defaults = SettingsState()
-        val focusTime =
-            preferenceRepository.getIntPreference("focus_time")?.toLong()
-                ?: preferenceRepository.saveIntPreference(
-                    "focus_time",
-                    defaults.focusTime.toInt()
-                ).toLong()
-        val shortBreakTime =
-            preferenceRepository.getIntPreference("short_break_time")?.toLong()
-                ?: preferenceRepository.saveIntPreference(
-                    "short_break_time",
-                    defaults.shortBreakTime.toInt()
-                ).toLong()
-        val longBreakTime =
-            preferenceRepository.getIntPreference("long_break_time")?.toLong()
-                ?: preferenceRepository.saveIntPreference(
-                    "long_break_time",
-                    defaults.longBreakTime.toInt()
-                ).toLong()
+
         val focusGoal = preferenceRepository.getIntPreference("focus_goal")?.toLong()
             ?: preferenceRepository.saveIntPreference("focus_goal", defaults.focusGoal.toInt())
                 .toLong()
-
-        val sessionLength =
-            preferenceRepository.getIntPreference("session_length")
-                ?: preferenceRepository.saveIntPreference(
-                    "session_length",
-                    defaults.sessionLength
-                )
 
         val alarmSoundUri = (
                 preferenceRepository.getStringPreference("alarm_sound")
@@ -89,8 +128,8 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
 
         val theme = preferenceRepository.getStringPreference("theme")
             ?: preferenceRepository.saveStringPreference("theme", defaults.theme)
-        val colorSchemeStr = preferenceRepository.getStringPreference("color_scheme")
-            ?: preferenceRepository.saveStringPreference("color_scheme", defaults.colorScheme)
+        val colorScheme = preferenceRepository.getColorPreference("color_scheme")
+            ?: preferenceRepository.saveColorPreference("color_scheme", defaults.colorScheme)
         val blackTheme = preferenceRepository.getBooleanPreference("black_theme")
             ?: preferenceRepository.saveBooleanPreference("black_theme", defaults.blackTheme)
         val aodEnabled = preferenceRepository.getBooleanPreference("aod_enabled")
@@ -105,8 +144,6 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
                 "vibrate_enabled",
                 defaults.vibrateEnabled
             )
-        val dndEnabled = preferenceRepository.getBooleanPreference("dnd_enabled")
-            ?: preferenceRepository.saveBooleanPreference("dnd_enabled", defaults.dndEnabled)
         val mediaVolumeForAlarm =
             preferenceRepository.getBooleanPreference("media_volume_for_alarm")
                 ?: preferenceRepository.saveBooleanPreference(
@@ -118,12 +155,6 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
                 "single_progress_bar",
                 defaults.singleProgressBar
             )
-        val autostartNextSession =
-            preferenceRepository.getBooleanPreference("autostart_next_session")
-                ?: preferenceRepository.saveBooleanPreference(
-                    "autostart_next_session",
-                    defaults.autostartNextSession
-                )
         val secureAod = preferenceRepository.getBooleanPreference("secure_aod")
             ?: preferenceRepository.saveBooleanPreference("secure_aod", defaults.secureAod)
 
@@ -145,46 +176,92 @@ class StateRepository(private val preferenceRepository: PreferenceRepository) {
                 defaults.vibrationAmplitude
             )
 
+        val customWindowDecor = preferenceRepository.getBooleanPreference("custom_window_decor")
+            ?: preferenceRepository.saveBooleanPreference(
+                "custom_window_decor",
+                defaults.customWindowDecor
+            )
+
         settingsState.update { currentState ->
             currentState.copy(
-                focusTime = focusTime,
-                shortBreakTime = shortBreakTime,
-                longBreakTime = longBreakTime,
                 focusGoal = focusGoal,
-                sessionLength = sessionLength,
                 theme = theme,
-                colorScheme = colorSchemeStr,
+                colorScheme = colorScheme,
                 alarmSoundUri = alarmSoundUri,
                 blackTheme = blackTheme,
                 aodEnabled = aodEnabled,
                 alarmEnabled = alarmEnabled,
                 vibrateEnabled = vibrateEnabled,
-                dndEnabled = dndEnabled,
                 mediaVolumeForAlarm = mediaVolumeForAlarm,
                 singleProgressBar = singleProgressBar,
-                autostartNextSession = autostartNextSession,
                 secureAod = secureAod,
                 vibrationOnDuration = vibrationOnDuration,
                 vibrationOffDuration = vibrationOffDuration,
-                vibrationAmplitude = vibrationAmplitude
+                vibrationAmplitude = vibrationAmplitude,
+                customWindowDecor = customWindowDecor
             )
         }
 
         if (isFirstLoad) {
             isFirstLoad = false
-            val settings = settingsState.value
-            time.update { settings.focusTime }
-            timerState.update { currentState ->
-                currentState.copy(
-                    timerMode = TimerMode.FOCUS,
-                    timeStr = millisecondsToStr(settings.focusTime),
-                    totalTime = settings.focusTime,
-                    nextTimerMode = if (settings.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
-                    nextTimeStr = millisecondsToStr(if (settings.sessionLength > 1) settings.shortBreakTime else settings.longBreakTime),
-                    currentFocusCount = 1,
-                    totalFocusCount = settings.sessionLength
-                )
-            }
+            restoreCurrentTopic()
         }
+    }
+
+    suspend fun setTopic(topic: Topic) {
+        if (_currentTopicId.value == topic.id) return
+        _currentTopicId.value = topic.id
+        publishTopic(topic)
+        preferenceRepository.saveLongPreference(CURRENT_TOPIC_KEY, topic.id)
+    }
+
+    private fun publishTopic(topic: Topic) {
+        val previous = _currentTopic.value
+        _currentTopic.value = topic
+        if (topic.id != previous.id || !topic.hasSameIntervals(previous)) refreshTimer(topic)
+    }
+
+    private fun refreshTimer(topic: Topic) {
+        val currentState = timerState.value
+        if (currentState.sessionActive || currentState.infiniteFocus) return
+
+        time.value = topic.focusTime
+        timerState.update {
+            it.copy(
+                timerMode = TimerMode.FOCUS,
+                timeStr = millisecondsToStr(topic.focusTime),
+                totalTime = topic.focusTime,
+                nextTimerMode = if (topic.sessionLength > 1) TimerMode.SHORT_BREAK else TimerMode.LONG_BREAK,
+                nextTimeStr = millisecondsToStr(if (topic.sessionLength > 1) topic.shortBreakTime else topic.longBreakTime),
+                currentFocusCount = 1,
+                totalFocusCount = topic.sessionLength
+            )
+        }
+    }
+
+    private fun Topic.hasSameIntervals(other: Topic) =
+        focusTime == other.focusTime &&
+                shortBreakTime == other.shortBreakTime &&
+                longBreakTime == other.longBreakTime &&
+                sessionLength == other.sessionLength
+
+    private suspend fun restoreCurrentTopic() {
+        val storedId = preferenceRepository.getLongPreference(CURRENT_TOPIC_KEY)
+        val topic = storedId?.let { topicRepository.getTopicById(it) }
+            ?: topicRepository.getTopicById(defaultTopic.id)
+            ?: defaultTopic
+
+        // the stored topic may be missing, or have never been written in the first place
+        if (storedId != topic.id) {
+            preferenceRepository.saveLongPreference(CURRENT_TOPIC_KEY, topic.id)
+        }
+
+        _currentTopicId.value = topic.id
+        _currentTopic.value = topic
+        refreshTimer(topic)
+    }
+
+    private companion object {
+        const val CURRENT_TOPIC_KEY = "current_topic_id"
     }
 }

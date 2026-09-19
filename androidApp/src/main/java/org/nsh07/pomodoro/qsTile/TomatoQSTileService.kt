@@ -22,7 +22,7 @@ import android.service.quicksettings.TileService
 import org.koin.android.ext.android.get
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.StateRepository
-import org.nsh07.pomodoro.service.AppServiceHelper
+import org.nsh07.pomodoro.service.AndroidTimerHelper
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
@@ -42,8 +42,8 @@ class TomatoQSTileService : TileService() {
         val stateRepository: StateRepository = get()
         val timerRunning = stateRepository.timerState.value.timerRunning
 
-        val serviceHelper: AppServiceHelper = get()
-        serviceHelper.startService(TimerAction.ToggleTimer)
+        val serviceHelper: AndroidTimerHelper = get()
+        serviceHelper.onAction(TimerAction.ToggleTimer)
 
         val tile = qsTile ?: return
 

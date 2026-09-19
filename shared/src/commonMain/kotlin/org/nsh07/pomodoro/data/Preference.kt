@@ -37,7 +37,7 @@ data class BooleanPreference(
 data class IntPreference(
     @PrimaryKey
     val key: String,
-    val value: Int
+    val value: Long
 )
 
 /**

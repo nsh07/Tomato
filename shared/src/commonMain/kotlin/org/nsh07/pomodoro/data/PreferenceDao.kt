@@ -44,7 +44,7 @@ interface PreferenceDao {
     suspend fun resetStringPreferences()
 
     @Query("SELECT value FROM int_preference WHERE `key` = :key")
-    suspend fun getIntPreference(key: String): Int?
+    suspend fun getIntPreference(key: String): Long?
 
     @Query("SELECT value FROM boolean_preference WHERE `key` = :key")
     suspend fun getBooleanPreference(key: String): Boolean?

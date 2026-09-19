@@ -32,24 +32,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.ui.LocalSetShowPaywall
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.tomato_plus_desc
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PlusDivider(
-    setShowPaywall: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = colorScheme.surfaceContainer
 ) {
+    val setShowPaywall = LocalSetShowPaywall.current
+
     Box(contentAlignment = Alignment.Center, modifier = modifier.padding(vertical = 14.dp)) {
         HorizontalDivider(modifier = Modifier.clip(CircleShape), thickness = 4.dp)
         Button(
             onClick = { setShowPaywall(true) },
             shapes = ButtonDefaults.shapes(),
             modifier = Modifier
-                .background(colorScheme.surfaceContainer)
+                .background(backgroundColor)
                 .padding(horizontal = 8.dp)
         ) {
             Text(stringResource(Res.string.tomato_plus_desc), style = typography.titleSmall)

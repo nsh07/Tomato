@@ -17,27 +17,11 @@
 
 package org.nsh07.pomodoro.data
 
-/**
- * Class to handle platform-specific filesystem abstraction (e.g. Uri on Android). An empty
- * constructor is provided to initialize a null instance.
- */
-expect class FileLocator {
-    /**
-     * Initialize a [org.nsh07.pomodoro.data.FileLocator] with a null instance of whichever
-     * filesystem abstraction is being used
-     */
-    constructor()
-
-    /**
-     * File/directory path as string
-     */
-    val path: String?
-    val isNull: Boolean
-}
+import io.github.vinceglb.filekit.PlatformFile
 
 interface BackupRestoreManager {
-    suspend fun performBackup(directoryLocator: FileLocator)
-    suspend fun performRestore(fileLocator: FileLocator)
+    suspend fun performBackup(directory: PlatformFile)
+    suspend fun performRestore(file: PlatformFile?)
 
     fun restartApp()
 }

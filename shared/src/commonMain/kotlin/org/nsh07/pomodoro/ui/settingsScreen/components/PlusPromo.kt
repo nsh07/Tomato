@@ -27,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.nsh07.pomodoro.ui.LocalIsPlus
+import org.nsh07.pomodoro.ui.LocalSetShowPaywall
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 import tomato.shared.generated.resources.Res
@@ -37,11 +39,10 @@ import tomato.shared.generated.resources.tomato_logo_notification
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun PlusPromo(
-    isPlus: Boolean,
-    setShowPaywall: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun PlusPromo(modifier: Modifier = Modifier) {
+    val isPlus = LocalIsPlus.current
+    val setShowPaywall = LocalSetShowPaywall.current
+
     SegmentedListItem(
         onClick = { setShowPaywall(true) },
         leadingContent = {

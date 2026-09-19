@@ -15,6 +15,11 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.INT
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -25,20 +30,32 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.koin.compiler)
+
+    alias(libs.plugins.buildKonfig)
 }
 
-// TODO: remove when CMP migration is done
+tasks.withType(Test::class) {
+    systemProperty("room.schemaDir", "$projectDir/schemas")
+    testLogging {
+        exceptionFormat = TestExceptionFormat.FULL
+        events = setOf(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
+        showStandardStreams = true
+    }
+}
+
+koinCompiler {
+    compileSafety.set(false)
+}
+
 compose.resources {
     publicResClass = true
 }
 
 kotlin {
-    compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
-
     android {
         namespace = "org.nsh07.pomodoro.shared"
-        compileSdk = 36
-        minSdk = 26
+        compileSdk = libs.versions.app.targetSdk.get().toInt()
+        minSdk = libs.versions.app.minSdk.get().toInt()
 
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
@@ -47,22 +64,24 @@ kotlin {
         androidResources {
             enable = true
         }
+
+        withHostTest {}
     }
+
+    jvm()
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project.dependencies.platform(libs.androidx.compose.bom))
             implementation(libs.components.resources)
-            implementation(libs.androidx.ui)
-            implementation(libs.androidx.ui.graphics)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.ui.graphics)
             implementation(libs.androidx.ui.tooling)
-            implementation(libs.androidx.lifecycle.runtime.ktx)
+            implementation(libs.androidx.lifecycle.runtime)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.material3)
             implementation(libs.androidx.adaptive)
 
-            implementation(libs.androidx.navigation3.runtime)
             implementation(libs.androidx.navigation3.ui)
             implementation(libs.androidx.compose.adaptive.navigation3)
 
@@ -72,16 +91,18 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
 
             implementation(libs.androidx.room.runtime)
-            implementation(libs.androidx.room.ktx)
 
             implementation(libs.vico.compose.m3)
             implementation(libs.material.kolor)
+
+            implementation(libs.filekit.core) // file handling
+        }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
         }
 
         androidMain.dependencies {
-            implementation(project.dependencies.platform(libs.androidx.compose.bom))
-
-            // Android-specific Compose
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.core.ktx)
 
@@ -92,13 +113,56 @@ kotlin {
             implementation(libs.androidx.junit)
             implementation(libs.androidx.espresso.core)
             implementation(libs.androidx.ui.test.junit4)
-            implementation(libs.androidx.ui.test.manifest)
+        }
+
+        jvmMain.dependencies {
+            implementation(compose.desktop.currentOs)
+
+            implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.androidx.sqlite.bundled)
+
+            implementation(libs.filekit.dialogs.compose)
+
+            implementation(libs.composenativetray) // tray icons
+
+            implementation(libs.jlayer.player) // MP3 playback
+        }
+
+        // Room's MigrationTestHelper is device-instrumented on Android, so migration tests are
+        // JVM-only. The migration itself lives in commonMain and is platform independent.
+        jvmTest.dependencies {
+            implementation(libs.androidx.room.testing)
+            implementation(libs.androidx.sqlite.bundled)
+        }
+    }
+}
+
+buildkonfig {
+    packageName = "org.nsh07.pomodoro"
+    defaultConfigs {
+        buildConfigField(INT, "VERSION_CODE", libs.versions.app.versionCode.get())
+        buildConfigField(STRING, "VERSION_NAME", libs.versions.app.versionName.get())
+        buildConfigField(STRING, "DATABASE_NAME", "app_database")
+    }
+
+    targetConfigs {
+        create("jvm") {
+            buildConfigField(
+                BOOLEAN,
+                "DEBUG",
+                if (
+                    gradle.startParameter.taskNames.any {
+                        it.contains("run", true)
+                    }
+                ) "true" else "false"
+            )
         }
     }
 }
 
 dependencies {
-    ksp(libs.androidx.room.compiler)
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspJvm", libs.androidx.room.compiler)
 }
 
 ksp {
@@ -108,5 +172,18 @@ ksp {
 androidComponents {
     onVariants { variant ->
         variant.sources.res?.addStaticSourceDirectory("src/commonMain/composeResources")
+    }
+}
+// Compose Multiplatform 1.12.0-rc01 ships skiko 0.150.1, which changed the binary
+// signature of Image.encodeToData(). composenativetray 1.3.3 was compiled against the
+// previous one and crashes with NoSuchMethodError while rendering the tray icon.
+// Pin skiko to 0.150.0 on the JVM target only, until the library is rebuilt.
+val skikoVersion = libs.versions.skiko.get()
+
+configurations.matching { it.name.startsWith("jvm") }.configureEach {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.skiko") {
+            useVersion(skikoVersion)
+        }
     }
 }

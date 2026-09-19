@@ -35,3 +35,5 @@ actual fun logError(tag: String, message: String): Int =
 
 actual fun androidDeviceManufacturerIs(manufacturer: String): Boolean =
     Build.MANUFACTURER == manufacturer
+
+actual val currentOS: OS = OS.ANDROID

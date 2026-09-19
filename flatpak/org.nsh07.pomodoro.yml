@@ -1,0 +1,57 @@
+id: org.nsh07.pomodoro
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.openjdk21
+
+command: tomato
+
+finish-args:
+  - --socket=x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --share=ipc
+  - --device=dri
+  # Tray icon (StatusNotifierItem)
+  - --talk-name=org.kde.StatusNotifierWatcher
+  - --own-name=org.kde.*
+  - --env=PATH=/app/jre/bin:/app/bin:/usr/bin
+  - --env=JAVA_HOME=/app/jre
+
+modules:
+  - name: openjdk
+    buildsystem: simple
+    build-commands:
+      - /usr/lib/sdk/openjdk21/install.sh
+
+  - name: tomato
+    buildsystem: simple
+    build-options:
+      env:
+        JAVA_HOME: /usr/lib/sdk/openjdk21/jvm/openjdk-21
+        PATH: /usr/lib/sdk/openjdk21/bin:/usr/bin:/bin
+      build-args:
+        - --share=network
+    build-commands:
+      # Build the distributable (unpacked app with bundled JRE)
+      - chmod +x gradlew
+      - ./gradlew :desktopApp:createReleaseDistributable
+        -Porg.gradle.java.home=/usr/lib/sdk/openjdk21/jvm/openjdk-21
+
+      # Install application files
+      - mkdir -p /app/lib/tomato
+      - cp -r desktopApp/build/compose/binaries/main-release/app/Tomato/* /app/lib/tomato/
+
+      # Install launcher script
+      - install -Dm755 flatpak/tomato-launcher.sh /app/bin/tomato
+
+      # Install icon
+      - install -Dm644 shared/src/jvmMain/composeResources/drawable/logo.png
+        /app/share/icons/hicolor/512x512/apps/org.nsh07.pomodoro.png
+
+      # Install the desktop entry and AppStream metadata
+      - python3 linux/generate-metadata.py --output-dir /app/share
+    sources:
+      - type: dir
+        path: ..

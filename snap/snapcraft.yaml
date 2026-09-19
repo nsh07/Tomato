@@ -1,0 +1,66 @@
+name: tomato
+
+contact: nishant.28@outlook.com
+
+adopt-info: tomato
+
+base: core22
+confinement: strict
+grade: stable
+icon: shared/src/jvmMain/composeResources/drawable/logo.png
+
+architectures:
+  - build-on: [ amd64 ]
+    build-for: [ amd64 ]
+
+apps:
+  tomato:
+    command: bin/tomato-launch
+    common-id: org.nsh07.pomodoro
+    desktop: usr/share/applications/org.nsh07.pomodoro.desktop
+    extensions: [ gnome ]
+    # desktop, desktop-legacy, gsettings, opengl, wayland and x11 come from the
+    # gnome extension
+    plugs:
+      - audio-playback
+      # Needed to browse for and read a custom alarm sound
+      - home
+
+parts:
+  tomato:
+    plugin: nil
+    source: .
+    parse-info: [ usr/share/metainfo/org.nsh07.pomodoro.metainfo.xml ]
+    build-packages:
+      - openjdk-21-jdk-headless
+      - python3
+    stage-packages:
+      - libappindicator3-1
+    override-build: |
+      # Build the distributable
+      chmod +x gradlew
+      ./gradlew :desktopApp:createReleaseDistributable
+
+      # Install the distributable
+      mkdir -p $CRAFT_PART_INSTALL/opt/tomato
+      cp -r desktopApp/build/compose/binaries/main-release/app/Tomato/* $CRAFT_PART_INSTALL/opt/tomato/
+
+      # Create launcher script
+      mkdir -p $CRAFT_PART_INSTALL/bin
+      cat > $CRAFT_PART_INSTALL/bin/tomato-launch << 'EOF'
+      #!/bin/sh
+      exec $SNAP/opt/tomato/bin/Tomato "$@"
+      EOF
+      chmod +x $CRAFT_PART_INSTALL/bin/tomato-launch
+
+      # Install the desktop entry and AppStream metadata
+      python3 linux/generate-metadata.py --output-dir $CRAFT_PART_INSTALL/usr/share
+
+      # Install the icon, both for the desktop entry and for snapd's icon cache
+      icon=shared/src/jvmMain/composeResources/drawable/logo.png
+      install -Dm644 $icon \
+        $CRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps/org.nsh07.pomodoro.png
+      install -Dm644 $icon \
+        $CRAFT_PART_INSTALL/meta/gui/icons/hicolor/512x512/apps/org.nsh07.pomodoro.png
+
+      craftctl set version="$(sed -n 's/^app-versionName = "\(.*\)"$/\1/p' gradle/libs.versions.toml)"

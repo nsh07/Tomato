@@ -1,0 +1,5 @@
+Enhancements:
+- Translation updates (thanks to contributors on Weblate)
+
+This release marks a milestone for Tomato: Tomato is now available on Desktop (Linux, Mac and Windows).
+Try it out from the releases page on GitHub. It will soon be available on Flathub and Snap Store for download on Linux as well.

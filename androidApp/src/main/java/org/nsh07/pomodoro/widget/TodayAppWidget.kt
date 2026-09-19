@@ -66,6 +66,7 @@ import org.nsh07.pomodoro.MainActivity
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.data.Stat
 import org.nsh07.pomodoro.data.StatRepository
+import org.nsh07.pomodoro.data.Topic
 import org.nsh07.pomodoro.ui.theme.lightScheme
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.utils.millisecondsToMinutes
@@ -84,7 +85,7 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
     ) {
         val statRepository: StatRepository = get()
         val stat = statRepository.getTodayStat().first()
-            ?: Stat(LocalDate.now(), 0, 0, 0, 0, 0)
+            ?: Stat(LocalDate.now(), Topic.DEFAULT_TOPIC_ID, 0, 0, 0, 0, 0)
 
         provideContent {
             key(LocalSize.current) {
@@ -205,6 +206,7 @@ class TodayAppWidget : GlanceAppWidget(), KoinComponent {
                     Content(
                         Stat(
                             date = LocalDate.of(2026, 3, 12),
+                            topicId = Topic.DEFAULT_TOPIC_ID,
                             focusTimeQ1 = 1617943,
                             focusTimeQ2 = 5704591,
                             focusTimeQ3 = 556490,

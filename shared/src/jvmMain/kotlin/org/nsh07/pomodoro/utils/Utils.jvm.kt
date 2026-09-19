@@ -17,6 +17,9 @@
 
 package org.nsh07.pomodoro.utils
 
+import androidx.annotation.ChecksSdkIntAtLeast
+
+@ChecksSdkIntAtLeast(parameter = 0)
 actual fun androidSdkVersionAtLeast(version: Int): Boolean = false
 
 actual fun androidDeviceManufacturerIs(manufacturer: String): Boolean = false

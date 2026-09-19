@@ -17,11 +17,13 @@
 
 package org.nsh07.pomodoro.data
 
+import androidx.annotation.RequiresApi
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.IGNORE
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -42,6 +44,7 @@ interface StatDao {
     /**
      * Adds the given times to the row for [date] and [topicId], creating it if it does not exist
      */
+    @RequiresApi(30)
     @Query(
         """
         INSERT INTO stat (date, topicId, focusTimeQ1, focusTimeQ2, focusTimeQ3, focusTimeQ4, breakTime)
@@ -55,6 +58,61 @@ interface StatDao {
         """
     )
     suspend fun addStatTimes(
+        date: LocalDate,
+        topicId: Long,
+        focusTimeQ1: Long,
+        focusTimeQ2: Long,
+        focusTimeQ3: Long,
+        focusTimeQ4: Long,
+        breakTime: Long
+    )
+
+    /**
+     * Adds the given times to the row for [date] and [topicId], creating it if it does not exist.
+     * Fallback for Android versions prior to API 30 (Android 11) which do not support SQLite UPSERT syntax.
+     */
+    @Transaction
+    suspend fun addStatTimesLegacy(
+        date: LocalDate,
+        topicId: Long,
+        focusTimeQ1: Long,
+        focusTimeQ2: Long,
+        focusTimeQ3: Long,
+        focusTimeQ4: Long,
+        breakTime: Long
+    ) {
+        insertDefaultStatTimes(date, topicId)
+        updateStatTimes(
+            date,
+            topicId,
+            focusTimeQ1,
+            focusTimeQ2,
+            focusTimeQ3,
+            focusTimeQ4,
+            breakTime
+        )
+    }
+
+    @Query(
+        """
+        INSERT OR IGNORE INTO stat (date, topicId, focusTimeQ1, focusTimeQ2, focusTimeQ3, focusTimeQ4, breakTime)
+        VALUES (:date, :topicId, 0, 0, 0, 0, 0)
+        """
+    )
+    suspend fun insertDefaultStatTimes(date: LocalDate, topicId: Long)
+
+    @Query(
+        """
+        UPDATE stat SET
+            focusTimeQ1 = focusTimeQ1 + :focusTimeQ1,
+            focusTimeQ2 = focusTimeQ2 + :focusTimeQ2,
+            focusTimeQ3 = focusTimeQ3 + :focusTimeQ3,
+            focusTimeQ4 = focusTimeQ4 + :focusTimeQ4,
+            breakTime = breakTime + :breakTime
+        WHERE date = :date AND topicId = :topicId
+        """
+    )
+    suspend fun updateStatTimes(
         date: LocalDate,
         topicId: Long,
         focusTimeQ1: Long,

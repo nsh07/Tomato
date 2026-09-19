@@ -17,6 +17,7 @@
 
 package org.nsh07.pomodoro.utils
 
+import androidx.annotation.ChecksSdkIntAtLeast
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
@@ -69,6 +70,7 @@ fun <T> MutableList<T>.onTopLevelNavigate(screen: T) {
  * @param version SDK version code
  * @return false if device is not running Android or SDK version is lower than [version], else true
  */
+@ChecksSdkIntAtLeast(parameter = 0)
 expect fun androidSdkVersionAtLeast(version: Int): Boolean
 
 expect fun androidDeviceManufacturerIs(manufacturer: String): Boolean

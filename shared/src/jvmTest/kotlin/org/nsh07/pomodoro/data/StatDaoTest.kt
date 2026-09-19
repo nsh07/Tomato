@@ -84,6 +84,33 @@ class StatDaoTest : DatabaseTest() {
     }
 
     @Test
+    fun `adding times legacy creates row when missing and accumulates onto existing row`(): Unit =
+        runBlocking {
+            val work = insertTopic("Work")
+            val date = LocalDate.parse("2026-03-12")
+
+            statDao.addStatTimesLegacy(date, work.id, 1, 2, 3, 4, 5)
+
+            val created = assertNotNull(statFor("2026-03-12", work.id))
+            assertEquals(10L, created.totalFocusTime())
+            assertEquals(5L, created.breakTime)
+
+            statDao.addStatTimesLegacy(date, work.id, 10, 20, 30, 40, 50)
+
+            val summed = assertNotNull(statFor("2026-03-12", work.id))
+            assertContentEquals(
+                listOf(11L, 22L, 33L, 44L, 55L),
+                listOf(
+                    summed.focusTimeQ1,
+                    summed.focusTimeQ2,
+                    summed.focusTimeQ3,
+                    summed.focusTimeQ4,
+                    summed.breakTime
+            )
+        )
+    }
+
+    @Test
     fun `adding times keeps each topic's row separate`(): Unit = runBlocking {
         val work = insertTopic("Work")
         val reading = insertTopic("Reading")

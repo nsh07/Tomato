@@ -20,6 +20,7 @@ package org.nsh07.pomodoro.data
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import org.nsh07.pomodoro.utils.androidSdkVersionAtLeast
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -73,7 +74,7 @@ class AppStatRepository(
                 else -> 4
             }
 
-            statDao.addStatTimes(
+            addStatTimes(
                 date = LocalDate.now(),
                 topicId = topicId,
                 focusTimeQ1 = if (quarter == 1) focusTime else 0,
@@ -86,7 +87,7 @@ class AppStatRepository(
 
     override suspend fun addBreakTime(topicId: Long, breakTime: Long) =
         withContext(ioDispatcher) {
-            statDao.addStatTimes(
+            addStatTimes(
                 date = LocalDate.now(),
                 topicId = topicId,
                 focusTimeQ1 = 0,
@@ -96,6 +97,38 @@ class AppStatRepository(
                 breakTime = breakTime
             )
         }
+
+    private suspend fun addStatTimes(
+        date: LocalDate,
+        topicId: Long,
+        focusTimeQ1: Long,
+        focusTimeQ2: Long,
+        focusTimeQ3: Long,
+        focusTimeQ4: Long,
+        breakTime: Long
+    ) {
+        if (androidSdkVersionAtLeast(30)) {
+            statDao.addStatTimes(
+                date = date,
+                topicId = topicId,
+                focusTimeQ1 = focusTimeQ1,
+                focusTimeQ2 = focusTimeQ2,
+                focusTimeQ3 = focusTimeQ3,
+                focusTimeQ4 = focusTimeQ4,
+                breakTime = breakTime
+            )
+        } else {
+            statDao.addStatTimesLegacy(
+                date = date,
+                topicId = topicId,
+                focusTimeQ1 = focusTimeQ1,
+                focusTimeQ2 = focusTimeQ2,
+                focusTimeQ3 = focusTimeQ3,
+                focusTimeQ4 = focusTimeQ4,
+                breakTime = breakTime
+            )
+        }
+    }
 
     override fun getTodayStat(): Flow<Stat?> {
         val currentDate = LocalDate.now()

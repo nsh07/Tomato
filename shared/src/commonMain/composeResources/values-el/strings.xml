@@ -147,4 +147,17 @@
     <string name="cancel">Ακύρωση</string>
     <string name="settings_infinite_focus_tip">Πάτα παρατεταμένα στο χρονόμετρο για να ενεργοποιήσεις την άπειρη εστίαση</string>
     <string name="advanced">Προχωρημένα</string>
+    <string name="default_name">Προεπιλογή</string>
+    <string name="shape">Σχήμα</string>
+    <string name="topics">Θέματα</string>
+    <string name="create_new_topic">Νέο θέμα</string>
+    <string name="topic_settings">Ρυθμίσεις θέματος</string>
+    <string name="topic_name">'Ονομα</string>
+    <string name="topic_name_taken">Ένα θέμα με αυτό το όνομα υπάρχει ήδη</string>
+    <string name="topic_name_empty">Το όνομα θέματος δεν μπορεί να είναι άδειο</string>
+    <string name="add_topic">Προσθήκη θέματος</string>
+    <string name="next">Επόμενο</string>
+    <string name="delete_topic">Διαγραφή θέματος</string>
+    <string name="delete_topic_and_stats">Διαγραφή θέματος και στατιστικών</string>
+    <string name="delete_topic_dialog_title">Διαγραφή θέματος;</string>
 </resources>

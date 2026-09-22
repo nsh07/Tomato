@@ -156,6 +156,146 @@ class SettingsViewModelTest {
         assertEquals(MinuteInputs(work), viewModel.minuteInputs)
     }
 
+    @Test
+    fun `saveSetting with Boolean key updates state and preference repository`() = runBlocking {
+        viewModel.saveSetting(SettingsKey.ALARM_ENABLED, false)
+
+        awaitUntil("alarm enabled to be updated") {
+            !viewModel.settingsState.value.alarmEnabled &&
+                    preferenceRepository.getBooleanPreference(SettingsKey.ALARM_ENABLED.key) == false
+        }
+    }
+
+    @Test
+    fun `saveSetting with String key updates state and preference repository`() = runBlocking {
+        viewModel.saveSetting(SettingsKey.THEME, "dark")
+
+        awaitUntil("theme to be updated") {
+            viewModel.settingsState.value.theme == "dark" &&
+                    preferenceRepository.getStringPreference(SettingsKey.THEME.key) == "dark"
+        }
+    }
+
+    @Test
+    fun `saveSetting with Int key updates state and preference repository`() = runBlocking {
+        viewModel.saveSetting(SettingsKey.FOCUS_GOAL, 120)
+
+        awaitUntil("focus goal to be updated") {
+            viewModel.settingsState.value.focusGoal == 120L &&
+                    preferenceRepository.getIntPreference(SettingsKey.FOCUS_GOAL.key) == 120
+        }
+    }
+
+    @Test
+    fun `saveSetting with Color key updates state and preference repository`() = runBlocking {
+        val testColor = Color(0xFF3B82F6)
+        viewModel.saveSetting(SettingsKey.COLOR_SCHEME, testColor)
+
+        awaitUntil("color scheme to be updated") {
+            viewModel.settingsState.value.colorScheme == testColor &&
+                    preferenceRepository.getColorPreference(SettingsKey.COLOR_SCHEME.key) == testColor
+        }
+    }
+
+    @Test
+    fun `SaveColorScheme action updates color scheme state and preference repository`() =
+        runBlocking {
+            val testColor = Color(0xFF3B82F6)
+            viewModel.onAction(SettingsAction.SaveColorScheme(testColor))
+
+            awaitUntil("color scheme to be updated") {
+                viewModel.settingsState.value.colorScheme == testColor &&
+                        preferenceRepository.getColorPreference(SettingsKey.COLOR_SCHEME.key) == testColor
+            }
+
+            viewModel.onAction(SettingsAction.SaveColorScheme(Color.White))
+            awaitUntil("color scheme to be updated to White") {
+                viewModel.settingsState.value.colorScheme == Color.White &&
+                        preferenceRepository.getColorPreference(SettingsKey.COLOR_SCHEME.key) == Color.White
+            }
+        }
+
+    @Test
+    fun `all Save actions update state and preference repository`() = runBlocking {
+        viewModel.onAction(SettingsAction.SaveTheme("dark"))
+        awaitUntil("theme updated") {
+            viewModel.settingsState.value.theme == "dark" &&
+                    preferenceRepository.getStringPreference(SettingsKey.THEME.key) == "dark"
+        }
+
+        viewModel.onAction(SettingsAction.SaveAlarmSound("fake://sound"))
+        awaitUntil("alarm sound updated") {
+            viewModel.settingsState.value.alarmSoundUri == "fake://sound" &&
+                    preferenceRepository.getStringPreference(SettingsKey.ALARM_SOUND.key) == "fake://sound"
+        }
+
+        viewModel.onAction(SettingsAction.SaveAlarmEnabled(false))
+        awaitUntil("alarm enabled updated") {
+            !viewModel.settingsState.value.alarmEnabled &&
+                    preferenceRepository.getBooleanPreference(SettingsKey.ALARM_ENABLED.key) == false
+        }
+
+        viewModel.onAction(SettingsAction.SaveVibrateEnabled(false))
+        awaitUntil("vibrate enabled updated") {
+            !viewModel.settingsState.value.vibrateEnabled &&
+                    preferenceRepository.getBooleanPreference(SettingsKey.VIBRATE_ENABLED.key) == false
+        }
+
+        viewModel.onAction(SettingsAction.SaveBlackTheme(true))
+        awaitUntil("black theme updated") {
+            viewModel.settingsState.value.blackTheme &&
+                    preferenceRepository.getBooleanPreference(SettingsKey.BLACK_THEME.key) == true
+        }
+
+        viewModel.onAction(SettingsAction.SaveAodEnabled(true))
+        awaitUntil("aod enabled updated") {
+            viewModel.settingsState.value.aodEnabled &&
+                    preferenceRepository.getBooleanPreference(SettingsKey.AOD_ENABLED.key) == true
+        }
+
+        viewModel.onAction(SettingsAction.SaveMediaVolumeForAlarm(true))
+        awaitUntil("media volume for alarm updated") {
+            viewModel.settingsState.value.mediaVolumeForAlarm &&
+                    preferenceRepository.getBooleanPreference(SettingsKey.MEDIA_VOLUME_FOR_ALARM.key) == true
+        }
+
+        viewModel.onAction(SettingsAction.SaveSingleProgressBar(true))
+        awaitUntil("single progress bar updated") {
+            viewModel.settingsState.value.singleProgressBar &&
+                    preferenceRepository.getBooleanPreference(SettingsKey.SINGLE_PROGRESS_BAR.key) == true
+        }
+
+        viewModel.onAction(SettingsAction.SaveSecureAod(false))
+        awaitUntil("secure aod updated") {
+            !viewModel.settingsState.value.secureAod &&
+                    preferenceRepository.getBooleanPreference(SettingsKey.SECURE_AOD.key) == false
+        }
+
+        viewModel.onAction(SettingsAction.SaveFocusGoal(180L))
+        awaitUntil("focus goal updated") {
+            viewModel.settingsState.value.focusGoal == 180L &&
+                    preferenceRepository.getIntPreference(SettingsKey.FOCUS_GOAL.key) == 180
+        }
+
+        viewModel.onAction(SettingsAction.SaveVibrationOnDuration(500L))
+        awaitUntil("vibration on duration updated") {
+            viewModel.settingsState.value.vibrationOnDuration == 500L &&
+                    preferenceRepository.getIntPreference(SettingsKey.VIBRATION_ON_DURATION.key) == 500
+        }
+
+        viewModel.onAction(SettingsAction.SaveVibrationOffDuration(300L))
+        awaitUntil("vibration off duration updated") {
+            viewModel.settingsState.value.vibrationOffDuration == 300L &&
+                    preferenceRepository.getIntPreference(SettingsKey.VIBRATION_OFF_DURATION.key) == 300
+        }
+
+        viewModel.onAction(SettingsAction.SaveVibrationAmplitude(100))
+        awaitUntil("vibration amplitude updated") {
+            viewModel.settingsState.value.vibrationAmplitude == 100 &&
+                    preferenceRepository.getIntPreference(SettingsKey.VIBRATION_AMPLITUDE.key) == 100
+        }
+    }
+
     private suspend fun awaitUntil(description: String, condition: suspend () -> Boolean) {
         try {
             withTimeout(TIMEOUT.milliseconds) {

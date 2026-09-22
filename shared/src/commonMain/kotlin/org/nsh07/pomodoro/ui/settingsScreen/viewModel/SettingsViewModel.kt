@@ -125,24 +125,52 @@ class SettingsViewModel(
 
     fun onAction(action: SettingsAction) {
         when (action) {
-            is SettingsAction.SaveAlarmSound -> saveAlarmSound(action.uri)
-            is SettingsAction.SaveAlarmEnabled -> saveAlarmEnabled(action.enabled)
-            is SettingsAction.SaveVibrateEnabled -> saveVibrateEnabled(action.enabled)
+            is SettingsAction.SaveAlarmSound -> saveSetting(
+                SettingsKey.ALARM_SOUND,
+                action.uri.toString()
+            )
+
+            is SettingsAction.SaveAlarmEnabled -> saveSetting(
+                SettingsKey.ALARM_ENABLED,
+                action.enabled
+            )
+
+            is SettingsAction.SaveVibrateEnabled -> saveSetting(
+                SettingsKey.VIBRATE_ENABLED,
+                action.enabled
+            )
             is SettingsAction.SaveDndEnabled -> saveDndEnabled(action.enabled)
-            is SettingsAction.SaveMediaVolumeForAlarm -> saveMediaVolumeForAlarm(action.enabled)
-            is SettingsAction.SaveSingleProgressBar -> saveSingleProgressBar(action.enabled)
+            is SettingsAction.SaveMediaVolumeForAlarm -> saveSetting(
+                SettingsKey.MEDIA_VOLUME_FOR_ALARM,
+                action.enabled
+            )
+
+            is SettingsAction.SaveSingleProgressBar -> saveSetting(
+                SettingsKey.SINGLE_PROGRESS_BAR,
+                action.enabled
+            )
             is SettingsAction.SaveAutostartNextSession -> saveAutostartNextSession(action.enabled)
-            is SettingsAction.SaveSecureAod -> saveSecureAod(action.enabled)
-            is SettingsAction.SaveColorScheme -> saveColorScheme(action.color)
-            is SettingsAction.SaveTheme -> saveTheme(action.theme)
-            is SettingsAction.SaveBlackTheme -> saveBlackTheme(action.enabled)
-            is SettingsAction.SaveAodEnabled -> saveAodEnabled(action.enabled)
+            is SettingsAction.SaveSecureAod -> saveSetting(SettingsKey.SECURE_AOD, action.enabled)
+            is SettingsAction.SaveColorScheme ->
+                saveSetting(SettingsKey.COLOR_SCHEME, action.color)
 
-            is SettingsAction.SaveFocusGoal -> saveFocusGoal(action.goal)
+            is SettingsAction.SaveTheme -> saveSetting(SettingsKey.THEME, action.theme)
+            is SettingsAction.SaveBlackTheme -> saveSetting(SettingsKey.BLACK_THEME, action.enabled)
+            is SettingsAction.SaveAodEnabled -> saveSetting(SettingsKey.AOD_ENABLED, action.enabled)
 
-            is SettingsAction.SaveVibrationOnDuration -> saveVibrationOnDuration(action.duration)
-            is SettingsAction.SaveVibrationOffDuration -> saveVibrationOffDuration(action.duration)
-            is SettingsAction.SaveVibrationAmplitude -> saveVibrationAmplitude(action.amplitude)
+            is SettingsAction.SaveFocusGoal -> saveSetting(
+                SettingsKey.FOCUS_GOAL,
+                action.goal.toInt()
+            )
+
+            is SettingsAction.SaveVibrationOnDuration ->
+                saveSetting(SettingsKey.VIBRATION_ON_DURATION, action.duration.toInt())
+
+            is SettingsAction.SaveVibrationOffDuration ->
+                saveSetting(SettingsKey.VIBRATION_OFF_DURATION, action.duration.toInt())
+
+            is SettingsAction.SaveVibrationAmplitude ->
+                saveSetting(SettingsKey.VIBRATION_AMPLITUDE, action.amplitude)
 
             is SettingsAction.CreateTopic -> createTopic(action.topic, action.setAsCurrent)
             is SettingsAction.DeleteTopic -> deleteTopic(action.topic, action.deleteStats)
@@ -309,105 +337,9 @@ class SettingsViewModel(
             }
     }
 
-    private fun saveFocusGoal(goal: Long) {
-        viewModelScope.launch {
-            _settingsState.update { currentState ->
-                currentState.copy(focusGoal = goal)
-            }
-            preferenceRepository.saveIntPreference("focus_goal", goal.toInt())
-        }
-    }
-
-    private fun saveAlarmEnabled(enabled: Boolean) {
-        viewModelScope.launch {
-            _settingsState.update { currentState ->
-                currentState.copy(alarmEnabled = enabled)
-            }
-            preferenceRepository.saveBooleanPreference("alarm_enabled", enabled)
-        }
-    }
-
-    private fun saveVibrateEnabled(enabled: Boolean) {
-        viewModelScope.launch {
-            _settingsState.update { currentState ->
-                currentState.copy(vibrateEnabled = enabled)
-            }
-            preferenceRepository.saveBooleanPreference("vibrate_enabled", enabled)
-        }
-    }
-
     private fun saveDndEnabled(enabled: Boolean) {
         viewModelScope.launch {
             editTopic { it.copy(dndEnabled = enabled) }
-        }
-    }
-
-    private fun saveAlarmSound(uri: String?) {
-        viewModelScope.launch {
-            _settingsState.update { currentState ->
-                currentState.copy(alarmSoundUri = uri)
-            }
-            preferenceRepository.saveStringPreference("alarm_sound", uri.toString())
-        }
-    }
-
-    private fun saveColorScheme(colorScheme: Color) {
-        viewModelScope.launch {
-            _settingsState.update { currentState ->
-                currentState.copy(colorScheme = colorScheme)
-            }
-            preferenceRepository.saveColorPreference("color_scheme", colorScheme)
-        }
-    }
-
-    private fun saveTheme(theme: String) {
-        viewModelScope.launch {
-            _settingsState.update { currentState ->
-                currentState.copy(theme = theme)
-            }
-            preferenceRepository.saveStringPreference("theme", theme)
-        }
-    }
-
-    private fun saveBlackTheme(blackTheme: Boolean) {
-        viewModelScope.launch {
-            _settingsState.update { currentState ->
-                currentState.copy(blackTheme = blackTheme)
-            }
-            preferenceRepository.saveBooleanPreference("black_theme", blackTheme)
-        }
-    }
-
-    private fun saveAodEnabled(aodEnabled: Boolean) {
-        viewModelScope.launch {
-            _settingsState.update { currentState ->
-                currentState.copy(aodEnabled = aodEnabled)
-            }
-            preferenceRepository.saveBooleanPreference("aod_enabled", aodEnabled)
-        }
-    }
-
-    private fun saveMediaVolumeForAlarm(mediaVolumeForAlarm: Boolean) {
-        viewModelScope.launch {
-            _settingsState.update { currentState ->
-                currentState.copy(mediaVolumeForAlarm = mediaVolumeForAlarm)
-            }
-            preferenceRepository.saveBooleanPreference(
-                "media_volume_for_alarm",
-                mediaVolumeForAlarm
-            )
-        }
-    }
-
-    private fun saveSingleProgressBar(singleProgressBar: Boolean) {
-        viewModelScope.launch {
-            _settingsState.update { currentState ->
-                currentState.copy(singleProgressBar = singleProgressBar)
-            }
-            preferenceRepository.saveBooleanPreference(
-                "single_progress_bar",
-                singleProgressBar
-            )
         }
     }
 
@@ -417,51 +349,62 @@ class SettingsViewModel(
         }
     }
 
-    private fun saveSecureAod(secureAod: Boolean) {
+    fun saveSetting(key: SettingsKey, value: String) {
         viewModelScope.launch {
             _settingsState.update { currentState ->
-                currentState.copy(secureAod = secureAod)
+                when (key) {
+                    SettingsKey.ALARM_SOUND -> currentState.copy(alarmSoundUri = value)
+                    SettingsKey.THEME -> currentState.copy(theme = value)
+                    else -> currentState
+                }
             }
-            preferenceRepository.saveBooleanPreference(
-                "secure_aod",
-                secureAod
-            )
+            preferenceRepository.saveStringPreference(key.key, value)
         }
     }
 
-    private fun saveVibrationOnDuration(vibrationOnDuration: Long) {
+    fun saveSetting(key: SettingsKey, value: Boolean) {
         viewModelScope.launch {
             _settingsState.update { currentState ->
-                currentState.copy(vibrationOnDuration = vibrationOnDuration)
+                when (key) {
+                    SettingsKey.ALARM_ENABLED -> currentState.copy(alarmEnabled = value)
+                    SettingsKey.VIBRATE_ENABLED -> currentState.copy(vibrateEnabled = value)
+                    SettingsKey.BLACK_THEME -> currentState.copy(blackTheme = value)
+                    SettingsKey.AOD_ENABLED -> currentState.copy(aodEnabled = value)
+                    SettingsKey.MEDIA_VOLUME_FOR_ALARM -> currentState.copy(mediaVolumeForAlarm = value)
+                    SettingsKey.SINGLE_PROGRESS_BAR -> currentState.copy(singleProgressBar = value)
+                    SettingsKey.SECURE_AOD -> currentState.copy(secureAod = value)
+                    SettingsKey.CUSTOM_WINDOW_DECOR -> currentState.copy(customWindowDecor = value)
+                    else -> currentState
+                }
             }
-            preferenceRepository.saveIntPreference(
-                "vibration_on_duration",
-                vibrationOnDuration.toInt()
-            )
+            preferenceRepository.saveBooleanPreference(key.key, value)
         }
     }
 
-    private fun saveVibrationOffDuration(vibrationOffDuration: Long) {
+    fun saveSetting(key: SettingsKey, value: Int) {
         viewModelScope.launch {
             _settingsState.update { currentState ->
-                currentState.copy(vibrationOffDuration = vibrationOffDuration)
+                when (key) {
+                    SettingsKey.FOCUS_GOAL -> currentState.copy(focusGoal = value.toLong())
+                    SettingsKey.VIBRATION_ON_DURATION -> currentState.copy(vibrationOnDuration = value.toLong())
+                    SettingsKey.VIBRATION_OFF_DURATION -> currentState.copy(vibrationOffDuration = value.toLong())
+                    SettingsKey.VIBRATION_AMPLITUDE -> currentState.copy(vibrationAmplitude = value)
+                    else -> currentState
+                }
             }
-            preferenceRepository.saveIntPreference(
-                "vibration_off_duration",
-                vibrationOffDuration.toInt()
-            )
+            preferenceRepository.saveIntPreference(key.key, value)
         }
     }
 
-    private fun saveVibrationAmplitude(vibrationAmplitude: Int) {
+    fun saveSetting(key: SettingsKey, value: Color) {
         viewModelScope.launch {
             _settingsState.update { currentState ->
-                currentState.copy(vibrationAmplitude = vibrationAmplitude)
+                when (key) {
+                    SettingsKey.COLOR_SCHEME -> currentState.copy(colorScheme = value)
+                    else -> currentState
+                }
             }
-            preferenceRepository.saveIntPreference(
-                "vibration_amplitude",
-                vibrationAmplitude
-            )
+            preferenceRepository.saveColorPreference(key.key, value)
         }
     }
 }

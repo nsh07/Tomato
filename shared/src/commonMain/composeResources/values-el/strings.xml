@@ -152,7 +152,7 @@
     <string name="topics">Θέματα</string>
     <string name="create_new_topic">Νέο θέμα</string>
     <string name="topic_settings">Ρυθμίσεις θέματος</string>
-    <string name="topic_name">'Ονομα</string>
+    <string name="topic_name">\u0027Ονομα</string>
     <string name="topic_name_taken">Ένα θέμα με αυτό το όνομα υπάρχει ήδη</string>
     <string name="topic_name_empty">Το όνομα θέματος δεν μπορεί να είναι άδειο</string>
     <string name="add_topic">Προσθήκη θέματος</string>

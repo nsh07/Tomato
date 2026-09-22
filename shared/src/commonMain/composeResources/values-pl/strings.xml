@@ -128,4 +128,5 @@
     <string name="infinite_focus">Nieskończone skupienie</string>
     <string name="cancel">Anuluj</string>
     <string name="advanced">Zaawansowane</string>
+    <string name="default_name">Domyślne</string>
 </resources>

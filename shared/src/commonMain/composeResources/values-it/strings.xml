@@ -17,7 +17,7 @@
   --><resources>
     <string name="start">Inizia</string>
     <string name="stop">Ferma</string>
-    <string name="focus">Concentrazione</string>
+    <string name="focus">Focus</string>
     <string name="short_break">Pausa breve</string>
     <string name="long_break">Pausa lunga</string>
     <string name="exit">Esci</string>
@@ -51,7 +51,7 @@
     <string name="pomodoro_info">Una sessione è una sequenza di intervalli pomodoro che include intervalli di concentrazione, di pausa breve, e di pausa lunga. L\u0027ultima pausa di una sessione è sempre una pausa lunga.</string>
     <string name="stats">Statistiche</string>
     <string name="today">Oggi</string>
-    <string name="break_">Tempo di pausa</string>
+    <string name="break_">Pausa</string>
     <string name="last_week">Ultima settimana</string>
     <string name="focus_per_day_avg">concentrazione al giorno (media)</string>
     <string name="more_info">Più informazioni</string>

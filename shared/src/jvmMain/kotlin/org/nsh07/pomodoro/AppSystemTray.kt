@@ -23,16 +23,18 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.ApplicationScope
-import com.kdroid.composetray.tray.api.Tray
+import androidx.compose.ui.window.Tray
 import kotlinx.coroutines.flow.update
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.nsh07.pomodoro.data.StateRepository
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerViewModel
+import org.nsh07.pomodoro.utils.OS
+import org.nsh07.pomodoro.utils.currentOS
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.app_name
 import tomato.shared.generated.resources.focus
@@ -84,14 +86,18 @@ fun ApplicationScope.AppSystemTray(
     }
     val remainingTimeStr = stringResource(Res.string.min_remaining_notification, remainingTimeS)
 
+    val trayIcon = painterResource(
+        if (currentOS == OS.WINDOWS) Res.drawable.logo
+        else Res.drawable.tomato_logo_notification
+    )
+
     Tray(
-        windowsIcon = Res.drawable.logo,
-        macLinuxIcon = vectorResource(Res.drawable.tomato_logo_notification),
+        icon = trayIcon,
         tooltip = stringResource(Res.string.app_name),
-        primaryAction = { stateRepository.windowVisible.update { true } }
+        onAction = { stateRepository.windowVisible.update { true } }
     ) {
         if (!timerState.alarmRinging) {
-            SubMenu(
+            Menu(
                 "$timerModeStr $middleDot ${
                     if (timerState.timerMode == TimerMode.FOCUS && timerState.infiniteFocus) infiniteString
                     else remainingTimeStr
@@ -108,7 +114,7 @@ fun ApplicationScope.AppSystemTray(
         } else {
             Item(stopAlarmString) { timerViewModel.onAction(TimerAction.StopAlarm) }
         }
-        Divider()
+        Separator()
         Item(openTomato) { stateRepository.windowVisible.update { true } }
         Item(quitTomato, onClick = ::exitApplication)
     }

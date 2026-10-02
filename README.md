@@ -147,8 +147,6 @@ This app was made possible by these awesome libraries:
 
 ### Desktop
 
-- [ComposeNativeTray](https://github.com/kdroidFilter/ComposeNativeTray) - System tray applications
-  with native support for Mac, Linux and Windows
 - [Java Audio Stack](https://github.com/bowbahdoe/java-audio-stack) - Repackaged and modularized
   com.googlecode.soundlibs libraries
 

@@ -123,8 +123,6 @@ kotlin {
 
             implementation(libs.filekit.dialogs.compose)
 
-            implementation(libs.composenativetray) // tray icons
-
             implementation(libs.jlayer.player) // MP3 playback
         }
 
@@ -172,18 +170,5 @@ ksp {
 androidComponents {
     onVariants { variant ->
         variant.sources.res?.addStaticSourceDirectory("src/commonMain/composeResources")
-    }
-}
-// Compose Multiplatform 1.12.0-rc01 ships skiko 0.150.1, which changed the binary
-// signature of Image.encodeToData(). composenativetray 1.3.3 was compiled against the
-// previous one and crashes with NoSuchMethodError while rendering the tray icon.
-// Pin skiko to 0.150.0 on the JVM target only, until the library is rebuilt.
-val skikoVersion = libs.versions.skiko.get()
-
-configurations.matching { it.name.startsWith("jvm") }.configureEach {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "org.jetbrains.skiko") {
-            useVersion(skikoVersion)
-        }
     }
 }

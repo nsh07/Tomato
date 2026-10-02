@@ -110,7 +110,12 @@ class TimerService : Service(), KoinComponent {
         runBlocking(Dispatchers.IO) { timerManager.saveTimeToDb() }
         setDoNotDisturb(false)
         notificationManager.cancel(1)
-        alarm?.release()
+        try {
+            alarm?.release()
+        } catch (e: Exception) {
+            Log.e("TimerService", "Error releasing alarm", e)
+        }
+        alarm = null
         super.onDestroy()
     }
 
@@ -374,7 +379,13 @@ class TimerService : Service(), KoinComponent {
 
     fun startAlarm() {
         val settingsState = _settingsState.value
-        if (settingsState.alarmEnabled) alarm?.start()
+        if (settingsState.alarmEnabled) {
+            try {
+                alarm?.start()
+            } catch (e: Exception) {
+                Log.e("TimerService", "Error starting alarm", e)
+            }
+        }
 
         activityCallbacks.activityTurnScreenOn(true)
 
@@ -419,9 +430,13 @@ class TimerService : Service(), KoinComponent {
         autoAlarmStopScope?.cancel()
 
         if (settingsState.alarmEnabled) {
-            alarm?.let {
-                if (it.isPlaying) it.pause()
-                it.seekTo(0)
+            alarm?.let { player ->
+                try {
+                    if (player.isPlaying) player.pause()
+                    player.seekTo(0)
+                } catch (e: Exception) {
+                    Log.e("TimerService", "Error stopping alarm", e)
+                }
             }
         }
 
@@ -460,7 +475,11 @@ class TimerService : Service(), KoinComponent {
         return try {
             MediaPlayer().apply {
                 setOnErrorListener { mp, what, extra ->
-                    mp.reset()
+                    try {
+                        mp.reset()
+                    } catch (e: Exception) {
+                        Log.e("TimerService", "Error resetting MediaPlayer", e)
+                    }
                     Log.e("TimerService", "MediaPlayer error: $what, $extra")
                     true
                 }
@@ -482,6 +501,7 @@ class TimerService : Service(), KoinComponent {
                 }
             }
         } catch (e: Exception) {
+            Log.e("TimerService", "Error initializing MediaPlayer", e)
             e.printStackTrace()
             null
         }
@@ -496,7 +516,11 @@ class TimerService : Service(), KoinComponent {
     }
 
     private fun updateAlarmTone() {
-        alarm?.release()
+        try {
+            alarm?.release()
+        } catch (e: Exception) {
+            Log.e("TimerService", "Error releasing alarm", e)
+        }
         alarm = initializeMediaPlayer()
     }
 

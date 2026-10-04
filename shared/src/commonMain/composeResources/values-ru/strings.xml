@@ -145,4 +145,5 @@
     <string name="infinite_focus">Бесконечная фокусировка</string>
     <string name="settings_infinite_focus_tip">Нажмите и удерживайте таймер, чтобы включить режим бесконечной фокусировки</string>
     <string name="cancel">Отмена</string>
+    <string name="add_topic">Добавить тему</string>
 </resources>

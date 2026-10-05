@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -39,7 +38,6 @@ import org.nsh07.pomodoro.ui.LocalSetShowPaywall
 import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.tomato_plus_desc
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PlusDivider(
     modifier: Modifier = Modifier,

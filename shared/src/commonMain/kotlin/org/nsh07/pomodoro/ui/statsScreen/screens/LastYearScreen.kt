@@ -36,9 +36,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilledTonalToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -46,7 +45,6 @@ import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TonalToggleButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
@@ -107,7 +105,6 @@ import tomato.shared.generated.resources.more_info
 import tomato.shared.generated.resources.show_chart
 import tomato.shared.generated.resources.stats
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SharedTransitionScope.LastYearScreen(
     contentPadding: PaddingValues,
@@ -310,7 +307,7 @@ fun SharedTransitionScope.LastYearScreen(
                             .padding(horizontal = 16.dp)
                             .fillMaxWidth()
                     ) {
-                        TonalToggleButton(
+                        FilledTonalToggleButton(
                             checked = breakdownChartExpanded,
                             onCheckedChange = { breakdownChartExpanded = it },
                             modifier = Modifier.align(Alignment.End)

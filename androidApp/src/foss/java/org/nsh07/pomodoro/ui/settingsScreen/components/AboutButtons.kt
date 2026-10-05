@@ -18,7 +18,6 @@
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.SegmentedListItem
@@ -33,7 +32,6 @@ import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 import org.nsh07.pomodoro.ui.theme.TomatoShapeDefaults.segmentedListItemShapes
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TopButton(modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current
@@ -56,7 +54,6 @@ fun TopButton(modifier: Modifier = Modifier) {
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun BottomButton(modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current

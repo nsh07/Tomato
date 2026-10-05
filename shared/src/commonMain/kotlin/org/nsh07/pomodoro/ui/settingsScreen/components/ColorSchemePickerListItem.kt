@@ -34,7 +34,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
@@ -48,6 +47,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.ToggleButtonShapes
+import androidx.compose.material3.ToggleButtonSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -119,7 +119,6 @@ val colorSchemes = listOf(
 private val dynamicColorLabel: StringResource
     get() = if (androidSdkVersionAtLeast(31)) Res.string.dynamic else Res.string.default_name
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ColorSchemePickerListItem(
     color: Color,
@@ -265,7 +264,6 @@ fun ColorPickerRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ColorPickerButton(
     items: Int,
@@ -287,15 +285,14 @@ private fun ColorPickerButton(
                     items - 1 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                     else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                 },
-                colors = ToggleButtonDefaults.toggleButtonColors(
+                colors = ToggleButtonDefaults.colors(
                     containerColor = colorScheme.primaryContainer,
                     checkedContainerColor = colorScheme.primary,
                     checkedContentColor = colorScheme.onPrimary
                 ),
+                buttonSize = ToggleButtonSize.Small,
                 enabled = enabled,
-                modifier = modifier
-                    .height(40.dp)
-                    .widthIn(min = 40.dp),
+                modifier = modifier.widthIn(min = 40.dp),
                 checked = checked,
                 onCheckedChange = {
                     if (!checked) haptic.performSegmentTick()
@@ -334,16 +331,15 @@ private fun DynamicColorPickerButton(
 
     ToggleButton(
         shapes = shapes,
-        colors = ToggleButtonDefaults.toggleButtonColors(
+        colors = ToggleButtonDefaults.colors(
             containerColor = colorScheme.secondaryContainer,
             contentColor = colorScheme.onSecondaryContainer,
             checkedContainerColor = colorScheme.primary,
             checkedContentColor = colorScheme.onPrimary
         ),
+        buttonSize = ToggleButtonSize.Small,
         enabled = enabled,
-        modifier = modifier
-            .height(40.dp)
-            .widthIn(min = 40.dp),
+        modifier = modifier.widthIn(min = 40.dp),
         checked = checked,
         onCheckedChange = {
             if (!checked) haptic.performSegmentTick()

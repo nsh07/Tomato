@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.settingsScreen.viewModel
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -57,7 +56,6 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.utils.logError
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalMaterial3Api::class)
 class SettingsViewModel(
     billingManager: BillingManager,
     private val preferenceRepository: PreferenceRepository,
@@ -139,6 +137,7 @@ class SettingsViewModel(
                 SettingsKey.VIBRATE_ENABLED,
                 action.enabled
             )
+
             is SettingsAction.SaveDndEnabled -> saveDndEnabled(action.enabled)
             is SettingsAction.SaveMediaVolumeForAlarm -> saveSetting(
                 SettingsKey.MEDIA_VOLUME_FOR_ALARM,
@@ -149,6 +148,7 @@ class SettingsViewModel(
                 SettingsKey.SINGLE_PROGRESS_BAR,
                 action.enabled
             )
+
             is SettingsAction.SaveAutostartNextSession -> saveAutostartNextSession(action.enabled)
             is SettingsAction.SaveSecureAod -> saveSetting(SettingsKey.SECURE_AOD, action.enabled)
             is SettingsAction.SaveColorScheme ->

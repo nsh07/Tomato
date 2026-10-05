@@ -18,7 +18,6 @@
 package org.nsh07.pomodoro.ui.settingsScreen.components
 
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
@@ -37,7 +36,6 @@ import tomato.shared.generated.resources.arrow_forward_big
 import tomato.shared.generated.resources.get_plus
 import tomato.shared.generated.resources.tomato_logo_notification
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PlusPromo(modifier: Modifier = Modifier) {
     val isPlus = LocalIsPlus.current

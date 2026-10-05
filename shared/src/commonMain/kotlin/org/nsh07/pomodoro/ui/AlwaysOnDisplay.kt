@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -73,7 +72,6 @@ import kotlin.time.Duration.Companion.milliseconds
  * root [TimerScreen] composable
  * @param progress lambda that returns the current progress of the clock
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SharedTransitionScope.AlwaysOnDisplay(
     timerState: TimerState,
@@ -232,7 +230,6 @@ fun SharedTransitionScope.AlwaysOnDisplay(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview
 @Composable
 private fun AlwaysOnDisplayPreview() {

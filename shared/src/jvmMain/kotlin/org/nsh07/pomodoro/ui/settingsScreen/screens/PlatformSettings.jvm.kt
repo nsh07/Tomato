@@ -19,7 +19,6 @@ package org.nsh07.pomodoro.ui.settingsScreen.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Switch
@@ -45,7 +44,6 @@ import tomato.shared.generated.resources.advanced
 import tomato.shared.generated.resources.arrow_down
 import tomato.shared.generated.resources.check
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 actual fun PlatformSettings() {
     val viewModel: PlatformSettingsViewModel = koinViewModel()

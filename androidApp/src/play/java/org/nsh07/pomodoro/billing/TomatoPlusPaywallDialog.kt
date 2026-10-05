@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -18,7 +18,6 @@
 package org.nsh07.pomodoro.billing
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -34,7 +33,6 @@ import com.revenuecat.purchases.ui.revenuecatui.customercenter.CustomerCenter
 import org.nsh07.pomodoro.R
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TomatoPlusPaywallDialog(
     isPlus: Boolean,

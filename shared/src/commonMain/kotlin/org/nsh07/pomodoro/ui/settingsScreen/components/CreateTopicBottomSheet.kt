@@ -42,7 +42,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -92,7 +91,7 @@ import tomato.shared.generated.resources.next
 
 private enum class CreateTopicStep { Appearance, Timer }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateTopicBottomSheet(
     topics: List<Topic>,
@@ -205,10 +204,7 @@ fun CreateTopicBottomSheet(
     }
 }
 
-@OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalFoundationStyleApi::class
-)
+@OptIn(ExperimentalFoundationStyleApi::class)
 @Composable
 private fun CreateTopicSheetContent(
     step: CreateTopicStep,
@@ -395,7 +391,6 @@ private fun CreateTopicSheetContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview(widthDp = 412, heightDp = 600)
 @Composable
 private fun CreateTopicSheetContentPreview() {

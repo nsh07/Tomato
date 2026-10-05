@@ -18,7 +18,6 @@
 package org.nsh07.pomodoro.di
 
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.SegmentedListItem
@@ -39,7 +38,6 @@ import tomato.shared.generated.resources.help_with_translation_desc
 import tomato.shared.generated.resources.open_in_browser
 import tomato.shared.generated.resources.weblate
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TopButton(modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current
@@ -62,7 +60,6 @@ fun TopButton(modifier: Modifier = Modifier) {
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun BottomButton(modifier: Modifier = Modifier) {
     val uriHandler = LocalUriHandler.current

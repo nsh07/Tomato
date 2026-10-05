@@ -24,7 +24,6 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.scaleToBounds
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -32,7 +31,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun Modifier.sharedBoundsReveal(
     sharedContentState: SharedTransitionScope.SharedContentState,

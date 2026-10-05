@@ -28,8 +28,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Scaffold
@@ -77,7 +75,6 @@ import tomato.shared.generated.resources.reset_data
 import tomato.shared.generated.resources.restore
 import tomato.shared.generated.resources.settings
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingsMainScreen(
     settingsState: SettingsState,
@@ -245,7 +242,6 @@ fun SettingsMainScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Preview
 @Composable
 private fun SettingsMainScreenPreview() {

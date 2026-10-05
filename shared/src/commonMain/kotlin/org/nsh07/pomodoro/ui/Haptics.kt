@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -71,7 +70,6 @@ fun <T> rememberSliderTickHaptics(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SliderTickHaptics(state: SliderState, frequent: Boolean = false) {
     val haptic = LocalHapticFeedback.current

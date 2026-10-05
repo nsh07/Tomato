@@ -55,8 +55,6 @@ import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilledTonalIconToggleButton
@@ -68,6 +66,7 @@ import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDropdownMenuItem
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -76,7 +75,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -150,11 +148,6 @@ import tomato.shared.generated.resources.topic_settings
 import tomato.shared.generated.resources.undo
 import tomato.shared.generated.resources.up_next
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalMaterial3AdaptiveApi::class
-)
 @Composable
 fun SharedTransitionScope.TimerMainPane(
     timerState: TimerState,
@@ -303,9 +296,9 @@ fun SharedTransitionScope.TimerMainPane(
                     ) {
                         DropdownMenuGroup(shapes = MenuDefaults.groupShape(0, 2)) {
                             topics.fastForEachIndexed { index, topic ->
-                                DropdownMenuItem(
-                                    checked = topic.id == currentTopic.id,
-                                    onCheckedChange = {
+                                SelectableDropdownMenuItem(
+                                    selected = topic.id == currentTopic.id,
+                                    onClick = {
                                         expanded = false
                                         if (canSwitchTopic) onAction(TimerAction.SetTopic(topic))
                                     },

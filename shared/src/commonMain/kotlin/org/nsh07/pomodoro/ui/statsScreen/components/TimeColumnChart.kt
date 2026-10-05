@@ -20,7 +20,6 @@ package org.nsh07.pomodoro.ui.statsScreen.components
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.shapes
@@ -68,7 +67,6 @@ import org.nsh07.pomodoro.utils.millisecondsToHours
 import org.nsh07.pomodoro.utils.millisecondsToHoursMinutes
 import org.nsh07.pomodoro.utils.millisecondsToMinutes
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TimeColumnChart(
     modelProducer: CartesianChartModelProducer,

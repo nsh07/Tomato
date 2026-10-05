@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.statsScreen
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
@@ -73,7 +72,7 @@ import tomato.shared.generated.resources.minutes_format
 import tomato.shared.generated.resources.query_stats
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3AdaptiveApi::class)
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun StatsScreenRoot(
     contentPadding: PaddingValues,

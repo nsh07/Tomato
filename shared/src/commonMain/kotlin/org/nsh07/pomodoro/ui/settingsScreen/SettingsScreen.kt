@@ -24,8 +24,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy.Companion.detailPane
@@ -58,10 +56,7 @@ import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.settings_filled
 
 
-@OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class,
-    ExperimentalMaterial3ExpressiveApi::class
-)
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun SettingsScreenRoot(
     contentPadding: PaddingValues,

@@ -18,7 +18,6 @@
 package org.nsh07.pomodoro.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.darkColorScheme
@@ -136,7 +135,6 @@ expect fun TomatoTheme(
  *
  * Color scheme changes are animated, so switching between topics cross-fades the whole subtree.
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SeededTheme(
     seedColor: Color,

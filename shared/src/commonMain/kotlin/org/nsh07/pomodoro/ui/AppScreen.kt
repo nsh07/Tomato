@@ -39,14 +39,12 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
 import androidx.compose.material3.FloatingToolbarExitDirection
@@ -60,6 +58,8 @@ import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.ToggleButtonShapes
+import androidx.compose.material3.ToggleButtonSize
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
@@ -78,7 +78,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
@@ -113,7 +112,7 @@ import tomato.shared.generated.resources.timer
 import tomato.shared.generated.resources.timer_filled
 import tomato.shared.generated.resources.timer_outlined
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppScreen(
     isAODEnabled: Boolean,
@@ -259,18 +258,18 @@ fun AppScreen(
                                             } else {
                                                 { item.onNavigateHome() }
                                             },
-                                            colors = ToggleButtonDefaults.toggleButtonColors(
+                                            buttonSize = ToggleButtonSize.Medium,
+                                            colors = ToggleButtonDefaults.colors(
                                                 containerColor = primaryContainer,
                                                 contentColor = onPrimaryContainer,
                                                 checkedContainerColor = primary,
                                                 checkedContentColor = onPrimary
                                             ),
-                                            shapes = ToggleButtonDefaults.shapes(
+                                            shapes = ToggleButtonShapes(
                                                 CircleShape,
                                                 CircleShape,
                                                 CircleShape
-                                            ),
-                                            modifier = Modifier.height(56.dp)
+                                            )
                                         ) {
                                             Row(verticalAlignment = Alignment.CenterVertically) {
                                                 Crossfade(selected) {

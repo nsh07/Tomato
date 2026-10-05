@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
@@ -53,8 +52,6 @@ import tomato.shared.generated.resources.light_mode
 import tomato.shared.generated.resources.system_default
 import tomato.shared.generated.resources.theme
 
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ThemePickerListItem(
     theme: String,

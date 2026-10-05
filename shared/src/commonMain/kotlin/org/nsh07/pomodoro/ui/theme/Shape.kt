@@ -19,7 +19,6 @@ package org.nsh07.pomodoro.ui.theme
 
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme.shapes
@@ -27,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 
 object TomatoShapeDefaults {
-    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     val topListItemShape: RoundedCornerShape
         @Composable get() =
             RoundedCornerShape(
@@ -40,7 +38,6 @@ object TomatoShapeDefaults {
     val middleListItemShape: RoundedCornerShape
         @Composable get() = RoundedCornerShape(shapes.extraSmall.topStart)
 
-    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     val bottomListItemShape: RoundedCornerShape
         @Composable get() =
             RoundedCornerShape(
@@ -50,11 +47,9 @@ object TomatoShapeDefaults {
                 bottomEnd = shapes.large.bottomEnd
             )
 
-    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     val cardShape: CornerBasedShape
         @Composable get() = shapes.large
 
-    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
     fun segmentedListItemShapes(
         index: Int,

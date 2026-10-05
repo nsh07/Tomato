@@ -27,15 +27,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
@@ -49,6 +45,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.ToggleButtonSize
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -106,10 +103,6 @@ import tomato.shared.generated.resources.timer_settings_reset_info
 
 private enum class TopicTimerTip { INFINITE_FOCUS, RESET }
 
-@OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalFoundationStyleApi::class
-)
 @Composable
 fun TopicTimerSettings(
     topic: Topic,
@@ -231,7 +224,6 @@ fun TopicTimerSettings(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TopicTimerProperties(
     topicId: Long,
@@ -444,16 +436,14 @@ fun TopicTimerProperties(
                         checked = showDeleteDialog,
                         onCheckedChange = setShowDeleteDialog,
                         enabled = !topicRunning,
-                        shapes = ToggleButtonDefaults.shapes(),
-                        colors = ToggleButtonDefaults.toggleButtonColors(
+                        buttonSize = ToggleButtonSize.Medium,
+                        colors = ToggleButtonDefaults.colors(
                             containerColor = colorScheme.errorContainer,
                             contentColor = colorScheme.onErrorContainer,
                             checkedContainerColor = colorScheme.error,
                             checkedContentColor = colorScheme.onError
                         ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(
                             painterResource(Res.drawable.delete),
@@ -481,16 +471,14 @@ private fun TopicShapeColorPickerButton(
     ToggleButton(
         checked = showColorShapeSheet,
         onCheckedChange = onShowColorShapeSheet,
-        shapes = ToggleButtonDefaults.shapes(),
-        colors = ToggleButtonDefaults.toggleButtonColors(
+        buttonSize = ToggleButtonSize.Medium,
+        colors = ToggleButtonDefaults.colors(
             containerColor = colorScheme.tertiaryContainer,
             contentColor = colorScheme.onTertiaryContainer,
             checkedContainerColor = colorScheme.tertiary,
             checkedContentColor = colorScheme.onTertiary
         ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
         Icon(
             painterResource(Res.drawable.style),
@@ -502,7 +490,6 @@ private fun TopicShapeColorPickerButton(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun TopicTimerSettingsPreview() {
@@ -520,7 +507,6 @@ fun TopicTimerSettingsPreview() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun TopicTimerSettingsDarkPreview() {

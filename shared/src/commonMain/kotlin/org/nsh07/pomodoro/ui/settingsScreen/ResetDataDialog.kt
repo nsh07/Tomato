@@ -31,8 +31,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
@@ -58,7 +56,6 @@ import tomato.shared.generated.resources.reset_data_dialog_text
 import tomato.shared.generated.resources.reset_data_dialog_title
 import tomato.shared.generated.resources.restart
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ResetDataDialog(
     modifier: Modifier = Modifier,

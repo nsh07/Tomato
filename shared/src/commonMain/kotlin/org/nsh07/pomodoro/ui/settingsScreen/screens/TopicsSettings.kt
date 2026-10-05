@@ -49,7 +49,6 @@ import androidx.compose.foundation.style.animate
 import androidx.compose.foundation.style.size
 import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -134,7 +133,7 @@ fun StyleScope.selected(block: () -> Unit) {
     state(selectedKey, block) { key, state -> state[key] }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TopicsSettings(
     topics: List<Topic>,

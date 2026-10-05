@@ -30,7 +30,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
@@ -71,7 +70,6 @@ val HORIZONTAL_STACKED_BAR_HEIGHT = 40.dp
  * @param height Height of the bar
  * @param gap Gap between each part of the bar
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HorizontalStackedBar(
     values: List<Long>,

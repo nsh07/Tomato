@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.theme
 
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LocalRippleThemeConfiguration
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MotionScheme
@@ -28,7 +27,6 @@ import androidx.compose.ui.graphics.Color
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicColorScheme
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 actual fun TomatoTheme(
     darkTheme: Boolean,
@@ -63,7 +61,7 @@ actual fun TomatoTheme(
         LocalDarkTheme provides darkTheme,
         LocalBlackTheme provides (blackTheme && darkTheme),
         LocalRippleThemeConfiguration provides
-                RippleDefaults.InsetFocusRingRippleThemeConfiguration
+                RippleDefaults.InsetFocusRingThemeConfiguration
     ) {
         MaterialExpressiveTheme(
             colorScheme = scheme,

@@ -37,8 +37,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
@@ -129,7 +127,6 @@ import tomato.shared.generated.resources.settings
 import tomato.shared.generated.resources.timer
 import tomato.shared.generated.resources.view_day
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TimerSettings(
     sessionActive: Boolean,
@@ -197,7 +194,7 @@ fun TimerSettings(
             Scaffold(
                 topBar = {
                     Column {
-                        val colors = ToggleButtonDefaults.toggleButtonColors(
+                        val colors = ToggleButtonDefaults.colors(
                             containerColor = listItemColors.containerColor,
                             checkedContainerColor = colorScheme.secondaryContainer,
                             checkedContentColor = colorScheme.onSecondaryContainer
@@ -528,7 +525,6 @@ fun TimerSettings(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun TimerSettingsPreview() {

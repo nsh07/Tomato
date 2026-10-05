@@ -17,7 +17,6 @@
 
 package org.nsh07.pomodoro.ui.theme
 
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -123,7 +122,6 @@ object CustomColors {
                 scrolledContainerColor = if (!black) colorScheme.surfaceContainerLow else colorScheme.surface
             )
 
-    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     val listItemColors: ListItemColors
         @Composable get() =
             ListItemDefaults.segmentedColors(

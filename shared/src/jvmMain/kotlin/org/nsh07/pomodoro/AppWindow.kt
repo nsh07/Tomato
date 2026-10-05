@@ -24,7 +24,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.runtime.Composable
@@ -59,7 +58,6 @@ import tomato.shared.generated.resources.Res
 import tomato.shared.generated.resources.app_name
 import tomato.shared.generated.resources.logo
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ApplicationScope.AppWindow(
     settingsViewModel: SettingsViewModel = koinInject(),

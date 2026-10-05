@@ -32,7 +32,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
@@ -91,7 +90,6 @@ val CALENDAR_INTERNAL_PADDING = 20.dp
  * @param horizontalGap The horizontal spacing between calendar cells.
  * @param verticalGap The vertical spacing between calendar rows.
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FocusHistoryCalendar(
     data: List<Stat?>,

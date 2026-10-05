@@ -90,7 +90,6 @@ fun TopicShapeColorBottomSheet(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun TopicShapeColorBottomSheetPreview() {

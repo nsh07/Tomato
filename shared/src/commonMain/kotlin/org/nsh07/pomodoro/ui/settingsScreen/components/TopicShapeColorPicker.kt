@@ -33,7 +33,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonGroup
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
@@ -89,7 +88,7 @@ private val shapeGridRows = TopicShape.entries.chunked(shapeGridColumns)
 /** The number of trailing shape grid rows that are only available to Tomato Plus users. */
 private const val plusShapeGridRows = 2
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, FlowPreview::class)
+@OptIn(FlowPreview::class)
 @Composable
 fun TopicShapeColorPicker(
     name: String,
@@ -240,7 +239,6 @@ fun TopicShapeColorPicker(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun TopicShapeButton(
     topicShape: TopicShape,

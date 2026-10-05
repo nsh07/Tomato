@@ -26,8 +26,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -53,7 +51,6 @@ import tomato.shared.generated.resources.stop_alarm
 import tomato.shared.generated.resources.stop_alarm_dialog_text
 import tomato.shared.generated.resources.stop_alarm_question
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AlarmDialog(
     modifier: Modifier = Modifier,

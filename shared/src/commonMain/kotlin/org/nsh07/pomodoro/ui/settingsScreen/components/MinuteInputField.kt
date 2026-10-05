@@ -30,7 +30,6 @@ import androidx.compose.foundation.style.rememberUpdatedStyleState
 import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -49,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.nsh07.pomodoro.ui.theme.CustomColors.listItemColors
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalFoundationStyleApi::class)
+@OptIn(ExperimentalFoundationStyleApi::class)
 @Composable
 fun MinuteInputField(
     minutes: String,

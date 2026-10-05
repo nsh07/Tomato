@@ -20,7 +20,6 @@ package org.nsh07.pomodoro.ui.timerScreen
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.Surface
 import androidx.compose.material3.VerticalDragHandle
@@ -47,10 +46,7 @@ import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerAction
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3AdaptiveApi::class
-)
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun SharedTransitionScope.TimerScreen(
     timerState: TimerState,

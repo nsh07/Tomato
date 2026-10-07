@@ -173,4 +173,6 @@
     <string name="chartreuse">Amarillo verdoso</string>
     <string name="yellow">Amarillo</string>
     <string name="orange">Naranja</string>
+    <string name="shape">Figura</string>
+    <string name="topic_name_empty">El nombre de la temática no puede estar vacío</string>
 </resources>

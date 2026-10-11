@@ -230,35 +230,37 @@ fun ColorPickerRow(
     backgroundColor: Color = animateColorAsState(listItemColors.containerColor).value,
     horizontalPadding: Dp = 48.dp
 ) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
-        contentPadding = PaddingValues(horizontal = horizontalPadding),
-        userScrollEnabled = enabled,
-        modifier = modifier
-            .background(
-                backgroundColor,
-                shape = shapes.extraSmall.copy(topStart = CornerSize(0), topEnd = CornerSize(0))
-            )
-            .padding(bottom = 8.dp)
-    ) {
-        item {
-            DynamicColorPickerButton(
-                shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
-                checked = color == Color.White,
-                enabled = enabled,
-                onClick = { onColorChange(Color.White) }
-            )
-        }
-        itemsIndexed(colorSchemes) { index, it ->
-            ColorPickerButton(
-                items = colorSchemes.size + 1,
-                index = index + 1,
-                color = it.color,
-                colorName = it.name,
-                checked = it.color == color,
-                enabled = enabled
-            ) {
-                onColorChange(it.color)
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            contentPadding = PaddingValues(horizontal = horizontalPadding),
+            userScrollEnabled = enabled,
+            modifier = modifier
+                .background(
+                    backgroundColor,
+                    shape = shapes.extraSmall.copy(topStart = CornerSize(0), topEnd = CornerSize(0))
+                )
+                .padding(bottom = 8.dp)
+        ) {
+            item {
+                DynamicColorPickerButton(
+                    shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
+                    checked = color == Color.White,
+                    enabled = enabled,
+                    onClick = { onColorChange(Color.White) }
+                )
+            }
+            itemsIndexed(colorSchemes) { index, it ->
+                ColorPickerButton(
+                    items = colorSchemes.size + 1,
+                    index = index + 1,
+                    color = it.color,
+                    colorName = it.name,
+                    checked = it.color == color,
+                    enabled = enabled
+                ) {
+                    onColorChange(it.color)
+                }
             }
         }
     }
@@ -277,41 +279,39 @@ private fun ColorPickerButton(
 ) {
     val haptic = LocalHapticFeedback.current
 
-    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-        SeededTheme(color) {
-            ToggleButton(
-                shapes = when (index) {
-                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                    items - 1 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                },
-                colors = ToggleButtonDefaults.colors(
-                    containerColor = colorScheme.primaryContainer,
-                    checkedContainerColor = colorScheme.primary,
-                    checkedContentColor = colorScheme.onPrimary
-                ),
-                buttonSize = ToggleButtonSize.Small,
-                enabled = enabled,
-                modifier = modifier.widthIn(min = 40.dp),
-                checked = checked,
-                onCheckedChange = {
-                    if (!checked) haptic.performSegmentTick()
-                    onClick()
-                }
-            ) {
-                AnimatedContent(checked) { checked ->
-                    if (checked) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Icon(
-                                painterResource(Res.drawable.check),
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Text(
-                                stringResource(colorName),
-                                style = typography.labelLarge
-                            )
-                        }
+    SeededTheme(color) {
+        ToggleButton(
+            shapes = when (index) {
+                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                items - 1 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+            },
+            colors = ToggleButtonDefaults.colors(
+                containerColor = colorScheme.primaryContainer,
+                checkedContainerColor = colorScheme.primary,
+                checkedContentColor = colorScheme.onPrimary
+            ),
+            buttonSize = ToggleButtonSize.Small,
+            enabled = enabled,
+            modifier = modifier.widthIn(min = 40.dp),
+            checked = checked,
+            onCheckedChange = {
+                if (!checked) haptic.performSegmentTick()
+                onClick()
+            }
+        ) {
+            AnimatedContent(checked) { checked ->
+                if (checked) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Icon(
+                            painterResource(Res.drawable.check),
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(
+                            stringResource(colorName),
+                            style = typography.labelLarge
+                        )
                     }
                 }
             }
@@ -339,7 +339,7 @@ private fun DynamicColorPickerButton(
         ),
         buttonSize = ToggleButtonSize.Small,
         enabled = enabled,
-        modifier = modifier.widthIn(min = 40.dp),
+        modifier = modifier,
         checked = checked,
         onCheckedChange = {
             if (!checked) haptic.performSegmentTick()

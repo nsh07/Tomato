@@ -18,7 +18,6 @@
 package org.nsh07.pomodoro.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandHorizontally
@@ -39,6 +38,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
@@ -59,7 +59,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.ToggleButtonShapes
-import androidx.compose.material3.ToggleButtonSize
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
@@ -78,6 +77,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
@@ -258,7 +258,6 @@ fun AppScreen(
                                             } else {
                                                 { item.onNavigateHome() }
                                             },
-                                            buttonSize = ToggleButtonSize.Medium,
                                             colors = ToggleButtonDefaults.colors(
                                                 containerColor = primaryContainer,
                                                 contentColor = onPrimaryContainer,
@@ -269,19 +268,14 @@ fun AppScreen(
                                                 CircleShape,
                                                 CircleShape,
                                                 CircleShape
-                                            )
+                                            ),
+                                            modifier = Modifier.height(56.dp)
                                         ) {
                                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                                Crossfade(selected) {
-                                                    if (it) Icon(
-                                                        painterResource(item.selectedIcon),
-                                                        stringResource(item.label)
-                                                    )
-                                                    else Icon(
-                                                        painterResource(item.unselectedIcon),
-                                                        stringResource(item.label)
-                                                    )
-                                                }
+                                                Icon(
+                                                    painterResource(if (selected) item.selectedIcon else item.unselectedIcon),
+                                                    stringResource(item.label)
+                                                )
                                                 AnimatedVisibility(
                                                     visible = selected || wide,
                                                     enter = expandHorizontally(motionScheme.defaultSpatialSpec()),

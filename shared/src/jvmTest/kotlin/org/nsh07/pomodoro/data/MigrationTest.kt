@@ -17,12 +17,13 @@
 
 package org.nsh07.pomodoro.data
 
-import androidx.room.testing.MigrationTestHelper
+import androidx.room3.testing.MigrationTestHelper
 import androidx.sqlite.SQLITE_DATA_NULL
 import androidx.sqlite.SQLITE_DATA_TEXT
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.sqlite.execSQL
+import kotlinx.coroutines.runBlocking
 import org.nsh07.pomodoro.data.Topic.Companion.DEFAULT_TOPIC_ID
 import java.nio.file.Files
 import java.nio.file.Path
@@ -53,21 +54,22 @@ class MigrationTest {
     }
 
     @Test
-    fun `migrating 2 to 3 matches the exported schema`() {
+    fun `migrating 2 to 3 matches the exported schema`(): Unit = runBlocking {
         helper.createDatabase(2).close()
 
         helper.runMigrationsAndValidate(3, listOf(MIGRATION_2_3)).close()
     }
 
     @Test
-    fun `migrating 1 to 3 matches the exported schema`() {
+    fun `migrating 1 to 3 matches the exported schema`(): Unit = runBlocking {
         helper.createDatabase(1).close()
 
         helper.runMigrationsAndValidate(3, listOf(MIGRATION_2_3)).close()
     }
 
     @Test
-    fun `migrating 2 to 3 seeds the default topic from the global preferences`() {
+    fun `migrating 2 to 3 seeds the default topic from the global preferences`(): Unit =
+        runBlocking {
         helper.createDatabase(2).use { db ->
             db.execSQL("INSERT INTO int_preference (key, value) VALUES ('focus_time', 1800000)")
             db.execSQL("INSERT INTO int_preference (key, value) VALUES ('short_break_time', 600000)")
@@ -104,7 +106,8 @@ class MigrationTest {
     }
 
     @Test
-    fun `migrating 2 to 3 falls back to the built-in defaults when no preferences exist`() {
+    fun `migrating 2 to 3 falls back to the built-in defaults when no preferences exist`(): Unit =
+        runBlocking {
         helper.createDatabase(2).close()
 
         helper.runMigrationsAndValidate(3, listOf(MIGRATION_2_3)).use { db ->
@@ -121,7 +124,7 @@ class MigrationTest {
     }
 
     @Test
-    fun `migrating 2 to 3 moves existing stats onto the default topic`() {
+    fun `migrating 2 to 3 moves existing stats onto the default topic`(): Unit = runBlocking {
         helper.createDatabase(2).use { db ->
             db.execSQL(
                 """
@@ -151,7 +154,7 @@ class MigrationTest {
     }
 
     @Test
-    fun `migrating 2 to 3 clears the preferences that moved onto the topic`() {
+    fun `migrating 2 to 3 clears the preferences that moved onto the topic`(): Unit = runBlocking {
         helper.createDatabase(2).use { db ->
             db.execSQL("INSERT INTO int_preference (key, value) VALUES ('focus_time', 1800000)")
             db.execSQL("INSERT INTO int_preference (key, value) VALUES ('session_length', 6)")
@@ -189,7 +192,7 @@ class MigrationTest {
     }
 
     @Test
-    fun `migrating 2 to 3 leaves stats cascading from their topic`() {
+    fun `migrating 2 to 3 leaves stats cascading from their topic`(): Unit = runBlocking {
         helper.createDatabase(2).use { db ->
             db.execSQL(
                 """
@@ -208,7 +211,7 @@ class MigrationTest {
     }
 
     @Test
-    fun `migrating 2 to 3 keeps topic names unique case-insensitively`() {
+    fun `migrating 2 to 3 keeps topic names unique case-insensitively`(): Unit = runBlocking {
         helper.createDatabase(2).close()
 
         helper.runMigrationsAndValidate(3, listOf(MIGRATION_2_3)).use { db ->

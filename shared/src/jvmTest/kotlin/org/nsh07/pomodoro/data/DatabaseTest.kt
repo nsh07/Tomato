@@ -18,7 +18,7 @@
 package org.nsh07.pomodoro.data
 
 import androidx.compose.ui.graphics.Color
-import androidx.room.Room
+import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlinx.coroutines.Dispatchers
 import java.nio.file.Files

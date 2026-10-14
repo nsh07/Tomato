@@ -18,7 +18,7 @@
 package org.nsh07.pomodoro.di
 
 import android.content.Context
-import androidx.room.Room
+import androidx.room3.Room
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.create

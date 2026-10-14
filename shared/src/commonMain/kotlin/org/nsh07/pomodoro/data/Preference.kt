@@ -17,8 +17,8 @@
 
 package org.nsh07.pomodoro.data
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 
 /**
  * Class for storing boolean preferences in the app's database

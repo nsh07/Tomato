@@ -18,28 +18,28 @@
 package org.nsh07.pomodoro.data
 
 import androidx.compose.ui.graphics.Color
-import androidx.room.TypeConverter
+import androidx.room3.ColumnTypeConverter
 import java.time.LocalDate
 
 object LocalDateConverter {
-    @TypeConverter
+    @ColumnTypeConverter
     fun localDateToString(localDate: LocalDate?): String? {
         return localDate?.toString()
     }
 
-    @TypeConverter
+    @ColumnTypeConverter
     fun stringToLocalDate(date: String?): LocalDate? {
         return if (date != null) LocalDate.parse(date) else null
     }
 }
 
 object ComposeColorConverter {
-    @TypeConverter
+    @ColumnTypeConverter
     fun fromColor(color: Color): Long {
         return color.value.toLong()
     }
 
-    @TypeConverter
+    @ColumnTypeConverter
     fun toColor(value: Long): Color {
         return Color(value.toULong())
     }

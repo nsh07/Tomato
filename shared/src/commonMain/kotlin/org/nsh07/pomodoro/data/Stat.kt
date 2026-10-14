@@ -18,9 +18,9 @@
 package org.nsh07.pomodoro.data
 
 import androidx.compose.runtime.Immutable
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
+import androidx.room3.Entity
+import androidx.room3.ForeignKey
+import androidx.room3.Index
 import java.time.LocalDate
 
 /**

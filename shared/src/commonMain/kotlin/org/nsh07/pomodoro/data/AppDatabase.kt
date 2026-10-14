@@ -17,10 +17,10 @@
 
 package org.nsh07.pomodoro.data
 
-import androidx.room.AutoMigration
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room3.AutoMigration
+import androidx.room3.ColumnTypeConverters
+import androidx.room3.Database
+import androidx.room3.RoomDatabase
 
 @Database(
     entities = [IntPreference::class, BooleanPreference::class, StringPreference::class, Stat::class, Topic::class],
@@ -29,7 +29,7 @@ import androidx.room.TypeConverters
         AutoMigration(from = 1, to = 2)
     ]
 )
-@TypeConverters(LocalDateConverter::class, ComposeColorConverter::class)
+@ColumnTypeConverters(LocalDateConverter::class, ComposeColorConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun preferenceDao(): PreferenceDao
     abstract fun statDao(): StatDao

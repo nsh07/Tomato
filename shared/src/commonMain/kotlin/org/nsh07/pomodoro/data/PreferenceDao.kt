@@ -17,10 +17,10 @@
 
 package org.nsh07.pomodoro.data
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy.Companion.REPLACE
-import androidx.room.Query
+import androidx.room3.Dao
+import androidx.room3.Insert
+import androidx.room3.OnConflictStrategy.Companion.REPLACE
+import androidx.room3.Query
 import kotlinx.coroutines.flow.Flow
 
 @Dao

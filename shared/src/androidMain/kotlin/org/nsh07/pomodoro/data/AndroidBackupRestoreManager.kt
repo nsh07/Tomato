@@ -21,7 +21,7 @@ import android.content.Context
 import android.content.Intent
 import android.provider.DocumentsContract
 import androidx.core.net.toUri
-import androidx.room.RoomRawQuery
+import androidx.room3.RoomRawQuery
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.path
 import kotlinx.coroutines.Dispatchers

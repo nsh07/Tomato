@@ -18,13 +18,13 @@
 package org.nsh07.pomodoro.data
 
 import androidx.compose.ui.graphics.Color
-import androidx.room.migration.Migration
+import androidx.room3.migration.Migration
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
 import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 
 val MIGRATION_2_3 = object : Migration(2, 3) {
-    override fun migrate(connection: SQLiteConnection) {
+    override suspend fun migrate(connection: SQLiteConnection) {
         connection.execSQL(
             """
             CREATE TABLE IF NOT EXISTS `topic` (

@@ -17,7 +17,7 @@
 
 package org.nsh07.pomodoro.data
 
-import androidx.room.RoomRawQuery
+import androidx.room3.RoomRawQuery
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.databasesDir

@@ -17,7 +17,7 @@
 
 package org.nsh07.pomodoro.data
 
-import androidx.room.RoomDatabase
+import androidx.room3.RoomDatabase
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
 import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
@@ -26,7 +26,7 @@ import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
  * Writes [defaultTopic] into a freshly created database
  */
 object SeedDefaultTopicCallback : RoomDatabase.Callback() {
-    override fun onCreate(connection: SQLiteConnection) {
+    override suspend fun onCreate(connection: SQLiteConnection) {
         super.onCreate(connection)
         connection.execSQL(
             """

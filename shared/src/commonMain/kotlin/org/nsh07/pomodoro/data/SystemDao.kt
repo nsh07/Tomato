@@ -17,9 +17,9 @@
 
 package org.nsh07.pomodoro.data
 
-import androidx.room.Dao
-import androidx.room.RawQuery
-import androidx.room.RoomRawQuery
+import androidx.room3.Dao
+import androidx.room3.RawQuery
+import androidx.room3.RoomRawQuery
 
 @Dao
 interface SystemDao {

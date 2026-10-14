@@ -165,8 +165,8 @@ fun SharedTransitionScope.AlwaysOnDisplay(
                             .size(250.dp),
                         color = primary,
                         trackColor = secondaryContainer,
-                        strokeWidth = 12.dp,
-                        gapSize = 8.dp,
+                        strokeWidth = 8.dp,
+                        gapSize = 4.dp,
                     )
                 } else {
                     CircularWavyProgressIndicator(
@@ -183,18 +183,18 @@ fun SharedTransitionScope.AlwaysOnDisplay(
                         trackColor = secondaryContainer,
                         stroke = Stroke(
                             width = with(LocalDensity.current) {
-                                12.dp.toPx()
+                                8.dp.toPx()
                             },
                             cap = StrokeCap.Round,
                         ),
                         trackStroke = Stroke(
                             width = with(LocalDensity.current) {
-                                12.dp.toPx()
+                                8.dp.toPx()
                             },
                             cap = StrokeCap.Round,
                         ),
                         wavelength = 42.dp,
-                        gapSize = 8.dp
+                        gapSize = 4.dp
                     )
                 }
             } else {

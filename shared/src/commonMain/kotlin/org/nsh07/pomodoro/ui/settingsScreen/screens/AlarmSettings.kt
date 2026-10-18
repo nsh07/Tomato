@@ -359,7 +359,7 @@ fun AlarmSettings(
                         val interactionSources = remember { List(2) { MutableInteractionSource() } }
 
                         ListItem(
-                            headlineContent = { Text(stringResource(Res.string.vibration_pattern)) },
+                            modifier = Modifier.clip(topListItemShape),
                             trailingContent = {
                                 ButtonGroup(
                                     overflowIndicator = {},
@@ -432,9 +432,8 @@ fun AlarmSettings(
                                     )
                                 }
                             },
-                            colors = listItemColors,
-                            modifier = Modifier.clip(topListItemShape)
-                        )
+                            colors = listItemColors
+                        ) { Text(stringResource(Res.string.vibration_pattern)) }
                     }
                     item {
                         SliderListItem(

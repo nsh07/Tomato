@@ -170,11 +170,6 @@ fun AppScreen(
         LocalIsPlus provides isPlus,
         LocalSetShowPaywall provides setShowPaywall
     ) {
-        if (uiState.alarmRinging)
-            AlarmDialog {
-                timerViewModel.onAction(TimerAction.StopAlarm)
-            }
-
         Scaffold(
             contentWindowInsets = LocalContentWindowInsets.current(),
             bottomBar = {
@@ -391,6 +386,16 @@ fun AppScreen(
                         }
                     }
                 )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = uiState.alarmRinging,
+            enter = fadeIn(motionScheme.defaultEffectsSpec()) + slideInVertically(motionScheme.slowSpatialSpec()) { -it },
+            exit = fadeOut(motionScheme.defaultEffectsSpec()) + slideOutVertically(motionScheme.slowSpatialSpec()) { -it }
+        ) {
+            AlarmDialog {
+                timerViewModel.onAction(TimerAction.StopAlarm)
             }
         }
 

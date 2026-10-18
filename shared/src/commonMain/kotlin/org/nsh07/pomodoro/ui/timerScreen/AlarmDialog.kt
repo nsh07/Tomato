@@ -20,10 +20,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -39,8 +42,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.nsh07.pomodoro.ui.performConfirm
@@ -62,47 +63,41 @@ fun AlarmDialog(
         stopAlarm()
     }
 
-    Dialog(
-        onDismissRequest = stopAlarmWithHaptics,
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false
-        )
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxSize()
+            .background(colorScheme.primaryContainer)
+            .clickable(onClick = stopAlarmWithHaptics)
+            .windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = modifier
-                .fillMaxSize()
-                .background(colorScheme.primaryContainer)
-                .clickable(onClick = stopAlarmWithHaptics)
-        ) {
-            CompositionLocalProvider(LocalContentColor provides colorScheme.onPrimaryContainer) {
-                Column(modifier = Modifier.padding(24.dp)) {
-                    Icon(
-                        painter = painterResource(Res.drawable.alarm),
-                        contentDescription = stringResource(Res.string.alarm),
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .size(40.dp)
-                    )
-                    Spacer(Modifier.height(16.dp))
-                    Text(
-                        text = stringResource(Res.string.stop_alarm_question),
-                        style = typography.headlineSmall,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(Modifier.height(16.dp))
-                    Text(
-                        text = stringResource(Res.string.stop_alarm_dialog_text),
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Button(
-                        onClick = stopAlarmWithHaptics,
-                        shapes = ButtonDefaults.shapes(),
-                        modifier = Modifier.align(Alignment.End),
-                    ) {
-                        Text(stringResource(Res.string.stop_alarm))
-                    }
+        CompositionLocalProvider(LocalContentColor provides colorScheme.onPrimaryContainer) {
+            Column(modifier = Modifier.padding(24.dp)) {
+                Icon(
+                    painter = painterResource(Res.drawable.alarm),
+                    contentDescription = stringResource(Res.string.alarm),
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .size(40.dp)
+                )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = stringResource(Res.string.stop_alarm_question),
+                    style = typography.headlineSmall,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = stringResource(Res.string.stop_alarm_dialog_text),
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = stopAlarmWithHaptics,
+                    shapes = ButtonDefaults.shapes(),
+                    modifier = Modifier.align(Alignment.End),
+                ) {
+                    Text(stringResource(Res.string.stop_alarm))
                 }
             }
         }

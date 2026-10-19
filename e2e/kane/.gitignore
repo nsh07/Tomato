@@ -1,0 +1,8 @@
+# The APK under test (download it from Releases or build it, see README)
+*.apk
+# Local Kane CLI run evidence
+.testmuai/
+# Files left by cloud (--remote) runs
+.hyperexecute/
+hyperexecute-cli.log
+.updatedhyperexecute.yaml

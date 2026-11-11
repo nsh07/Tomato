@@ -25,7 +25,8 @@ plugins {
 
 dependencies {
     implementation(project(":shared"))
-    implementation(compose.desktop.currentOs)
+    implementation(libs.compose.ui)
+    implementation(libs.androidx.material3)
 
     implementation(project.dependencies.platform(libs.koin.bom))
     implementation(libs.koin.core)

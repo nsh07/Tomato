@@ -530,8 +530,8 @@ fun TimerSettings(
 private fun TimerSettingsPreview() {
     val sessionsSliderState = rememberSliderState(
         value = 4f,
-        valueRange = 1f..10f,
-        steps = 8
+        steps = 8,
+        trackRange = 1f..10f,
     )
     TomatoTheme(dynamicColor = false) {
         Surface(Modifier.fillMaxSize()) {

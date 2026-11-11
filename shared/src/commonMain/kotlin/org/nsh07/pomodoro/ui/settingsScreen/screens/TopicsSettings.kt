@@ -468,7 +468,7 @@ fun TopicsSettingsPreview() {
             sessionActive = false,
             currentTopicId = editingTopic.id,
             minuteInputs = MinuteInputs("25", "5", "15"),
-            sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
+            sessionsSliderState = rememberSliderState(4f, steps = 8, trackRange = 1f..10f),
             contentPadding = PaddingValues(0.dp),
             onBack = {},
             onAction = { action ->
@@ -501,7 +501,7 @@ fun TopicsSettingsDarkPreview() {
             sessionActive = false,
             currentTopicId = editingTopic.id,
             minuteInputs = MinuteInputs("25", "5", "15"),
-            sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
+            sessionsSliderState = rememberSliderState(4f, steps = 8, trackRange = 1f..10f),
             contentPadding = PaddingValues(0.dp),
             onBack = {},
             onAction = { action ->

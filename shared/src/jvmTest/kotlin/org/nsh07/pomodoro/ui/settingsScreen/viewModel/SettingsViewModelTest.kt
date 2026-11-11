@@ -107,6 +107,18 @@ class SettingsViewModelTest {
     }
 
     @Test
+    fun `session length is updated on action`() = runBlocking {
+        awaitUntil("the restored topic to be edited") { viewModel.editingTopic.value == work }
+
+        viewModel.sessionsSliderState.value = 6f
+        viewModel.onAction(SettingsAction.UpdateSessionLength)
+
+        awaitUntil("the session length to be saved") {
+            topicRepository.getTopicById(work.id)?.sessionLength == 6
+        }
+    }
+
+    @Test
     fun `edits are debounced into a single write`() = runBlocking {
         awaitUntil("the restored topic to be edited") { viewModel.editingTopic.value == work }
 

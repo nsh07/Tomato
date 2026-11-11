@@ -117,7 +117,7 @@ fun CreateTopicBottomSheet(
     val sessionsSliderState = rememberSliderState(
         value = defaultTopic.sessionLength.toFloat(),
         steps = 8,
-        valueRange = 1f..10f
+        trackRange = 1f..10f,
     )
     var autostartNextSession by remember { mutableStateOf(defaultTopic.autostartNextSession) }
     var dndEnabled by remember { mutableStateOf(defaultTopic.dndEnabled) }
@@ -419,7 +419,7 @@ private fun CreateTopicSheetContentPreview() {
                     sessionsSliderState = rememberSliderState(
                         value = 4f,
                         steps = 8,
-                        valueRange = 1f..10f
+                        trackRange = 1f..10f
                     ),
                     autostartNextSession = autostartNextSession,
                     dndEnabled = dndEnabled,

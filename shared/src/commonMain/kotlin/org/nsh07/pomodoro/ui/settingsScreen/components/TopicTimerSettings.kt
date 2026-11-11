@@ -192,7 +192,8 @@ fun TopicTimerSettings(
             },
             onDndEnabledChange = { onAction(SettingsAction.SaveDndEnabled(it)) },
             onShowColorShapeSheet = { showColorShapeSheet = it },
-            setShowDeleteDialog = { showDeleteDialog = it }
+            setShowDeleteDialog = { showDeleteDialog = it },
+            onSessionLengthChangeFinished = { onAction(SettingsAction.UpdateSessionLength) }
         )
     }
 
@@ -241,7 +242,8 @@ fun TopicTimerProperties(
     showDeleteDialog: Boolean = false,
     onShowColorShapeSheet: (Boolean) -> Unit = {},
     setShowDeleteDialog: (Boolean) -> Unit = {},
-    showEditButtons: Boolean = true
+    showEditButtons: Boolean = true,
+    onSessionLengthChangeFinished: (() -> Unit)? = null
 ) {
     val requestDndPermissionCallback = rememberRequestDndPermissionCallback()
     val haptic = LocalHapticFeedback.current
@@ -342,6 +344,8 @@ fun TopicTimerProperties(
                 SliderTickHaptics(sessionsSliderState)
                 Slider(
                     state = sessionsSliderState,
+                    onValueChange = { sessionsSliderState.value = it },
+                    onValueChangeFinished = onSessionLengthChangeFinished,
                     enabled = !topicRunning,
                     modifier = Modifier
                         .padding(start = (16 * 2 + 24).dp, end = 16.dp, bottom = 12.dp)
@@ -500,7 +504,7 @@ fun TopicTimerSettingsPreview() {
                 topics = sampleTopics,
                 topicRunning = false,
                 minuteInputs = MinuteInputs("25", "5", "15"),
-                sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
+                sessionsSliderState = rememberSliderState(4f, steps = 8, trackRange = 1f..10f),
                 onAction = {}
             )
         }
@@ -517,7 +521,7 @@ fun TopicTimerSettingsDarkPreview() {
                 topics = sampleTopics,
                 topicRunning = false,
                 minuteInputs = MinuteInputs("25", "5", "15"),
-                sessionsSliderState = rememberSliderState(4f, valueRange = 1f..10f),
+                sessionsSliderState = rememberSliderState(4f, steps = 8, trackRange = 1f..10f),
                 onAction = {}
             )
         }

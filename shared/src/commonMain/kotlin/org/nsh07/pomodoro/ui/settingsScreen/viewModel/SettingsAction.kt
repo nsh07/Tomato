@@ -49,6 +49,7 @@ sealed interface SettingsAction {
     data class SetEditingTopicMinutes(val minutes: MinuteInputs) : SettingsAction
     data class SetEditingTopicColor(val color: Color) : SettingsAction
     data class SetEditingTopicShape(val shape: TopicShape) : SettingsAction
+    data object UpdateSessionLength : SettingsAction
 
     data object AskEraseData : SettingsAction
     data object CancelEraseData : SettingsAction

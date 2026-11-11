@@ -54,7 +54,11 @@ compose.resources {
 kotlin {
     android {
         namespace = "org.nsh07.pomodoro.shared"
-        compileSdk = libs.versions.app.targetSdk.get().toInt()
+        compileSdk {
+            version = release(libs.versions.app.targetSdk.get().toInt()) {
+                minorApiLevel = libs.versions.app.minorApiLevel.get().toInt()
+            }
+        }
         minSdk = libs.versions.app.minSdk.get().toInt()
 
         compilerOptions {
@@ -116,8 +120,6 @@ kotlin {
         }
 
         jvmMain.dependencies {
-            implementation(compose.desktop.currentOs)
-
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.androidx.sqlite.bundled)
 
@@ -126,8 +128,6 @@ kotlin {
             implementation(libs.jlayer.player) // MP3 playback
         }
 
-        // Room's MigrationTestHelper is device-instrumented on Android, so migration tests are
-        // JVM-only. The migration itself lives in commonMain and is platform independent.
         jvmTest.dependencies {
             implementation(libs.androidx.room.testing)
             implementation(libs.androidx.sqlite.bundled)

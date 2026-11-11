@@ -99,8 +99,7 @@ class SettingsViewModel(
         SliderState(
             value = _editingTopic.value.sessionLength.toFloat(),
             steps = 8,
-            valueRange = 1f..10f,
-            onValueChangeFinished = ::updateSessionLength
+            trackRange = 1f..10f
         )
     }
 
@@ -179,6 +178,7 @@ class SettingsViewModel(
             is SettingsAction.SetEditingTopicMinutes -> setEditingTopicMinutes(action.minutes)
             is SettingsAction.SetEditingTopicColor -> setEditingTopicColor(action.color)
             is SettingsAction.SetEditingTopicShape -> setEditingTopicShape(action.shape)
+            is SettingsAction.UpdateSessionLength -> updateSessionLength()
 
             is SettingsAction.AskEraseData -> askEraseData()
             is SettingsAction.CancelEraseData -> cancelEraseData()

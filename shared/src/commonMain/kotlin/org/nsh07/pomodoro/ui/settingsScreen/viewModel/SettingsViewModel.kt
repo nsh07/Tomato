@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import org.nsh07.pomodoro.billing.BillingManager
 import org.nsh07.pomodoro.data.PreferenceRepository
 import org.nsh07.pomodoro.data.StatRepository
@@ -202,16 +203,18 @@ class SettingsViewModel(
 
     private fun deleteTopic(topic: Topic, deleteStats: Boolean) {
         if (topic.id == Topic.DEFAULT_TOPIC_ID) return
-        viewModelScope.launch(Dispatchers.IO) {
-            if (deleteStats) topicRepository.deleteTopic(topic)
-            else topicRepository.deleteTopicMergingStats(topic, Topic.DEFAULT_TOPIC_ID)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                if (deleteStats) topicRepository.deleteTopic(topic)
+                else topicRepository.deleteTopicMergingStats(topic, Topic.DEFAULT_TOPIC_ID)
 
-            val fallback = topicRepository.getTopicById(Topic.DEFAULT_TOPIC_ID) ?: defaultTopic
+                val fallback = topicRepository.getTopicById(Topic.DEFAULT_TOPIC_ID) ?: defaultTopic
 
-            if (stateRepository.currentTopicId.value == topic.id) {
-                stateRepository.setTopic(fallback)
+                if (stateRepository.currentTopicId.value == topic.id) {
+                    stateRepository.setTopic(fallback)
+                }
+                if (_editingTopic.value.id == topic.id) setEditingTopic(fallback)
             }
-            if (_editingTopic.value.id == topic.id) setEditingTopic(fallback)
         }
     }
 
@@ -236,7 +239,10 @@ class SettingsViewModel(
             val topic = _editingTopic.updateAndGet(transform)
             if (topic == previous) return
 
-            if (!topicRepository.updateTopic(topic)) {
+            val success = withContext(Dispatchers.IO) {
+                topicRepository.updateTopic(topic)
+            }
+            if (!success) {
                 // saving edit failed, roll back unless the topic being edited has since changed
                 _editingTopic.update { if (it == topic) previous else it }
             }
@@ -244,25 +250,25 @@ class SettingsViewModel(
     }
 
     private fun setEditingTopicName(name: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             editTopic { it.copy(name = name) }
         }
     }
 
     private fun setEditingTopicColor(color: Color) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             editTopic { it.copy(color = color) }
         }
     }
 
     private fun setEditingTopicShape(shape: TopicShape) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             editTopic { it.copy(shape = shape) }
         }
     }
 
     private fun cancelEraseData() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _settingsState.update { currentState ->
                 currentState.copy(isShowingEraseDataDialog = false)
             }
@@ -270,7 +276,7 @@ class SettingsViewModel(
     }
 
     private fun askEraseData() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _settingsState.update { currentState ->
                 currentState.copy(isShowingEraseDataDialog = true)
             }
@@ -278,18 +284,18 @@ class SettingsViewModel(
     }
 
     private fun updateSessionLength() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val value = sessionsSliderState.value.toInt()
-
             editTopic { it.copy(sessionLength = value) }
         }
     }
 
     private fun deleteStats() {
-        viewModelScope.launch(Dispatchers.IO) {
-
+        viewModelScope.launch {
             timerHelper.onAction(TimerAction.ResetTimer)
-            statRepository.deleteAllStats()
+            withContext(Dispatchers.IO) {
+                statRepository.deleteAllStats()
+            }
             _settingsState.update {
                 it.copy(isShowingEraseDataDialog = false)
             }
@@ -301,7 +307,7 @@ class SettingsViewModel(
         editingTopicChosen = true
         minuteInputs = minutes
         minutesWriteJob?.cancel()
-        minutesWriteJob = viewModelScope.launch(Dispatchers.IO) {
+        minutesWriteJob = viewModelScope.launch {
             delay(500.milliseconds)
             saveMinutes(minutes)
         }
@@ -322,7 +328,8 @@ class SettingsViewModel(
         // an edit still being debounced is saved rather than dropped
         if (minutesWriteJob?.isActive == true) {
             minutesWriteJob?.cancel()
-            viewModelScope.launch(Dispatchers.IO) { saveMinutes(minuteInputs) }
+            val currentInputs = minuteInputs
+            viewModelScope.launch { saveMinutes(currentInputs) }
         }
 
         if (!isSessionActive)

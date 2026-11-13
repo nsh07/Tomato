@@ -160,4 +160,19 @@
     <string name="delete_topic">Διαγραφή θέματος</string>
     <string name="delete_topic_and_stats">Διαγραφή θέματος και στατιστικών</string>
     <string name="delete_topic_dialog_title">Διαγραφή θέματος;</string>
+    <string name="delete_topic_dialog_text">Αυτό δεν μπορεί να αναιρεθεί. Τα στατιστικά που συνδέονται με αυτό το θέμα θα μεταφερθούν στο προεπιλεγμένο θέμα (%1$s). Εναλλακτικά, μπορείτε να διαγράψετε τα στατιστικά στοιχεία που σχετίζονται με αυτό το θέμα.</string>
+    <string name="edit_topic">Επεξεργασία θέματος</string>
+    <string name="edit_topic_desc">Όνομα, χρώμα και σχήμα</string>
+    <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d χρονόμετρα</string>
+    <string name="red">Κόκκινο</string>
+    <string name="rose">Ροζέ</string>
+    <string name="purple">Μωβ</string>
+    <string name="indigo">Ίντιγκο</string>
+    <string name="blue">Μπλε</string>
+    <string name="cyan">Κυανό</string>
+    <string name="teal">Πετρόλ</string>
+    <string name="green">Πράσινο</string>
+    <string name="chartreuse">Κιτρινοπράσινο</string>
+    <string name="yellow">Κίτρινο</string>
+    <string name="orange">Πορτοκαλί</string>
 </resources>

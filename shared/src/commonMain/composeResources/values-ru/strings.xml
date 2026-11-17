@@ -47,7 +47,7 @@
     <string name="play">Пуск</string>
     <string name="pomodoro_info">Сессия — это последовательность интервалов помодоро, которые содержат интервалы фокусировки, короткие интервалы перерыва и длинный интервал перерыва. Последний перерыв в сеансе — всегда долгий перерыв.</string>
     <string name="restart">Перезапуск</string>
-    <string name="session_length">Длинна сессии</string>
+    <string name="session_length">Продолжительность сессии</string>
     <string name="session_length_desc">Интервалы фокусировки в одной сессии: %1$d</string>
     <string name="settings">Настройки</string>
     <string name="short_break">Короткий перерыв</string>
@@ -57,7 +57,7 @@
     <string name="start_next">Начать далее</string>
     <string name="stats">Статистика</string>
     <string name="stop">Стоп</string>
-    <string name="stop_alarm">Сигнал остановки</string>
+    <string name="stop_alarm">Остановить сигнал</string>
     <string name="stop_alarm_dialog_text">Текущий таймер завершен. Нажмите в любом месте для остановки сигнала.</string>
     <string name="stop_alarm_question">Остановить сигнал?</string>
     <string name="system_default">Система</string>
@@ -170,4 +170,10 @@
     <string name="chartreuse">Салатовый</string>
     <string name="yellow">Жёлтый</string>
     <string name="orange">Оранжевый</string>
+    <string name="default_name">По умолчанию</string>
+    <string name="advanced">Расширенные</string>
+    <string name="next">Следующий</string>
+    <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d таймеры</string>
+    <string name="rose">Роза</string>
+    <string name="purple">Фиолетовый</string>
 </resources>

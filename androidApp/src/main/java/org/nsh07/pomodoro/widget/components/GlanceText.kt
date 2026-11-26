@@ -32,6 +32,33 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.text.FontWeight
 import androidx.glance.unit.ColorProvider
+import java.util.concurrent.ConcurrentHashMap
+
+private const val GOOGLE_SANS_FLEX_ASSET_PATH =
+    "composeResources/tomato.shared.generated.resources/font/google_sans_flex.ttf"
+
+private val typefaceLock = Any()
+
+@Volatile
+private var cachedBaseTypeface: Typeface? = null
+private val cachedStyleTypefaces = ConcurrentHashMap<Int, Typeface>()
+
+private fun getCustomTypeface(context: Context, fontWeight: FontWeight): Typeface {
+    val style = when (fontWeight) {
+        FontWeight.Bold -> Typeface.BOLD
+        FontWeight.Medium -> Typeface.ITALIC
+        else -> Typeface.NORMAL
+    }
+    cachedStyleTypefaces[style]?.let { return it }
+    return synchronized(typefaceLock) {
+        cachedStyleTypefaces[style]?.let { return@synchronized it }
+        val base = cachedBaseTypeface ?: Typeface.createFromAsset(
+            context.applicationContext.assets,
+            GOOGLE_SANS_FLEX_ASSET_PATH
+        ).also { cachedBaseTypeface = it }
+        Typeface.create(base, style).also { cachedStyleTypefaces[style] = it }
+    }
+}
 
 fun createCustomFontBitmap(
     context: Context,
@@ -41,17 +68,7 @@ fun createCustomFontBitmap(
     fontWeight: FontWeight = FontWeight.Normal,
     isClock: Boolean = true
 ): Bitmap {
-    val customTypeface = Typeface.create(
-        Typeface.createFromAsset(
-            context.assets,
-            "composeResources/tomato.shared.generated.resources/font/google_sans_flex.ttf"
-        ),
-        when (fontWeight) {
-            FontWeight.Bold -> Typeface.BOLD
-            FontWeight.Medium -> Typeface.ITALIC
-            else -> Typeface.NORMAL
-        }
-    )
+    val customTypeface = getCustomTypeface(context, fontWeight)
     val displayMetrics = context.resources.displayMetrics
 
     val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {

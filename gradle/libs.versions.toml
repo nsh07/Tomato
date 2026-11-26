@@ -20,7 +20,7 @@ kotlin = "2.4.20"
 kotlinxCoroutines = "1.11.0"
 ksp = "2.3.12"
 lifecycleRuntime = "2.11.0"
-materialKolor = "5.0.1"
+materialKolor = "6.0.0"
 navigation3 = "1.1.1"
 revenuecat = "10.22.0"
 room = "3.0.3"
@@ -60,7 +60,7 @@ filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "file
 filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekitDialogsCompose" }
 jlayer-player = { module = "dev.mccue:jlayer-player", version.ref = "jlayerPlayer" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
+material-kolor = { module = "com.materialkolor:material-kolor-material3", version.ref = "materialKolor" }
 revenuecat-purchases = { module = "com.revenuecat.purchases:purchases", version.ref = "revenuecat" }
 revenuecat-purchases-ui = { module = "com.revenuecat.purchases:purchases-ui", version.ref = "revenuecat" }
 vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }

@@ -63,8 +63,7 @@ import tomato.shared.generated.resources.dnd_permission_message
 actual fun AodSystemBarsHandler(
     density: Density,
     windowInfo: WindowInfo,
-    secureAod: Boolean,
-    setTimerFrequency: (Float) -> Unit
+    secureAod: Boolean
 ) {
     val activity = LocalActivity.current
     val view = LocalView.current
@@ -73,7 +72,6 @@ actual fun AodSystemBarsHandler(
     val insetsController = remember { WindowCompat.getInsetsController(window, view) }
 
     DisposableEffect(Unit) {
-        setTimerFrequency(1f)
         window.addFlags(
             if (secureAod) {
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
@@ -91,7 +89,6 @@ actual fun AodSystemBarsHandler(
         }
 
         onDispose {
-            setTimerFrequency(60f)
             window.clearFlags(
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
                         WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON

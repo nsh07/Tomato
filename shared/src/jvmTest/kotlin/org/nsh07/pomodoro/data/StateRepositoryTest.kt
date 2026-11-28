@@ -26,7 +26,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.yield
 import org.nsh07.pomodoro.data.Topic.Companion.DEFAULT_TOPIC_ID
-import org.nsh07.pomodoro.data.Topic.Companion.defaultTopic
 import org.nsh07.pomodoro.service.FakePreferenceRepository
 import org.nsh07.pomodoro.service.FakeTopicRepository
 import kotlin.test.Test
@@ -151,19 +150,6 @@ class StateRepositoryTest {
         }
         assertNotEquals(edited.focusTime, stateRepository.timerState.value.totalTime)
         assertEquals(work.focusTime, stateRepository.timerState.value.totalTime)
-    }
-
-    @Test
-    fun `the timer only ticks at the screen's rate while the app is in the foreground`() {
-        val stateRepository = stateRepository()
-
-        stateRepository.screenTimerFrequency = 1f // the AOD is shown
-        stateRepository.foreground = false
-        stateRepository.screenTimerFrequency = 60f // the AOD leaves the screen
-        assertEquals(1f, stateRepository.timerFrequency)
-
-        stateRepository.foreground = true
-        assertEquals(60f, stateRepository.timerFrequency)
     }
 
     @Test

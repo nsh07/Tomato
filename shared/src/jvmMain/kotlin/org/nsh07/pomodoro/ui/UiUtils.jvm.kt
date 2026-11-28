@@ -45,17 +45,14 @@ import java.awt.image.BufferedImage
 actual fun AodSystemBarsHandler(
     density: Density,
     windowInfo: WindowInfo,
-    secureAod: Boolean,
-    setTimerFrequency: (Float) -> Unit
+    secureAod: Boolean
 ) {
     val windowState: WindowState = koinInject()
 
     DisposableEffect(Unit) {
-        setTimerFrequency(30f)
         windowState.placement = WindowPlacement.Fullscreen
 
         onDispose {
-            setTimerFrequency(60f)
             windowState.placement = WindowPlacement.Floating
         }
     }

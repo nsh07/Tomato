@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nishant Mishra
+ * Copyright (c) 2025-2026 Nishant Mishra
  *
  * This file is part of Tomato - a minimalist pomodoro timer for Android.
  *
@@ -81,25 +81,13 @@ class MainActivity : ComponentActivity() {
                     stateRepository.colorScheme = colorScheme
                 }
 
-                AppScreen(
-                    isAODEnabled = settingsState.aodEnabled,
-                    setTimerFrequency = {
-                        stateRepository.screenTimerFrequency = it
-                    }
-                )
+                AppScreen(isAODEnabled = settingsState.aodEnabled)
             }
         }
     }
 
-
-    override fun onStop() {
-        super.onStop()
-        stateRepository.foreground = false
-    }
-
     override fun onStart() {
         super.onStart()
-        stateRepository.foreground = true
         resumeStoredTimer()
     }
 

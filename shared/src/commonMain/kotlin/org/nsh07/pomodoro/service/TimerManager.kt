@@ -230,10 +230,15 @@ class TimerManager(
         // over instead of pausing it. Pausing would leave the button doing nothing visible.
         if (_timerState.value.timerRunning && timerJob?.isActive == true) {
             pauseTime = currentTime()
+            val remaining = remainingInInterval()
+            time = remaining
             setDoNotDisturb(false)
-            onPause(time)
+            onPause(remaining)
             _timerState.update { currentState ->
-                currentState.copy(timerRunning = false)
+                currentState.copy(
+                    timerRunning = false,
+                    timeStr = remainingStr(currentState, remaining)
+                )
             }
             updateExpiryAlarm()
             persist()
@@ -274,8 +279,7 @@ class TimerManager(
         onSkipComplete: suspend () -> Unit,
         setDoNotDisturb: (Boolean) -> Unit,
     ) {
-        var iterations = -1
-        var notificationUpdateCounter = -1
+        var widgetUpdateCounter = -1
 
         timerJob?.cancel() // never let two timer loops run at once
         timerJob = scope.launch {
@@ -285,17 +289,10 @@ class TimerManager(
                 val elapsed = elapsedInInterval()
                 time = remainingInInterval()
 
-                val freq = stateRepository.timerFrequency.toInt().coerceAtLeast(1)
+                widgetUpdateCounter =
+                    (widgetUpdateCounter + 1) % 10 // update widget every 10 seconds
 
-                iterations = (iterations + 1) % freq
-                notificationUpdateCounter =
-                    (notificationUpdateCounter + 1) % (freq * 10) // update widget every 10 seconds
-
-                if (iterations == 0) {
-                    onTick(time, true, notificationUpdateCounter == 0)
-                } else if (notificationUpdateCounter == 0) {
-                    onTick(time, false, true)
-                }
+                onTick(time, true, widgetUpdateCounter == 0)
 
                 if (time < 0) {
                     expireIntervalIfDue(onTimerExpired, onSkipComplete, setDoNotDisturb)
@@ -306,7 +303,23 @@ class TimerManager(
                     if (elapsed - lastSavedDuration > SAVE_INTERVAL) saveTimeToDb()
                 }
 
-                delay((1000f / stateRepository.timerFrequency).toLong().milliseconds)
+                val currentState = _timerState.value
+                val delayMs =
+                    if (currentState.infiniteFocus && currentState.timerMode == TimerMode.FOCUS) {
+                        val currentElapsed = elapsedInInterval()
+                        val targetElapsed = ((currentElapsed / 1000L) + 1L) * 1000L + 50L
+                        (targetElapsed - currentElapsed).coerceAtLeast(1L)
+                    } else {
+                        val currentRemaining = remainingInInterval()
+                        if (currentRemaining < 0L) {
+                            1L
+                        } else {
+                            val targetRemaining = ((currentRemaining / 1000L) * 1000L - 50L)
+                                .coerceAtLeast(-1L)
+                            (currentRemaining - targetRemaining).coerceAtLeast(1L)
+                        }
+                    }
+                delay(delayMs.milliseconds)
             }
         }
     }

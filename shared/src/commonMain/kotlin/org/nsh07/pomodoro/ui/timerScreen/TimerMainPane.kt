@@ -50,8 +50,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
@@ -89,11 +87,8 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -375,53 +370,18 @@ fun SharedTransitionScope.TimerMainPane(
                             exit = fadeOut(motionScheme.defaultEffectsSpec()) +
                                     scaleOut(motionScheme.defaultSpatialSpec(), 4f)
                         ) {
-                            if (timerState.timerMode == TimerMode.FOCUS) {
-                                CircularProgressIndicator(
-                                    progress = progress,
-                                    modifier = Modifier
-                                        .sharedBounds(
-                                            sharedContentState = this@TimerMainPane.rememberSharedContentState(
-                                                "focus progress"
-                                            ),
-                                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                        )
-                                        .fillMaxWidth(0.9f)
-                                        .aspectRatio(1f),
-                                    color = color,
-                                    trackColor = colorContainer,
-                                    strokeWidth = 16.dp,
-                                    gapSize = 8.dp
-                                )
-                            } else {
-                                CircularWavyProgressIndicator(
-                                    progress = progress,
-                                    modifier = Modifier
-                                        .sharedBounds(
-                                            sharedContentState = this@TimerMainPane.rememberSharedContentState(
-                                                "break progress"
-                                            ),
-                                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                                        )
-                                        .fillMaxWidth(0.9f)
-                                        .aspectRatio(1f),
-                                    color = color,
-                                    trackColor = colorContainer,
-                                    stroke = Stroke(
-                                        width = with(LocalDensity.current) {
-                                            16.dp.toPx()
-                                        },
-                                        cap = StrokeCap.Round,
-                                    ),
-                                    trackStroke = Stroke(
-                                        width = with(LocalDensity.current) {
-                                            16.dp.toPx()
-                                        },
-                                        cap = StrokeCap.Round,
-                                    ),
-                                    wavelength = 60.dp,
-                                    gapSize = 8.dp
-                                )
-                            }
+                            TimerProgressIndicator(
+                                timerState = timerState,
+                                progress = progress,
+                                color = color,
+                                trackColor = colorContainer,
+                                modifier = Modifier
+                                    .fillMaxWidth(0.9f)
+                                    .aspectRatio(1f),
+                                strokeWidth = 16.dp,
+                                gapSize = 8.dp,
+                                wavelength = 60.dp,
+                            )
                         }
                         var expanded by remember { mutableStateOf(timerState.showBrandTitle) }
                         Column(

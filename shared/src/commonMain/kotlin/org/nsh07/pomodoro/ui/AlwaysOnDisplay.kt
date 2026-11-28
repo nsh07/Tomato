@@ -27,8 +27,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.TextAutoSize
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -43,8 +41,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -59,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import kotlinx.coroutines.delay
 import org.nsh07.pomodoro.ui.theme.TomatoTheme
+import org.nsh07.pomodoro.ui.timerScreen.TimerProgressIndicator
 import org.nsh07.pomodoro.ui.timerScreen.TimerScreen
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerMode
 import org.nsh07.pomodoro.ui.timerScreen.viewModel.TimerState
@@ -77,7 +74,6 @@ fun SharedTransitionScope.AlwaysOnDisplay(
     timerState: TimerState,
     secureAod: Boolean,
     progress: () -> Float,
-    setTimerFrequency: (Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var sharedElementTransitionComplete by remember { mutableStateOf(false) }
@@ -85,7 +81,7 @@ fun SharedTransitionScope.AlwaysOnDisplay(
     val density = LocalDensity.current
     val windowInfo = LocalWindowInfo.current
 
-    AodSystemBarsHandler(density, windowInfo, secureAod, setTimerFrequency)
+    AodSystemBarsHandler(density, windowInfo, secureAod)
 
     LaunchedEffect(Unit) {
         delay(300.milliseconds)
@@ -152,51 +148,17 @@ fun SharedTransitionScope.AlwaysOnDisplay(
                 }
         ) {
             if (!timerState.infiniteFocus) {
-                if (timerState.timerMode == TimerMode.FOCUS) {
-                    CircularProgressIndicator(
-                        progress = progress,
-                        modifier = Modifier
-                            .sharedBounds(
-                                sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState(
-                                    "focus progress"
-                                ),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                            )
-                            .size(250.dp),
-                        color = primary,
-                        trackColor = secondaryContainer,
-                        strokeWidth = 8.dp,
-                        gapSize = 4.dp,
-                    )
-                } else {
-                    CircularWavyProgressIndicator(
-                        progress = progress,
-                        modifier = Modifier
-                            .sharedBounds(
-                                sharedContentState = this@AlwaysOnDisplay.rememberSharedContentState(
-                                    "break progress"
-                                ),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
-                            )
-                            .size(250.dp),
-                        color = primary,
-                        trackColor = secondaryContainer,
-                        stroke = Stroke(
-                            width = with(LocalDensity.current) {
-                                8.dp.toPx()
-                            },
-                            cap = StrokeCap.Round,
-                        ),
-                        trackStroke = Stroke(
-                            width = with(LocalDensity.current) {
-                                8.dp.toPx()
-                            },
-                            cap = StrokeCap.Round,
-                        ),
-                        wavelength = 42.dp,
-                        gapSize = 4.dp
-                    )
-                }
+                TimerProgressIndicator(
+                    timerState = timerState,
+                    progress = progress,
+                    color = primary,
+                    trackColor = secondaryContainer,
+                    modifier = Modifier.size(250.dp),
+                    strokeWidth = 8.dp,
+                    gapSize = 4.dp,
+                    wavelength = 42.dp,
+                    animate = false,
+                )
             } else {
                 Box(modifier = Modifier.size(250.dp))
             }
@@ -240,8 +202,7 @@ private fun AlwaysOnDisplayPreview() {
             AlwaysOnDisplay(
                 timerState = timerState,
                 secureAod = true,
-                progress = progress,
-                setTimerFrequency = {}
+                progress = progress
             )
         }
     }

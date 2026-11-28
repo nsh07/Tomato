@@ -60,8 +60,7 @@ fun mergePaddingValues(
 expect fun AodSystemBarsHandler(
     density: Density,
     windowInfo: WindowInfo,
-    secureAod: Boolean,
-    setTimerFrequency: (Float) -> Unit
+    secureAod: Boolean
 )
 
 /**

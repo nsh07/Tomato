@@ -116,7 +116,6 @@ import tomato.shared.generated.resources.timer_outlined
 @Composable
 fun AppScreen(
     isAODEnabled: Boolean,
-    setTimerFrequency: (Float) -> Unit,
     modifier: Modifier = Modifier,
     flavorUI: FlavorUI = koinInject(),
     timerViewModel: TimerViewModel = koinViewModel(),
@@ -362,7 +361,6 @@ fun AppScreen(
                                 timerState = uiState,
                                 secureAod = settingsState.secureAod,
                                 progress = { progress },
-                                setTimerFrequency = setTimerFrequency,
                                 modifier = if (isAODEnabled) Modifier
                                     .clickable(
                                         interactionSource = aodInteractionSource,

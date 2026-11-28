@@ -132,12 +132,7 @@ fun ApplicationScope.AppWindow(
                                 )
                                 .background(colorScheme.surface)
                         ) {
-                            AppScreen(
-                                isAODEnabled = settingsState.aodEnabled,
-                                setTimerFrequency = {
-                                    stateRepository.screenTimerFrequency = it
-                                }
-                            )
+                            AppScreen(isAODEnabled = settingsState.aodEnabled)
 
                             AnimatedVisibility(
                                 windowState.placement != WindowPlacement.Fullscreen &&
